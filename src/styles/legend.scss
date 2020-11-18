@@ -1,0 +1,295 @@
+.legend {
+  width: 360px;
+  // height: 100px;
+  position: fixed;
+  bottom: 120px;
+  right: 20px;
+  background: #FFFFFF;
+  box-shadow: 1px 1px 6px 0px rgba(0, 0, 0, 0.3);
+
+  // 标题部分
+  .legend_top {
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    font-family: FZLTZCHK--GBK1-0, FZLTZCHK--GBK1;
+    font-weight: normal;
+    color: #696E7F;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .legend_title {
+      margin-left: 15px;
+    }
+
+    .legend_clear {
+      height: 100%;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      font-size: 12px;
+
+      .clear {
+        margin-right: 15px;
+        text-align: center;
+        color: #9C9C9C;
+
+        img {
+          width: 22px;
+          height: 22px;
+          padding-bottom: 3px;
+          vertical-align: middle;
+        }
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
+      .close {
+        width: 15px;
+        height: 15px;
+        margin-right: 10px;
+        cursor: pointer;
+
+        img {
+          display: block;
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+  }
+
+  // 图例区域
+  .legend_content {
+    width: 100%;
+    max-height: 650px;
+    overflow-y: auto;
+    padding: 0 15px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    // background: #ccc;
+
+    ul {
+      li {
+        width: 100%;
+        height: 80px;
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: space-around;
+        align-items: center;
+
+        .legend_item_top {
+          width: 100%;
+          height: 30px;
+          line-height: 30px;
+          position: relative;
+
+          .legend_item_left {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            position: absolute;
+            left: 5px;
+
+            img {
+              width: 20px;
+              height: 20px;
+            }
+
+            span {
+              font-size: 13px;
+              font-family: FZLTHJW--GB1-0, FZLTHJW--GB1;
+              font-weight: normal;
+              color: #696E7F;
+              margin-left: 7px;
+            }
+          }
+
+          .legend_item_right {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            position: absolute;
+            right: 5px;
+
+            span {
+              font-size: 12px;
+              font-family: FZLTHJW--GB1-0, FZLTHJW--GB1;
+              font-weight: normal;
+              color: #ABAEB9;
+            }
+
+            img {
+              width: 12px;
+              height: 12px;
+              margin-left: 7px;
+
+              &:hover {
+                cursor: pointer;
+              }
+            }
+          }
+        }
+
+        .legend_item_bottom {
+          width: 100%;
+          height: 45px;
+          display: flex;
+          flex-flow: row nowrap;
+          align-items: flex-start;
+
+          ul {
+            width: 310px;
+            height: 16px;
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto !important;
+            padding: 0 !important;
+            // border-radius: 10px;
+            background: #292826;
+            z-index: 2;
+            margin-top: 4px!important;
+
+            li {
+              height: 100%;
+              flex: auto;
+              position: relative;
+
+              // &:first-child {
+              //   border-top-left-radius: 10px;
+              //   border-bottom-left-radius: 10px;
+              // }
+
+              // &:last-child {
+              //   border-top-right-radius: 10px;
+              //   border-bottom-right-radius: 10px;
+              // }
+
+              &::after {
+                content: attr(data-value);
+                position: absolute;
+                top: 22px;
+                left: 50%;
+                transform: translateX(-50%);
+                color: #4F525E;
+                font-size: 12px;
+                font-weight: 100;
+              }
+            }
+          }
+
+          .color-slider {
+            width: 100%;
+            height: 25px;
+            z-index: 1;
+
+            .el-slider__button {
+              width: 15px;
+              height: 15px;
+              border: none;
+            }
+          }
+        }
+      }
+
+    }
+
+    .bggray {
+      background: #F5F5F5;
+    }
+
+    .thunder {
+      width: 100%;
+      height: 130px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border: 1px solid #EDEDED;
+      margin-top: 5px;
+
+      .thunder_left {
+        width: 180px;
+        height: 100%;
+        position: relative;
+        font-size: 14px;
+        font-family: FZLTZCHK--GBK1-0, FZLTZCHK--GBK1;
+        font-weight: 600;
+        margin-left: 10px;
+
+        img {
+          width: 50px;
+          height: 65px;
+          display: block;
+          position: absolute;
+          left: 55px;
+          top: 28px;
+        }
+
+        span {
+          display: inline-block;
+          position: absolute;
+
+          &:nth-child(2) {
+            color: #4C44F1;
+            top: 5px;
+            left: 65px;
+          }
+
+          &:nth-child(3) {
+            color: #E9305B;
+            top: 45px;
+            left: 10px;
+          }
+
+          &:nth-child(4) {
+            color: #2077F9;
+            left: 30px;
+            bottom: 15px;
+          }
+
+          &:nth-child(5) {
+            color: #B434F0;
+            right: 40px;
+            bottom: 15px;
+          }
+
+          &:nth-child(6) {
+            color: #31BE00;
+            top: 45px;
+            right: 30px;
+          }
+        }
+      }
+
+      .thunder_right {
+        width: 150px;
+        height: 100%;
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: space-around;
+        // align-items: center;
+
+        .right_thunder {
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+          font-size: 15px;
+          font-family: FZLTHJW--GB1-0, FZLTHJW--GB1;
+          font-weight: normal;
+          color: #777;
+
+          img {
+            width: 26px;
+            height: 26px;
+            margin-right: 12px;
+          }
+        }
+      }
+    }
+  }
+}

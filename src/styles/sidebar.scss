@@ -1,0 +1,79 @@
+.sideBar {
+    // width: 210px;
+    // height: 630px;
+    position: fixed;
+    right: 35px;
+    top: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    max-height: 950px;
+
+    ul {
+        list-style: none;
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .menu_list {
+        border-radius: 15px;
+        background: rgba(26, 26, 24, 0.7);
+    }
+
+    .menu_name {
+        margin-right: 15px;
+    }
+
+    ul,
+    li {
+        padding: 0;
+        margin: 0;
+    }
+
+    // 蓝色背景
+    .bgcolor {
+        background: rgba(152, 26, 0, 1) !important;
+        border-radius: 15px;
+    }
+
+    .menuSelect {
+        margin-left: 40px;
+        margin-top: 5px;
+    }
+
+    // 菜单栏要素
+    li {
+        height: 45px;
+
+        .menu_left {
+            width: 110px;
+            height: 45px;
+            line-height: 45px;
+            text-align: right;
+            font-size: 14px;
+            font-family: FZLTHJW--GB1-0, FZLTHJW--GB1;
+            font-weight: normal;
+            color: #fff3e1;
+        }
+
+        .menu_right {
+            width: 30px;
+            height: 45px;
+            line-height: 45px;
+            text-align: center;
+
+            img {
+                width: 28px;
+                height: 28px;
+                vertical-align: middle;
+            }
+        }
+
+        .menu_left,
+        .menu_right:hover {
+            cursor: pointer;
+        }
+    }
+}

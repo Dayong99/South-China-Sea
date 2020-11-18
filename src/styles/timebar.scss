@@ -1,0 +1,473 @@
+#app {
+    #timebar {
+        width:100%;
+        transition: .5s margin-bottom ease-in-out 0s;
+        position: fixed;
+        left: 10px;
+        right: 10px;
+        height: 30px;
+        bottom: 30px;
+        margin-bottom: 0;
+
+        input {
+            background:rgba(97, 96, 94, .6);  
+            outline:none;  
+            border:none;
+            color:white;
+            border-radius:15px;
+        }
+
+        // 时间进度条
+        .timeline {
+            height: 6px;
+            cursor: pointer;
+            position: relative;
+            border: 10px solid transparent;
+            background-clip: padding-box;
+            border-right: none;
+            border-left: none;
+            top: -17px;
+            left:180px;
+            -webkit-transition: width ease-in-out .7s;
+            transition: width ease-in-out .7s;
+            .playLen{
+                background-color: #e5e5e5;
+                height: 6px;
+                float: left;
+                position:absolute;
+                top:0;
+                // border-right:2px solid #9d0300;
+                border-top-left-radius: 3px;
+                border-bottom-left-radius: 3px;
+                transition: width 1s;
+                -moz-transition: width 1s;
+                -webkit-transition: width 1s;
+                -o-transition: width 1s;
+        
+            }
+
+            .totalLen {
+                width:calc(100% - 80px);
+                height: 6px;
+                background-color: rgba(68,65,65,0.84);
+                border-radius: 6px;
+                left:140px;
+            }
+        }
+
+        .circle {
+            position: absolute;
+            display: block;
+            width:10px;
+            height:10px;
+            background:#D49500;
+            border-radius: 10px;
+            left:0;
+            top:-9px;
+            transition: left 1s;
+            -moz-transition: left 1s;
+            -webkit-transition: left 1s;
+            -o-transition: left 1s;
+        }
+
+        .timecode {
+            font-size: 13px;
+            position: absolute;
+            display: block;
+            box-sizing: border-box;
+            margin-left: 15px;
+            left:0;
+            transition: left 1s;
+            -moz-transition: left 1s;
+            -webkit-transition: left 1s;
+            -o-transition: left 1s;
+        }
+
+        // 划过提示框
+        .ghost-timecode {
+            transition: .3s opacity 0s;
+            -webkit-transition: .3s opacity 0s;
+            pointer-events: none;
+            text-align:center;
+
+            .box {
+                color: white;
+                height: 1.8em;
+                box-sizing: border-box;
+                padding: 0 .8em;
+                white-space: nowrap;
+                text-align: center;
+                display: table-cell;
+                vertical-align: middle;
+                border-radius: .5em;
+                box-shadow: 0 0 4px 0 black;
+                background-color: rgba(68,65,65,0.84);
+
+                &::before {
+                    top: 100%;
+                    left: 1.8em;
+                    border: solid transparent;
+                    content: ' ';
+                    height: 0;
+                    width: 0;
+                    position: absolute;
+                    border-top-color: rgba(68,65,65,0.84);
+                    border-width: .5em;
+                    margin-left: -0.5em;
+                }
+            }
+        }
+
+        // 当前时间
+        .main-timecode {
+            top: -3em;
+            text-align:center;
+
+            .box {
+                cursor: -webkit-grab;
+                cursor: -moz-grab;
+                cursor: grab;
+                position: relative;
+                // background-color: #d49500;
+                color: white;
+                height: 1.8em;
+                box-sizing: border-box;
+                padding: 0 .8em;
+                white-space: nowrap;
+                text-align: center;
+                display: table-cell;
+                vertical-align: middle;
+                border: none;
+                // border-radius: .5em;
+                // box-shadow: 0 0 4px 0 black;
+
+                // &::before {
+                //     top: 100%;
+                //     left: 2em;
+                //     border: solid transparent;
+                //     content: ' ';
+                //     height: 0;
+                //     width: 0;
+                //     position: absolute;
+                //     border-top-color: #d49500;
+                //     border-width: .5em;
+                //     margin-left: -0.5em;
+                // }
+            }
+
+            .dataImg{
+                position: absolute;
+                top: 2px;
+                //right: -28px;
+                cursor: pointer;
+            }
+
+            .dataBox {
+                font-size: 16px;
+                width: 354px;
+                //height: 291px;
+                // height: 305px;
+                height: 385px;
+                background: rgba(55, 54, 51, 1);
+                border-radius: 4px;
+                opacity: 0.7;
+                position: absolute;
+                //left: 5px;
+                bottom: 35px;
+    
+                img {
+                    position: absolute;
+                    top: 15px;
+                    left: 12px;
+                }
+    
+                .lonlatBox {
+                    width: 246px;
+                    height: 28px;
+                    border-radius: 16px;
+                    border: 1px solid rgba(255, 255, 255, .3);
+                    position: absolute;
+                    top: 10px;
+                    left: 50px;
+                    color: #ffffff;
+    
+                    span {
+                        &:first-child {
+                            position: absolute;
+                            top: 6px;
+                            left: 25px;
+                        }
+    
+                        &:last-child {
+                            position: absolute;
+                            top: 6px;
+                            right: 25px;
+                        }
+                    }
+    
+                }
+    
+                .close {
+                    position: absolute;
+                    top: 12px;
+                    right: 11px;
+                    cursor: pointer;
+                }
+    
+                .datalist {
+                    width: 330px;
+                    // height: 232px;
+                    // height: 250px;
+                    height: 332px;
+                    border-radius: 6px;
+                    border: 1px solid rgba(255, 255, 255, .3);
+                    position: absolute;
+                    top: 49px;
+                    left: 12px;
+                    color: #ffffff;
+    
+                    ul {
+                        list-style: none;
+                        margin: 0;
+                        padding: 0;
+    
+                        li {
+                            height: 26px;
+                            margin-top: 5px;
+                            margin-bottom: 3px;
+    
+                            .itemdiv {
+                                height: 26px;
+                                position: relative;
+    
+                                div {
+                                    height: 26px;
+                                    position: absolute;
+                                    right: 128px;
+                                    text-align: center;
+    
+                                    span {
+                                        display: inline-block;
+                                        margin-top: 2px;
+    
+                                        &:nth-child(2) {
+                                            background: rgba(160, 160, 160, 1);
+                                            border-radius: 5px;
+                                            margin-left: 12px;
+                                        }
+                                    }
+                                }
+    
+                                .dataNum {
+                                    display: inline-block;
+                                    position: absolute;
+                                    left: 224px;
+                                    height: 26px;
+                                    line-height: 26px;
+                                    //margin-top: 6px;
+                                }
+    
+    
+    
+                            }
+                        }
+                    }
+    
+                    .remarkBox{
+                        width: 100%;
+                        height: 78px;
+                        position: relative;
+                        span{
+                            position: absolute;
+                            top: 0;
+                            left: 20px;
+                        }
+                        .remarks{
+                            width: 255px;
+                            height: 74px;
+                            display: inline-block;
+                            border: 1px solid rgba(255, 255, 255, .3);
+                            position: absolute;
+                            top: 0;
+                            right: 5px;
+                            text-align: left;
+                            
+                        }
+                    }
+                }
+                
+            }
+        }
+
+        // 播放按钮
+        #playpause {
+            position: absolute;
+            top: -20px;
+            left: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 1.2em;
+            box-shadow: 0 0 4px 0 black;
+            background-color: rgba(85, 95, 104, 0.8);
+            text-align: center;
+            cursor: pointer;
+            i {
+                display: block;
+                font-size: 18px;
+                line-height: 30px;
+                color: #fff;
+            }
+        }
+
+      
+
+        // 日期
+        #calendar {
+            width:calc(100% - 80px);
+            position: absolute;
+            left: 40px;
+            right: 0;
+            top: 6px;
+            white-space: nowrap;
+
+            div{
+                display: inline-block;
+                box-sizing: border-box;
+                text-align: left;
+                padding:6px 0 0 6px;
+                font-size: 12px;
+                line-height: 1;
+                height: 26px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-shadow: 0 0 4px black;
+                color: #fff3e1;
+                cursor: pointer;
+                position: relative;
+                
+                &:not(:first-child) {
+                    border-left: 1px solid rgba(68,65,65,0.84);
+                }
+            }
+        }
+
+        .day {
+            .dayitem {
+                width:100%;
+                position: absolute;
+                height:6px;
+                left:0;
+                // top:-12px;
+                display: flex;
+
+                span {
+                    height:100%;
+                }
+            }
+        }
+
+        // 产品演示时间轴
+        #productBar {
+            position: absolute;
+            top: -20px;
+            left: 0;
+            width:80px;
+            display:flex;
+            justify-content: space-around;
+
+            i {
+                color:#D49500;
+                cursor: pointer;
+                font-size:26px;
+        
+                &:nth-child(1) {
+                    margin-top:1px;
+                }
+                &:nth-child(2) {
+                    margin-top:5px;
+                    margin-left: 2px;
+                }
+                &:nth-child(3) {
+                    margin-top:1px;
+                }
+            }
+        }
+
+        .loading {
+            position: absolute;
+            top: .2em;
+            left: -1.4em;
+        }
+
+        #now {
+            display: block;
+            width: 3px;
+            height: 6px;
+            position: absolute;
+            background-color: #946051;
+            top: 0;
+        }
+
+        .time-operate {
+            position: absolute;
+            top:40px;
+            height: 85px;
+            display: flex !important;
+            flex-direction: column;
+            justify-content: space-around;
+            margin-left: 0 !important;
+            border-radius: 3px;
+            /* background: #bfa; */
+            color: #d49500;
+            font-size: 16px !important;
+            font-family: FZLTHJW--GB1-0, FZLTHJW--GB1;
+            font-weight: normal;
+
+            .operate {
+                width: 115px;
+                display: flex;
+                flex-flow: row nowrap;
+                align-items: center;
+              }
+
+              .operate-add {
+                justify-content: space-between;
+
+                a {
+                    height: 20px;
+                    line-height: 20px;
+                  }
+              }
+
+              .operate-pos {
+                justify-content: start;
+                span {
+                    font-family: DIN-Regular, DIN;
+                    padding-left: 5px;
+                  }
+                  
+              }
+
+              .operate-data {
+                width: 180px;
+                justify-content: start;
+                padding-left: 2px;
+
+                input {
+                    width: 100%;
+                    margin-left: 5px;
+                    outline:none;  
+                    border:none;
+                    color:white;
+                    background:rgba(97, 96, 94, .6);  
+                    padding:0 5px;
+
+                  }
+              }
+              
+          }
+    }
+
+    
+  }
+  
