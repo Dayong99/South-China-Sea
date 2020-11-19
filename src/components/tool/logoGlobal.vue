@@ -2,9 +2,11 @@
 <template>
   <!-- eslint-disable -->
   <div class="logo-global" id="logo-global">
-    <!-- <img src="@/assets/images/logo/logo.png" /> -->
-    <img src="@/assets/images/logo.png" />
+    <div class="logal_image">
+      <img src="@/assets/images/logo.png" />
+    </div>
     <span>{{logoName}}</span>
+    <span>船舰</span>
   </div>
 </template>
 
@@ -13,7 +15,7 @@
 export default {
   data() {
     return {
-      logoName: "XX船舰"
+      logoName: "XX"
     };
   },
   created() {},
@@ -26,6 +28,7 @@ export default {
   z-index: 999;
 }
 .logo-global {
+  width: 302px;
   position: fixed;
   top: 12.5px;
   left: 50%;
@@ -33,25 +36,37 @@ export default {
   font-size: 26px;
   letter-spacing: 2px;
   font-family: FZLTZCHK--GBK1-0, FZLTZCHK--GBK1;
-  font-weight: normal;
-  color: #2674FD;
+  font-weight: bold;
+  color: #fff;
   padding: 10px;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   -ms-border-radius: 5px;
   -o-border-radius: 5px;
-  width: 302px;
 	border-radius: 23px;
-  text-align: center;
   user-select: none;
-}
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-.logo-global img {
-  // width: 46px;
-  width: 34px;
-  height: 34px;
-  vertical-align: middle;
-  margin-right: 5px;
-  color: #FFFFFF;
+  .logal_image {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: rgba(152, 26, 0, 1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+
+    img {
+      width: 70%;
+      height: 70%;
+    }
+  }
+
+  span:last-child {
+    font-weight: normal;
+  }
 }
 </style>

@@ -5,7 +5,6 @@
 </template>
 
 <script>
-
 import Line from '@/utils/isoline'
 import { parseTime } from '@/utils'
 import Tool from '@/utils/tool'
@@ -62,10 +61,24 @@ export default {
         zoomOffset: 1,
       })
       window.map.setView([35.09, 102.21], 4);
+      this.changeZoom()
+      this.changeMove()
     },
     async createTileLayer(url, options) {
       let tileLayer = await L.tileLayer(url, options)
       tileLayer.addTo(window.map)
+    },
+    changeZoom() {
+      window.map.on('zoomend', ev => {
+        console.log('zoomend', window.map.getZoom())
+        console.log(ev)
+      })
+    },
+    changeMove() {
+      window.map.on('moveend', ev => {
+        console.log('moveend', window.map.getZoom())
+        console.log(ev)
+      })
     },
   }
 }

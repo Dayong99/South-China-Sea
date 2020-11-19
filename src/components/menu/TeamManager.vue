@@ -1,7 +1,7 @@
 <template>
-  <div id="ship_manager" class="ship_manager" v-show="shipManagerShow">
+  <div id="ship_manager" class="ship_manager" v-show="teamManagerShow">
     <div class="manager_title">
-      <span>船舰管理</span>
+      <span>编队管理</span>
       <img src="@/assets/images/legendbar/close.png" @click.stop="closeManager">
     </div>
     <div class="manager_operation">
@@ -23,50 +23,23 @@
         style="width: 100%;"
         max-height="390px">
         <el-table-column
-          prop="date"
-          label="日期"
+          prop="id"
+          label="序号"
           header-align="center"
           align="center">
         </el-table-column>
         <el-table-column
           prop="name"
-          label="姓名"
+          label="名称"
           width="120"
           header-align="center"
           align="center">
         </el-table-column>
         <el-table-column
-          prop="province"
-          label="省份"
+          prop="unit"
+          label="基本单元"
           header-align="center"
           align="center">
-        </el-table-column>
-        <el-table-column
-          prop="city"
-          label="市区"
-          header-align="center"
-          align="center">
-        </el-table-column>
-        <el-table-column
-          prop="address"
-          label="地址"
-          header-align="center"
-          align="center">
-        </el-table-column>
-        <el-table-column
-          prop="zip"
-          label="邮编"
-          header-align="center"
-          align="center">
-        </el-table-column>
-        <el-table-column
-          prop="picture"
-          label="图片"
-          header-align="center"
-          align="center">
-          <template slot-scope="scope">
-            <el-button type="text">查看</el-button>
-          </template>
         </el-table-column>
         <el-table-column
           label="操作"
@@ -101,36 +74,24 @@ export default {
   data() {
     return {
       // 详细面板显示隐藏
-      shipManagerShow: false,
+      teamManagerShow: false,
       managerValue: '',
       tableData: [{
-        date: '2016-05-02',
+        id: '1',
         name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
+        unit: '上海',
       }, {
-        date: '2016-05-04',
+        id: '2',
         name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1517 弄',
-        zip: 200333
+        unit: '上海',
       }, {
-        date: '2016-05-01',
+        id: '2',
         name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1519 弄',
-        zip: 200333
+        unit: '上海',
       }, {
-        date: '2016-05-03',
+        id: '2',
         name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1516 弄',
-        zip: 200333
+        unit: '上海',
       }]
     }
   },
@@ -146,10 +107,10 @@ export default {
         let i = newval.findIndex(item => {
           return item.flag == true
         })
-        if(i != -1 && i == 0) {
-          this.shipManagerShow = true
+        if(i != -1 && i == 1) {
+          this.teamManagerShow = true
         } else {
-          this.shipManagerShow = false
+          this.teamManagerShow = false
         }
       },
       deep: true
@@ -160,8 +121,8 @@ export default {
       setMenuList: 'menuBar/setMenuList'
     }),
     closeManager() {
-      this.shipManagerShow = false
-      this.menuList[0].flag = false
+      this.teamManagerShow = false
+      this.menuList[1].flag = false
       this.setMenuList(this.menuList)
     },
   }

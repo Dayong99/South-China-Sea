@@ -20,6 +20,8 @@
     <menu-bar></menu-bar>
     <!-- 船舰管理 -->
     <ship-manager></ship-manager>
+    <!-- 编队管理 -->
+    <team-manager></team-manager>
 
   </div>
 </template>
@@ -36,6 +38,7 @@ import SideBar from '@/components/sidebar/SideBar.vue';
 import LegendBar from '@/components/legendbar/legendBar.vue'
 import MenuBar from '@/components/menu/MenuBar.vue'
 import ShipManager from '@/components/menu/ShipManager.vue';
+import TeamManager from '@/components/menu/TeamManager'
 
 import eventBus from "@/utils/eventBus.js";
 
@@ -50,7 +53,8 @@ export default {
     SideBar: SideBar,
     LegendBar: LegendBar,
     MenuBar: MenuBar,
-    ShipManager: ShipManager
+    ShipManager: ShipManager,
+    TeamManager: TeamManager,
   },
   data() {
     return {

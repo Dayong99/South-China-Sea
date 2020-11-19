@@ -180,11 +180,11 @@ export default {
       this.totalwidth = width;
 
       // 初始化时间
-      // this.timeFlag = true
-      // this.getLatestTime()
-      this.timeFlag = false;
+      this.timeFlag = true
+      this.getLatestTime()
+      // this.timeFlag = false;
       // this.dateVal = "2020-08-01"
-      this.getTypeTime();
+      // this.getTypeTime();
       // this.getLatestTime()
       // this.getTypeTime().then(res=>{
       //   console.log(res);
@@ -192,24 +192,24 @@ export default {
       //   console.log(err);
       // })
 
-      // // 初始化当前时间
-      // this.showday =
-      //   this.calendarList[0].day + ' ' + this.calendarList[0].timeArr[0]
-      // // this.showday = "2020-08-01 03:00"
-      // // 时间数组长度
-      // this.dayListLength = this.calendarList.length
-      // // 分割的总个数
-      // this.count = this.dayListLength * this.num
-      // // 时间段长度
-      // this.bItem = this.totalwidth / this.dayListLength
-      // // console.log(this.bItem)
-      // this.sItem = this.totalwidth / this.count
+      // 初始化当前时间
+      this.showday =
+        this.calendarList[0].day + ' ' + this.calendarList[0].timeArr[0]
+      // this.showday = "2020-08-01 03:00"
+      // 时间数组长度
+      this.dayListLength = this.calendarList.length
+      // 分割的总个数
+      this.count = this.dayListLength * this.num
+      // 时间段长度
+      this.bItem = this.totalwidth / this.dayListLength
+      // console.log(this.bItem)
+      this.sItem = this.totalwidth / this.count
 
-      // this.$store.commit('changeTime', this.showday)
-      // console.log('------------')
-      // console.log(this.showday)
+      this.$store.commit('changeTime', this.showday)
+      console.log('------------')
+      console.log(this.showday)
 
-      // this.resetPlay()
+      this.resetPlay()
     });
   },
   methods: {
@@ -246,13 +246,11 @@ export default {
       }).then((res) => {
         let timeArr = res.data.data.split(" ");
         console.log(timeArr);
-        // const hour = Number(timeArr[1])<10?'0'+Number(timeArr[1])<10:Number(timeArr[1])<10
         this.dateVal = timeArr[0];
         this.getLatestTime();
         // 初始化当前时间
         this.showday =
           this.calendarList[0].day + " " + this.calendarList[0].timeArr[0];
-        // this.showday = "2020-08-01 03:00"
         // 时间数组长度
         this.dayListLength = this.calendarList.length;
         // 分割的总个数
@@ -267,13 +265,7 @@ export default {
         console.log(this.showday);
 
         this.resetPlay();
-      });
-      // .catch(err=>{
-      //   console.log(err.response.status);
-      //   if(err.response.status==404){
-      //     this.getTypeTime()
-      //   }
-      // })
+      })
     },
     // 获取最近三周时间
     getLatestTime() {

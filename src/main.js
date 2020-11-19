@@ -9,6 +9,8 @@ import utils from './utils/utils'
 import "leaflet/dist/leaflet.css"
 import L from "leaflet";
 
+import map from './utils/map.js'
+
 import store from './store'
 import router from './router'
 
@@ -40,7 +42,8 @@ Vue.prototype.$upload = request.upload
 Vue.prototype.$login = request.login
 Vue.prototype.$utils = utils
 Vue.prototype.$db = db
-Vue.prototype.L = L
+Vue.prototype.$L = L
+Vue.prototype.$utilsMap = map
 
 // const on = Vue.prototype.$on
 // // 防抖处理

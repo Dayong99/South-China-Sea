@@ -20,8 +20,8 @@
         @click.stop="menuClick(index)"
       >
         <!-- <div class="menu_left" :class="{ bgcolor: item.flag == 1 }">{{ item.name }}</div> -->
-        <div :class="{ menu_right: true, bgcolor: item.flag == 1 }">
-          <img :src="item.img" />
+        <div :class="{ menu_right: true, bgcolor: item.flag == true }">
+          <img :src="item.icon" />
         </div>
       </li>
     </ul>
@@ -115,7 +115,10 @@ export default {
         gridType: false,
         mutex: 0,
       }],
-      currentItemList: []
+      // 当前选中的所有要素集合
+      currentItemList: [],
+      // 当前选中的一个要素
+      currentItem: null,
     };
   },
   computed: {
@@ -128,12 +131,21 @@ export default {
     currentItemList: {
       handler(val, oldval) {
         this.setMenuItemList(this.currentItemList)
+        this.createMarker()
       },
       deep: true
+    },
+    currentItem: {
+      handler(val, old) {
+        this.drawItem()
+      }
     }
   },
-  mounted() {
+  created() {
     this.initMenuList()
+  },
+  mounted() {
+    // this.initMenuList()
   },
   methods: {
     ...mapMutations({
@@ -141,8 +153,65 @@ export default {
     }),
     // 初始选中
     initMenuList() {
-      this.menuList[0].flag = true
-      this.currentItemList.push(this.menuList[0])
+      /**
+       * type: 数据源类型   0--EC  1--GFS
+       */
+      this.$get('/api/parameters/get_type', {
+        type: 0
+      }).then(res => {
+        if(res.status == 200) {
+          this.menuList = []
+          res.data.data.forEach(item => {
+            let obj = {
+              id: item.id,
+              flag: false,
+              icon: item.iconImage,
+              dataSource: item.type,
+              name: item.parameterName,
+              parameterMark: item.parameterMark,
+              legendId: item.legendId,
+              mutex: item.dataGroup,
+              level: [],
+              grid: null,
+              xMin: null,
+              xMax: null,
+              yMin: null,
+              yMax: null,
+              units: item.units,
+              drawType: item.drawType
+            }
+            // 处理level
+            let level = item.parameterStep.split(',')
+            level.forEach(item => {
+              obj.level.push(Number(item))
+            })
+            // 处理经纬度范围
+            let lat = item.latRange.split(',')
+            obj.yMin = lat[1]
+            obj.yMax = lat[0]
+            let lon = item.lonRange.split(',')
+            obj.xMin = lon[0]
+            obj.xMax = lon[1]
+            // 处理格点数据抽稀
+            let gridsize = 0
+            if(item.gridSize == 0.125) {
+              gridsize = 8
+            } else if(item.gridSize == 0.25) {
+              gridsize = 4
+            } else{
+              gridsize = 0
+            }
+            obj.grid = gridsize
+            this.menuList.push(obj)
+          })
+        }
+        console.log('数据源', this.menuList)
+        this.menuList[0].flag = true
+        this.currentItemList.push(this.menuList[0])
+        this.currentItem = this.menuList[0]
+      }).catch(error => {
+        this.$message.error("获取数据源数据失败")
+      })
     },
     // 要素选择
     menuClick(index) {
@@ -179,9 +248,33 @@ export default {
         }
       }
 
+      // 当前要素设置为当前要素列表中的最后一个
+      this.currentItem = this.currentItemList[this.currentItemList.length - 1]
+
       console.log('currentItemList', this.currentItemList);
       console.log('menuList', this.menuList);
     },
+    // 创建marker
+    createMarker() {
+      let icon = this.$utilsMap.createIcon({
+        iconUrl: require('@/assets/images/logo.png')
+      })
+      this.$utilsMap.createMarkerByLatlng(window.map, [25, 120], {
+        icon: icon,
+        title: '测试'
+      })
+    },
+    // 绘制
+    drawItem() {
+      console.log('currentItem', this.currentItem)
+      if(this.currentItem.drawType == 'line') {
+        this.getAndDrawLine()
+      }
+    },
+    // 获取线的数据并绘制
+    getAndDrawLine() {
+
+    }
   }
 };
 </script>
