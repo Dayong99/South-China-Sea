@@ -11,70 +11,87 @@
       <el-input
         placeholder="请输入关键词"
         prefix-icon="el-icon-search"
-        v-model="managerValue"
+        v-model="queryParams.warshipName"
         class="operation_input"
         clearable
       >
       </el-input>
-      <el-button class="operation_search">搜索</el-button>
-      <el-button class="operation_clear">重置</el-button>
+      <el-button class="operation_search" @click="search">搜索</el-button>
+      <el-button class="operation_clear" @click="resetSearch">重置</el-button>
       <el-button icon="el-icon-plus" class="operation_add" @click="add"
         >添加</el-button
       >
     </div>
     <div class="manager_table">
-      <el-table :data="tableData" border style="width: 100%" max-height="390px">
+      <el-table :data="tableData" border style="width: 100%" max-height="400px">
         <el-table-column
-          prop="date"
-          label="日期"
-          header-align="center"
+          label="名称"
+          prop="role-name"
           align="center"
-        >
-        </el-table-column>
-        <el-table-column
-          prop="name"
-          label="姓名"
-          width="120"
-          header-align="center"
-          align="center"
-        >
-        </el-table-column>
-        <el-table-column
-          prop="province"
-          label="省份"
-          header-align="center"
-          align="center"
-        >
-        </el-table-column>
-        <el-table-column
-          prop="city"
-          label="市区"
-          header-align="center"
-          align="center"
-        >
-        </el-table-column>
-        <el-table-column
-          prop="address"
-          label="地址"
-          header-align="center"
-          align="center"
-        >
-        </el-table-column>
-        <el-table-column
-          prop="zip"
-          label="邮编"
-          header-align="center"
-          align="center"
-        >
-        </el-table-column>
-        <el-table-column
-          prop="picture"
-          label="图片"
-          header-align="center"
-          align="center"
+          min-width="100px"
         >
           <template slot-scope="scope">
-            <el-button type="text">查看</el-button>
+            <span>{{ scope.row.warshipName }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="类型"
+          prop="role-name"
+          align="center"
+          min-width="100px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.warshipType }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="编号"
+          prop="role-name"
+          align="center"
+          min-width="100px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.number }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="吨位"
+          prop="role-name"
+          align="center"
+          min-width="100px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.tonnage }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="抗风能力"
+          prop="role-name"
+          align="center"
+          min-width="100px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.windResistant }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="图片"
+          prop="role-name"
+          align="center"
+          min-width="100px"
+        >
+          <template slot-scope="scope">
+            <span>
+              <el-image
+                style="width: 20px; height: 20px"
+                :src="scope.row.shipPhoto"
+                :preview-src-list="[scope.row.shipPhoto]"
+              >
+                <div slot="error" class="image-slot">
+                  <i class="el-icon-picture-outline"></i>
+                </div>
+              </el-image>
+            </span>
           </template>
         </el-table-column>
         <el-table-column
@@ -83,21 +100,24 @@
           header-align="center"
           align="center"
         >
-          <template slot-scope="scope">
+          <template slot-scope="{ row }">
             <el-button
               icon="el-icon-warning-outline"
               class="table_column_icon blue"
               type="text"
+              @click="information(row)"
             ></el-button>
             <el-button
               icon="el-icon-edit-outline"
               class="table_column_icon green"
               type="text"
+              @click="editItem(row)"
             ></el-button>
             <el-button
               icon="el-icon-delete"
               class="table_column_icon red"
               type="text"
+              @click="deleteItem(row)"
             ></el-button>
             <el-button
               icon="el-icon-s-operation"
@@ -109,15 +129,13 @@
       </el-table>
     </div>
     <div class="manager_page">
-      <el-pagination
-        :page-sizes="[5, 10, 15]"
-        :page-size="10"
-        :pager-count="5"
-        background
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="400"
-      >
-      </el-pagination>
+      <!-- 分页 -->
+      <pagination
+        :total="total"
+        :page.sync="pagination.num"
+        :limit.sync="pagination.size"
+        @pagination="search"
+      />
     </div>
 
     <edit
@@ -130,15 +148,17 @@
 </template>
 
 <script>
+import Pagination from "@/components/Pagination";
 import { mapState, mapMutations } from "vuex";
 import edit from "./edit.vue";
 export default {
   components: {
     edit,
+    Pagination,
   },
   data() {
     return {
-      total: null,
+      total: 0,
       // 新增 修改 对话框
       dialog: {
         isVisible: false,
@@ -147,44 +167,19 @@ export default {
       // 详细面板显示隐藏
       shipManagerShow: false,
       managerValue: "",
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1518 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1517 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1519 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1516 弄",
-          zip: 200333,
-        },
-      ],
+      tableData: [],
+      // 分页
+      pagination: {
+        size: 5,
+        num: 1,
+      },
+      queryParams: {
+        warshipName: null
+      }
     };
   },
   mounted() {
-    this.fetch()
+    this.fetch();
   },
   computed: {
     ...mapState({
@@ -211,26 +206,71 @@ export default {
     ...mapMutations({
       setMenuList: "menuBar/setMenuList",
     }),
+    editItem(row) {
+      this.$refs.edit.setData(row);
+      this.dialog.isVisible = true;
+      this.dialog.title = "修改船舰";
+    },
+    information(row) {
+      console.log(row)
+      this.$refs.edit.setData(row);
+      this.dialog.isVisible = true;
+      this.dialog.title = "船舰信息";
+    },
+    // 搜索重置
+    resetSearch() {
+      this.queryParams = {
+        warshipName: null
+      }
+      this.search()
+    },
+    // 删除
+    deleteItem(row) {
+      console.log(row, `row`);
+      this.$delete(`/api/warship`, {
+        id: row.id,
+      })
+        .then(() => {
+          this.$message({
+            message: "舰船删除成功",
+            type: "success",
+          });
+        })
+        .then(() => {
+          this.fetch();
+        });
+    },
     add() {
-      console.log('添加')
+      console.log("添加");
       this.dialog.isVisible = true;
       this.dialog.title = "添加船舰";
     },
+    // 搜索
+    search() {
+      this.fetch({
+        ...this.queryParams,
+      });
+    },
     // 获取表格数据
-    fetch() {
-      console.log('获取表格数据')
-      let params = {}
-      this.$get('/api/warship',{
-        ...params
-      }).then(res=> {
-        console.log(res.data.data,`tableData`)
-        this.total = res.data.data.total
-      })
+    fetch(params = {}) {
+      params.pageSize = this.pagination.size;
+      params.pageNum = this.pagination.num;
+      console.log("获取表格数据");
+      this.$get("/api/warship", {
+        ...params,
+      }).then((res) => {
+        if (res.data.data) {
+          console.log(res.data.data,`res.data.data`)
+          this.total = res.data.data.total;
+          this.tableData = res.data.data.rows;
+          console.log(this.tableData)
+        }
+      });
     },
     // 关闭新增 修改 对话框
     closeDialogPage() {
       this.dialog.isVisible = false;
-      this.fetch()
+      this.fetch();
     },
     closeManager() {
       this.shipManagerShow = false;
