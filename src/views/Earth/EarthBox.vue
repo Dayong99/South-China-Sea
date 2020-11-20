@@ -15,7 +15,6 @@
     <side-bar></side-bar>
     <!-- 图例 -->
     <legend-bar></legend-bar>
-
     <!-- 菜单栏 -->
     <menu-bar></menu-bar>
     <!-- 船舰管理 -->
@@ -37,7 +36,7 @@ import ParameterHeading from '@/components/tool/parameterHeading.vue'
 import SideBar from '@/components/sidebar/SideBar.vue';
 import LegendBar from '@/components/legendbar/legendBar.vue'
 import MenuBar from '@/components/menu/MenuBar.vue'
-import ShipManager from '@/components/menu/ShipManager.vue';
+import ShipManager from '@/components/menu/ShipManager/index.vue';
 import TeamManager from '@/components/menu/TeamManager'
 
 import eventBus from "@/utils/eventBus.js";
