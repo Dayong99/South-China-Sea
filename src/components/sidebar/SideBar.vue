@@ -119,25 +119,42 @@ export default {
       currentItemList: [],
       // 当前选中的一个要素
       currentItem: null,
+      // 当前选中的一个要素的层级
+      currentLevel: null,
+      // 线集合
+      lineList: [],
+      // 文字集合
+      divIconList: [],
     };
   },
   computed: {
     ...mapState({
-      menuItem: state => state.sideBar.menuItem
+      // 范围
+      extent: state => state.earth.extent,
+      // 时间
+      time: state => state.time.time
     })
   },
   watch: {
-    // 当前要素的变化
+    // 当前要素列表的变化
     currentItemList: {
       handler(val, oldval) {
         this.setMenuItemList(this.currentItemList)
-        this.createMarker()
+        // 测试marker
+        // this.createMarker()
       },
       deep: true
     },
+    // 当前要素的变化
     currentItem: {
       handler(val, old) {
-        this.drawItem()
+        // this.drawItem()
+      }
+    },
+    // 范围的变化
+    extent: {
+      handler(val, old) {
+        this.drawItemList()
       }
     }
   },
@@ -172,7 +189,7 @@ export default {
               legendId: item.legendId,
               mutex: item.dataGroup,
               level: [],
-              grid: null,
+              grade: null,
               xMin: null,
               xMax: null,
               yMin: null,
@@ -193,15 +210,15 @@ export default {
             obj.xMin = lon[0]
             obj.xMax = lon[1]
             // 处理格点数据抽稀
-            let gridsize = 0
+            let gradesize = 0
             if(item.gridSize == 0.125) {
-              gridsize = 8
+              gradesize = 8
             } else if(item.gridSize == 0.25) {
-              gridsize = 4
+              gradesize = 4
             } else{
-              gridsize = 0
+              gradesize = 0
             }
-            obj.grid = gridsize
+            obj.grade = gradesize
             this.menuList.push(obj)
           })
         }
@@ -217,6 +234,10 @@ export default {
     menuClick(index) {
       // 选中状态时取消选中
       if(this.menuList[index].flag) {
+        // 清除单个
+        this.clearDivIcon(this.menuList[index].id)
+        this.clearLayer(this.menuList[index].id)
+
         this.menuList[index].flag = false
         let i = this.currentItemList.findIndex(item => {
           return item.id == this.menuList[index].id
@@ -224,6 +245,9 @@ export default {
         if(i != -1) {
           this.currentItemList.splice(i, 1)
         }
+        // 当前要素设置为当前要素列表中的最后一个
+        this.currentItem = this.currentItemList[this.currentItemList.length - 1]
+        this.currentLevel = this.currentItemList[this.currentItemList.length - 1].level[0]
       } else {
         // 互斥元素添加
         if(this.menuList[index].mutex) {
@@ -246,34 +270,123 @@ export default {
           this.menuList[index].flag = true
           this.currentItemList.push(this.menuList[index])
         }
+        // 当前要素设置为当前要素列表中的最后一个
+        this.currentItem = this.currentItemList[this.currentItemList.length - 1]
+        this.currentLevel = this.currentItemList[this.currentItemList.length - 1].level[0]
+        this.drawItem()
       }
 
       // 当前要素设置为当前要素列表中的最后一个
-      this.currentItem = this.currentItemList[this.currentItemList.length - 1]
+      // this.currentItem = this.currentItemList[this.currentItemList.length - 1]
+      // this.currentLevel = this.currentItemList[this.currentItemList.length - 1].level[0]
 
       console.log('currentItemList', this.currentItemList);
       console.log('menuList', this.menuList);
+      console.log('currentLevel', this.currentLevel);
     },
     // 创建marker
-    createMarker() {
-      let icon = this.$utilsMap.createIcon({
-        iconUrl: require('@/assets/images/logo.png')
-      })
-      this.$utilsMap.createMarkerByLatlng(window.map, [25, 120], {
-        icon: icon,
-        title: '测试'
-      })
-    },
-    // 绘制
+    // createMarker() {
+    //   let icon = this.$utilsMap.createIcon({
+    //     iconUrl: require('@/assets/images/logo.png')
+    //   })
+    //   this.$utilsMap.createMarkerByLatlng(window.map, [25, 120], {
+    //     icon: icon,
+    //     title: '测试'
+    //   })
+    // },
+    // 绘制单个要素
     drawItem() {
-      console.log('currentItem', this.currentItem)
       if(this.currentItem.drawType == 'line') {
-        this.getAndDrawLine()
+        this.getAndDrawLine(this.currentItem)
       }
     },
+    // 循环绘制当前要素列表的要素
+    drawItemList() {
+      this.currentItemList.forEach(item => {
+        if(item.drawType == 'line') {
+          this.clearDivIcon(item.id)
+          this.clearLayer(item.id)
+          this.getAndDrawLine(item)
+        }
+      })
+    },
     // 获取线的数据并绘制
-    getAndDrawLine() {
+    getAndDrawLine(currentItem) {
+      let day = this.time.split(' ')[0]
+      let time = this.time.split(' ')[1] + ':00'
+      this.$get('/api/numerical-forecast/contours', {
+        day: day,
+        grade: currentItem.grade,
+        level: this.currentLevel,
+        minX: this.extent.xMin,
+        maxX: this.extent.xMax,
+        minY: this.extent.yMin,
+        maxY: this.extent.yMax,
+        num: 20,
+        time: time,
+        type: currentItem.id
+      }).then(res => {
+        if(res.status == 200) {
+          console.log(res.data.data)
+          let polyline = []
+          res.data.data.forEach(item => {
+            let linedata = []
+            item.PointList.forEach(item1 => {
+              let latlng = []
+              latlng.push(item1.Y)
+              latlng.push(item1.X)
+              linedata.push(latlng)
+            })
+            // 中间位置加文字
+            let j = Math.round(item.PointList.length / 2)
+            let icon = this.$utilsMap.createDivIcon({
+              id: currentItem.id,
+              html: item.Value
+            })
+            let x = item.PointList[j].X
+            let y = item.PointList[j].Y
+            let iconMarker = this.$utilsMap.createMarkerByLatlng(window.map, [y, x], {
+              id: currentItem.id,
+              icon: icon
+            })
+            this.divIconList.push(iconMarker)
 
+            polyline.push(linedata)
+          })
+          let line = this.$utilsMap.createPolyline(window.map, polyline, {
+            id: currentItem.id,
+            color: "#ff0000",
+            weight: 1
+          })
+          this.lineList.push(line)
+        }
+      }).catch(error => {
+        this.$message.error("获取" + currentItem.name + "数据失败")
+      })
+    },
+    clearLayer(id) {
+      if(this.lineList.length) {
+        let i = this.lineList.findIndex(item => {
+          return item.options.id == id
+        })
+        map.removeLayer(this.lineList[i])
+        this.lineList.splice(i, 1)
+      }
+    },
+    clearDivIcon(id) {
+      if(this.divIconList.length) {
+        console.log('divIconList', this.divIconList)
+        let list = this.divIconList.filter(item => {
+          return item.options.id == id
+        })
+        list.forEach(item => {
+          map.removeLayer(item)
+          let i = this.divIconList.findIndex(item1 => {
+            return item1 == item
+          })
+          this.divIconList.splice(i, 1)
+        })
+      }
     }
   }
 };
@@ -298,5 +411,10 @@ export default {
 
 #sideBar {
   z-index: 999;
+
+}
+.leaflet-marker-pane .leaflet-div-icon {
+  background: none!important;
+  border: none!important;
 }
 </style>

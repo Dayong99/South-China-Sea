@@ -75,6 +75,12 @@ p {
   padding: 0;
 }
 
+// marker去样式
+.leaflet-marker-pane .leaflet-div-icon {
+  background: none!important;
+  border: none!important;
+}
+
 .firstType_option {
   border-radius: 10px!important;
 }
