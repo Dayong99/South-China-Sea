@@ -37,7 +37,7 @@ import SideBar from '@/components/sidebar/SideBar.vue';
 import LegendBar from '@/components/legendbar/legendBar.vue'
 import MenuBar from '@/components/menu/MenuBar.vue'
 import ShipManager from '@/components/menu/ShipManager/index.vue';
-import TeamManager from '@/components/menu/TeamManager'
+import TeamManager from '@/components/menu/TeamManager/index.vue'
 
 import eventBus from "@/utils/eventBus.js";
 

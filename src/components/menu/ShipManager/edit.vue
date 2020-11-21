@@ -201,7 +201,6 @@ export default {
   methods: {
     // 修改设置参数
     setData(data) {
-      console.log(data, `data`);
       this.formData = {
         ...this.formData,
         ...data,
@@ -215,9 +214,7 @@ export default {
     },
     // 上传文件变化
     getFile(file, fileList) {
-      console.log(file.raw);
       toBase64(file.raw).then((res) => {
-        console.log(res);
         this.formData.shipPhoto = res;
       });
     },

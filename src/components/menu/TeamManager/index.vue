@@ -1,7 +1,7 @@
 <template>
-  <div id="ship_manager" class="ship_manager" v-show="shipManagerShow">
+  <div id="ship_manager" class="ship_manager" v-show="teamManagerShow">
     <div class="manager_title">
-      <span>船舰管理</span>
+      <span>编队管理</span>
       <img
         src="@/assets/images/legendbar/close.png"
         @click.stop="closeManager"
@@ -11,7 +11,7 @@
       <el-input
         placeholder="请输入关键词"
         prefix-icon="el-icon-search"
-        v-model="queryParams.warshipName"
+        v-model="queryParams.name"
         class="operation_input"
         clearable
       >
@@ -24,6 +24,11 @@
     </div>
     <div class="manager_table">
       <el-table :data="tableData" border style="width: 100%" max-height="400px">
+        <el-table-column label="序号" width="70px" align="center">
+          <template slot-scope="scope">
+            {{(pagination.num - 1) * pagination.size + scope.$index + 1}}
+          </template>
+        </el-table-column>
         <el-table-column
           label="名称"
           prop="role-name"
@@ -31,67 +36,17 @@
           min-width="100px"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.warshipName }}</span>
+            <span>{{ scope.row.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="类型"
+          label="基本单元"
           prop="role-name"
           align="center"
           min-width="100px"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.warshipType }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="编号"
-          prop="role-name"
-          align="center"
-          min-width="100px"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.number }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="吨位"
-          prop="role-name"
-          align="center"
-          min-width="100px"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.tonnage }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="抗风能力"
-          prop="role-name"
-          align="center"
-          min-width="100px"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.windResistant }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="图片"
-          prop="role-name"
-          align="center"
-          min-width="100px"
-        >
-          <template slot-scope="scope">
-            <span>
-              <el-image
-                style="width: 20px; height: 20px"
-                :src="scope.row.shipPhoto"
-                :preview-src-list="[scope.row.shipPhoto]"
-              >
-                <div slot="error" class="image-slot">
-                  <i class="el-icon-picture-outline"></i>
-                </div>
-              </el-image>
-            </span>
+            <span>{{ scope.row.ships }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -101,12 +56,12 @@
           align="center"
         >
           <template slot-scope="{ row }">
-            <el-button
+            <!--<el-button
               icon="el-icon-warning-outline"
               class="table_column_icon blue"
               type="text"
               @click="information(row)"
-            ></el-button>
+            ></el-button> -->
             <el-button
               icon="el-icon-edit-outline"
               class="table_column_icon green"
@@ -123,7 +78,6 @@
               icon="el-icon-s-operation"
               class="table_column_icon purple"
               type="text"
-              @click="algorithm(row)"
             ></el-button>
           </template>
         </el-table-column>
@@ -145,12 +99,6 @@
       :title="dialog.title"
       @close="closeDialogPage"
     />
-
-    <algorithm
-      ref="algorithm"
-      :dialog-visible="algorithmDialog.isVisible"
-      @close="closeAlgorithmDialog"
-    />
   </div>
 </template>
 
@@ -158,20 +106,13 @@
 import Pagination from "@/components/Pagination";
 import { mapState, mapMutations } from "vuex";
 import edit from "./edit.vue";
-import algorithm from "./algorithm.vue";
 export default {
   components: {
     edit,
     Pagination,
-    algorithm
   },
   data() {
     return {
-      // 算法弹窗
-      algorithmDialog: {
-        isVisible: false,
-        title: "",
-      },
       total: 0,
       // 新增 修改 对话框
       dialog: {
@@ -179,7 +120,7 @@ export default {
         title: "",
       },
       // 详细面板显示隐藏
-      shipManagerShow: false,
+      teamManagerShow: false,
       managerValue: "",
       tableData: [],
       // 分页
@@ -188,8 +129,8 @@ export default {
         num: 1,
       },
       queryParams: {
-        warshipName: null
-      }
+        name: null,
+      },
     };
   },
   mounted() {
@@ -207,10 +148,10 @@ export default {
         let i = newval.findIndex((item) => {
           return item.flag == true;
         });
-        if (i != -1 && i == 0) {
-          this.shipManagerShow = true;
+        if (i != -1 && i == 1) {
+          this.teamManagerShow = true;
         } else {
-          this.shipManagerShow = false;
+          this.teamManagerShow = false;
         }
       },
       deep: true,
@@ -221,35 +162,24 @@ export default {
       setMenuList: "menuBar/setMenuList",
     }),
     editItem(row) {
-      this.$refs.edit.setData(row);
+      this.$refs.edit.loadShipList(row);
       this.dialog.isVisible = true;
-      this.dialog.title = "修改船舰";
-    },
-    algorithm() {
-      this.algorithmDialog.isVisible = true;
-      this.algorithmDialog.title = "船舰信息";
-    },
-    closeAlgorithmDialog() {
-      this.algorithmDialog.isVisible = false;
-      this.fetch();
+      this.dialog.title = "修改编队";
     },
     information(row) {
-      console.log(row)
-      this.$refs.edit.setData(row);
       this.dialog.isVisible = true;
       this.dialog.title = "船舰信息";
     },
     // 搜索重置
     resetSearch() {
       this.queryParams = {
-        warshipName: null
-      }
-      this.search()
+        name: null,
+      };
+      this.search();
     },
     // 删除
     deleteItem(row) {
-      console.log(row, `row`);
-      this.$delete(`/api/warship`, {
+      this.$delete(`/api/formation`, {
         id: row.id,
       })
         .then(() => {
@@ -263,9 +193,9 @@ export default {
         });
     },
     add() {
-      console.log("添加");
       this.dialog.isVisible = true;
-      this.dialog.title = "添加船舰";
+      this.dialog.title = "添加编队";
+      this.$refs.edit.loadShipList();
     },
     // 搜索
     search() {
@@ -277,15 +207,13 @@ export default {
     fetch(params = {}) {
       params.pageSize = this.pagination.size;
       params.pageNum = this.pagination.num;
-      console.log("获取表格数据");
-      this.$get("/api/warship", {
+      this.$get("/api/formation", {
         ...params,
       }).then((res) => {
+        console.log(res, "res");
         if (res.data.data) {
-          console.log(res.data.data,`res.data.data`)
           this.total = res.data.data.total;
           this.tableData = res.data.data.rows;
-          console.log(this.tableData)
         }
       });
     },
@@ -295,7 +223,7 @@ export default {
       this.fetch();
     },
     closeManager() {
-      this.shipManagerShow = false;
+      this.teamManagerShow = false;
       this.menuList[0].flag = false;
       this.setMenuList(this.menuList);
     },
