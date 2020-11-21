@@ -78,6 +78,7 @@
               icon="el-icon-s-operation"
               class="table_column_icon purple"
               type="text"
+              @click="algorithm(row)"
             ></el-button>
           </template>
         </el-table-column>
@@ -99,6 +100,12 @@
       :title="dialog.title"
       @close="closeDialogPage"
     />
+
+    <algorithm
+      ref="algorithm"
+      :dialog-visible="algorithmDialog.isVisible"
+      @close="closeAlgorithmDialog"
+    />
   </div>
 </template>
 
@@ -106,13 +113,20 @@
 import Pagination from "@/components/Pagination";
 import { mapState, mapMutations } from "vuex";
 import edit from "./edit.vue";
+import algorithm from "./algorithm.vue";
 export default {
   components: {
     edit,
     Pagination,
+    algorithm
   },
   data() {
     return {
+      // 算法弹窗
+      algorithmDialog: {
+        isVisible: false,
+        title: "",
+      },
       total: 0,
       // 新增 修改 对话框
       dialog: {
@@ -161,6 +175,14 @@ export default {
     ...mapMutations({
       setMenuList: "menuBar/setMenuList",
     }),
+    algorithm() {
+      this.algorithmDialog.isVisible = true;
+      this.algorithmDialog.title = "船舰信息";
+    },
+    closeAlgorithmDialog() {
+      this.algorithmDialog.isVisible = false;
+      this.fetch();
+    },
     editItem(row) {
       this.$refs.edit.loadShipList(row);
       this.dialog.isVisible = true;
@@ -224,7 +246,7 @@ export default {
     },
     closeManager() {
       this.teamManagerShow = false;
-      this.menuList[0].flag = false;
+      this.menuList[1].flag = false;
       this.setMenuList(this.menuList);
     },
   },
