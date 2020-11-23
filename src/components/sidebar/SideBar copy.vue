@@ -1,46 +1,35 @@
 <template>
   <div class="sideBar" id="sideBar">
-    <div class="sidebar_ul">
-      <!-- 温度、气压等子项 -->
-      <ul class="menu_name">
-        <li
-          v-for="(item, index) in menuList"
-          :key="index"
-          @click.stop="menuClick(index)"
-        >
-          <div class="menu_left">{{ item.name }}</div>
-          <!-- <div :class="{ menu_right: true, bgcolor: item.flag == 1 }">
-            <img :src="item.flag == 0 ? item.img : item.selectImg" />
-          </div> -->
-        </li>
-      </ul>
-      <ul class="menu_list">
-        <li
-          v-for="(item, index) in menuList"
-          :key="index"
-          @click.stop="menuClick(index)"
-        >
-          <!-- <div class="menu_left" :class="{ bgcolor: item.flag == 1 }">{{ item.name }}</div> -->
-          <div :class="{ menu_right: true, bgcolor: item.flag == true }">
-            <img :src="item.icon" />
-          </div>
-        </li>
-      </ul>
-    </div>
-
-    <!-- 层级轴 -->
-    <level-bar></level-bar>
+    <!-- 温度、气压等子项 -->
+    <ul class="menu_name">
+      <li
+        v-for="(item, index) in menuList"
+        :key="index"
+        @click.stop="menuClick(index)"
+      >
+        <div class="menu_left">{{ item.name }}</div>
+        <!-- <div :class="{ menu_right: true, bgcolor: item.flag == 1 }">
+          <img :src="item.flag == 0 ? item.img : item.selectImg" />
+        </div> -->
+      </li>
+    </ul>
+    <ul class="menu_list">
+      <li
+        v-for="(item, index) in menuList"
+        :key="index"
+        @click.stop="menuClick(index)"
+      >
+        <!-- <div class="menu_left" :class="{ bgcolor: item.flag == 1 }">{{ item.name }}</div> -->
+        <div :class="{ menu_right: true, bgcolor: item.flag == true }">
+          <img :src="item.icon" />
+        </div>
+      </li>
+    </ul>
   </div>
 </template>
 <script>
 import { mapState, mapMutations } from "vuex";
-import { PressureLayer } from '@/utils/pressure/ocean.weather.pressure';
-
-import LevelBar from '@/components/levelbar/LevelBar'
 export default {
-  components: {
-    LevelBar: LevelBar
-  },
   data() {
     return {
       // 菜单列表数组
@@ -134,8 +123,8 @@ export default {
       currentLevel: null,
       // 线集合
       lineList: [],
-      // 图层集合
-      layerList: [],
+      // 文字集合
+      divIconList: [],
     };
   },
   computed: {
@@ -143,9 +132,7 @@ export default {
       // 范围
       extent: state => state.earth.extent,
       // 时间
-      time: state => state.time.time,
-      // 当前层级
-      nowLevel: state => state.sideBar.nowLevel,
+      time: state => state.time.time
     })
   },
   watch: {
@@ -153,7 +140,6 @@ export default {
     currentItemList: {
       handler(val, oldval) {
         this.setMenuItemList(this.currentItemList)
-        console.log('currentItemList', this.currentItemList)
         // 测试marker
         // this.createMarker()
       },
@@ -170,14 +156,6 @@ export default {
       handler(val, old) {
         this.drawItemList()
       }
-    },
-    // 层级变化
-    nowLevel(newval) {
-      // 最近的层级 作为缓存，删除当前要素之后 显示前一个要素的绘制层级
-      this.currentItemList[this.currentItemList.length - 1].currentLevel = newval
-      this.currentLevel = newval
-      this.clearLayer(this.currentItem)
-      this.drawItem()
     }
   },
   created() {
@@ -189,7 +167,6 @@ export default {
   methods: {
     ...mapMutations({
       setMenuItemList: 'sideBar/setMenuItemList',
-      setLevelList: 'sideBar/setLevelList',
     }),
     // 初始选中
     initMenuList() {
@@ -218,15 +195,13 @@ export default {
               yMin: null,
               yMax: null,
               units: item.units,
-              drawType: item.drawType,
-              currentLevel: null,
+              drawType: item.drawType
             }
             // 处理level
             let level = item.parameterStep.split(',')
             level.forEach(item => {
               obj.level.push(Number(item))
             })
-            obj.currentLevel = Number(level[0])
             // 处理经纬度范围
             let lat = item.latRange.split(',')
             obj.yMin = lat[1]
@@ -251,10 +226,6 @@ export default {
         this.menuList[0].flag = true
         this.currentItemList.push(this.menuList[0])
         this.currentItem = this.menuList[0]
-        this.currentLevel = this.menuList[0].currentLevel
-        this.setLevelList(this.menuList[0].level)
-        // 首次加载绘制默认选中的要素
-        this.drawItem()
       }).catch(error => {
         this.$message.error("获取数据源数据失败")
       })
@@ -264,7 +235,8 @@ export default {
       // 选中状态时取消选中
       if(this.menuList[index].flag) {
         // 清除单个
-        this.clearLayer(this.menuList[index])
+        this.clearDivIcon(this.menuList[index].id)
+        this.clearLayer(this.menuList[index].id)
 
         this.menuList[index].flag = false
         let i = this.currentItemList.findIndex(item => {
@@ -274,15 +246,8 @@ export default {
           this.currentItemList.splice(i, 1)
         }
         // 当前要素设置为当前要素列表中的最后一个
-        if(this.currentItemList.length) {
-          this.currentItem = this.currentItemList[this.currentItemList.length - 1]
-          this.currentLevel = this.currentItemList[this.currentItemList.length - 1].level[0]
-          this.setLevelList(this.currentItemList[this.currentItemList.length - 1].level)
-        } else{
-          this.currentItem = null
-          this.currentLevel = null
-          this.setLevelList([])
-        }
+        this.currentItem = this.currentItemList[this.currentItemList.length - 1]
+        this.currentLevel = this.currentItemList[this.currentItemList.length - 1].level[0]
       } else {
         // 互斥元素添加
         if(this.menuList[index].mutex) {
@@ -308,9 +273,6 @@ export default {
         // 当前要素设置为当前要素列表中的最后一个
         this.currentItem = this.currentItemList[this.currentItemList.length - 1]
         this.currentLevel = this.currentItemList[this.currentItemList.length - 1].level[0]
-        this.setLevelList(this.currentItemList[this.currentItemList.length - 1].level)
-
-        // 绘制当前选中的要素
         this.drawItem()
       }
 
@@ -318,6 +280,9 @@ export default {
       // this.currentItem = this.currentItemList[this.currentItemList.length - 1]
       // this.currentLevel = this.currentItemList[this.currentItemList.length - 1].level[0]
 
+      console.log('currentItemList', this.currentItemList);
+      console.log('menuList', this.menuList);
+      console.log('currentLevel', this.currentLevel);
     },
     // 创建marker
     // createMarker() {
@@ -333,21 +298,15 @@ export default {
     drawItem() {
       if(this.currentItem.drawType == 'line') {
         this.getAndDrawLine(this.currentItem)
-      } else if(this.currentItem.drawType == 'layer') {
-        this.getAndDrawLayer(this.currentItem)
-      } else if(this.currentItem.drawType == 'point_wind') {
-        this.getAndDrawWind(this.currentItem)
       }
     },
     // 循环绘制当前要素列表的要素
     drawItemList() {
       this.currentItemList.forEach(item => {
-        this.clearLayer(item)
         if(item.drawType == 'line') {
+          this.clearDivIcon(item.id)
+          this.clearLayer(item.id)
           this.getAndDrawLine(item)
-        } else if(item.drawType == 'layer') {
-          // this.clearLayer(item)
-          this.getAndDrawLayer(item)
         }
       })
     },
@@ -363,15 +322,12 @@ export default {
         maxX: this.extent.xMax,
         minY: this.extent.yMin,
         maxY: this.extent.yMax,
-        // minX: 0,
-        // maxX: 360,
-        // minY: -75,
-        // maxY: 75,
-        num: 30,
+        num: 20,
         time: time,
         type: currentItem.id
       }).then(res => {
         if(res.status == 200) {
+          console.log(res.data.data)
           let polyline = []
           res.data.data.forEach(item => {
             let linedata = []
@@ -379,97 +335,59 @@ export default {
               let latlng = []
               latlng.push(item1.Y)
               latlng.push(item1.X)
-              latlng.push(Math.round(item.Value/100))
               linedata.push(latlng)
             })
+            // 中间位置加文字
+            let j = Math.round(item.PointList.length / 2)
+            let icon = this.$utilsMap.createDivIcon({
+              id: currentItem.id,
+              html: item.Value
+            })
+            let x = item.PointList[j].X
+            let y = item.PointList[j].Y
+            let iconMarker = this.$utilsMap.createMarkerByLatlng(window.map, [y, x], {
+              id: currentItem.id,
+              icon: icon
+            })
+            this.divIconList.push(iconMarker)
 
             polyline.push(linedata)
           })
-          let line = new PressureLayer({}, {
-            data: polyline,
-            hlData: []
-          }).addTo(window.map);
-          line.id = currentItem.id
+          let line = this.$utilsMap.createPolyline(window.map, polyline, {
+            id: currentItem.id,
+            color: "#ff0000",
+            weight: 1
+          })
           this.lineList.push(line)
         }
       }).catch(error => {
         this.$message.error("获取" + currentItem.name + "数据失败")
       })
     },
-    // 绘制色斑图
-    getAndDrawLayer(currentItem) {
-      let day = this.time.split(' ')[0]
-      let time = this.time.split(' ')[1] + ':00'
-      this.$getbuffer('/api/numerical-forecast/polygonsImage', {
-        day: day,
-        grade: currentItem.grade,
-        level: this.currentLevel,
-        minX: this.extent.xMin,
-        maxX: this.extent.xMax,
-        minY: this.extent.yMin,
-        maxY: this.extent.yMax,
-        num: 20,
-        time: time,
-        type: currentItem.id
-      }, { responseType: 'arraybuffer' }).then(res => {
-        if(res.status == 200) {
-          return (
-            'data:image/png;base64,' +
-            btoa(
-              new Uint8Array(res.data).reduce(
-                (data, byte) => data + String.fromCharCode(byte),
-                ''
-              )
-            )
-          )
-        }
-      }).then((data) => {
-        const img = data
-        // let bounds = L.latLngBounds(L.latLng(this.extent.xMin, this.extent.yMin), L.latLng(this.extent.xMax, this.extent.yMax))
-        let bounds = L.latLngBounds(L.latLng(-10, 60), L.latLng(60, 150))
-        if (img) {
-          let imageLayer = L.imageOverlay(img, bounds).addTo(window.map)
-          imageLayer.id = currentItem.id
-          this.layerList.push(imageLayer)
-        }
-      }).catch(error => {
-        this.$message.error("获取" + currentItem.name + "数据失败")
-      })
-    },
-    getAndDrawWind(currentItem) {
-      let day = this.time.split(' ')[0]
-      let time = this.time.split(' ')[1] + ':00'
-      this.$get('/api/numerical-forecast/wind', {
-        day: day,
-        level: this.currentLevel,
-        time: time,
-        type: currentItem.id
-      }).then(res => {
-        if(res.status == 200) {
-          console.log('wind--res', res.data.data)
-        }
-      }).catch(error => {
-        this.$message.error("获取" + currentItem.name + "数据失败")
-      })
-    },
-    // 清除
-    clearLayer(layer) {
-      if(layer.drawType === 'line' && this.lineList.length) {
+    clearLayer(id) {
+      if(this.lineList.length) {
         let i = this.lineList.findIndex(item => {
-          return item.id == layer.id
+          return item.options.id == id
         })
         map.removeLayer(this.lineList[i])
         this.lineList.splice(i, 1)
       }
-
-      if(layer.drawType === 'layer' && this.layerList.length) {
-        let i = this.layerList.findIndex(item => {
-          return item.id == layer.id
-        })
-        map.removeLayer(this.layerList[i])
-        this.layerList.splice(i, 1)
-      }
     },
+    clearDivIcon(id) {
+      if(this.divIconList.length) {
+        console.log('divIconList', this.divIconList)
+        let list = this.divIconList.filter(item => {
+          return item.options.id == id
+        })
+        list.forEach(item => {
+          map.removeLayer(item)
+          let i = this.divIconList.findIndex(item1 => {
+            return item1 == item
+          })
+          this.divIconList.splice(i, 1)
+        })
+      }
+    }
   }
 };
 </script>

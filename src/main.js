@@ -8,6 +8,7 @@ import animate from 'animate.css'
 import utils from './utils/utils'
 import "leaflet/dist/leaflet.css"
 import L from "leaflet";
+import './utils/leaflet.fix'
 
 import map from './utils/map.js'
 
@@ -22,7 +23,7 @@ import db from '@/utils/localstorage'
 
 if (process.env.NODE_ENV === 'development') {
   window.globalConfig = {
-    baseURL: 'http://192.168.0.24:80/api/'
+    baseURL: 'http://192.168.1.122:8301/warship'
   }
 }
 

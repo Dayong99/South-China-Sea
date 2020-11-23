@@ -5,44 +5,40 @@
 </template>
 
 <script>
-import Line from '@/utils/isoline'
 import { parseTime } from '@/utils'
 import Tool from '@/utils/tool'
 import eventBus from '@/utils/eventBus.js'
 import { mapState, mapMutations } from 'vuex'
+import "@/utils/leaflet.ChineseTmsProviders.js";
 
 var tileLayer1 = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 var tileLayer2 = 'http://192.168.1.152:8081/num/getOffLine?name={z}/{y}/{x}.png'
 var tileLayer3 = globalConfig.baseURL + '/api/maps/GeoQ_colors/{z}/{y}/{x}'
 
 
+var tileLayer1 = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+
+var tileLayer2 =
+  "http://192.168.1.152:8081/num/getOffLine?name={z}/{y}/{x}.png";
 
 export default {
-  name: 'Earth',
-  components: {
-    
-  },
+  name: "Earth",
+  components: {},
   data() {
-    return {
-      
-    }
+    return {};
   },
   computed: {
     nowtime() {
-      return this.$store.state.time.time
-    }
+      return this.$store.state.time.time;
+    },
   },
-  watch: {
-    
-  },
-  created() {
-    
-  },
+  watch: {},
+  created() {},
   destroyed() {
-    window.map = null
+    window.map = null;
   },
   mounted() {
-    this.initMap()
+    this.initMap();
   },
   methods: {
     ...mapMutations({
@@ -50,7 +46,7 @@ export default {
     }),
     initMap() {
       // 底图切换
-      window.map = L.map('mapContainer', {
+      window.map = L.map("mapContainer", {
         attributionControl: false,
         crs: L.CRS.EPSG4326,
         minZoom: 2,
@@ -58,19 +54,22 @@ export default {
         worldCopyJump: true,
         zoomControl: false,
       });
-      window.map.on('load', ev => {
-        this.getExtent()
-      })
       this.createTileLayer(tileLayer2, {
         zoomOffset: 1,
       })
+      // L.tileLayer
+      //   .chinaProvider("Geoq.Normal.PurplishBlue", { maxZoom: 13, minZoom: 2 })
+      //   .addTo(window.map);
+      window.map.on('load', ev => {
+        this.getExtent()
+      })
       window.map.setView([35.09, 102.21], 4);
-      this.changeZoom()
-      this.changeMove()
+      this.changeZoom();
+      this.changeMove();
     },
-    async createTileLayer(url, options) {
-      let tileLayer = await L.tileLayer(url, options)
-      tileLayer.addTo(window.map)
+    createTileLayer(url, options) {
+      let tileLayer = L.tileLayer(url, options);
+      tileLayer.addTo(window.map);
     },
     // 层级发生变化
     changeZoom() {
@@ -85,17 +84,49 @@ export default {
     },
     // 获取范围
     getExtent() {
+      let zoom = window.map.getZoom()
+      console.log('zoom', zoom)
       let bounds = window.map.getBounds()
+      // let min = bounds.getSouthWest()
+      // let max = bounds.getNorthEast()
+      // let extent = {
+      //   xMin: null,
+      //   xMax: null,
+      //   yMin: min.lat,
+      //   yMax: max.lat
+      // }
+      // if(Math.abs(max.lng - min.lng) >= 360) {
+      //   extent.xMin = 0
+      //   extent.xMax = 360
+      // } else {
+      //   extent.xMin = min.lng
+      //   extent.xMax = max.lng
+      //   extent.yMin = min.lat
+      //   extent.yMax = max.lat
+      // }
+
+      let min = bounds.getSouthWest().wrap()
+      let max = bounds.getNorthEast().wrap()
       let extent = {
-        xMin: bounds._southWest.lng,
-        xMax: bounds._northEast.lng,
-        yMin: bounds._southWest.lat,
-        yMax: bounds._northEast.lat
+        xMin: null,
+        xMax: null,
+        yMin: min.lat,
+        yMax: max.lat
       }
+      if(zoom <= 2) {
+        extent.xMin = -180
+        extent.xMax = 180
+      } else {
+        extent.xMin = min.lng
+        extent.xMax = max.lng
+      }
+      console.log('min', min)
+      console.log('max', max)
+      
       this.setExtent(extent)
     }
   }
-}
+};
 </script>
 <style lang="scss" scoped>
 html,

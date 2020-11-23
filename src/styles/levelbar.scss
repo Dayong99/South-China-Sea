@@ -1,0 +1,106 @@
+#app {
+    #levelbar {
+        width: 25px;
+        position: relative;
+        cursor: pointer;
+        line-height:18px;
+        display:block;
+        align-self: flex-end;
+        margin-top: 30px;
+        margin-right: 10px;
+
+        &::before {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            width: 9px;
+            background-color: rgba(68,65,65,0.84);
+            border-radius: 9px;
+            content: ' ';
+        }
+
+        .ghost-levelcode {
+            font-size: 10px;
+            position: absolute;
+            display: block;
+            box-sizing: border-box;
+            right: 1.5em;
+
+            .box{
+                // cursor: -webkit-grab;
+                // cursor: -moz-grab;
+                // cursor: grab;
+                position: relative;
+                background-color: rgba(68,65,65,0.84);    
+                color: white;
+                height: 1.8em;
+                box-sizing: border-box;
+                padding: 0 .8em;
+                white-space: nowrap;
+                text-align: center;
+                display: table-cell;
+                vertical-align: middle;
+                border-radius: .5em;
+                box-shadow: 0 0 4px 0 black;
+
+                &::before {
+                    top: .45em;
+                    right: -1em;
+                    border: solid transparent;
+                    content: ' ';
+                    height: 0;
+                    width: 0;
+                    position: absolute;
+                    border-left-color: rgba(68,65,65,0.84);
+                    border-width: .5em;
+                    margin-left: -0.5em;
+                }
+            
+            }
+        }
+
+        .main-levelcode {
+            font-size: 10px;
+            position: absolute;
+            display: block;
+            box-sizing: border-box;
+            right: 1.5em;
+
+            .box {
+                // cursor: -webkit-grab;
+                // cursor: -moz-grab;
+                // cursor: grab;
+                position: relative;
+                background-color: #d49500;
+                color: white;
+                height: 1.8em;
+                box-sizing: border-box;
+                padding: 0 .8em;
+                white-space: nowrap;
+                text-align: center;
+                display: table-cell;
+                vertical-align: middle;
+                border-radius: .5em;
+                box-shadow: 0 0 4px 0 black;
+
+                &::before {
+                    top: .45em;
+                    right: -1em;
+                    border: solid transparent;
+                    content: ' ';
+                    height: 0;
+                    width: 0;
+                    position: absolute;
+                    border-left-color: #d49500;
+                    border-width: .5em;
+                    margin-left: -0.5em;
+                }
+            }
+        }
+    
+    
+    
+    }
+  }
+  
