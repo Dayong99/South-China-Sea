@@ -12,6 +12,7 @@ const state = {
     icon: require('@/assets/images/menu/collection.png'),
     flag: false,
   }],
+  TaskManagerOptions: 0 // 0 不显示 1 添加 2 修改
 }
 
 const actions = {
@@ -23,6 +24,9 @@ const mutations = {
   setMenuList(state, val) {
     state.menuList = val
     console.log('store menuList', state.menuList);
+  },
+  setTaskManagerOptions(state,val) {
+    state.TaskManagerOptions = val
   }
 }
 

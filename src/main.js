@@ -20,7 +20,8 @@ import request from '@/utils/request'
 
 import '@/permission' // permission control
 import db from '@/utils/localstorage'
-
+import echarts from 'echarts';
+Vue.prototype.$echarts = echarts
 if (process.env.NODE_ENV === 'development') {
   window.globalConfig = {
     baseURL: 'http://192.168.1.122:8301/warship'

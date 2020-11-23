@@ -21,7 +21,8 @@
     <ship-manager></ship-manager>
     <!-- 编队管理 -->
     <team-manager></team-manager>
-
+    <!-- 任务管理 -->
+    <task-manager></task-manager>
   </div>
 </template>
 
@@ -37,8 +38,8 @@ import SideBar from '@/components/sidebar/SideBar.vue';
 import LegendBar from '@/components/legendbar/legendBar.vue'
 import MenuBar from '@/components/menu/MenuBar.vue'
 import ShipManager from '@/components/menu/ShipManager/index.vue';
-import TeamManager from '@/components/menu/TeamManager'
-
+import TeamManager from '@/components/menu/TeamManager/index.vue'
+import TaskManager from '@/components/menu/TaskManagement/edit.vue'
 import eventBus from "@/utils/eventBus.js";
 
 export default {
@@ -54,6 +55,7 @@ export default {
     MenuBar: MenuBar,
     ShipManager: ShipManager,
     TeamManager: TeamManager,
+    TaskManager: TaskManager
   },
   data() {
     return {
