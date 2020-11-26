@@ -3,7 +3,7 @@
     <!-- 地球 -->
     <earth ref="earth"/>
     <!-- 时间播放轴 -->
-    <time-bar v-show="timeShow" ref="timeBar" />
+    <time-bar v-show="timeShow"></time-bar>
     <!-- 工具条 -->
     <tool-bar></tool-bar>
     <!-- 标题logo -->

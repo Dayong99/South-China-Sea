@@ -83,7 +83,7 @@ L.TileLayer.ChinaProvider.providers = {
   Geoq: {
       Normal: {
           Map: "//map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer/tile/{z}/{y}/{x}",
-          PurplishBlue: "http://192.168.1.122:8301/warship/api/maps/GeoQ_colors/{z}/{y}/{x}",
+          PurplishBlue: globalConfig.baseURL + '/api/maps/GeoQ_colors/{z}/{y}/{x}',
           Gray: "//map.geoq.cn/ArcGIS/rest/services/ChinaOnlineStreetGray/MapServer/tile/{z}/{y}/{x}",
           Warm: "//map.geoq.cn/ArcGIS/rest/services/ChinaOnlineStreetWarm/MapServer/tile/{z}/{y}/{x}",
       },

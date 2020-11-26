@@ -5,6 +5,7 @@
 @import './legend.scss';
 @import './menubar.scss';
 @import './shipmanager.scss';
+@import './levelbar.scss';
 
 body {
   height: 100%;
@@ -73,6 +74,12 @@ a:hover {
 p {
   margin: 0;
   padding: 0;
+}
+
+// marker去样式
+.leaflet-marker-pane .leaflet-div-icon {
+  background: none!important;
+  border: none!important;
 }
 
 .firstType_option {

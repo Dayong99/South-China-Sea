@@ -8,6 +8,9 @@ import animate from 'animate.css'
 import utils from './utils/utils'
 import "leaflet/dist/leaflet.css"
 import L from "leaflet";
+import './utils/leaflet.fix'
+import 'proj4leaflet'
+import lodash from 'lodash'
 
 import map from './utils/map.js'
 
@@ -23,9 +26,11 @@ import echarts from 'echarts';
 Vue.prototype.$echarts = echarts
 if (process.env.NODE_ENV === 'development') {
   window.globalConfig = {
-    baseURL: 'http://192.168.0.24:80/api/'
+    baseURL: 'http://192.168.1.122:8301/warship'
   }
 }
+
+// L.Proj = Proj
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
@@ -45,6 +50,7 @@ Vue.prototype.$utils = utils
 Vue.prototype.$db = db
 Vue.prototype.$L = L
 Vue.prototype.$utilsMap = map
+Vue.prototype._ = lodash
 
 // const on = Vue.prototype.$on
 // // 防抖处理

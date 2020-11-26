@@ -5,6 +5,9 @@ import $L, { latLng } from "leaflet";
 const createIcon = options => {
   return $L.icon(options)
 }
+const createDivIcon = options => {
+  return $L.divIcon(options)
+}
 
 /**
  * 通过经纬度创建点
@@ -38,4 +41,4 @@ const createPolyline = (map, latlngs, options) => {
 
 
 
-export default {createIcon, createMarkerByLatlng, createPolyline}
+export default {createIcon, createDivIcon, createMarkerByLatlng, createPolyline}
