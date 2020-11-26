@@ -11,10 +11,10 @@
     <logo-global></logo-global>
     <!-- 要素时间信息 -->
     <!-- <parameter-heading></parameter-heading> -->
-    <!-- 气象要素菜单栏 -->
-    <side-bar></side-bar>
     <!-- 图例 -->
     <legend-bar></legend-bar>
+    <!-- 气象要素菜单栏 -->
+    <side-bar></side-bar>
     <!-- 菜单栏 -->
     <menu-bar></menu-bar>
     <!-- 船舰管理 -->

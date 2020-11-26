@@ -129,8 +129,116 @@ export default {
       let extentList = []
       let ex1 = {}
       let ex2 = {}
+      let ex3 = {}
 
       // 转为 0-360 然后再根据要素本身范围进行范围修正 sideBar中
+      // 层级3不加载全部
+      /*if(zoom <= 2) {
+        ex1 = {
+          xMin: 180,
+          xMax: 360,
+          yMin: -85,
+          yMax: 85
+        }
+        ex2 = {
+          xMin: 0,
+          xMax: 180,
+          yMin: -85,
+          yMax: 85
+        }
+        extentList.push(ex1)
+        extentList.push(ex2)
+      } else if(zoom == 3) {
+        if(xMin < 0 && xMax < 0) {
+          ex1 = {
+            xMin: xMin + 360,
+            xMax: 360,
+            yMin: yMin,
+            yMax: yMax
+          }
+          ex2 = {
+            xMin: 0,
+            xMax: 180,
+            yMin: yMin,
+            yMax: yMax
+          }
+          ex3 = {
+            xMin: 180,
+            xMax: xMax + 360,
+            yMin: yMin,
+            yMax: yMax
+          }
+          extentList.push(ex1)
+          extentList.push(ex2)
+          extentList.push(ex3)
+        } else if(xMin > 0 && xMax > 0) {
+          ex1 = {
+            xMin: xMin,
+            xMax: 180,
+            yMin: yMin,
+            yMax: yMax
+          }
+          ex2 = {
+            xMin: 180,
+            xMax: 360,
+            yMin: yMin,
+            yMax: yMax
+          }
+          ex3 = {
+            xMin: 0,
+            xMax: xMax,
+            yMin: yMin,
+            yMax: yMax
+          }
+          extentList.push(ex1)
+          extentList.push(ex2)
+          extentList.push(ex3)
+        }
+      } else {
+        if(xMin < 0 && xMax > 0) {
+          ex1 = {
+            xMin: xMin + 360,
+            xMax: 360,
+            yMin: yMin,
+            yMax: yMax
+          }
+          ex2 = {
+            xMin: 0,
+            xMax: xMax,
+            yMin: yMin,
+            yMax: yMax
+          }
+          extentList.push(ex1)
+          extentList.push(ex2)
+        } else if(xMin > 0 && xMax < 0) {
+          ex1 = {
+            xMin: xMin,
+            xMax: 180,
+            yMin: yMin,
+            yMax: yMax
+          }
+          ex2 = {
+            xMin: 180,
+            xMax: xMax + 360,
+            yMin: yMin,
+            yMax: yMax
+          }
+          extentList.push(ex1)
+          extentList.push(ex2)
+        } else if(xMin <= 0 && xMax <= 0) {
+          extent.xMin = xMin + 360
+          extent.xMax = xMax + 360
+          extentList.push(extent)
+        } else {
+          extent.xMin = xMin
+          extent.xMax = xMax
+          extentList.push(extent)
+        }
+      }
+      console.log('extentList', extentList)
+      this.setExtent(extentList)*/
+
+
       if(zoom <= 3) {
         ex1 = {
           xMin: 180,
@@ -189,63 +297,6 @@ export default {
       }
       console.log('extentList', extentList)
       this.setExtent(extentList)
-
-
-
-      // if(zoom <= 3) {
-      //   ex1 = {
-      //     xMin: -180,
-      //     xMax: 0,
-      //     yMin: yMin,
-      //     yMax: yMax
-      //   }
-      //   ex2 = {
-      //     xMin: 0,
-      //     xMax: 180,
-      //     yMin: yMin,
-      //     yMax: yMax
-      //   }
-      //   extentList.push(ex1)
-      //   extentList.push(ex2)
-      // } else {
-      //   if(xMin < 0 && xMax > 0) {
-      //     ex1 = {
-      //       xMin: xMin,
-      //       xMax: 0,
-      //       yMin: yMin,
-      //       yMax: yMax
-      //     }
-      //     ex2 = {
-      //       xMin: 0,
-      //       xMax: xMax,
-      //       yMin: yMin,
-      //       yMax: yMax
-      //     }
-      //     extentList.push(ex1)
-      //     extentList.push(ex2)
-      //   } else if(xMin > 0 && xMax < 0) {
-      //     ex1 = {
-      //       xMin: xMin,
-      //       xMax: 180,
-      //       yMin: yMin,
-      //       yMax: yMax
-      //     }
-      //     ex2 = {
-      //       xMin: -180,
-      //       xMax: xMax,
-      //       yMin: yMin,
-      //       yMax: yMax
-      //     }
-      //     extentList.push(ex1)
-      //     extentList.push(ex2)
-      //   } else {
-      //     extent.xMin = xMin
-      //     extent.xMax = xMax
-      //     extentList.push(extent)
-      //   }
-      // }
-      // console.log('extentList', extentList)
-      // this.setExtent(extentList)
 
     }
   }
