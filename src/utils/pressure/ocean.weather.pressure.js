@@ -9,7 +9,7 @@ export var PressureLayer = CanvasLayer.extend({
   options:{
     isclip: false,
     isDrawLeftRight: true,
-    showLevel: 4, // 文字的显示级别
+    showLevel: 3, // 文字的显示级别
     stroke: true,
     color:  '#605FF0', //'#61A5E8',
     weight: 0.8,

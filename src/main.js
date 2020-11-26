@@ -9,6 +9,8 @@ import utils from './utils/utils'
 import "leaflet/dist/leaflet.css"
 import L from "leaflet";
 import './utils/leaflet.fix'
+import 'proj4leaflet'
+import lodash from 'lodash'
 
 import map from './utils/map.js'
 
@@ -28,6 +30,8 @@ if (process.env.NODE_ENV === 'development') {
   }
 }
 
+// L.Proj = Proj
+
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(animate)
@@ -46,6 +50,7 @@ Vue.prototype.$utils = utils
 Vue.prototype.$db = db
 Vue.prototype.$L = L
 Vue.prototype.$utilsMap = map
+Vue.prototype._ = lodash
 
 // const on = Vue.prototype.$on
 // // 防抖处理

@@ -134,33 +134,11 @@ export default {
         width: "calc(100% / " + this.dayListLength + ")",
       };
     },
-    // 获取时次
-    timeLevel: function () {
-      return this.$store.state.time.timeLevel;
-    },
   },
-  watch: {
-    timeLevel(newval) {
-      this.calendarList.forEach((item, index) => {
-        this.calendarList[index].timeArr = newval;
-      });
-
-      // 时次改变时间轴改变
-      this.resetPlay();
-
-      // 基数
-      this.num = newval.length;
-      // 初始化当前时间
-      this.showday =
-        this.calendarList[0].day + " - " + this.calendarList[0].timeArr[0];
-      // 时间数组长度
-      this.dayListLength = this.calendarList.length;
-      // 分割的总个数
-      this.count = this.dayListLength * newval.length;
-      // 时间段长度
-      this.bItem = this.totalwidth / this.dayListLength;
-      this.sItem = this.totalwidth / this.count;
-    },
+  created() {
+    // 初始化时间
+    this.timeFlag = true
+    this.getLatestTime()
   },
   mounted() {
     // 监听时间轴尺寸变化
@@ -178,19 +156,6 @@ export default {
       // const height = element.offsetHeight
       // 总长度
       this.totalwidth = width;
-
-      // 初始化时间
-      this.timeFlag = true
-      this.getLatestTime()
-      // this.timeFlag = false;
-      // this.dateVal = "2020-08-01"
-      // this.getTypeTime();
-      // this.getLatestTime()
-      // this.getTypeTime().then(res=>{
-      //   console.log(res);
-      // }).catch(err=>{
-      //   console.log(err);
-      // })
 
       // 初始化当前时间
       this.showday =
@@ -225,48 +190,6 @@ export default {
       this.getLatestTime();
     },
 
-    //获得最近有数据的时间点
-    getTypeTime() {
-      const date = new Date();
-      const year = date.getFullYear();
-      const month =
-        date.getMonth() + 1 < 10
-          ? "0" + (date.getMonth() + 1)
-          : date.getMonth() + 1;
-      const day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-      const hour =
-        date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-      const minute =
-        date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-      let time = year + "-" + month + "-" + day + " " + hour + ":" + minute;
-      console.log("当前系统时间", time);
-      this.$get("gis/api/numericalvalue/trygettime", {
-        time: time,
-        type: "MSLP_Eta_model_reduction",
-      }).then((res) => {
-        let timeArr = res.data.data.split(" ");
-        console.log(timeArr);
-        this.dateVal = timeArr[0];
-        this.getLatestTime();
-        // 初始化当前时间
-        this.showday =
-          this.calendarList[0].day + " " + this.calendarList[0].timeArr[0];
-        // 时间数组长度
-        this.dayListLength = this.calendarList.length;
-        // 分割的总个数
-        this.count = this.dayListLength * this.num;
-        // 时间段长度
-        this.bItem = this.totalwidth / this.dayListLength;
-        // console.log(this.bItem)
-        this.sItem = this.totalwidth / this.count;
-
-        this.$store.commit("changeTime", this.showday);
-        console.log("------------");
-        console.log(this.showday);
-
-        this.resetPlay();
-      })
-    },
     // 获取最近三周时间
     getLatestTime() {
       this.dateList = [];
@@ -324,6 +247,8 @@ export default {
       this.calendarList = this.dateList;
       this.showday =
         this.calendarList[0].day + " " + this.calendarList[0].timeArr[0];
+        
+      this.$store.commit('changeTime', this.showday)
 
       // this.item = 1;
       this.dayIndex = 0;

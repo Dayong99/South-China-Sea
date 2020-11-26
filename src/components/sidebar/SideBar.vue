@@ -35,6 +35,7 @@
 <script>
 import { mapState, mapMutations } from "vuex";
 import { PressureLayer } from '@/utils/pressure/ocean.weather.pressure';
+import { FlowLayer } from '@/utils/pressure/ocean.weather.flow'
 
 import LevelBar from '@/components/levelbar/LevelBar'
 export default {
@@ -136,19 +137,30 @@ export default {
       lineList: [],
       // 图层集合
       layerList: [],
+      // 范围数组
+      extentList: [],
+      // 海流图层
+      waveLayer: null,
+      // 图层个数
+      layerNum: null,
     };
   },
   computed: {
     ...mapState({
       // 范围
-      extent: state => state.earth.extent,
+      extent: state => JSON.parse(JSON.stringify(state.earth.extent)),
       // 时间
       time: state => state.time.time,
       // 当前层级
       nowLevel: state => state.sideBar.nowLevel,
+      // 重绘次数
+      imageLayerNum: state => state.earth.imageLayerNum,
     })
   },
   watch: {
+    imageLayerNum(val, old) {
+      this.layerNum = val
+    },
     // 当前要素列表的变化
     currentItemList: {
       handler(val, oldval) {
@@ -165,11 +177,24 @@ export default {
         // this.drawItem()
       }
     },
-    // 范围的变化
+    // 范围数组的变化
     extent: {
-      handler(val, old) {
-        this.drawItemList()
-      }
+      async handler(val, old) {
+        // console.log('val', val)
+        // console.log('old', old)
+        // val.forEach((item, index) => {
+        //   if(item.xMin !== old[index].xMin || item.xMax !== old[index].xMax || item.yMin !== old[index].yMin || item.yMax !== old[index].yMax) {
+        //     this.extentList = val
+        //     this.drawItemList()
+        //   }
+        // })
+        // 图层数减一
+        this.layerNum -= 1
+        this.extentList = val
+        await this.drawItemList()
+        await this.setImageLayerNum(this.layerNum)
+      },
+      deep: true
     },
     // 层级变化
     nowLevel(newval) {
@@ -190,6 +215,7 @@ export default {
     ...mapMutations({
       setMenuItemList: 'sideBar/setMenuItemList',
       setLevelList: 'sideBar/setLevelList',
+      setImageLayerNum: 'earth/setImageLayerNum',
     }),
     // 初始选中
     initMenuList() {
@@ -197,7 +223,7 @@ export default {
        * type: 数据源类型   0--EC  1--GFS
        */
       this.$get('/api/parameters/get_type', {
-        type: 0
+        type: 1
       }).then(res => {
         if(res.status == 200) {
           this.menuList = []
@@ -213,6 +239,7 @@ export default {
               mutex: item.dataGroup,
               level: [],
               grade: null,
+              gridSize: item.gridSize,
               xMin: null,
               xMax: null,
               yMin: null,
@@ -265,8 +292,14 @@ export default {
       if(this.menuList[index].flag) {
         // 清除单个
         this.clearLayer(this.menuList[index])
+        // 海流和风用同一个清除方法
+        if(this.menuList[index].drawType === 'point_flow' || this.menuList[index].drawType === 'point_wind') {
+          this.clearWindWave(this.menuList[index])
+        }
 
+        // 取消状态、重置最近缓存的level
         this.menuList[index].flag = false
+        this.menuList[index].currentLevel = this.menuList[index].level[0]
         let i = this.currentItemList.findIndex(item => {
           return item.id == this.menuList[index].id
         })
@@ -296,6 +329,8 @@ export default {
           })
           // 只需要判断 i，currentItemList有menulist一定有
           if(i != -1) {
+            // 清除前一个互斥的要素及色斑图
+            this.clearLayer(this.menuList[j])
             this.menuList[j].flag = false
             this.currentItemList.splice(i, 1)
           }
@@ -331,38 +366,179 @@ export default {
     // },
     // 绘制单个要素
     drawItem() {
-      if(this.currentItem.drawType == 'line') {
-        this.getAndDrawLine(this.currentItem)
-      } else if(this.currentItem.drawType == 'layer') {
-        this.getAndDrawLayer(this.currentItem)
+      if(this.currentItem.drawType == 'point_flow') {
+        this.getAndDrawWave(this.currentItem)
       } else if(this.currentItem.drawType == 'point_wind') {
-        this.getAndDrawWind(this.currentItem)
+
+      } else {
+        // // 需要根据每个要素自带的限制范围进行范围约束
+        // let itemExtentList = []
+        // if(this.currentItem.xMax > 180) {
+        //   let ex1 = {
+        //     xMin: this.currentItem.xMin,
+        //     xMax: 180,
+        //     yMin: this.currentItem.yMin,
+        //     yMax: this.currentItem.yMax
+        //   }
+        //   let ex2 = {
+        //     xMin: -180,
+        //     xMax: this.currentItem.xMax - 360,
+        //     yMin: this.currentItem.yMin,
+        //     yMax: this.currentItem.yMax
+        //   }
+        //   itemExtentList.push(ex1)
+        //   itemExtentList.push(ex2)
+        // } else {
+          
+        // }
+
+
+
+        let itemExtent = {
+          xMin: null,
+          xMax: null,
+          yMin: null,
+          yMax: null
+        }
+        itemExtent.xMin = this.currentItem.xMin
+        itemExtent.xMax = this.currentItem.xMax
+        itemExtent.yMin = this.currentItem.yMin
+        itemExtent.yMax = this.currentItem.yMax
+        // 存放不在要素范围内的 extentList 中的项
+        let otherList = []
+        // 深拷贝，范围是列表中所有数据共用的
+        let extentList = this._.cloneDeep(this.extentList)
+        extentList.forEach((item, index) => {
+          // 最小范围大于最大范围，直接赋值
+          if(item.xMin >= itemExtent.xMax) {
+            otherList.push(item)
+          } else if(item.xMax <= itemExtent.xMin) {
+            otherList.push(item)
+          } else if(item.yMin >= itemExtent.yMax) {
+            otherList.push(item)
+          } else if(item.yMax <= itemExtent.yMin) {
+            otherList.push(item)
+          } else {
+            extentList[index].xMin = Number(itemExtent.xMin) > Number(item.xMin) ? Number(itemExtent.xMin) : Number(item.xMin)
+            extentList[index].xMax = Number(itemExtent.xMax) < Number(item.xMax) ? Number(itemExtent.xMax) : Number(item.xMax)
+            extentList[index].yMin = Number(itemExtent.yMin) > Number(item.yMin) ? Number(itemExtent.yMin) : Number(item.yMin)
+            extentList[index].yMax = Number(itemExtent.yMax) < Number(item.yMax) ? Number(itemExtent.yMax) : Number(item.yMax)
+          }
+        })
+
+        // 删除不用的 extent 数据
+        otherList.forEach((item, index) => {
+          let i = extentList.findIndex(item1 => {
+            return item1 == item
+          })
+          extentList.splice(i, 1)
+        })
+        // 色斑图按照 -180~180 请求，
+        if(this.currentItem.drawType == 'layer') {
+          extentList.forEach((item, index) => {
+            if(item.xMax > 180) {
+              extentList[index].xMin -= 360
+              extentList[index].xMax -= 360
+            }
+          })
+        }
+        extentList.forEach(item => {
+          this.clearLayer(this.currentItem)
+          if(this.currentItem.drawType == 'line') {
+            this.getAndDrawLine(this.currentItem, item)
+          } else if(this.currentItem.drawType == 'layer') {
+            this.getAndDrawLayer(this.currentItem, item)
+          }
+        })
+        console.log('extentList', extentList);
       }
     },
     // 循环绘制当前要素列表的要素
     drawItemList() {
-      this.currentItemList.forEach(item => {
-        this.clearLayer(item)
-        if(item.drawType == 'line') {
-          this.getAndDrawLine(item)
-        } else if(item.drawType == 'layer') {
-          // this.clearLayer(item)
-          this.getAndDrawLayer(item)
+      // 循环所有元素，根据每个元素的范围给视口范围进行调整
+      this.currentItemList.forEach(currentItem => {
+        let itemExtent = {
+          xMin: null,
+          xMax: null,
+          yMin: null,
+          yMax: null
         }
+        itemExtent.xMin = currentItem.xMin
+        itemExtent.xMax = currentItem.xMax
+        itemExtent.yMin = currentItem.yMin
+        itemExtent.yMax = currentItem.yMax
+        let otherList = []
+        // 深拷贝，范围是列表中所有数据共用的
+        let extentList = this._.cloneDeep(this.extentList)
+        extentList.forEach((item, index) => {
+          // 最小范围大于最大范围，直接赋值
+          if(item.xMin >= itemExtent.xMax) {
+            otherList.push(item)
+          } else if(item.xMax <= itemExtent.xMin) {
+            otherList.push(item)
+          } else if(item.yMin >= itemExtent.yMax) {
+            otherList.push(item)
+          } else if(item.yMax <= itemExtent.yMin) {
+            otherList.push(item)
+          } else {
+            extentList[index].xMin = Number(itemExtent.xMin) > Number(item.xMin) ? Number(itemExtent.xMin) : Number(item.xMin)
+            extentList[index].xMax = Number(itemExtent.xMax) < Number(item.xMax) ? Number(itemExtent.xMax) : Number(item.xMax)
+            extentList[index].yMin = Number(itemExtent.yMin) > Number(item.yMin) ? Number(itemExtent.yMin) : Number(item.yMin)
+            extentList[index].yMax = Number(itemExtent.yMax) < Number(item.yMax) ? Number(itemExtent.yMax) : Number(item.yMax)
+          }
+        })
+
+        otherList.forEach((item, index) => {
+          let i = extentList.findIndex(item1 => {
+            return item1 == item
+          })
+          extentList.splice(i, 1)
+        })
+        if(currentItem.drawType === 'layer') {
+          extentList.forEach((item, index) => {
+            if(item.xMax > 180) {
+              extentList[index].xMin -= 360
+              extentList[index].xMax -= 360
+            }
+          })
+        }
+        extentList.forEach(item => {
+          this.clearLayer(currentItem)
+          if(currentItem.drawType == 'line') {
+            this.getAndDrawLine(currentItem, item)
+          } else if(currentItem.drawType == 'layer') {
+            // this.clearLayer(item)
+            this.getAndDrawLayer(currentItem, item)
+          }
+        })
+        console.log(extentList)
       })
+
+      // this.extentList.forEach(item => {
+      //   this.currentItemList.forEach(item1 => {
+      //     this.clearLayer(item1)
+      //     if(item1.drawType == 'line') {
+      //       this.getAndDrawLine(item1, item)
+      //     } else if(item1.drawType == 'layer') {
+      //       // this.clearLayer(item)
+      //       this.getAndDrawLayer(item1, item)
+      //     }
+      //   })
+      // })
+      
     },
     // 获取线的数据并绘制
-    getAndDrawLine(currentItem) {
+    getAndDrawLine(currentItem, extent) {
       let day = this.time.split(' ')[0]
       let time = this.time.split(' ')[1] + ':00'
       this.$get('/api/numerical-forecast/contours', {
         day: day,
         grade: currentItem.grade,
         level: this.currentLevel,
-        minX: this.extent.xMin,
-        maxX: this.extent.xMax,
-        minY: this.extent.yMin,
-        maxY: this.extent.yMax,
+        minX: extent.xMin,
+        maxX: extent.xMax,
+        minY: extent.yMin,
+        maxY: extent.yMax,
         // minX: 0,
         // maxX: 360,
         // minY: -75,
@@ -397,46 +573,140 @@ export default {
       })
     },
     // 绘制色斑图
-    getAndDrawLayer(currentItem) {
+    async getAndDrawLayer(currentItem, extent) {
       let day = this.time.split(' ')[0]
       let time = this.time.split(' ')[1] + ':00'
-      this.$getbuffer('/api/numerical-forecast/polygonsImage', {
+      let test = await this.$getbuffer('/api/numerical-forecast/mercator-polygonsImage', {
+      // this.$getbuffer('/api/numerical-forecast/polygonsImage', {
         day: day,
         grade: currentItem.grade,
         level: this.currentLevel,
-        minX: this.extent.xMin,
-        maxX: this.extent.xMax,
-        minY: this.extent.yMin,
-        maxY: this.extent.yMax,
+        minX: extent.xMin,
+        maxX: extent.xMax,
+        minY: extent.yMin,
+        maxY: extent.yMax,
         num: 20,
         time: time,
         type: currentItem.id
-      }, { responseType: 'arraybuffer' }).then(res => {
-        if(res.status == 200) {
-          return (
-            'data:image/png;base64,' +
-            btoa(
-              new Uint8Array(res.data).reduce(
-                (data, byte) => data + String.fromCharCode(byte),
-                ''
-              )
-            )
-          )
-        }
-      }).then((data) => {
-        const img = data
-        // let bounds = L.latLngBounds(L.latLng(this.extent.xMin, this.extent.yMin), L.latLng(this.extent.xMax, this.extent.yMax))
-        let bounds = L.latLngBounds(L.latLng(-10, 60), L.latLng(60, 150))
+      }, { responseType: 'arraybuffer' })
+      console.log(test)
+      
+        const img = this.toImage(test)
+        // let ex = this._.cloneDeep(extent)
+        // if(extent.xMax == 360) {
+        //   ex.xMin = extent.xMin - 360
+        //   ex.xMax = extent.xMax - 360
+        // }
+        let bounds = L.latLngBounds(L.latLng(extent.yMin, extent.xMin), L.latLng(extent.yMax, extent.xMax))
+        let bounds1 = L.latLngBounds(L.latLng(extent.yMin, extent.xMin + 360), L.latLng(extent.yMax, extent.xMax + 360))
+        let bounds2 = L.latLngBounds(L.latLng(extent.yMin, extent.xMin - 360), L.latLng(extent.yMax, extent.xMax - 360))
         if (img) {
-          let imageLayer = L.imageOverlay(img, bounds).addTo(window.map)
+          let imageLayer = L.imageOverlay(img, bounds)
           imageLayer.id = currentItem.id
+          imageLayer.on('add', ev => {
+            console.log('加载完成', ev)
+            if(this.imageLayerNum >= 0) {
+              window.map.removeLayer(imageLayer)
+            }
+            console.log(this.layerNum)
+            // this.setImageLayerNum(this.layerNum)
+          })
+          imageLayer.addTo(window.map)
+          console.log(imageLayer)
           this.layerList.push(imageLayer)
+          let imageLayer1 = L.imageOverlay(img, bounds1)
+          imageLayer1.id = currentItem.id
+          imageLayer1.on('add', ev => {
+            if(this.imageLayerNum >= 0) {
+              window.map.removeLayer(imageLayer1)
+            }
+          })
+          imageLayer1.addTo(window.map)
+          this.layerList.push(imageLayer1)
+          let imageLayer2 = L.imageOverlay(img, bounds2).addTo(window.map)
+          imageLayer2.id = currentItem.id
+          imageLayer2.on('add', ev => {
+            if(this.imageLayerNum >= 0) {
+              window.map.removeLayer(imageLayer2)
+            }
+            // this.setImageLayerNum(this.layerNum)
+          })
+          imageLayer2.addTo(window.map)
+          this.layerList.push(imageLayer2)
         }
-      }).catch(error => {
-        this.$message.error("获取" + currentItem.name + "数据失败")
-      })
+      // test.then(res => {
+      //   if(res.status == 200) {
+      //     return (
+      //       'data:image/png;base64,' +
+      //       btoa(
+      //         new Uint8Array(res.data).reduce(
+      //           (data, byte) => data + String.fromCharCode(byte),
+      //           ''
+      //         )
+      //       )
+      //     )
+      //   }
+      // }).then((data) => {
+      //   const img = data
+      //   // let ex = this._.cloneDeep(extent)
+      //   // if(extent.xMax == 360) {
+      //   //   ex.xMin = extent.xMin - 360
+      //   //   ex.xMax = extent.xMax - 360
+      //   // }
+      //   let bounds = L.latLngBounds(L.latLng(extent.yMin, extent.xMin), L.latLng(extent.yMax, extent.xMax))
+      //   let bounds1 = L.latLngBounds(L.latLng(extent.yMin, extent.xMin + 360), L.latLng(extent.yMax, extent.xMax + 360))
+      //   let bounds2 = L.latLngBounds(L.latLng(extent.yMin, extent.xMin - 360), L.latLng(extent.yMax, extent.xMax - 360))
+      //   if (img) {
+      //     let imageLayer = L.imageOverlay(img, bounds)
+      //     imageLayer.id = currentItem.id
+      //     imageLayer.on('add', ev => {
+      //       console.log('加载完成', ev)
+      //       if(this.imageLayerNum >= 1) {
+      //         window.map.removeLayer(imageLayer)
+      //       }
+      //       console.log(this.layerNum)
+      //       // this.setImageLayerNum(this.layerNum)
+      //     })
+      //     imageLayer.addTo(window.map)
+      //     console.log(imageLayer)
+      //     this.layerList.push(imageLayer)
+      //     let imageLayer1 = L.imageOverlay(img, bounds1)
+      //     imageLayer1.id = currentItem.id
+      //     imageLayer1.on('add', ev => {
+      //       if(this.imageLayerNum >= 1) {
+      //         window.map.removeLayer(imageLayer1)
+      //       }
+      //     })
+      //     imageLayer1.addTo(window.map)
+      //     this.layerList.push(imageLayer1)
+      //     let imageLayer2 = L.imageOverlay(img, bounds2).addTo(window.map)
+      //     imageLayer2.id = currentItem.id
+      //     imageLayer2.on('add', ev => {
+      //       if(this.imageLayerNum >= 1) {
+      //         window.map.removeLayer(imageLayer2)
+      //       }
+      //       // this.setImageLayerNum(this.layerNum)
+      //     })
+      //     imageLayer2.addTo(window.map)
+      //     this.layerList.push(imageLayer2)
+      //   }
+      // }).catch(error => {
+      //   this.$message.error("获取" + currentItem.name + "数据失败")
+      // })
+
     },
-    getAndDrawWind(currentItem) {
+    toImage(res) {
+      return (
+        'data:image/png;base64,' +
+        btoa(
+          new Uint8Array(res.data).reduce(
+            (data, byte) => data + String.fromCharCode(byte),
+            ''
+          )
+        )
+      )
+    },
+    getAndDrawWind(currentItem, extent) {
       let day = this.time.split(' ')[0]
       let time = this.time.split(' ')[1] + ':00'
       this.$get('/api/numerical-forecast/wind', {
@@ -452,24 +722,105 @@ export default {
         this.$message.error("获取" + currentItem.name + "数据失败")
       })
     },
+    // 绘制 洋流\波向
+    getAndDrawWave(currentItem) {
+      console.log('wave--', currentItem)
+      let day = this.time.split(' ')[0]
+      let time = this.time.split(' ')[1] + ':00'
+      this.$get('/api/numerical-forecast/wave', {
+        day: day,
+        time: time,
+        type: currentItem.id,
+      }).then(res => {
+        console.log(res.data.data)
+        if(res.status == 200) {
+          let gridSize = currentItem.gridSize
+          let xMin = currentItem.xMin
+          let xMax = currentItem.xMax
+          let yMin = currentItem.yMin
+          let yMax = currentItem.yMax
+          // waveList 构造数组 361 * 720 [lat, lng, value, dir]
+          let waveList = []
+          let data = res.data.data
+          for(let i = 0; i < data.length; i++) {
+            let latlngList = []
+            for(let j = 0;j < data[i].length; j++) {
+              let arr = []
+              arr.push(Number(yMax) - i * gridSize)
+              if(Number(xMin) + j * gridSize > 180) {
+                arr.push(Number(xMin) + j * gridSize - 360)
+              } else {
+                arr.push(Number(xMin) + j * gridSize)
+              }
+              if(data[i][j] != "") {
+                let temp = data[i][j].split(',')
+                arr.push(temp[0])
+                arr.push(temp[1])
+              } else {
+                arr.push("")
+                arr.push("")
+              }
+              latlngList.push(arr)
+            }
+            waveList.push(latlngList)
+          }
+          console.log('waveList', waveList)
+
+          var config = {
+            lat: '0',
+            lng: '1',
+            value: '2',
+            dir: '3',
+            data: waveList
+          };
+          this.waveLayer = new FlowLayer({}, config);
+          this.waveLayer.id = currentItem.id
+          window.map.addLayer(this.waveLayer)
+        }
+      }).catch(error => {
+        this.$message.error('获取' + currentItem.name + '数据失败')
+      })
+    },
     // 清除
     clearLayer(layer) {
       if(layer.drawType === 'line' && this.lineList.length) {
-        let i = this.lineList.findIndex(item => {
+        let arr = this.lineList.filter(item => {
           return item.id == layer.id
         })
-        map.removeLayer(this.lineList[i])
-        this.lineList.splice(i, 1)
+        arr.forEach(item => {
+          let i = this.lineList.findIndex(item1 => {
+            return item1.id == item.id
+          })
+          map.removeLayer(this.lineList[i])
+          this.lineList.splice(i, 1)
+        })
       }
 
       if(layer.drawType === 'layer' && this.layerList.length) {
-        let i = this.layerList.findIndex(item => {
+        let arr = this.layerList.filter(item => {
           return item.id == layer.id
         })
-        map.removeLayer(this.layerList[i])
-        this.layerList.splice(i, 1)
+        arr.forEach(item => {
+          let i = this.layerList.findIndex(item1 => {
+            return item1.id == item.id
+          })
+          map.removeLayer(this.layerList[i])
+          this.layerList.splice(i, 1)
+        })
       }
+
+      // if(layer.drawType === 'point_flow' && (this.waveLayer !== null)) {
+      //   map.removeLayer(layer)
+      //   this.waveLayer = null
+      // }
     },
+    // wind、wave使用了自动重绘，需要单独清除
+    clearWindWave(layer) {
+      if(layer.drawType === 'point_flow' && (this.waveLayer !== null)) {
+        map.removeLayer(this.waveLayer)
+        this.waveLayer = null
+      }
+    }
   }
 };
 </script>

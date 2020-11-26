@@ -1,5 +1,7 @@
 const state = {
-  extent: null
+  extent: null,
+  // 图层重绘个数
+  imageLayerNum: 0,
 }
 
 const actions = {
@@ -10,7 +12,10 @@ const actions = {
 const mutations = {
   setExtent(state, val) {
     state.extent = val
-    console.log('store extent', state.extent);
+    // console.log('store extent', state.extent);
+  },
+  setImageLayerNum(state, val) {
+    state.imageLayerNum = val
   }
 }
 
