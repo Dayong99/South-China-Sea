@@ -7,8 +7,10 @@
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
+  height: auto;
 
-  ul,li {
+  ul,
+  li {
     list-style: none;
     padding: none;
     margin: none;
@@ -45,7 +47,7 @@
 
     // input输入框加左右图标
     .search_input {
-      flex: 1;  // 防止挤压左侧
+      flex: 1; // 防止挤压左侧
       display: flex;
       align-items: center;
       margin-left: 10px;
@@ -76,6 +78,7 @@
           padding-left: 0;
           background: rgba(26, 26, 24, 0.7);
         }
+
         .search_content /deep/ .el-input__suffix {
           line-height: 35px;
         }
@@ -107,7 +110,7 @@
     margin-top: 15px;
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.8);
-    box-shadow: 2px 2px 8px 0px rgba(0,0,0,0.5);
+    box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.5);
 
     .list_ul {
       width: 100%;
@@ -123,7 +126,7 @@
         display: flex;
         align-items: center;
         color: rgba(117, 109, 109, 1);
-	      font-size: 16px;
+        font-size: 16px;
 
         img {
           width: 25px;
@@ -162,59 +165,147 @@
         }
       }
 
+      .list_task_ul::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+      }
+
+      .list_task_ul::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 1);
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      .list_task_ul::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 1);
+        border-radius: 0;
+        background: rgba(0, 0, 218, 0.1);
+      }
+
       // ------子任务项------
       .list_task_ul {
         width: 90%;
+        max-height: 500px;
         margin-left: 10px;
         margin-bottom: 10px;
+        overflow-y: auto;
 
         li {
           width: 95%;
-          height: 30px;
+          height: auto;
           font-size: 14px;
           display: flex;
           justify-content: space-between;
           align-items: center;
+          flex-flow: column;
 
-          .task_name {
-            margin-left: 10px;
+          .task_list {
+            width: 95%;
+            height: 30px;
+            font-size: 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
 
-            .task_dot {
-              width: 10px;
-              height: 10px;
-              border: 1px solid #ccc;
-              border-radius: 50%;
-              margin-right: 10px;
-            }
-          }
+            .task_name {
+              cursor: pointer;
+              margin-left: 10px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
 
-          .task_operation {
-            // width: 90px;
-            font-size: 16px;
-            margin-left: 50px;
+              .task_dot {
+                width: 10px;
+                height: 10px;
+                border: 2px solid #ccc;
+                border-radius: 50%;
+                margin-right: 10px;
+              }
 
-            .blue {
-              color: rgb(50, 204, 255);
+              .active {
+                background: red;
+              }
             }
-            .green {
-              color: rgb(110, 207, 67);
-            }
-            .red {
-              color: rgb(247, 53, 11);
-            }
-            .purple {
-              color: rgb(145, 174, 255);
-            }
-        
-            // 图标大小 和 左外边距
-            .el-button {
+
+            .task_operation {
+              // width: 90px;
               font-size: 16px;
-              margin-left: 0;
+              margin-left: 50px;
+
+              .blue {
+                color: rgb(50, 204, 255);
+              }
+
+              .green {
+                color: rgb(110, 207, 67);
+              }
+
+              .red {
+                color: rgb(247, 53, 11);
+              }
+
+              .purple {
+                color: rgb(145, 174, 255);
+              }
+
+              // 图标大小 和 左外边距
+              .el-button {
+                font-size: 16px;
+                margin-left: 0;
+              }
             }
           }
+
+          .task_content_wrapper {
+            width: 100%;
+            margin-left: 15px;
+            .task_content {
+              width: 95%;
+              height: auto;
+              text-align: center;
+              background: #ccc;
+              display: flex;
+              white-space: nowrap;
+              flex-flow: column;
+              color: #ffffff;
+
+              .task_content_desc {
+                width: 100%;
+                height: auto;
+                text-align: center;
+                background: #ccc;
+                padding: 5px;
+                display: flex;
+                white-space: nowrap;
+                position: relative;
+
+                img {
+                  width: 24px;
+                  height: 24px;
+                  margin-left: 3px;
+
+                  &:hover {
+                    cursor: pointer;
+                  }
+                }
+
+                .down {
+                  position: absolute;
+                  right: 2px;
+                }
+              }
+
+              .task_content_route {
+                background: #000000;
+                text-align: left;
+                padding: 5px;
+                opacity: 0.5;
+                color: #ffffff;
+              }
+
+            }
+          }
+
         }
       }
     }

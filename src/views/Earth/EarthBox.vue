@@ -2,7 +2,6 @@
   <div id="earthBox">
     <!-- 地球 -->
     <earth ref="earth"/>
-
     <!-- 时间播放轴 -->
     <time-bar v-show="timeShow" ref="timeBar" />
     <!-- 工具条 -->
@@ -23,6 +22,8 @@
     <team-manager></team-manager>
     <!-- 任务管理 -->
     <task-manager></task-manager>
+    <!-- 航线管理 -->
+    <route-manager></route-manager>
   </div>
 </template>
 
@@ -40,6 +41,7 @@ import MenuBar from '@/components/menu/MenuBar.vue'
 import ShipManager from '@/components/menu/ShipManager/index.vue';
 import TeamManager from '@/components/menu/TeamManager/index.vue'
 import TaskManager from '@/components/menu/TaskManagement/edit.vue'
+import routeManager from '@/components/menu/routeManager/edit.vue'
 import eventBus from "@/utils/eventBus.js";
 
 export default {
@@ -55,7 +57,8 @@ export default {
     MenuBar: MenuBar,
     ShipManager: ShipManager,
     TeamManager: TeamManager,
-    TaskManager: TaskManager
+    TaskManager: TaskManager,
+    routeManager: routeManager
   },
   data() {
     return {

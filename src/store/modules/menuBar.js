@@ -12,7 +12,8 @@ const state = {
     icon: require('@/assets/images/menu/collection.png'),
     flag: false,
   }],
-  TaskManagerOptions: 0 // 0 不显示 1 添加 2 修改
+  TaskManagerOptions: 0, // 0 不显示 1 添加 2 修改
+  routeDialogOptions: 0 // 0不显示 1添加航线 2 修改航线
 }
 
 const actions = {
@@ -23,10 +24,13 @@ const actions = {
 const mutations = {
   setMenuList(state, val) {
     state.menuList = val
-    console.log('store menuList', state.menuList);
   },
   setTaskManagerOptions(state,val) {
     state.TaskManagerOptions = val
+  },
+  setRouteDialogOptions(state,val) {
+    state.routeDialogOptions = val
+    console.log(state.routeDialogOptions,`state.routeDialog`)
   }
 }
 
