@@ -7,7 +7,7 @@
     :close-on-press-escape="false"
     :visible.sync="taskManagerShow"
     append-to-body
-    @close = 'closeManager'
+    @close="closeManager"
   >
     <el-form
       ref="form"
@@ -168,7 +168,7 @@ export default {
   components: {},
   data() {
     return {
-      title: '添加任务',
+      title: "添加任务",
       data: {},
       rules: {},
       options: [
@@ -191,35 +191,70 @@ export default {
       teamList: [],
     };
   },
-  mounted() {
-    this.$nextTick(() => {
-      this.loadShipList();
-      this.loadTeamList();
-    });
-  },
+  mounted() {},
   computed: {
     ...mapState({
       TaskManagerOptions: (state) => state.menuBar.TaskManagerOptions,
     }),
   },
   watch: {
-    TaskManagerOptions(val) {
-      if(val === 1) {
-        this.title = '添加任务'
-      }
-      if(val === 2) {
-        this.title = '修改任务'
-      }
-      this.taskManagerShow = val
+    TaskManagerOptions: {
+      handler: function (val) {
+        if (val[0] === 1) {
+          this.title = "添加任务";
+        }
+        if (val[0] === 2) {
+          this.title = "修改任务";
+        }
+        this.taskManagerShow = val[0];
+        this.loadShipList();
+      },
     },
   },
   methods: {
     ...mapMutations({
-      setTaskManagerOptions: 'menuBar/setTaskManagerOptions'
+      setTaskManagerOptions: "menuBar/setTaskManagerOptions",
     }),
+    setData() {
+      this.$get(`/api/plan/sfs`,{
+        id: this.TaskManagerOptions[1].id
+      }).then((res) => {
+        if(res.data.data) {
+          res.data.data.forEach((e,i) => {
+            // 编队
+            if(e.type === 0) {
+              this.teamList = this.teamList.map((a,b)=> {
+                let obj = a
+                if(a.id === e.sfId) {
+                  obj.checked = true
+                }
+                return obj
+              })
+            }
+            // 船舰
+            if(e.type === 1) {
+               this.shipList = this.shipList.map((a,b)=> {
+                let obj = a
+                if(a.id === e.sfId) {
+                  obj.checked = true
+                }
+                return obj
+              })
+            }
+          })
+        }
+      })
+      this.formData = {
+        id: this.TaskManagerOptions[1].id,
+        name: this.TaskManagerOptions[1].name,
+        ptype: this.TaskManagerOptions[1].ptype,
+        type: 1,
+        createtime: this.TaskManagerOptions[1].createtime,
+      };
+    },
     closeManager() {
       this.taskManagerShow = false;
-      this.setTaskManagerOptions(0)
+      this.setTaskManagerOptions([0, {}]);
     },
     submit() {
       let obj = {};
@@ -229,7 +264,7 @@ export default {
       this.shipList.forEach((e, i) => {
         if (e.checked) {
           let a = {};
-          a["sfid"] = e.id;
+          a["sfId"] = e.id;
           a["type"] = 1;
           obj["planSfs"].push(a);
         }
@@ -237,31 +272,54 @@ export default {
       this.teamList.forEach((e, i) => {
         if (e.checked) {
           let a = {};
-          a["sfid"] = e.id;
+          a["sfId"] = e.id;
           a["type"] = 0;
           obj["planSfs"].push(a);
         }
       });
       this.$refs.form.validate((valid) => {
         if (valid) {
-          this.$jsonPost(`/api/plan`, {
-            ...obj,
-          })
-            .then(() => {
+          if (this.title === "添加任务") {
+            this.$jsonPost(`/api/plan`, {
+              ...obj,
+            })
+              .then(() => {
+                this.$message({
+                  message: "任务添加成功",
+                  type: "success",
+                });
+                this.reset();
+                this.closeManager();
+              })
+              .catch(() => {
+                this.$message({
+                  message: "任务添加失败",
+                  type: "error",
+                });
+                this.reset();
+                this.closeManager();
+              });
+          }
+          if (this.title === "修改任务") {
+
+            this.$jsonPut(`/api/plan`,{
+              ...obj,id: this.formData.id
+            }).then(() => {
               this.$message({
-                message: "任务添加成功",
+                message: "任务修改成功",
                 type: "success",
               });
               this.reset();
-              this.closeManager()
-            })
-            .catch(() => {
-              this.$message({
-                message: "任务添加失败",
-                type: "error",
+              this.closeManager();
+            }).catch(() => {
+                this.$message({
+                  message: "任务修改失败",
+                  type: "error",
+                });
+                this.reset();
+                this.closeManager();
               });
-              this.closeManager()
-            });
+          }
         }
       });
     },
@@ -280,6 +338,8 @@ export default {
             return { ...e, checked: false };
           });
         }
+      }).then(()=> {
+        this.loadTeamList()
       });
     },
     loadTeamList() {
@@ -289,6 +349,8 @@ export default {
             return { ...e, checked: false };
           });
         }
+      }).then(()=> {
+        this.setData()
       });
     },
   },
