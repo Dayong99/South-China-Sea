@@ -1,5 +1,5 @@
 <template>
-  <div class="legend" v-show="legendShow">
+  <!-- <div class="legend" v-show="legendShow">
     <div class="legend_top">
       <div class="legend_title">图例</div>
       <div class="legend_clear">
@@ -11,25 +11,22 @@
           <img src="@/assets/images/legendbar/close.png" />
         </div>
       </div>
-    </div>
-    <div class="legend_content">
+    </div> -->
+    <div class="legend_content" v-show="legendShow">
       <ul>
         <li
-          :class="{ bggray: index % 2 == 0 }"
           v-for="(color, index) in colorList"
           :key="index"
         >
-          <div class="legend_item_top">
-            <div class="legend_item_left">
-              <img src="@/assets/images/legendbar/view.png" />
-              <span>{{ color.name }}</span>
+          <div class="legend_item_left">
+            <div class="legend_item_top">
+              {{ color.name }}
             </div>
-            <div class="legend_item_right">
-              <span>{{ color.time }}</span>
-              <img src="@/assets/images/legendbar/close.png" />
+            <div class="legend_item_bottom">
+              {{ color.units }}
             </div>
           </div>
-          <div class="legend_item_bottom">
+          <div class="legend_item_right">
             <ul>
               <li
                 v-for="(item, i) in color.colorValues"
@@ -42,7 +39,7 @@
         </li>
       </ul>
       <!-- 雷电、风羽五色图例 -->
-      <div class="thunder">
+      <!-- <div class="thunder">
         <div class="thunder_left">
           <img src="@/assets/images/legendbar/wind.png" />
           <span>气压</span>
@@ -65,9 +62,9 @@
             <span>雷电强度高</span>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
-  </div>
+  <!-- </div> -->
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex'
@@ -75,7 +72,7 @@ export default {
   data() {
     return {
       // 图例显隐
-      legendShow: false,
+      legendShow: true,
       // 图例中的雷电显隐
       thunderShow: false,
       colorList: [
@@ -92,53 +89,43 @@ export default {
       //   colorValues: ['#aaa', '#bbb', '#ccc', '#ddd', '#fff'],
       //   legendValues: [1, 2, 3, 4, 5]
       // }
-      ]
+      ],
+      // 获取所有的图例配置信息
+      allColorList: []
     };
+  },
+  created() {
+    this.getAllColorList()
   },
   computed: {
     ...mapState({
-      menuItem: state => state.sideBar.menuItem
+      menuItemList: state => state.sideBar.menuItemList
     })
   },
   watch: {
     // 根据菜单显示图例
-    menuItem: {
+    menuItemList: {
       handler(newval, oldval) {
-        let menuObj = {
-          name: null,
-          type: null,
-          flag: null,
-          time: '8/17 16:00',
-          colorValues: ['#97E8AD', '#9AD2CA', '#9BBCE8', '#6B9DE1', '#2B5CC2', '#2B5CC2', '#1C3BA9', '#112C90', '#071E78', '#000F50'],
-          legendValues: [-5, 0, 5, 10, 15, 20, 25, 30, 35, 40]
-        }
-        if(newval.flag) {
-          menuObj.name = newval.name
-          menuObj.type = newval.type
-          menuObj.flag = newval.flag
-          this.colorList.push(menuObj)
-          if(newval.type == 'thunder') {
-            this.thunderShow = true
-          }
-        } else {
-          let index = this.colorList.findIndex((item) => {
-            return item.type == newval.type
+        this.colorList = []
+        let list = newval.filter(item => {
+          return item.drawType === 'layer' && item.legendId !== 0
+        })
+        list.forEach(item => {
+          let temp = this.allColorList.filter(itemColor => {
+            return itemColor.id === item.legendId
           })
-          if(index != -1) {
-            this.colorList.splice(index, 1)
-            if(newval.type == 'thunder') {
-              this.thunderShow = false
-            }
+          let menuObj = {
+            name: item.name,
+            type: item.parameterMark,
+            units: item.units,
+            flag: null,
+            // time: '8/17 16:00',
+            colorValues: temp[0].colorValues.split(','),
+            legendValues: temp[0].legendValues.split(',')
           }
-        }
-        // let index = this.colorList.findIndex((item) => {
-        //   return item.type == newval.type
-        // })
-        // if(index != -1) {
-        //   return
-        // } else {
-
-        // }
+          this.limitLegend(menuObj)
+          this.colorList.push(menuObj)
+        })
       },
       deep: true
     },
@@ -152,7 +139,8 @@ export default {
         }
       },
       deep: true
-    }
+    },
+    
   },
   mounted() {
 
@@ -161,7 +149,45 @@ export default {
     // 关闭图例
     closeLegend() {
       this.legendShow = false
-    }
+    },
+    // 获取所有图例数据
+    getAllColorList() {
+      this.$get('/api/legend-config').then(res => {
+        if(res.status == 200) {
+          this.allColorList = res.data.data.rows
+          console.log('allColorList', this.allColorList)
+        }
+      }).catch(error => {
+        this.$message.error('获取图例数据失败')
+      })
+    },
+    limitLegend(legendColor) {
+      legendColor.legendValues.forEach((item, i) => {
+        if(item > 180) {
+          legendColor.legendValues[i] = Math.round(legendColor.legendValues[i] - 273.15)
+        }
+      })
+      // 对图例数据进行抽稀
+      if (legendColor.legendValues.length > 15 && legendColor.legendValues.length <= 25) {
+        for (let i = 1; i < legendColor.legendValues.length; i += 2) {
+          if(i % 2 != 0) {
+            legendColor.legendValues[i] = ''
+          }
+        }
+      } else if(legendColor.legendValues.length > 25 && legendColor.legendValues.length <=50) {
+        for (let i = 1; i < legendColor.legendValues.length; i += 1) {
+          if(i % 4 != 0) {
+            legendColor.legendValues[i] = ''
+          }
+        }
+      } else if(legendColor.legendValues.length > 50) {
+        for(let i = 1; i < legendColor.legendValues.length; i++) {
+          if(i % 6 != 0) {
+            legendColor.legendValues[i] = ''
+          }
+        }
+      }
+    },
   }
 };
 </script>

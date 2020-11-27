@@ -57,33 +57,57 @@
 
         <ul class="list_task_ul" v-show="menuListFlag">
           <li v-for="(item, index) in taskList" :key="index">
-            <div class="task_name">
-              <div class="task_dot"></div>
-              <span>{{ item.name }}</span>
+            <div class="task_list">
+              <div class="task_name" @click="switchTask(item, index)">
+                <div class="task_dot" :class="{ active: item.checked }"></div>
+                <span>{{ item.name }}</span>
+              </div>
+              <div class="task_operation">
+                <el-button
+                  icon="el-icon-edit-outline"
+                  class="table_column_icon green"
+                  type="text"
+                  @click="editTaskItem(item)"
+                ></el-button>
+                <el-button
+                  icon="el-icon-delete"
+                  class="table_column_icon red"
+                  type="text"
+                  @click="deleteTaskItem(item)"
+                ></el-button>
+                <el-button
+                  icon="el-icon-plus"
+                  class="table_column_icon blueDeep"
+                  type="text"
+                  @click="addTaskItem(item,index)"
+                ></el-button>
+                <el-button
+                  icon="el-icon-s-operation"
+                  class="table_column_icon purple"
+                  type="text"
+                ></el-button>
+              </div>
             </div>
-            <div class="task_operation">
-              <el-button
-                icon="el-icon-warning-outline"
-                class="table_column_icon blue"
-                type="text"
-              ></el-button>
-              <el-button
-                icon="el-icon-edit-outline"
-                class="table_column_icon green"
-                type="text"
-                @click="editTaskItem(item)"
-              ></el-button>
-              <el-button
-                icon="el-icon-delete"
-                class="table_column_icon red"
-                type="text"
-                @click="deleteTaskItem(item)"
-              ></el-button>
-              <el-button
-                icon="el-icon-s-operation"
-                class="table_column_icon purple"
-                type="text"
-              ></el-button>
+            <div class="task_content_wrapper" v-if="item.checked">
+              <div
+                class="task_content"
+                v-for="(itemRoute, indexRoute) in routeList"
+                :key="`route${indexRoute}`"
+              >
+                <div class="task_content_desc">
+                  <div class="task_content_name">{{ itemRoute.name }}</div>
+                  <img
+                    :src="itemRoute.checked ? downContentUpIcon : downContentDownIcon"
+                    class="down"
+                    @click="routeDetail(itemRoute, indexRoute)"
+                  />
+                </div>
+                <div class="task_content_route" v-if="itemRoute.checked">
+                  <div>评估时间:{{ itemRoute.descList.time }}</div>
+                  <div>评估02:{{ itemRoute.descList.assessment1 }}</div>
+                  <div>评估03:{{ itemRoute.descList.assessment1 }}</div>
+                </div>
+              </div>
             </div>
           </li>
         </ul>
@@ -115,6 +139,45 @@ import { mapState, mapMutations } from "vuex";
 export default {
   data() {
     return {
+      // 任务航线列表
+      routeList: [
+        {
+          name: "航线1",
+          descList: {
+            time: "2020-10-24 00:00:00",
+            assessment1: "xxx",
+            assessment2: "xxx",
+          },
+          checked: false,
+        },
+        {
+          name: "航线2",
+          descList: {
+            time: "2020-10-24 00:00:00",
+            assessment1: "xxx",
+            assessment2: "xxx",
+          },
+          checked: false,
+        },
+        {
+          name: "航线3",
+          descList: {
+            time: "2020-10-24 00:00:00",
+            assessment1: "xxx",
+            assessment2: "xxx",
+          },
+          checked: false,
+        },
+        {
+          name: "航线4",
+          descList: {
+            time: "2020-10-24 00:00:00",
+            assessment1: "xxx",
+            assessment2: "xxx",
+          },
+          checked: false,
+        },
+      ],
       // 搜索框
       searchFlag: false,
       searchIcon: require("@/assets/images/menu/unselect.png"),
@@ -122,13 +185,20 @@ export default {
 
       // 任务管理展开
       menuListFlag: false,
+      downContentDownIcon: require("@/assets/images/menu/down.png"),
+      downContentUpIcon: require("@/assets/images/menu/up.png"),
       downIcon: require("@/assets/images/menu/down.png"),
       nowMenuList: [],
-      taskList: [],
 
       // 系统配置展开
       systemFlag: false,
       sysIcon: require("@/assets/images/menu/down.png"),
+      taskList: [
+        {
+          name: "1",
+          checked: true,
+        },
+      ],
     };
   },
   computed: {
@@ -136,6 +206,7 @@ export default {
       menuList: (state) => state.menuBar.menuList,
       systemList: (state) => state.menuBar.systemList,
       TaskManagerOptions: (state) => state.menuBar.TaskManagerOptions,
+      routeDialogOptions: s => s.menuBar.routeDialogOptions
     }),
   },
   watch: {
@@ -175,9 +246,14 @@ export default {
         // this.menuList[2].flag = false
       }
     },
+    // 任务变化
     TaskManagerOptions() {
       this.loadTaskList();
     },
+    // 航线变化
+    routeDialogOptions() {
+      console.log('更新航线信息')
+    }
   },
   mounted() {
     this.loadTaskList();
@@ -186,10 +262,46 @@ export default {
     ...mapMutations({
       setMenuList: "menuBar/setMenuList",
       setTaskManagerOptions: "menuBar/setTaskManagerOptions",
-      setSystem:"menuBar/setSystem"
+      setSystem:"menuBar/setSystem",
+      setRouteDialogOptions: "menuBar/setRouteDialogOptions"
     }),
+    // 添加航线
+    addTaskItem(item,index) {
+      console.log(item,index,`item`)
+      this.setRouteDialogOptions([1, item])
+    },
+    routeDetail(item, index) {
+      if (item.checked) {
+        this.routeList[index].checked = true;
+      }
+      if (item.checked) {
+        
+        this.routeList[index].checked = false;
+        return;
+      } else {
+        this.routeList = this.routeList.map((e, i) => {
+          let obj = e;
+          obj.checked = false;
+          return obj;
+        });
+        this.routeList[index].checked = true;
+      }
+    },
+    switchTask(item, index) {
+      console.log(item, index, `item`);
+      if (item.checked) {
+        this.taskList[index].checked = false;
+      } else {
+        this.taskList = this.taskList.map((e, i) => {
+          let obj = e;
+          obj.checked = false;
+          return obj;
+        });
+        this.taskList[index].checked = true;
+      }
+    },
     editTaskItem(item) {
-      this.setTaskManagerOptions(2);
+      this.setTaskManagerOptions([2, item]);
     },
     deleteTaskItem(item) {
       console.log(item, `item`);
@@ -231,7 +343,12 @@ export default {
       }).then((res) => {
         console.log(res, `loadTaskList`);
         if (res.data.data) {
-          this.taskList = res.data.data.rows;
+          this.taskList = res.data.data.rows.map((e, i) => {
+            return {
+              ...e,
+              checked: false,
+            };
+          });
         }
       });
     },
@@ -275,7 +392,7 @@ export default {
     //------------start任务管理--------------
     // 添加任务
     addTask(index) {
-      this.setTaskManagerOptions(1);
+      this.setTaskManagerOptions([1, {}]);
     },
     // 打开任务管理
     openTask(index) {

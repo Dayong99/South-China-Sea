@@ -2,7 +2,6 @@
   <div id="earthBox">
     <!-- 地球 -->
     <earth ref="earth"/>
-
     <!-- 时间播放轴 -->
     <time-bar v-show="timeShow"></time-bar>
     <!-- 工具条 -->
@@ -11,10 +10,10 @@
     <logo-global></logo-global>
     <!-- 要素时间信息 -->
     <!-- <parameter-heading></parameter-heading> -->
-    <!-- 气象要素菜单栏 -->
-    <side-bar></side-bar>
     <!-- 图例 -->
     <legend-bar></legend-bar>
+    <!-- 气象要素菜单栏 -->
+    <side-bar></side-bar>
     <!-- 菜单栏 -->
     <menu-bar></menu-bar>
     <!-- 船舰管理 -->
@@ -23,6 +22,7 @@
     <team-manager></team-manager>
     <!-- 任务管理 -->
     <task-manager></task-manager>
+<<<<<<< HEAD
     <!-- 系统配置 -->
     <!-- 色斑图配置 -->
     <legend-manager></legend-manager>
@@ -36,6 +36,10 @@
     <param-manager></param-manager>
     <!-- 数据项配置 -->
     <dataitem-manager></dataitem-manager>
+=======
+    <!-- 航线管理 -->
+    <route-manager></route-manager>
+>>>>>>> 45acf3a1774da92dcae27a9f2cc5c4651a2c7181
   </div>
 </template>
 
@@ -60,6 +64,7 @@ import SeaManager from '@/components/menu/SystemManager/seaManager/index.vue'
 import ParamManager from '@/components/menu/SystemManager/paramManager/index.vue'
 import DataitemManager from '@/components/menu/SystemManager/dataitemManager/index.vue'
 
+import routeManager from '@/components/menu/routeManager/edit.vue'
 import eventBus from "@/utils/eventBus.js";
 
 export default {
@@ -76,12 +81,16 @@ export default {
     ShipManager: ShipManager,
     TeamManager: TeamManager,
     TaskManager: TaskManager,
+<<<<<<< HEAD
     LegendManager:LegendManager,
     LineManager:LineManager,
     AreaManager:AreaManager,
     SeaManager:SeaManager,
     ParamManager:ParamManager,
     DataitemManager:DataitemManager
+=======
+    routeManager: routeManager
+>>>>>>> 45acf3a1774da92dcae27a9f2cc5c4651a2c7181
   },
   data() {
     return {

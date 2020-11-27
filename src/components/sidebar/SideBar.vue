@@ -35,7 +35,8 @@
 <script>
 import { mapState, mapMutations } from "vuex";
 import { PressureLayer } from '@/utils/pressure/ocean.weather.pressure';
-import { FlowLayer } from '@/utils/pressure/ocean.weather.flow'
+import { FlowLayer } from '@/utils/pressure/ocean.weather.flow';
+import { WindLayer } from '@/utils/pressure/ocean.weather.wind';
 
 import LevelBar from '@/components/levelbar/LevelBar'
 export default {
@@ -44,6 +45,7 @@ export default {
   },
   data() {
     return {
+      firstFlag: true,
       // 菜单列表数组
       menuList: [{
         id: 0,
@@ -141,6 +143,8 @@ export default {
       extentList: [],
       // 海流图层
       waveLayer: null,
+      // 风羽图层
+      windLayer: null,
       // 图层个数
       layerNum: null,
     };
@@ -179,20 +183,53 @@ export default {
     },
     // 范围数组的变化
     extent: {
+      // async handler(val, old) {
       async handler(val, old) {
-        // console.log('val', val)
-        // console.log('old', old)
-        // val.forEach((item, index) => {
-        //   if(item.xMin !== old[index].xMin || item.xMax !== old[index].xMax || item.yMin !== old[index].yMin || item.yMax !== old[index].yMax) {
+        console.log('val', val)
+        console.log('old', old)
+        // flag 为 true 需要重绘
+        let flag = true
+
+        if(old === null || val.length !== old.length) {
+          flag = true
+        } else {
+          for(let i = 0; i < val.length; i++) {
+            if(val[i].xMin === old[i].xMin && val[i].xMax === old[i].xMax && val[i].yMin === old[i].yMin && val[i].yMax === old[i].yMax) {
+              flag = false
+              break;
+            }
+          }
+        }
+        if(flag) {
+          this.layerNum -= 1
+          this.extentList = val
+          await this.drawItemList()
+          await this.setImageLayerNum(this.layerNum)
+        }
+
+        // val.forEach(async(item, index) => {
+        //   if(this.firstFlag) {
+        //     this.layerNum -= 1
         //     this.extentList = val
-        //     this.drawItemList()
+        //     await this.drawItemList()
+        //     await this.setImageLayerNum(this.layerNum)
+        //     this.firstFlag = false
+        //   } else {
+        //     if(item.xMin !== old[index].xMin || item.xMax !== old[index].xMax || item.yMin !== old[index].yMin || item.yMax !== old[index].yMax) {
+        //       this.layerNum -= 1
+        //       this.extentList = val
+        //       await this.drawItemList()
+        //       await this.setImageLayerNum(this.layerNum)
+        //     }
         //   }
         // })
+        
+        
         // 图层数减一
-        this.layerNum -= 1
-        this.extentList = val
-        await this.drawItemList()
-        await this.setImageLayerNum(this.layerNum)
+        // this.layerNum -= 1
+        // this.extentList = val
+        // await this.drawItemList()
+        // await this.setImageLayerNum(this.layerNum)
       },
       deep: true
     },
@@ -223,7 +260,7 @@ export default {
        * type: 数据源类型   0--EC  1--GFS
        */
       this.$get('/api/parameters/get_type', {
-        type: 1
+        type: 0
       }).then(res => {
         if(res.status == 200) {
           this.menuList = []
@@ -369,7 +406,7 @@ export default {
       if(this.currentItem.drawType == 'point_flow') {
         this.getAndDrawWave(this.currentItem)
       } else if(this.currentItem.drawType == 'point_wind') {
-
+        this.getAndDrawWind(this.currentItem)
       } else {
         // // 需要根据每个要素自带的限制范围进行范围约束
         // let itemExtentList = []
@@ -576,21 +613,21 @@ export default {
     async getAndDrawLayer(currentItem, extent) {
       let day = this.time.split(' ')[0]
       let time = this.time.split(' ')[1] + ':00'
-      let test = await this.$getbuffer('/api/numerical-forecast/mercator-polygonsImage', {
-      // this.$getbuffer('/api/numerical-forecast/polygonsImage', {
-        day: day,
-        grade: currentItem.grade,
-        level: this.currentLevel,
-        minX: extent.xMin,
-        maxX: extent.xMax,
-        minY: extent.yMin,
-        maxY: extent.yMax,
-        num: 20,
-        time: time,
-        type: currentItem.id
-      }, { responseType: 'arraybuffer' })
-      console.log(test)
-      
+      try {
+        let test = await this.$getbuffer('/api/numerical-forecast/mercator-polygonsImage', {
+        // this.$getbuffer('/api/numerical-forecast/polygonsImage', {
+          day: day,
+          grade: currentItem.grade,
+          level: this.currentLevel,
+          minX: extent.xMin,
+          maxX: extent.xMax,
+          minY: extent.yMin,
+          maxY: extent.yMax,
+          num: 20,
+          time: time,
+          type: currentItem.id
+        }, { responseType: 'arraybuffer' })
+        
         const img = this.toImage(test)
         // let ex = this._.cloneDeep(extent)
         // if(extent.xMax == 360) {
@@ -634,6 +671,11 @@ export default {
           imageLayer2.addTo(window.map)
           this.layerList.push(imageLayer2)
         }
+      } catch (error) {
+        this.$message.error("获取" + currentItem.name + "数据失败")
+      }
+      
+
       // test.then(res => {
       //   if(res.status == 200) {
       //     return (
@@ -695,6 +737,7 @@ export default {
       // })
 
     },
+    // 接收图像转base64
     toImage(res) {
       return (
         'data:image/png;base64,' +
@@ -713,10 +756,25 @@ export default {
         day: day,
         level: this.currentLevel,
         time: time,
+        grade: 4,
         type: currentItem.id
       }).then(res => {
         if(res.status == 200) {
           console.log('wind--res', res.data.data)
+          if(res.status == 200) {
+            let windList = res.data.data
+            
+            var config = {
+              lat: '0',
+              lng: '1',
+              value: '2',
+              dir: '3',
+              data: windList
+            };
+            this.windLayer = new WindLayer({}, config);
+            this.windLayer.id = currentItem.id
+            window.map.addLayer(this.windLayer)
+          }
         }
       }).catch(error => {
         this.$message.error("获取" + currentItem.name + "数据失败")
@@ -732,7 +790,7 @@ export default {
         time: time,
         type: currentItem.id,
       }).then(res => {
-        console.log(res.data.data)
+        console.log('wave--res', res.data.data)
         if(res.status == 200) {
           let gridSize = currentItem.gridSize
           let xMin = currentItem.xMin
@@ -819,6 +877,9 @@ export default {
       if(layer.drawType === 'point_flow' && (this.waveLayer !== null)) {
         map.removeLayer(this.waveLayer)
         this.waveLayer = null
+      } else if(layer.drawType === 'point_wind' && (this.windLayer !== null)) {
+        map.removeLayer(this.windLayer)
+        this.windLayer = null
       }
     }
   }

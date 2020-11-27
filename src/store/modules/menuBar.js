@@ -42,7 +42,8 @@ const state = {
       flag:false
     },
   ],
-  TaskManagerOptions: 0 // 0 不显示 1 添加 2 修改
+  TaskManagerOptions: 0, // 0 不显示 1 添加 2 修改
+  routeDialogOptions: 0 // 0不显示 1添加航线 2 修改航线
 }
 
 const actions = {
@@ -53,16 +54,21 @@ const actions = {
 const mutations = {
   setMenuList(state, val) {
     state.menuList = val
-    console.log('store menuList', state.menuList);
   },
   setTaskManagerOptions(state,val) {
     state.TaskManagerOptions = val
   },
+<<<<<<< HEAD
   setSystem(state,obj) {
     state.systemList.forEach((item)=>{
       item.flag = false
     })
     state.systemList[obj.index].flag = obj.val
+=======
+  setRouteDialogOptions(state,val) {
+    state.routeDialogOptions = val
+    console.log(state.routeDialogOptions,`state.routeDialog`)
+>>>>>>> 45acf3a1774da92dcae27a9f2cc5c4651a2c7181
   }
 }
 
