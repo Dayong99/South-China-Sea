@@ -47,8 +47,14 @@
             class="down"
             @click.stop="openTask(index)"
           />
+          <img
+            :src="sysIcon"
+            v-if="index == 3"
+            class="down"
+            @click.stop="openTask(index)"
+          />
         </li>
-        
+
         <ul class="list_task_ul" v-show="menuListFlag">
           <li v-for="(item, index) in taskList" :key="index">
             <div class="task_name">
@@ -81,6 +87,24 @@
             </div>
           </li>
         </ul>
+
+        <!-- 系统配置 -->
+        <ul class="list_task_ul" v-show="systemFlag">
+          <li v-for="(item, index) in systemList" :key="index">
+            <div class="task_name">
+              <div class="task_dot"></div>
+              <span>{{ item.name }}</span>
+            </div>
+            <div class="task_operation">
+              <el-button
+                icon="el-icon-s-operation"
+                class="table_column_icon blue"
+                type="text"
+                @click="openSystem(index)"
+              ></el-button>
+            </div>
+          </li>
+        </ul>
       </ul>
     </div>
   </div>
@@ -101,11 +125,16 @@ export default {
       downIcon: require("@/assets/images/menu/down.png"),
       nowMenuList: [],
       taskList: [],
+
+      // 系统配置展开
+      systemFlag: false,
+      sysIcon: require("@/assets/images/menu/down.png"),
     };
   },
   computed: {
     ...mapState({
       menuList: (state) => state.menuBar.menuList,
+      systemList: (state) => state.menuBar.systemList,
       TaskManagerOptions: (state) => state.menuBar.TaskManagerOptions,
     }),
   },
@@ -129,9 +158,20 @@ export default {
     // 任务管理
     menuListFlag(newval, oldval) {
       if (newval) {
+        this.sysIcon = require("@/assets/images/menu/down.png");
         this.downIcon = require("@/assets/images/menu/up.png");
       } else {
         this.downIcon = require("@/assets/images/menu/down.png");
+        // this.menuList[2].flag = false
+      }
+    },
+    // 系统配置
+    systemFlag(newval, oldval) {
+      if (newval) {
+        this.downIcon = require("@/assets/images/menu/down.png");
+        this.sysIcon = require("@/assets/images/menu/up.png");
+      } else {
+        this.sysIcon = require("@/assets/images/menu/down.png");
         // this.menuList[2].flag = false
       }
     },
@@ -146,6 +186,7 @@ export default {
     ...mapMutations({
       setMenuList: "menuBar/setMenuList",
       setTaskManagerOptions: "menuBar/setTaskManagerOptions",
+      setSystem:"menuBar/setSystem"
     }),
     editTaskItem(item) {
       this.setTaskManagerOptions(2);
@@ -224,6 +265,9 @@ export default {
         });
         this.setMenuList(this.menuList);
         this.downIcon = require("@/assets/images/menu/down.png");
+        this.sysIcon = require("@/assets/images/menu/down.png");
+        this.menuListFlag = false;
+        this.systemFlag = false;
       }
     },
     //------------end搜索框--------------
@@ -239,16 +283,28 @@ export default {
       this.menuList.forEach((item) => {
         item.flag = false;
       });
+      this.menuListFlag = false;
+      this.systemFlag = false;
+      
       // 任务管理需要可以多次切换
       if (index == 2) {
         this.menuList[index].flag = !this.menuListFlag;
         this.menuListFlag = !this.menuListFlag;
+      } else if (index == 3) {
+        this.menuList[index].flag = !this.menuListFlag;
+        this.systemFlag = !this.menuListFlag;
       } else {
         this.menuList[index].flag = true;
       }
       this.setMenuList(this.menuList);
     },
     //------------end任务管理--------------
+
+
+    // 系统配置
+    openSystem(index){
+      this.setSystem({index:index,val:true})
+    }
   },
 };
 </script>

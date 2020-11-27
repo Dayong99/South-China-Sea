@@ -165,9 +165,10 @@
       // ------子任务项------
       .list_task_ul {
         width: 90%;
+        max-height:300px;
         margin-left: 10px;
         margin-bottom: 10px;
-
+       
         li {
           width: 95%;
           height: 30px;

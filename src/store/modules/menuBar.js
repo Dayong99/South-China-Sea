@@ -11,7 +11,37 @@ const state = {
     name: '任务管理',
     icon: require('@/assets/images/menu/collection.png'),
     flag: false,
+  }, {
+    name: '系统配置',
+    icon: require('@/assets/images/menu/system.png'),
+    flag: false,
   }],
+  systemList:[
+    {
+      name:'色斑图配置',
+      flag:false
+    },
+    {
+      name:'等值线配置',
+      flag:false
+    },
+    {
+      name:'常用区域',
+      flag:false
+    },
+    {
+      name:'海区划分',
+      flag:false
+    },
+    {
+      name:'参数配置',
+      flag:false
+    },
+    {
+      name:'数据项配置',
+      flag:false
+    },
+  ],
   TaskManagerOptions: 0 // 0 不显示 1 添加 2 修改
 }
 
@@ -27,6 +57,12 @@ const mutations = {
   },
   setTaskManagerOptions(state,val) {
     state.TaskManagerOptions = val
+  },
+  setSystem(state,obj) {
+    state.systemList.forEach((item)=>{
+      item.flag = false
+    })
+    state.systemList[obj.index].flag = obj.val
   }
 }
 

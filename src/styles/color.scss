@@ -1,0 +1,228 @@
+.color_main{
+    width:100%;
+    display: flex;
+    overflow:hidden;
+    
+  
+  
+    .colorBox {
+      padding: 3px 0;
+      display: flex;
+      margin: auto;
+      margin-left:5px;
+      color:#707274;
+      user-select: none;
+      overflow-x: auto;
+      overflow-y: hidden;
+  
+      li {
+        width: 30px;
+        height: 50px;
+         list-style: none;
+          white-space: nowrap;
+          flex-shrink: 0;
+          position: relative;
+          cursor: pointer;
+  
+          // border:1px solid #CACDCF;
+          // border-right:none;
+          
+          // &:last-child {
+          //   border-right:1px solid #CACDCF;
+          // }
+          .color_item {
+            width: 30px;
+            height: 30px;
+            display:block;
+            list-style: none;
+            cursor: pointer;
+  
+          }
+  
+          .color_text {
+            width:30px;
+            font-size:12px;
+            position: absolute;
+            left:-7px;
+            top:30px;
+            white-space:nowrap;
+            text-overflow:ellipsis;
+            -o-text-overflow:ellipsis;
+            overflow:hidden;
+        }
+        }
+  
+    }
+
+
+  }
+  
+  // /* 设置滚动条的样式 */
+  .colorBox::-webkit-scrollbar {
+    width:10px;
+    height: 5px;
+    }
+    /* 滚动槽 */
+    .colorBox::-webkit-scrollbar-track {
+    -webkit-box-shadow:inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius:10px;
+    }
+    /* 滚动条滑块 */
+    .colorBox::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+    box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+    background   : rgba(0,0,0,0.5);
+    }
+    .colorBox::-webkit-scrollbar-thumb:window-inactive {
+    /*滚动条里面轨道*/
+    box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background   : #ededed;
+    }  
+      
+    .colorRange {
+      div {
+        &:nth-child(2) {
+          text-align:left;
+          line-height:26px;
+        }
+      }
+    }
+    
+    .colorItem {
+      width:26px;
+      height:26px;
+      float: right;
+    }
+  
+    // 添加弹窗
+    .btnBox {
+        width:240px;
+        margin:5px auto;
+        display: flex;
+        justify-content: space-around;
+        
+
+        .el-button {
+          height:30px;
+          line-height:30px;
+          &:first-child {
+            background:#981a00;
+            border-color:#981a00;
+          }
+
+
+          &:last-child {
+            background:white;
+            color:#981a00;
+            border-color:#981a00;
+          }
+
+          padding-top:0;
+          padding-bottom:0;
+  
+        }
+       
+    }
+    .insertBox {
+      width:100%;
+      // height:88px;
+      padding:20px;
+      margin:20px 0;
+      border:1px solid #CACDCF;
+  
+      .reduce {
+        color:#707274;
+        font-size:30px;
+        line-height:46px;
+        cursor: pointer;
+      }
+      .el-row {
+        display: flex;
+        align-items: center;
+        .color_main {
+          width:786px;
+          // overflow-x: scroll;
+          overflow-y: hidden;
+  
+          .color_text {
+            top:35px;
+        }
+        }
+      }
+    }
+  
+    .add {
+      line-height:38px;
+      font-size:30px;
+      float:left;
+      color:#707274;
+      margin-left:10px;
+      cursor: pointer;
+    }
+  
+    .border_active {
+      border:1px solid #737373;
+  
+    }
+  
+    .color_picker {
+      opacity:0;
+      width:30px;
+      height:30px;
+      top:-30px;
+      .el-color-picker__trigger {
+        width:30px;
+        height:30px;
+      }
+    }
+  
+  // 输入框颜色选择器
+  .color_value {
+    opacity:0;
+    width:130px;
+    height:36px;
+    padding:0 25px;
+    position: absolute;
+      top:2px;
+      left:0;
+    .el-color-picker__trigger {
+      width:130px;
+      height:36px;
+      position: absolute;
+      left:0;
+      
+    }
+  } 
+  
+    .color_show {
+      position:relative;
+      .el-input__inner{
+        padding:0 25px;
+      }
+  
+      .preview_color {
+        width:16px;
+        height:16px;
+        position: absolute;
+        left:115px;
+        top:12px;
+      }
+    }
+  
+    .delete_color {
+      width:30px;
+      height:30px;
+    }
+
+    .option_img {
+      width:30px;
+      height: 30px; 
+      float: right;
+    }
+
+    .table_img {
+      width:23px;
+      height: 23px; 
+      float: right;
+    }
