@@ -22,7 +22,6 @@
     <team-manager></team-manager>
     <!-- 任务管理 -->
     <task-manager></task-manager>
-<<<<<<< HEAD
     <!-- 系统配置 -->
     <!-- 色斑图配置 -->
     <legend-manager></legend-manager>
@@ -36,10 +35,8 @@
     <param-manager></param-manager>
     <!-- 数据项配置 -->
     <dataitem-manager></dataitem-manager>
-=======
     <!-- 航线管理 -->
     <route-manager></route-manager>
->>>>>>> 45acf3a1774da92dcae27a9f2cc5c4651a2c7181
   </div>
 </template>
 
@@ -81,16 +78,13 @@ export default {
     ShipManager: ShipManager,
     TeamManager: TeamManager,
     TaskManager: TaskManager,
-<<<<<<< HEAD
     LegendManager:LegendManager,
     LineManager:LineManager,
     AreaManager:AreaManager,
     SeaManager:SeaManager,
     ParamManager:ParamManager,
-    DataitemManager:DataitemManager
-=======
+    DataitemManager:DataitemManager,
     routeManager: routeManager
->>>>>>> 45acf3a1774da92dcae27a9f2cc5c4651a2c7181
   },
   data() {
     return {

@@ -58,17 +58,14 @@ const mutations = {
   setTaskManagerOptions(state,val) {
     state.TaskManagerOptions = val
   },
-<<<<<<< HEAD
   setSystem(state,obj) {
     state.systemList.forEach((item)=>{
       item.flag = false
     })
-    state.systemList[obj.index].flag = obj.val
-=======
+    state.systemList[obj.index].flag = obj.val},
   setRouteDialogOptions(state,val) {
     state.routeDialogOptions = val
     console.log(state.routeDialogOptions,`state.routeDialog`)
->>>>>>> 45acf3a1774da92dcae27a9f2cc5c4651a2c7181
   }
 }
 
