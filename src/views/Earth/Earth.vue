@@ -56,7 +56,7 @@ export default {
       // 底图切换
       window.map = L.map("mapContainer", {
         attributionControl: false,
-        // crs: L.CRS.EPSG4326,
+        // crs: L.CRS.EPSG3857,
         minZoom: 2,
         maxZoom: 13,
         worldCopyJump: true,
