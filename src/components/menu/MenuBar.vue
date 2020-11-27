@@ -28,28 +28,118 @@
     <div class="menu_list" v-show="searchFlag">
       <ul class="list_ul">
         <li v-for="(item, index) in menuList" :key="index" class="list_ul_li">
-          <img :src="item.icon" />
-          <div class="title">
-            <span
-              @click.stop="openTask(index)"
-              :class="{ title_bg: item.flag }"
-              >{{ item.name }}</span
-            >
+          <div class="title_box">
+            <img :src="item.icon" />
+            <div class="title">
+              <span
+                @click.stop="openTask(index)"
+                :class="{ title_bg: item.flag }"
+                >{{ item.name }}</span
+              >
+              <img
+                src="@/assets/images/menu/add.png"
+                v-if="index == 2"
+                @click.stop="addTask(index)"
+              />
+            </div>
             <img
-              src="@/assets/images/menu/add.png"
+              :src="downIcon"
               v-if="index == 2"
-              @click.stop="addTask(index)"
+              class="down"
+              @click.stop="openTask(index)"
+            />
+            <img
+              :src="sysIcon"
+              v-if="index == 3"
+              class="down"
+              @click.stop="openTask(index)"
             />
           </div>
-          <img
-            :src="downIcon"
-            v-if="index == 2"
-            class="down"
-            @click.stop="openTask(index)"
-          />
+
+
+          <!-- 任务管理 -->
+          <ul class="list_task_ul" v-show="item.flag && menuListFlag">
+            <li v-for="(item, index) in taskList" :key="index">
+              <div class="task_list">
+                <div class="task_name" @click="switchTask(item, index)">
+                  <div class="task_dot" :class="{ active: item.checked }"></div>
+                  <span>{{ item.name }}</span>
+                </div>
+                <div class="task_operation">
+                  <el-button
+                    icon="el-icon-edit-outline"
+                    class="table_column_icon green"
+                    type="text"
+                    @click="editTaskItem(item)"
+                  ></el-button>
+                  <el-button
+                    icon="el-icon-delete"
+                    class="table_column_icon red"
+                    type="text"
+                    @click="deleteTaskItem(item)"
+                  ></el-button>
+                  <el-button
+                    icon="el-icon-plus"
+                    class="table_column_icon blueDeep"
+                    type="text"
+                    @click="addTaskItem(item, index)"
+                  ></el-button>
+                  <el-button
+                    icon="el-icon-s-operation"
+                    class="table_column_icon purple"
+                    type="text"
+                  ></el-button>
+                </div>
+              </div>
+              <div class="task_content_wrapper" v-if="item.checked">
+                <div
+                  class="task_content"
+                  v-for="(itemRoute, indexRoute) in routeList"
+                  :key="`route${indexRoute}`"
+                >
+                  <div class="task_content_desc">
+                    <div class="task_content_name">{{ itemRoute.name }}</div>
+                    <img
+                      :src="
+                        itemRoute.checked
+                          ? downContentUpIcon
+                          : downContentDownIcon
+                      "
+                      class="down"
+                      @click="routeDetail(itemRoute, indexRoute)"
+                    />
+                  </div>
+                  <div class="task_content_route" v-if="itemRoute.checked">
+                    <div>评估时间:{{ itemRoute.descList.time }}</div>
+                    <div>评估02:{{ itemRoute.descList.assessment1 }}</div>
+                    <div>评估03:{{ itemRoute.descList.assessment1 }}</div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+
+          <!-- 系统设置 -->
+          <ul class="list_task_ul" v-show="item.flag && systemFlag">
+            <li v-for="(item, index) in systemList" :key="index">
+              <div class="task_list">
+                <div class="task_name" @click="openSystem(index)">
+                  <span>{{ item.name }}</span>
+                </div>
+                <div class="task_operation">
+                  <el-button
+                    icon="el-icon-s-operation"
+                    class="table_column_icon purple"
+                    type="text"
+                    @click="openSystem(index)"
+                  ></el-button>
+                </div>
+              </div>
+            </li>
+          </ul>
         </li>
 
-        <ul class="list_task_ul" v-show="menuListFlag">
+        <!-- <ul class="list_task_ul" v-show="menuListFlag">
           <li v-for="(item, index) in taskList" :key="index">
             <div class="task_list">
               <div class="task_name" @click="switchTask(item, index)">
@@ -73,7 +163,7 @@
                   icon="el-icon-plus"
                   class="table_column_icon blueDeep"
                   type="text"
-                  @click="addTaskItem(item,index)"
+                  @click="addTaskItem(item, index)"
                 ></el-button>
                 <el-button
                   icon="el-icon-s-operation"
@@ -91,7 +181,11 @@
                 <div class="task_content_desc">
                   <div class="task_content_name">{{ itemRoute.name }}</div>
                   <img
-                    :src="itemRoute.checked ? downContentUpIcon : downContentDownIcon"
+                    :src="
+                      itemRoute.checked
+                        ? downContentUpIcon
+                        : downContentDownIcon
+                    "
                     class="down"
                     @click="routeDetail(itemRoute, indexRoute)"
                   />
@@ -104,7 +198,26 @@
               </div>
             </div>
           </li>
-        </ul>
+        </ul> -->
+
+        <!-- 系统配置 -->
+        <!-- <ul class="list_task_ul" v-show="systemFlag">
+          <li v-for="(item, index) in systemList" :key="index">
+            <div class="task_list">
+              <div class="task_name" @click="openSystem(index)">
+                <span>{{ item.name }}</span>
+              </div>
+              <div class="task_operation">
+                <el-button
+                  icon="el-icon-s-operation"
+                  class="table_column_icon purple"
+                  type="text"
+                  @click="openSystem(index)"
+                ></el-button>
+              </div>
+            </div>
+          </li>
+        </ul> -->
       </ul>
     </div>
   </div>
@@ -165,6 +278,10 @@ export default {
       downContentUpIcon: require("@/assets/images/menu/up.png"),
       downIcon: require("@/assets/images/menu/down.png"),
       nowMenuList: [],
+
+      // 系统配置展开
+      systemFlag: false,
+      sysIcon: require("@/assets/images/menu/down.png"),
       taskList: [
         {
           name: "1",
@@ -176,8 +293,9 @@ export default {
   computed: {
     ...mapState({
       menuList: (state) => state.menuBar.menuList,
+      systemList: (state) => state.menuBar.systemList,
       TaskManagerOptions: (state) => state.menuBar.TaskManagerOptions,
-      routeDialogOptions: s => s.menuBar.routeDialogOptions
+      routeDialogOptions: (s) => s.menuBar.routeDialogOptions,
     }),
   },
   watch: {
@@ -200,9 +318,20 @@ export default {
     // 任务管理
     menuListFlag(newval, oldval) {
       if (newval) {
+        this.sysIcon = require("@/assets/images/menu/down.png");
         this.downIcon = require("@/assets/images/menu/up.png");
       } else {
         this.downIcon = require("@/assets/images/menu/down.png");
+        // this.menuList[2].flag = false
+      }
+    },
+    // 系统配置
+    systemFlag(newval, oldval) {
+      if (newval) {
+        this.downIcon = require("@/assets/images/menu/down.png");
+        this.sysIcon = require("@/assets/images/menu/up.png");
+      } else {
+        this.sysIcon = require("@/assets/images/menu/down.png");
         // this.menuList[2].flag = false
       }
     },
@@ -212,8 +341,8 @@ export default {
     },
     // 航线变化
     routeDialogOptions() {
-      console.log('更新航线信息')
-    }
+      console.log("更新航线信息");
+    },
   },
   mounted() {
     this.loadTaskList();
@@ -222,19 +351,19 @@ export default {
     ...mapMutations({
       setMenuList: "menuBar/setMenuList",
       setTaskManagerOptions: "menuBar/setTaskManagerOptions",
-      setRouteDialogOptions: "menuBar/setRouteDialogOptions"
+      setSystem: "menuBar/setSystem",
+      setRouteDialogOptions: "menuBar/setRouteDialogOptions",
     }),
     // 添加航线
-    addTaskItem(item,index) {
-      console.log(item,index,`item`)
-      this.setRouteDialogOptions([1, item])
+    addTaskItem(item, index) {
+      console.log(item, index, `item`);
+      this.setRouteDialogOptions([1, item]);
     },
     routeDetail(item, index) {
       if (item.checked) {
         this.routeList[index].checked = true;
       }
       if (item.checked) {
-        
         this.routeList[index].checked = false;
         return;
       } else {
@@ -341,6 +470,9 @@ export default {
         });
         this.setMenuList(this.menuList);
         this.downIcon = require("@/assets/images/menu/down.png");
+        this.sysIcon = require("@/assets/images/menu/down.png");
+        this.menuListFlag = false;
+        this.systemFlag = false;
       }
     },
     //------------end搜索框--------------
@@ -356,16 +488,27 @@ export default {
       this.menuList.forEach((item) => {
         item.flag = false;
       });
+      this.menuListFlag = false;
+      this.systemFlag = false;
+
       // 任务管理需要可以多次切换
       if (index == 2) {
         this.menuList[index].flag = !this.menuListFlag;
         this.menuListFlag = !this.menuListFlag;
+      } else if (index == 3) {
+        this.menuList[index].flag = !this.menuListFlag;
+        this.systemFlag = !this.menuListFlag;
       } else {
         this.menuList[index].flag = true;
       }
       this.setMenuList(this.menuList);
     },
     //------------end任务管理--------------
+
+    // 系统配置
+    openSystem(index) {
+      this.setSystem({ index: index, val: true });
+    },
   },
 };
 </script>

@@ -26,7 +26,7 @@ import db from '@/utils/localstorage'
 import echarts from 'echarts';
 if (process.env.NODE_ENV === 'development') {
   window.globalConfig = {
-    baseURL: 'http://192.168.1.122:8301/warship'
+    baseURL: 'http://192.168.1.2:8301/warship'
   }
 }
 
