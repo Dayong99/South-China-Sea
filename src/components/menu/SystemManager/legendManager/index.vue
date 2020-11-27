@@ -301,7 +301,7 @@ export default {
     },
     closeManager() {
       this.systemManagerShow = false;
-      this.menuList[3].flag = false;
+      // this.menuList[3].flag = false;
       this.setMenuList(this.menuList);
     },
   },

@@ -1,12 +1,7 @@
 <template>
-  <div
-    id="ship_manager"
-    class="ship_manager"
-    v-show="systemManagerShow"
-    style="width: auto"
-  >
+  <div id="ship_manager" class="ship_manager" v-show="systemManagerShow" style="width:auto;height:auto;">
     <div class="manager_title">
-      <span>数据项配置</span>
+      <span>数据源配置—广东省网</span>
       <img
         src="@/assets/images/legendbar/close.png"
         @click.stop="closeManager"
@@ -14,18 +9,29 @@
     </div>
     <div class="manager_operation">
       <el-input
-        placeholder="请输入关键词"
+        placeholder="任务名称"
         prefix-icon="el-icon-search"
-        v-model="queryParams.parameterName"
+        v-model="queryParams.name"
         class="operation_input"
         clearable
         @clear="search"
       >
       </el-input>
+      <el-date-picker
+          v-model="time"
+          format="yyyy-MM-dd HH:mm:ss"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          type="datetimerange"
+          range-separator="-"
+          start-placeholder="开始"
+          end-placeholder="结束"
+          class="operation_input"
+>
+         </el-date-picker>
       <el-button class="operation_search" @click="search">搜索</el-button>
       <el-button class="operation_clear" @click="resetSearch">重置</el-button>
       <el-button icon="el-icon-plus" class="operation_add" @click="add"
-        >添加</el-button
+        >资料导入</el-button
       >
     </div>
     <div class="manager_table">
@@ -36,80 +42,58 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="名称"
+          label="数据源名称"
           align="center"
-          min-width="150px"
+          min-width="100px"
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.parameterName }}</span>
+            <span>{{ scope.row.numericalName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="维数" align="center" min-width="100px">
+        <el-table-column label="起报时间" align="center" min-width="160px">
           <template slot-scope="scope">
-            <span>{{ scope.row.dimensionNum }}</span>
+            <span>{{ scope.row.startTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="维度参数" align="center" min-width="200px" :show-overflow-tooltip="true">
+         <el-table-column label="预报日期" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.dimensionParameter }}</span>
+            <span>{{ scope.row.startDay }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="维度单词"
-          align="center"
-          min-width="120px"
-          :show-overflow-tooltip="true"
-        >
+         <el-table-column label="预报时间" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.dimensionWord }}</span>
+            <span>{{ scope.row.startHours }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="网络大小" align="center" min-width="100px">
+         <el-table-column label="时效" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.gridSize }}</span>
+            <span>{{ scope.row.fcst }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="海洋数据" align="center" min-width="100px">
+         <el-table-column label="修改时间" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.isWave }}</span>
+            <span>{{ scope.row.modifyTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="关键词"
-          align="center"
-          min-width="200px"
-          :show-overflow-tooltip="true"
-        >
+         <el-table-column label="修改次数" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.keyword }}</span>
+            <span>{{ scope.row.modifyTimes }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="操作"
-          width="140px"
-          header-align="center"
-          align="center"
-        >
-          <template slot-scope="{ row }">
-            <el-button
-              icon="el-icon-warning-outline"
-              class="table_column_icon blue"
-              type="text"
-              @click="information(row)"
-            ></el-button>
-            <el-button
-              icon="el-icon-edit-outline"
-              class="table_column_icon green"
-              type="text"
-              @click="editItem(row)"
-            ></el-button>
-            <el-button
-              icon="el-icon-delete"
-              class="table_column_icon red"
-              type="text"
-              @click="deleteItem(row)"
-            ></el-button>
+         <el-table-column label="是否可用" align="center" min-width="100px">
+          <template slot-scope="scope">
+            <span>{{ scope.row.isAvailable }}</span>
+          </template>
+        </el-table-column>
+         <el-table-column label="补充" align="center" min-width="100px">
+          <template slot-scope="scope">
+            <span>{{ scope.row.isSupplement }}</span>
+          </template>
+        </el-table-column>
+         <el-table-column label="数据来源" align="center" min-width="100px" :show-overflow-tooltip="true">
+          <template slot-scope="scope">
+            <span>{{ scope.row.dataSource }}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -131,13 +115,6 @@
       :title="dialog.title"
       @close="closeDialogPage"
     />
-
-    <info
-      ref="info"
-      :dialog-visible="infoVisible"
-      title="数据项详情"
-      @close="closeInfo"
-    />
   </div>
 </template>
 
@@ -145,13 +122,10 @@
 import Pagination from "@/components/Pagination";
 import { mapState, mapMutations } from "vuex";
 import edit from "./edit.vue";
-import info from "./info.vue";
-
 export default {
   components: {
     edit,
-    info,
-    Pagination,
+    Pagination
   },
   data() {
     return {
@@ -161,7 +135,6 @@ export default {
         isVisible: false,
         title: "",
       },
-      
       // 详细面板显示隐藏
       systemManagerShow: false,
       managerValue: "",
@@ -172,20 +145,23 @@ export default {
         num: 1,
       },
       queryParams: {
-        parameterName: null,
+        name: null,
+        STime:'',
+        ETime:''
       },
-            infoVisible:false
-
+      time:[]
     };
   },
-  mounted() {},
+  mounted() {
+  },
   computed: {
     ...mapState({
       menuList: (state) => state.menuBar.menuList,
-      systemList: (state) => state.menuBar.systemList,
+            systemList: (state) => state.menuBar.systemList,
+
     }),
   },
-  watch: {
+   watch: {
     // 监听menuList，控制详细面板的显隐
     menuList: {
       handler(newval, oldval) {
@@ -194,17 +170,17 @@ export default {
         });
         if (i !== 3) {
           this.systemManagerShow = false;
-        }
+        } 
       },
       deep: true,
     },
     systemList: {
       handler(newval, oldval) {
-        if (newval[5].flag) {
-          this.systemManagerShow = true;
-        } else {
-          this.systemManagerShow = false;
-        }
+        if (newval[6].flag) {
+        this.systemManagerShow = true;
+      } else {
+        this.systemManagerShow = false;
+      }
       },
       deep: true,
     },
@@ -218,40 +194,27 @@ export default {
     ...mapMutations({
       setMenuList: "menuBar/setMenuList",
     }),
-    editItem(row) {
-      this.$refs.edit.setData(row);
-      this.dialog.isVisible = true;
-      this.dialog.title = "修改数据项";
-    },
 
     // 搜索重置
     resetSearch() {
       this.queryParams = {
-        parameterName: null,
+         name: null,
+        STime:'',
+        ETime:''
       };
       this.search();
     },
-    // 删除
-    deleteItem(row) {
-      this.$delete(`/api/parameters`, {
-        id: row.id,
-      })
-        .then(() => {
-          this.$message({
-            message: "数据项删除成功",
-            type: "success",
-          });
-        })
-        .then(() => {
-          this.fetch();
-        });
-    },
     add() {
       this.dialog.isVisible = true;
-      this.dialog.title = "添加数据项";
+      this.dialog.title = "添加数据源";
     },
     // 搜索
     search() {
+      if(this.time.length>0){
+      this.queryParams.STime=this.time[0]
+      this.queryParams.ETime=this.time[1]
+      }
+      this.time = [];
       this.fetch({
         ...this.queryParams,
       });
@@ -260,7 +223,7 @@ export default {
     fetch(params = {}) {
       params.pageSize = this.pagination.size;
       params.pageNum = this.pagination.num;
-      this.$get("/api/parameters/page", {
+      this.$get("/api/numerical-forecast", {
         ...params,
       }).then((res) => {
         console.log(res, "res");
@@ -279,14 +242,6 @@ export default {
       this.systemManagerShow = false;
       this.menuList[1].flag = false;
       this.setMenuList(this.menuList);
-    },
-    // 海区详情
-    closeInfo(){
-      this.infoVisible = false;
-    },
-    information(row) {
-      this.infoVisible = true;
-      this.$refs.info.setData(row);
     },
   },
 };

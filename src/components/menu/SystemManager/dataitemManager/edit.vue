@@ -15,7 +15,7 @@
       :rules="rules"
       label-position="right"
       label-width="100px"
-      style="line-height: 100%"
+      style="line-height: 100%; height: 600px"
     >
       <el-row>
         <el-col :span="18">
@@ -75,6 +75,7 @@
           </div>
         </el-col>
       </el-row>
+
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
@@ -93,6 +94,27 @@
             <el-form-item label="海洋数据" prop="isWave">
               <el-select
                 v-model="formData.isWave"
+                placeholder="请选择"
+                clearable
+              >
+                <el-option
+                  v-for="(item, index) in waveOption"
+                  :key="index"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="18">
+          <div class="grid-content bg-purple-dark">
+            <el-form-item label="评估参数" prop="isWave">
+              <el-select
+                v-model="formData.isEvaluate"
                 placeholder="请选择"
                 clearable
               >
@@ -150,19 +172,6 @@
           </div>
         </el-col>
       </el-row>
-      <!-- 名称 -->
-      <el-row>
-        <el-col :span="18">
-          <div class="grid-content bg-purple-dark">
-            <el-form-item label="数据项名称" prop="parameterName">
-              <el-input
-                placeholder="请输入数据项名称"
-                v-model="formData.parameterName"
-              ></el-input>
-            </el-form-item>
-          </div>
-        </el-col>
-      </el-row>
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
@@ -175,8 +184,8 @@
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
-            <el-form-item label="顺序" prop="NIndex">
-              <el-input v-model="formData.NIndex"></el-input>
+            <el-form-item label="顺序" prop="nindex">
+              <el-input v-model="formData.nindex"></el-input>
             </el-form-item>
           </div>
         </el-col>
@@ -202,6 +211,27 @@
                 <el-option
                   v-for="(item, index) in legendOption"
                   :key="index"
+                  :label="item.legendName"
+                  :value="item.id"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="18">
+          <div class="grid-content bg-purple-dark">
+            <el-form-item label="绘图类型" prop="drawType">
+              <el-select
+                v-model="formData.drawType"
+                placeholder="请选择"
+                clearable
+              >
+                <el-option
+                  v-for="(item, index) in drawOption"
+                  :key="index"
                   :label="item.label"
                   :value="item.value"
                 >
@@ -214,25 +244,8 @@
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
-            <el-form-item label="备注" prop="remark">
-              <el-input
-                type="textarea"
-                :rows="2"
-                v-model="formData.remark"
-              ></el-input>
-            </el-form-item>
-          </div>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="18">
-          <div class="grid-content bg-purple-dark">
-            <el-form-item label="数据源" prop="sourceType">
-              <el-select
-                v-model="formData.sourceType"
-                placeholder="请选择"
-                clearable
-              >
+            <el-form-item label="数据源" prop="type">
+              <el-select v-model="formData.type" placeholder="请选择" clearable>
                 <el-option
                   v-for="(item, index) in sourceOption"
                   :key="index"
@@ -275,6 +288,19 @@
           </div>
         </el-col>
       </el-row>
+      <el-row>
+        <el-col :span="18">
+          <div class="grid-content bg-purple-dark">
+            <el-form-item label="备注" prop="remark">
+              <el-input
+                type="textarea"
+                :rows="2"
+                v-model="formData.remark"
+              ></el-input>
+            </el-form-item>
+          </div>
+        </el-col>
+      </el-row>
     </el-form>
     <div class="save_wrapper">
       <button class="save" type="button" @click="submit()">保存</button>
@@ -310,27 +336,7 @@ export default {
     return {
       data: {},
       rules: {},
-      formData: {
-        dataGroup: null,
-        dimensionNum: null,
-        dimensionParameter: "",
-        dimensionWord: "",
-        gridSize: null,
-        iconImage: "",
-        isWave: null,
-        keyword: "",
-        latRange: "",
-        legendId: "",
-        lonRange: "",
-        NIndex: null,
-        parameterMark: "",
-        parameterName: "",
-        parameterStep: "",
-        remark: "",
-        sourceType: "",
-        type: null,
-        units: "",
-      },
+      formData: this.initForm(),
       rules: {
         name: {
           required: true,
@@ -373,6 +379,20 @@ export default {
           label: "GFS",
         },
       ],
+      drawOption: [
+        {
+          label: "点",
+          value: "point",
+        },
+        {
+          label: "线",
+          value: "line",
+        },
+        {
+          label: "图层",
+          value: "layer",
+        },
+      ],
     };
   },
   props: {
@@ -385,13 +405,42 @@ export default {
       default: "",
     },
   },
-  mounted() {
-    this.getLegend();
+  watch: {
+    dialogVisible(val) {
+      if (val) {
+        this.getLegend();
+      }
+    },
   },
+  mounted() {},
   methods: {
+    initForm() {
+      return {
+        dataGroup: null,
+        dimensionNum: null,
+        dimensionParameter: "",
+        dimensionWord: "",
+        drawType: "",
+        gridSize: null,
+        iconImage: "",
+        isWave: null,
+        keyword: "",
+        latRange: "",
+        legendId: "",
+        lonRange: "",
+        nindex: null,
+        parameterMark: "",
+        parameterName: "",
+        parameterStep: "",
+        remark: "",
+        sourceType: "",
+        type: null,
+        units: "",
+      };
+    },
     getLegend() {
-      this.$get("gis/api/legend-config").then((res) => {
-        this.legendOption = res.data.data.rows;
+      this.$get("/api/legend-config/all").then((res) => {
+        this.legendOption = res.data.data;
       });
     },
     setData(data) {
@@ -407,18 +456,15 @@ export default {
     reset() {
       this.$refs.form.clearValidate();
       this.$refs.form.resetFields();
-      this.formData = {
-        name: "",
-        minLon: "",
-        minLat: "",
-        maxLon: "",
-        maxLat: "",
-      };
+      this.formData = this.initForm();
     },
     // 添加或修改
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
+          if (this.formData.legendId == "") {
+            this.source.legendId = 0;
+          }
           if (this.title === "添加数据项") {
             this.$post("/api/parameters", this.formData)
               .then(() => {
@@ -476,6 +522,11 @@ export default {
 };
 </script>
 <style lang='scss'>
+.el-form {
+  .el-select {
+    width: 260px;
+  }
+}
 .el-dialog {
   border: 8px;
 }

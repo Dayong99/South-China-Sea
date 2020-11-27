@@ -41,6 +41,18 @@ const state = {
       name:'数据项配置',
       flag:false
     },
+    {
+      name:'广东省网',
+      flag:false
+    },
+    {
+      name:'欧格海浪数值预报',
+      flag:false
+    },
+    {
+      name:'hj数值预报数据',
+      flag:false
+    },
   ],
   TaskManagerOptions: 0, // 0 不显示 1 添加 2 修改
   routeDialogOptions: 0 // 0不显示 1添加航线 2 修改航线

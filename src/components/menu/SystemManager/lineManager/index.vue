@@ -208,6 +208,9 @@ export default {
       queryParams: {
         contourName: null,
       },
+
+      solidImg:require('../../../../assets/images/menu/solid.png'),
+      dashImg:require('../../../../assets/images/menu/dashed.png'),
     };
   },
   mounted() {},
@@ -253,9 +256,9 @@ export default {
     getTypeImg(type) {
       switch (type) {
         case "实线":
-          return "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg";
+          return this.solidImg;
         case "虚线":
-          return "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg";
+          return this.dashImg;
       }
     },
     editItem(row) {
@@ -320,7 +323,7 @@ export default {
     },
     closeManager() {
       this.systemManagerShow = false;
-      this.menuList[3].flag = false;
+      // this.menuList[3].flag = false;
       this.setMenuList(this.menuList);
     },
   },

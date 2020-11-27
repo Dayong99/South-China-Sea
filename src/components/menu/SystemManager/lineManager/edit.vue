@@ -28,6 +28,7 @@
               v-model="color.lineStyle"
               placeholder="请选择"
               clearable
+              style="width:auto;"
             >
               <el-option
                 v-for="(item, index) in lineOption"
@@ -37,7 +38,7 @@
               >
                 <span>{{ item.label }}</span>
                 <img
-                  src="https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg"
+                  :src="getSrc(item.value)"
                   class="option_img"
                 />
               </el-option>
@@ -251,6 +252,8 @@ export default {
           value: "虚线",
         },
       ],
+      solidImg:require('../../../../assets/images/menu/solid.png'),
+      dashImg:require('../../../../assets/images/menu/dashed.png'),
       colorShow: false,
       data: {},
       isActive: [],
@@ -338,6 +341,14 @@ export default {
     },
   },
   methods: {
+    getSrc(type){
+      switch(type){
+        case '实线':
+          return this.solidImg;
+        case '虚线':
+          return this.dashImg;
+      }
+    },
     setData(data) {
       this.color = {
         ...this.color,

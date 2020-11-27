@@ -12,7 +12,6 @@
     <el-form
       ref="form"
       :model="formData"
-      :rules="rules"
       label-position="right"
       label-width="100px"
       style="line-height: 100%"
@@ -23,7 +22,7 @@
           <div class="grid-content bg-purple-dark">
             <el-form-item label="数据项名称：" prop="parameterName">
               <div>
-                {{formData.parameterName}}
+                {{ formData.parameterName }}
               </div>
             </el-form-item>
           </div>
@@ -35,7 +34,7 @@
           <div class="grid-content bg-purple-dark">
             <el-form-item label="维数：" prop="dimensionNum">
               <div>
-                {{formData.dimensionNum}}
+                {{ formData.dimensionNum }}
               </div>
             </el-form-item>
           </div>
@@ -46,7 +45,7 @@
           <div class="grid-content bg-purple-dark">
             <el-form-item label="维度参数：" prop="dimensionParameter">
               <div>
-                {{formData.dimensionParameter}}
+                {{ formData.dimensionParameter }}
               </div>
             </el-form-item>
           </div>
@@ -57,7 +56,7 @@
           <div class="grid-content bg-purple-dark">
             <el-form-item label="维度单词：" prop="dimensionWord">
               <div>
-                {{formData.dimensionWord}}
+                {{ formData.dimensionWord }}
               </div>
             </el-form-item>
           </div>
@@ -68,7 +67,7 @@
           <div class="grid-content bg-purple-dark">
             <el-form-item label="网格大小：" prop="gridSize">
               <div>
-                {{formData.gridSize}}
+                {{ formData.gridSize }}
               </div>
             </el-form-item>
           </div>
@@ -79,7 +78,18 @@
           <div class="grid-content bg-purple-dark">
             <el-form-item label="海洋数据：" prop="isWave">
               <div>
-                {{formData.isWave}}
+                {{ formData.isWave == 1 ? "是" : "否" }}
+              </div>
+            </el-form-item>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="18">
+          <div class="grid-content bg-purple-dark">
+            <el-form-item label="评估参数：" prop="isWave">
+              <div>
+                {{ formData.isEvaluate == 1 ? "是" : "否" }}
               </div>
             </el-form-item>
           </div>
@@ -90,7 +100,7 @@
           <div class="grid-content bg-purple-dark">
             <el-form-item label="关键词：" prop="keyword">
               <div>
-                {{formData.keyword}}
+                {{ formData.keyword }}
               </div>
             </el-form-item>
           </div>
@@ -101,7 +111,7 @@
           <div class="grid-content bg-purple-dark">
             <el-form-item label="纬度范围：" prop="latRange">
               <div>
-                {{formData.latRange}}
+                {{ formData.latRange }}
               </div>
             </el-form-item>
           </div>
@@ -112,7 +122,7 @@
           <div class="grid-content bg-purple-dark">
             <el-form-item label="经度范围：" prop="lonRange">
               <div>
-                {{formData.lonRange}}
+                {{ formData.lonRange }}
               </div>
             </el-form-item>
           </div>
@@ -123,7 +133,7 @@
           <div class="grid-content bg-purple-dark">
             <el-form-item label="标识：" prop="parameterMark">
               <div>
-                {{formData.parameterMark}}
+                {{ formData.parameterMark }}
               </div>
             </el-form-item>
           </div>
@@ -135,7 +145,7 @@
           <div class="grid-content bg-purple-dark">
             <el-form-item label="数据项名称：" prop="parameterName">
               <div>
-                {{formData.parameterName}}
+                {{ formData.parameterName }}
               </div>
             </el-form-item>
           </div>
@@ -146,7 +156,7 @@
           <div class="grid-content bg-purple-dark">
             <el-form-item label="高度选择：" prop="parameterStep">
               <div>
-                {{formData.parameterStep}}
+                {{ formData.parameterStep }}
               </div>
             </el-form-item>
           </div>
@@ -155,9 +165,9 @@
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
-            <el-form-item label="顺序：" prop="NIndex">
+            <el-form-item label="顺序：" prop="nindex">
               <div>
-                {{formData.NIndex}}
+                {{ formData.nindex }}
               </div>
             </el-form-item>
           </div>
@@ -168,7 +178,7 @@
           <div class="grid-content bg-purple-dark">
             <el-form-item label="文件类型：" prop="sourceType">
               <div>
-                {{formData.sourceType}}
+                {{ formData.sourceType }}
               </div>
             </el-form-item>
           </div>
@@ -178,19 +188,18 @@
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
             <el-form-item label="图例：" prop="legendId">
-              <div>
-                {{formData.legendId}}
-              </div>
+              <div v-html="showLegend(formData.legendId)"></div>
             </el-form-item>
           </div>
         </el-col>
       </el-row>
+      
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
             <el-form-item label="备注：" prop="remark">
               <div>
-                {{formData.remark}}
+                {{ formData.remark }}
               </div>
             </el-form-item>
           </div>
@@ -201,9 +210,8 @@
           <div class="grid-content bg-purple-dark">
             <el-form-item label="数据源：" prop="type">
               <div>
-                {{formData.type}}
+                {{ formData.type == 0 ? "ECMWF" : "GFS" }}
               </div>
-            
             </el-form-item>
           </div>
         </el-col>
@@ -213,7 +221,7 @@
           <div class="grid-content bg-purple-dark">
             <el-form-item label="单位：" prop="units">
               <div>
-                {{formData.units}}
+                {{ formData.units }}
               </div>
             </el-form-item>
           </div>
@@ -224,8 +232,17 @@
           <div class="grid-content bg-purple-dark">
             <el-form-item label="色斑图：" prop="dataGroup">
               <div>
-                {{formData.dataGroup}}
+                {{ formData.dataGroup == 1 ? "是" : "否" }}
               </div>
+            </el-form-item>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="18">
+          <div class="grid-content bg-purple-dark">
+            <el-form-item label="绘图类型：" prop="drawType">
+              <div v-html="showType(formData.drawType)"></div>
             </el-form-item>
           </div>
         </el-col>
@@ -241,28 +258,10 @@ export default {
     return {
       data: {},
       rules: {},
-      formData: {
-        dataGroup: null,
-        dimensionNum: null,
-        dimensionParameter: "",
-        dimensionWord: "",
-        gridSize: null,
-        iconImage: "",
-        isWave: null,
-        keyword: "",
-        latRange: "",
-        legendId: "",
-        lonRange: "",
-        NIndex: null,
-        parameterMark: "",
-        parameterName: "",
-        parameterStep: "",
-        remark: "",
-        sourceType: "",
-        type: null,
-        units: "",
-      },
-  
+      formData: this.initForm(),
+      legendList: [],
+      colorValues: [],
+      legendValues: [],
     };
   },
   props: {
@@ -275,7 +274,71 @@ export default {
       default: "",
     },
   },
+  watch: {
+    dialogVisible(val) {
+      if (val) {
+        this.getLegend();
+      } else {
+        this.reset();
+      }
+    },
+  },
+  mounted() {
+    this.getLegend();
+  },
   methods: {
+    initForm() {
+      return {
+        dataGroup: null,
+        dimensionNum: null,
+        dimensionParameter: "",
+        dimensionWord: "",
+        gridSize: null,
+        iconImage: "",
+        isWave: null,
+        keyword: "",
+        latRange: "",
+        legendId: "",
+        lonRange: "",
+        nindex: null,
+        parameterMark: "",
+        parameterName: "",
+        parameterStep: "",
+        remark: "",
+        sourceType: "",
+        type: null,
+        units: "",
+        drawType: "",
+        isEvaluate: "",
+      };
+    },
+    getLegend() {
+      this.$get("/api/legend-config/all").then((res) => {
+        this.legendList = res.data.data;
+      });
+    },
+    showLegend(val) {
+      console.log(this.legendList);
+      let name;
+      for (let i = 0; i <= this.legendList.length - 1; i++) {
+        if (Number(val) == Number(this.legendList[i].id)) {
+          this.colorValues = this.legendList[i].colorValues;
+          this.legendValues = this.legendList[i].legendValues;
+          name = this.legendList[i].legendName;
+        }
+      }
+      return name;
+    },
+    showType(type) {
+      switch (type) {
+        case "point":
+          return "点";
+        case "line":
+          return "线";
+        case "layer":
+          return "图层";
+      }
+    },
     setData(data) {
       this.formData = {
         ...data,
@@ -287,12 +350,11 @@ export default {
     },
     // 重置
     reset() {
+      this.colorValues = [];
+      this.legendValues = [];
       this.$refs.form.clearValidate();
       this.$refs.form.resetFields();
-      this.formData = {
-        name: "",
-        dataGeo: "",
-      };
+      this.formData = this.initForm();
     },
   },
   computed: {
