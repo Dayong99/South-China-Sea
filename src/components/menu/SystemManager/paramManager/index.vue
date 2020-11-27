@@ -1,5 +1,10 @@
 <template>
-  <div id="ship_manager" class="ship_manager" v-show="systemManagerShow" style="width:auto;height:auto;">
+  <div
+    id="ship_manager"
+    class="ship_manager"
+    v-show="systemManagerShow"
+    style="width: auto; height: auto"
+  >
     <div class="manager_title">
       <span>参数配置</span>
       <img
@@ -33,18 +38,23 @@
             {{ (pagination.num - 1) * pagination.size + scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column label="参数名称" align="center" min-width="100px" :show-overflow-tooltip="true">
+        <el-table-column
+          label="参数名称"
+          align="center"
+          min-width="100px"
+          :show-overflow-tooltip="true"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.baseName }}</span>
           </template>
         </el-table-column>
-       
+
         <el-table-column label="类型" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span  v-html="showType(scope.row.baseType)"></span>
+            <span v-html="showType(scope.row.baseType)"></span>
           </template>
         </el-table-column>
-          <el-table-column label="值" align="center" min-width="250px">
+        <el-table-column label="值" align="center" min-width="250px">
           <template slot-scope="scope">
             <span>{{ scope.row.baseValue }}</span>
           </template>
@@ -84,7 +94,7 @@
         :page.sync="pagination.num"
         :limit.sync="pagination.size"
         @pagination="search"
-        style="padding-bottom:0;"
+        style="padding-bottom: 0"
       />
     </div>
 
@@ -95,10 +105,7 @@
       @close="closeDialogPage"
     />
 
-    <type
-      ref="type"
-      :title="typeTitle"
-    />
+    <type ref="type" :title="typeTitle" />
   </div>
 </template>
 
@@ -134,9 +141,8 @@ export default {
       queryParams: {
         baseName: null,
       },
-       typeTitle: "",
-       typeList:[]
-      
+      typeTitle: "",
+      typeList: [],
     };
   },
   mounted() {},
@@ -171,9 +177,11 @@ export default {
     },
     systemManagerShow(val) {
       if (val) {
+        this.queryParams = {
+          baseName: null,
+        };
         this.fetch();
-                this.getAllType();
-
+        this.getAllType();
       }
     },
   },
@@ -187,9 +195,9 @@ export default {
       });
     },
     showType(val) {
-      for(let i = 0;i<this.typeList.length;i++){
-        if(Number(val)==this.typeList[i].id){
-          return this.typeList[i].typeName
+      for (let i = 0; i < this.typeList.length; i++) {
+        if (Number(val) == this.typeList[i].id) {
+          return this.typeList[i].typeName;
         }
       }
     },
@@ -264,7 +272,7 @@ export default {
     addType() {
       this.$refs.type.openType();
       this.typeTitle = "添加参数";
-    }
+    },
   },
 };
 </script>

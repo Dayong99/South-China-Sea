@@ -166,7 +166,7 @@
         :page.sync="pagination.num"
         :limit.sync="pagination.size"
         @pagination="search"
-        style="padding-bottom:0;"
+        style="padding-bottom: 0"
       />
     </div>
 
@@ -209,8 +209,8 @@ export default {
         contourName: null,
       },
 
-      solidImg:require('../../../../assets/images/menu/solid.png'),
-      dashImg:require('../../../../assets/images/menu/dashed.png'),
+      solidImg: require("../../../../assets/images/menu/solid.png"),
+      dashImg: require("../../../../assets/images/menu/dashed.png"),
     };
   },
   mounted() {},
@@ -245,6 +245,9 @@ export default {
     },
     systemManagerShow(val) {
       if (val) {
+        this.queryParams = {
+          contourName: null,
+        };
         this.fetch();
       }
     },

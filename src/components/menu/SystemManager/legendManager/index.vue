@@ -155,7 +155,7 @@
         :page.sync="pagination.num"
         :limit.sync="pagination.size"
         @pagination="search"
-        style="padding-bottom:0;"
+        style="padding-bottom: 0"
       />
     </div>
 
@@ -215,7 +215,7 @@ export default {
         });
         if (i !== 3) {
           this.systemManagerShow = false;
-        } 
+        }
       },
       deep: true,
     },
@@ -231,6 +231,9 @@ export default {
     },
     systemManagerShow(val) {
       if (val) {
+        this.queryParams = {
+          legendName: null,
+        };
         this.fetch();
       }
     },

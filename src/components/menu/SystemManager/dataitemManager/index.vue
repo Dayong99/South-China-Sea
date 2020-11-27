@@ -50,7 +50,12 @@
             <span>{{ scope.row.dimensionNum }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="维度参数" align="center" min-width="200px" :show-overflow-tooltip="true">
+        <el-table-column
+          label="维度参数"
+          align="center"
+          min-width="200px"
+          :show-overflow-tooltip="true"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.dimensionParameter }}</span>
           </template>
@@ -161,7 +166,7 @@ export default {
         isVisible: false,
         title: "",
       },
-      
+
       // 详细面板显示隐藏
       systemManagerShow: false,
       managerValue: "",
@@ -174,8 +179,7 @@ export default {
       queryParams: {
         parameterName: null,
       },
-            infoVisible:false
-
+      infoVisible: false,
     };
   },
   mounted() {},
@@ -210,6 +214,9 @@ export default {
     },
     systemManagerShow(val) {
       if (val) {
+        this.queryParams = {
+          parameterName: null,
+        };
         this.fetch();
       }
     },
@@ -281,7 +288,7 @@ export default {
       this.setMenuList(this.menuList);
     },
     // 海区详情
-    closeInfo(){
+    closeInfo() {
       this.infoVisible = false;
     },
     information(row) {

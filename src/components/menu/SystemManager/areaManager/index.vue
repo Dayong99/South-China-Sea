@@ -27,7 +27,7 @@
       <el-table :data="tableData" border style="width: 100%" max-height="400px">
         <el-table-column label="序号" width="70px" align="center">
           <template slot-scope="scope">
-            {{(pagination.num - 1) * pagination.size + scope.$index + 1}}
+            {{ (pagination.num - 1) * pagination.size + scope.$index + 1 }}
           </template>
         </el-table-column>
         <el-table-column
@@ -40,38 +40,22 @@
             <span>{{ scope.row.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="最小经度"
-          align="center"
-          min-width="100px"
-        >
+        <el-table-column label="最小经度" align="center" min-width="100px">
           <template slot-scope="scope">
             <span>{{ scope.row.minLon }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="最小纬度"
-          align="center"
-          min-width="100px"
-        >
+        <el-table-column label="最小纬度" align="center" min-width="100px">
           <template slot-scope="scope">
             <span>{{ scope.row.minLat }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="最大经度"
-          align="center"
-          min-width="100px"
-        >
+        <el-table-column label="最大经度" align="center" min-width="100px">
           <template slot-scope="scope">
             <span>{{ scope.row.maxLon }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="最大纬度"
-          align="center"
-          min-width="100px"
-        >
+        <el-table-column label="最大纬度" align="center" min-width="100px">
           <template slot-scope="scope">
             <span>{{ scope.row.maxLat }}</span>
           </template>
@@ -106,7 +90,7 @@
         :page.sync="pagination.num"
         :limit.sync="pagination.size"
         @pagination="search"
-        style="padding-bottom:0;"
+        style="padding-bottom: 0"
       />
     </div>
 
@@ -126,7 +110,7 @@ import edit from "./edit.vue";
 export default {
   components: {
     edit,
-    Pagination
+    Pagination,
   },
   data() {
     return {
@@ -150,16 +134,14 @@ export default {
       },
     };
   },
-  mounted() {
-  },
+  mounted() {},
   computed: {
     ...mapState({
       menuList: (state) => state.menuBar.menuList,
-            systemList: (state) => state.menuBar.systemList,
-
+      systemList: (state) => state.menuBar.systemList,
     }),
   },
-   watch: {
+  watch: {
     // 监听menuList，控制详细面板的显隐
     menuList: {
       handler(newval, oldval) {
@@ -168,22 +150,25 @@ export default {
         });
         if (i !== 3) {
           this.systemManagerShow = false;
-        } 
+        }
       },
       deep: true,
     },
     systemList: {
       handler(newval, oldval) {
         if (newval[2].flag) {
-        this.systemManagerShow = true;
-      } else {
-        this.systemManagerShow = false;
-      }
+          this.systemManagerShow = true;
+        } else {
+          this.systemManagerShow = false;
+        }
       },
       deep: true,
     },
     systemManagerShow(val) {
       if (val) {
+        this.queryParams = {
+          name: null,
+        };
         this.fetch();
       }
     },

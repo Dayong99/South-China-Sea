@@ -30,7 +30,12 @@
     </div>
     <div class="manager_table">
       <el-table :data="tableData" border style="width: 100%">
-        <el-table-column label="名称" align="center" min-width="100px" :show-overflow-tooltip="true">
+        <el-table-column
+          label="名称"
+          align="center"
+          min-width="100px"
+          :show-overflow-tooltip="true"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.typeName }}</span>
           </template>
@@ -113,7 +118,6 @@ export default {
       queryParams: {
         typeName: null,
       },
-
     };
   },
   mounted() {},
@@ -126,12 +130,14 @@ export default {
   watch: {
     systemManagerShow(val) {
       if (val) {
+        this.queryParams = {
+          typeName: null,
+        };
         this.fetch();
       }
     },
   },
   methods: {
-    
     openType() {
       this.systemManagerShow = true;
     },

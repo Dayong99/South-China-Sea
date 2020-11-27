@@ -1,5 +1,10 @@
 <template>
-  <div id="ship_manager" class="ship_manager" v-show="systemManagerShow" style="width:auto;height:auto;">
+  <div
+    id="ship_manager"
+    class="ship_manager"
+    v-show="systemManagerShow"
+    style="width: auto; height: auto"
+  >
     <div class="manager_title">
       <span>数据源配置—广东省网</span>
       <img
@@ -15,19 +20,20 @@
         class="operation_input"
         clearable
         @clear="search"
+        style="width: 260px"
       >
       </el-input>
       <el-date-picker
-          v-model="time"
-          format="yyyy-MM-dd HH:mm:ss"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          type="datetimerange"
-          range-separator="-"
-          start-placeholder="开始"
-          end-placeholder="结束"
-          class="operation_input"
->
-         </el-date-picker>
+        v-model="time"
+        format="yyyy-MM-dd HH:mm:ss"
+        value-format="yyyy-MM-dd HH:mm:ss"
+        type="datetimerange"
+        range-separator="-"
+        start-placeholder="开始"
+        end-placeholder="结束"
+        class="operation_input"
+      >
+      </el-date-picker>
       <el-button class="operation_search" @click="search">搜索</el-button>
       <el-button class="operation_clear" @click="resetSearch">重置</el-button>
       <el-button icon="el-icon-plus" class="operation_add" @click="add"
@@ -56,42 +62,47 @@
             <span>{{ scope.row.startTime }}</span>
           </template>
         </el-table-column>
-         <el-table-column label="预报日期" align="center" min-width="100px">
+        <el-table-column label="预报日期" align="center" min-width="100px">
           <template slot-scope="scope">
             <span>{{ scope.row.startDay }}</span>
           </template>
         </el-table-column>
-         <el-table-column label="预报时间" align="center" min-width="100px">
+        <el-table-column label="预报时间" align="center" min-width="100px">
           <template slot-scope="scope">
             <span>{{ scope.row.startHours }}</span>
           </template>
         </el-table-column>
-         <el-table-column label="时效" align="center" min-width="100px">
+        <el-table-column label="时效" align="center" min-width="100px">
           <template slot-scope="scope">
             <span>{{ scope.row.fcst }}</span>
           </template>
         </el-table-column>
-         <el-table-column label="修改时间" align="center" min-width="100px">
+        <el-table-column label="修改时间" align="center" min-width="100px">
           <template slot-scope="scope">
             <span>{{ scope.row.modifyTime }}</span>
           </template>
         </el-table-column>
-         <el-table-column label="修改次数" align="center" min-width="100px">
+        <el-table-column label="修改次数" align="center" min-width="100px">
           <template slot-scope="scope">
             <span>{{ scope.row.modifyTimes }}</span>
           </template>
         </el-table-column>
-         <el-table-column label="是否可用" align="center" min-width="100px">
+        <el-table-column label="是否可用" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.isAvailable }}</span>
+            <span>{{ scope.row.isAvailable == 1 ? "是" : "否" }}</span>
           </template>
         </el-table-column>
-         <el-table-column label="补充" align="center" min-width="100px">
+        <el-table-column label="补充" align="center" min-width="100px">
           <template slot-scope="scope">
             <span>{{ scope.row.isSupplement }}</span>
           </template>
         </el-table-column>
-         <el-table-column label="数据来源" align="center" min-width="100px" :show-overflow-tooltip="true">
+        <el-table-column
+          label="数据来源"
+          align="center"
+          min-width="100px"
+          :show-overflow-tooltip="true"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.dataSource }}</span>
           </template>
@@ -125,7 +136,7 @@ import edit from "./edit.vue";
 export default {
   components: {
     edit,
-    Pagination
+    Pagination,
   },
   data() {
     return {
@@ -146,22 +157,20 @@ export default {
       },
       queryParams: {
         name: null,
-        STime:'',
-        ETime:''
+        STime: "",
+        ETime: "",
       },
-      time:[]
+      time: [],
     };
   },
-  mounted() {
-  },
+  mounted() {},
   computed: {
     ...mapState({
       menuList: (state) => state.menuBar.menuList,
-            systemList: (state) => state.menuBar.systemList,
-
+      systemList: (state) => state.menuBar.systemList,
     }),
   },
-   watch: {
+  watch: {
     // 监听menuList，控制详细面板的显隐
     menuList: {
       handler(newval, oldval) {
@@ -170,22 +179,28 @@ export default {
         });
         if (i !== 3) {
           this.systemManagerShow = false;
-        } 
+        }
       },
       deep: true,
     },
     systemList: {
       handler(newval, oldval) {
         if (newval[6].flag) {
-        this.systemManagerShow = true;
-      } else {
-        this.systemManagerShow = false;
-      }
+          this.systemManagerShow = true;
+        } else {
+          this.systemManagerShow = false;
+        }
       },
       deep: true,
     },
     systemManagerShow(val) {
       if (val) {
+        this.queryParams = {
+          name: null,
+          STime: "",
+          ETime: "",
+        };
+        this.time = []
         this.fetch();
       }
     },
@@ -198,9 +213,9 @@ export default {
     // 搜索重置
     resetSearch() {
       this.queryParams = {
-         name: null,
-        STime:'',
-        ETime:''
+        name: null,
+        STime: "",
+        ETime: "",
       };
       this.search();
     },
@@ -210,9 +225,9 @@ export default {
     },
     // 搜索
     search() {
-      if(this.time.length>0){
-      this.queryParams.STime=this.time[0]
-      this.queryParams.ETime=this.time[1]
+      if (this.time.length > 0) {
+        this.queryParams.STime = this.time[0];
+        this.queryParams.ETime = this.time[1];
       }
       this.time = [];
       this.fetch({
@@ -223,7 +238,7 @@ export default {
     fetch(params = {}) {
       params.pageSize = this.pagination.size;
       params.pageNum = this.pagination.num;
-      this.$get("/api/numerical-forecast", {
+      this.$get("/api/numerical-json", {
         ...params,
       }).then((res) => {
         console.log(res, "res");
