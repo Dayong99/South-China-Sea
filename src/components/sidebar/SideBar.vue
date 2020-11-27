@@ -28,6 +28,57 @@
       </ul>
     </div>
 
+    <!-- 潮汐显示 -->
+    <div class="tidal"
+      id="tidal"
+      ref="tidal"
+      :style="{'left': tidalObj.left + 'px', 'top': tidalObj.top + 'px'}"
+      v-show="tidalObj.tidalShow"
+      @mouseover="tidalOver(true)"
+      @mouseout="tidalOver(false)">
+      <div class="tidal_title">
+        <div class="title_detail" ref="tidal_name">{{ tidalData.name }}</div>
+        <div class="title_time">
+          <img src="@/assets/images/sidebar/refresh.png">
+          <span>{{ tidalData.time }}</span>
+        </div>
+      </div>
+      <div class="tidal_content">
+        <div class="content_echarts">
+          <!-- ul li 替换 -->
+          <!-- <div class="echarts_time">2020-10</div> -->
+          <ul class="echarts_time">
+            <li v-for="(item, index) in tidalData.timeList" :key="index" @click.stop="changeTimeIndex(index)" :class="{ 'li_select': index === tidalIndex }">
+              <div>{{ item }}</div>
+            </li>
+          </ul>
+          <div class="echarts_content" id="echarts_content"></div>
+        </div>
+        <div class="content_list">
+          <ul>
+            <li v-for="(item, index) in tidalData.tidalList" :key="index" :class="{ 'li_blue': index % 2 == 0, 'li_red': index % 2 != 0 }">
+              <div class="list_top">
+                <img :src="index % 2 == 0 ? require('@/assets/images/sidebar/bluetidal.png') : require('@/assets/images/sidebar/redtidal.png')">
+                <span :class="{ 'blue': index % 2 == 0, 'red': index % 2 != 0 }">{{ item.name }}</span>
+              </div>
+              <div class="list_bottom">
+                <div class="list_time">
+                  <img src="@/assets/images/sidebar/time.png">
+                  <span>潮时：</span>
+                  <span>{{ item.tidalTime }}</span>
+                </div>
+                <div class="list_height">
+                  <img src="@/assets/images/sidebar/up.png">
+                  <span>潮高：</span>
+                  <span>{{ item.height + 'cm' }}</span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
     <!-- 层级轴 -->
     <level-bar></level-bar>
   </div>
@@ -147,6 +198,38 @@ export default {
       windLayer: null,
       // 图层个数
       layerNum: null,
+
+      // 潮汐面板显隐
+      tidalObj: {
+        // 面板显隐
+        tidalShow: false,
+        // 定位 left、top
+        left: null,
+        top: null,
+      },
+      // 面板数据
+      tidalData: {
+        time: null,
+        name: null,
+        timeList: [],
+        tidalList: []
+      },
+      // 图表数据
+      tidalCharts: {
+        xdata: [],
+        ydata: [],
+      },
+      tidalChart: null,
+      // 屏幕宽高数据
+      screenWidth: document.body.clientWidth,
+      screenHeight: document.body.clientHeight,
+      // 潮汐面板选择时间
+      tidalIndex: 2,
+      // 潮汐图标
+      tidalIcon: null,
+      tidalSelectIcon: null,
+      tidalMarker: [],
+      markerId: null,
     };
   },
   computed: {
@@ -159,7 +242,7 @@ export default {
       nowLevel: state => state.sideBar.nowLevel,
       // 重绘次数
       imageLayerNum: state => state.earth.imageLayerNum,
-    })
+    }),
   },
   watch: {
     imageLayerNum(val, old) {
@@ -206,23 +289,6 @@ export default {
           await this.drawItemList()
           await this.setImageLayerNum(this.layerNum)
         }
-
-        // val.forEach(async(item, index) => {
-        //   if(this.firstFlag) {
-        //     this.layerNum -= 1
-        //     this.extentList = val
-        //     await this.drawItemList()
-        //     await this.setImageLayerNum(this.layerNum)
-        //     this.firstFlag = false
-        //   } else {
-        //     if(item.xMin !== old[index].xMin || item.xMax !== old[index].xMax || item.yMin !== old[index].yMin || item.yMax !== old[index].yMax) {
-        //       this.layerNum -= 1
-        //       this.extentList = val
-        //       await this.drawItemList()
-        //       await this.setImageLayerNum(this.layerNum)
-        //     }
-        //   }
-        // })
         
         
         // 图层数减一
@@ -240,13 +306,41 @@ export default {
       this.currentLevel = newval
       this.clearLayer(this.currentItem)
       this.drawItem()
-    }
+    },
+    // 监听时间
+    time(newval) {
+      console.log(newval)
+    },
   },
   created() {
     this.initMenuList()
   },
   mounted() {
-    // this.initMenuList()
+    // 初始化图表
+    this.tidalChart = this.$echarts.init(document.getElementById("echarts_content"))
+    // 初始化潮汐图标
+    this.tidalIcon = this.$utilsMap.createIcon({
+      iconUrl: require('@/assets/images/sidebar/station.png'),
+      iconSize: [45, 45],
+      popupAnchor: [40, 40]
+    })
+    this.tidalSelectIcon = this.$utilsMap.createIcon({
+      iconUrl: require('@/assets/images/sidebar/selectStation.png'),
+      iconSize: [45, 45],
+      popupAnchor: [40, 40]
+    })
+
+    const that = this
+    window.onresize = () => {
+      return (() => {
+        // window.fullWidth = document.documentElement.offsetWidth
+        // window.fullHeight = document.documentElement.offsetHeight
+        window.fullWidth = document.documentElement.clientWidth
+        window.fullHeight = document.documentElement.clientHeight
+        that.screenWidth = window.fullWidth
+        that.screenHeight = window.fullHeight
+      })()
+    }
   },
   methods: {
     ...mapMutations({
@@ -254,6 +348,31 @@ export default {
       setLevelList: 'sideBar/setLevelList',
       setImageLayerNum: 'earth/setImageLayerNum',
     }),
+    // 潮汐面板日期切换
+    changeTimeIndex(i) {
+      this.tidalIndex = i
+      let time = this.tidalData.timeList[i]
+      let date = new Date()
+      let year = date.getFullYear()
+      let t = year + '-' + time
+      this.getTidalData(this.markerId, t)
+    },
+    // 鼠标在面板上移入移出控制面板显隐
+    tidalOver(flag) {
+      this.tidalObj.tidalShow = flag
+      // 考虑id替换
+      let marker = this.tidalMarker.filter(item => {
+        return item.name == this.$refs.tidal_name.innerText
+      })
+      console.log('this.$refs.tidal', this.$refs.tidal_name.innerText)
+      if(flag) {
+        marker[0].setIcon(this.tidalSelectIcon)
+      } else {
+        // this.clearChart()
+        // this.createChart(this.tidalCharts)
+        marker[0].setIcon(this.tidalIcon)
+      }
+    },
     // 初始选中
     initMenuList() {
       /**
@@ -391,15 +510,19 @@ export default {
       // this.currentLevel = this.currentItemList[this.currentItemList.length - 1].level[0]
 
     },
-    // 创建marker
     // createMarker() {
     //   let icon = this.$utilsMap.createIcon({
-    //     iconUrl: require('@/assets/images/logo.png')
+    //     iconUrl: require('@/assets/images/sidebar/station.png')
     //   })
-    //   this.$utilsMap.createMarkerByLatlng(window.map, [25, 120], {
+    //   let marker = this.$utilsMap.createMarkerByLatlng(window.map, [25, 120], {
     //     icon: icon,
     //     title: '测试'
     //   })
+    //   marker.on('mouseover', ev => {
+    //     console.log('mouseover')
+    //   })
+    //   console.log('-----------------------');
+    //   // marker.addTo(map)
     // },
     // 绘制单个要素
     drawItem() {
@@ -407,6 +530,8 @@ export default {
         this.getAndDrawWave(this.currentItem)
       } else if(this.currentItem.drawType == 'point_wind') {
         this.getAndDrawWind(this.currentItem)
+      } else if(this.currentItem.drawType == 'point') {
+        this.getAndDrawTidal(this.currentItem)
       } else {
         // // 需要根据每个要素自带的限制范围进行范围约束
         // let itemExtentList = []
@@ -838,6 +963,231 @@ export default {
       }).catch(error => {
         this.$message.error('获取' + currentItem.name + '数据失败')
       })
+    },
+    // 绘制潮汐
+    getAndDrawTidal(currentItem) {
+      // 先绘制港口数据
+      this.$get('/api/harbor').then(res => {
+        if(res.status == 200) {
+          console.log('harbor', res.data.data);
+          let harborList = res.data.data.rows
+          harborList.forEach(item => {
+            this.createMarker(item)
+          })
+        }
+      }).catch(error => {
+        this.$message.error(this.$message.error('获取' + currentItem.name + '数据失败'))
+      })
+    },
+    // 根据港口数据创建marker
+    createMarker(harbor) {
+      // let icon = this.$utilsMap.createIcon({
+      //   iconUrl: require('@/assets/images/sidebar/station.png'),
+      //   iconSize: [45, 45],
+      //   popupAnchor: [40, 40]
+      // })
+      // let selectIcon = this.$utilsMap.createIcon({
+      //   iconUrl: require('@/assets/images/sidebar/selectStation.png'),
+      //   iconSize: [45, 45],
+      //   popupAnchor: [40, 40]
+      // })
+      let marker = this.$utilsMap.createMarkerByLatlng(window.map, [harbor.lat, harbor.lon], {
+        icon: this.tidalIcon,
+        title: harbor.hname
+      })
+      marker.id = harbor.id
+      marker.name = harbor.hname
+      marker.on('mouseover', ev => {
+        this.markerId = ev.target.id
+        // 请求潮汐数据
+        let time = this.time.split(' ')[0]
+        this.getTidalData(harbor.id, time)
+        
+        console.log('mouseover', ev)
+        // ev.target.   构造数据
+        this.tidalData.time = this.time
+        this.tidalData.name = ev.target.name
+        // 前三天日期数据
+        this.tidalIndex = 2     // 重置选择的日期
+        this.tidalData.timeList = []
+        let now = this.$m(this.time).format('MM-DD')
+        let yestoday = this.$m(this.time).subtract(1, 'days').format('MM-DD')
+        let lastday = this.$m(this.time).subtract(2, 'days').format('MM-DD')
+        this.tidalData.timeList.push(lastday)
+        this.tidalData.timeList.push(yestoday)
+        this.tidalData.timeList.push(now)
+
+        // 潮汐面板显示并重新定位
+        this.tidalObj.tidalShow = true
+        this.tidalObj.left = ev.containerPoint.x
+        this.tidalObj.top = ev.containerPoint.y - 50
+        marker.setIcon(this.tidalSelectIcon)
+        this.$nextTick(() => {
+          // let width = document.querySelector('.tidal').offsetWidth
+          // let height = this.$refs.tidal.clientHeight
+          let width = this.$refs.tidal.offsetWidth
+          let height = this.$refs.tidal.offsetHeight
+          // 都在屏幕范围内
+          if(this.screenWidth - ev.containerPoint.x > (width + 50) && this.screenHeight - ev.containerPoint.y > (height + 50)) {
+            this.tidalObj.left = ev.containerPoint.x + 10
+            this.tidalObj.top = ev.containerPoint.y - 50
+          } else if(this.screenWidth - ev.containerPoint.x > (width + 50)) {
+            // 高度超出屏幕
+            let offHeight = height - (this.screenHeight - ev.containerPoint.y)
+            this.tidalObj.left = ev.containerPoint.x + 10
+            this.tidalObj.top = ev.containerPoint.y - offHeight - 50
+          } else if(this.screenHeight - ev.containerPoint.y > (height + 50)) {
+            // 宽度超出屏幕
+            let offWidth = width - (this.screenWidth - ev.containerPoint.x)
+            this.tidalObj.left = ev.containerPoint.x - width - 10
+            this.tidalObj.top = ev.containerPoint.y + 10
+          } else {
+            // 宽度、高度都超出屏幕
+            let offWidth = width - (this.screenWidth - ev.containerPoint.x)
+            let offHeight = height - (this.screenHeight - ev.containerPoint.y)
+            this.tidalObj.left = ev.containerPoint.x - width - 10
+            this.tidalObj.top = ev.containerPoint.y - offHeight - 50
+          }
+        })
+      })
+      marker.on('mouseout', ev => {
+        marker.setIcon(this.tidalIcon)
+        this.tidalObj.tidalShow = false
+      })
+      this.tidalMarker.push(marker)
+      // marker.on('click', ev => {
+      //   console.log('harbor--click', harbor);
+      //   this.tidalObj.left = 500
+      //   this.tidalObj.top = 300
+      //   this.tidalObj.tidalShow = true
+      // })
+    },
+    getTidalData(id, time) {
+      this.$get('/api/tidal/one', {
+        id: id,
+        localDate: time
+      }).then(res => {
+        if(res.status == 200) {
+          let tidalList = res.data.data
+          console.log('tidalList', tidalList)
+          this.tidalData.tidalList = []
+          let time = null
+          this.clearChart()
+          this.createChart(this.tidalCharts)
+          if(tidalList.length && tidalList != null && tidalList != undefined) {
+            // 最大值和最小值
+            let maxObj = tidalList[0]
+            let minObj = tidalList[0]
+            for(let i = 0; i < tidalList.length; i++) {
+              if(maxObj.height < tidalList[i].height) {
+                maxObj = tidalList[i]
+              }
+              if(minObj.height > tidalList[i].height) {
+                minObj = tidalList[i]
+              }
+              let time = this.$m(tidalList[i].tidalTime).format('HH')
+              this.tidalCharts.xdata.push(time)
+              this.tidalCharts.ydata.push(tidalList[i].height)
+            }
+            // 绘制图表
+            this.createChart(this.tidalCharts)
+            console.log('xdata', this.tidalCharts.xdata);
+            console.log('ydata', this.tidalCharts.ydata);
+            this.tidalData.tidalList.push(this._.cloneDeep(maxObj))
+            time = this.$m(this.tidalData.tidalList[0].tidalTime).format('hh-mm')
+            this.tidalData.tidalList[0].tidalTime = time.split('-')[0] + '时' + time.split('-')[1] + '分'
+            this.tidalData.tidalList[0].name = '第一高潮'
+            this.tidalData.tidalList[0].type = 'max'
+            this.tidalData.tidalList.push(this._.cloneDeep(minObj))
+            time =  this.$m(this.tidalData.tidalList[1].tidalTime).format('hh-mm')
+            this.tidalData.tidalList[1].tidalTime = time.split('-')[0] + '时' + time.split('-')[1] + '分'
+            this.tidalData.tidalList[1].name = '第一低潮'
+            this.tidalData.tidalList[1].type = 'min'
+            console.log('tidalList', this.tidalData.tidalList)
+          } else {
+            this.$message.warning("此时刻暂无潮汐数据")
+          }
+        }
+      }).catch(error => {
+        this.$message.error('获取潮汐数据失败')
+      })
+    },
+    showTidalMessage() {
+      this.$message.warning("此时刻暂无潮汐数据")
+    },
+    // 创建图表
+    createChart(dital) {
+      let option = {
+        backgroundColor: '#fff',
+        color: ['#73A0FA'],
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross',
+            crossStyle: {
+              color: '#999'
+            },
+            lineStyle: {
+              type: 'dashed'
+            }
+          }
+        },
+        grid: {
+          left: 5,
+          right: 5,
+          bottom: 5,
+          top: 15,
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          data: dital.xdata,
+          splitLine: {
+            show: false
+          },
+          axisTick: {
+            show: false
+          },
+          axisLine: {
+            show: false
+          },
+        },
+        yAxis: {
+          type: 'value',
+          axisLabel: {
+            color: '#999',
+            textStyle: {
+              fontSize: 12
+            },
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              color: '#F3F4F4'
+            }
+          },
+          axisTick: {
+            show: false
+          },
+          axisLine: {
+            show: false
+          },
+        },
+        series: [{
+            name: '订单总笔数',
+            type: 'line',
+            smooth: true,
+            data: dital.ydata
+          }
+        ]
+      }
+
+      this.tidalChart.setOption(option)
+    },
+    // 清除图表数据
+    clearChart() {
+      this.tidalCharts.xdata = []
+      this.tidalCharts.ydata = []
     },
     // 清除
     clearLayer(layer) {
