@@ -3,7 +3,7 @@
     id="ship_manager"
     class="ship_manager"
     v-show="systemManagerShow"
-    style="width: auto"
+    style="width: auto;height:auto;"
   >
     <div class="manager_title">
       <span>数据项配置</span>
@@ -77,7 +77,7 @@
         </el-table-column>
         <el-table-column label="海洋数据" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.isWave==1?'是':'否' }}</span>
+            <span>{{ scope.row.isWave == 1 ? "是" : "否" }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -90,13 +90,15 @@
             <span>{{ scope.row.keyword }}</span>
           </template>
         </el-table-column>
-         <!-- <el-table-column label="图标" align="center" min-width="100px">
+         <el-table-column label="图标" align="center" width="50px">
           <template slot-scope="scope">
+            <!-- <span>{{ scope.row.iconImage }}</span> -->
             <div :class="scope.row.iconImage == null ? null : 'imgdiv'">
               <img class="itemImg" :src="scope.row.iconImage">
             </div>
           </template>
         </el-table-column>
+
 
         <el-table-column label="上传图标" align="center" min-width="100px">
           <template slot-scope="scope">
@@ -111,7 +113,7 @@
               <el-button size="mini" type="primary" @click="changeColumn(scope.row)">上传</el-button>
             </el-upload>
           </template>
-        </el-table-column> -->
+        </el-table-column>
 
         <el-table-column
           label="操作"
@@ -204,6 +206,8 @@ export default {
         parameterName: null,
       },
       infoVisible: false,
+      modifyItem: {},
+       fileList: [],
     };
   },
   mounted() {},
@@ -327,7 +331,7 @@ export default {
       return (
         // process.env.VUE_APP_BASE_API +
         globalConfig.baseURL +
-        "gis/api/parameters/imageTobase"
+        "/api/parameters/imageTobase"
       );
     },
     // 上传失败
@@ -345,7 +349,7 @@ export default {
       });
       this.modifyItem.iconImage = res
 
-      this.$put("gis/api/parameters", { ...this.modifyItem }).then(() => {
+      this.$put("/api/parameters", { ...this.modifyItem }).then(() => {
         this.search();
         this.$refs.upload.clearFiles()
       })
@@ -357,9 +361,32 @@ export default {
       })
 
     },
+    changeColumn(row) {
+      // this.$refs.upload.clearFiles()
+      this.modifyItem = row
+    }
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.imgdiv {
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  background: #F99C00;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img[src=""],img:not([src]) {
+    opacity:0;
+  }
+
+  .itemImg {
+    width: 20px;
+    height: 20px;
+  }
+}
 </style>

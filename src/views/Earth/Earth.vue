@@ -5,17 +5,17 @@
 </template>
 
 <script>
-import { parseTime, debounce } from '@/utils'
+import { parseTime, debounce } from "@/utils";
 // import { debounce } from '@/utils'
-import Tool from '@/utils/tool'
-import eventBus from '@/utils/eventBus.js'
-import { mapState, mapMutations } from 'vuex'
+import Tool from "@/utils/tool";
+import eventBus from "@/utils/eventBus.js";
+import { mapState, mapMutations } from "vuex";
 import "@/utils/leaflet.ChineseTmsProviders.js";
 
-var tileLayer1 = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-var tileLayer2 = 'http://192.168.1.152:8081/num/getOffLine?name={z}/{y}/{x}.png'
-var tileLayer3 = globalConfig.baseURL + '/api/maps/GeoQ_colors/{z}/{y}/{x}'
-
+var tileLayer1 = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+var tileLayer2 =
+  "http://192.168.1.152:8081/num/getOffLine?name={z}/{y}/{x}.png";
+var tileLayer3 = globalConfig.baseURL + "/api/maps/GeoQ_colors/{z}/{y}/{x}";
 
 var tileLayer1 = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 
@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     ...mapState({
-      imageLayerNum: state => state.earth.imageLayerNum
+      imageLayerNum: (state) => state.earth.imageLayerNum,
     }),
     nowtime() {
       return this.$store.state.time.time;
@@ -46,11 +46,12 @@ export default {
   },
   mounted() {
     this.initMap();
+
   },
   methods: {
     ...mapMutations({
-      setExtent: 'earth/setExtent',
-      setImageLayerNum: 'earth/setImageLayerNum'
+      setExtent: "earth/setExtent",
+      setImageLayerNum: "earth/setImageLayerNum",
     }),
     initMap() {
       // 底图切换
@@ -68,9 +69,9 @@ export default {
       L.tileLayer
         .chinaProvider("Geoq.Normal.PurplishBlue", { maxZoom: 13, minZoom: 2 })
         .addTo(window.map);
-      window.map.on('load', ev => {
-        this.getExtent()
-      })
+      window.map.on("load", (ev) => {
+        this.getExtent();
+      });
       window.map.setView([35.09, 102.21], 4);
       // this.changeZoom();
       this.changeMove();
@@ -91,45 +92,45 @@ export default {
     //   })
     // },
     changeMove() {
-      window.map.on('moveend', ev => {
-        if(this.timer) {
-          clearTimeout(this.timer)
+      window.map.on("moveend", (ev) => {
+        if (this.timer) {
+          clearTimeout(this.timer);
         }
         this.timer = setTimeout(() => {
-          console.log(this.imageLayerNum)
-          let num = this.imageLayerNum
-          this.setImageLayerNum(++num)
-          this.getExtent()
-        }, 1000)
-      })
+          console.log(this.imageLayerNum);
+          let num = this.imageLayerNum;
+          this.setImageLayerNum(++num);
+          this.getExtent();
+        }, 1000);
+      });
     },
     // 获取范围
     getExtent() {
-      let zoom = window.map.getZoom()
-      console.log('zoom', zoom)
-      let bounds = window.map.getBounds()
+      let zoom = window.map.getZoom();
+      console.log("zoom", zoom);
+      let bounds = window.map.getBounds();
 
-      let min = bounds.getSouthWest().wrap()
-      let max = bounds.getNorthEast().wrap()
-      console.log('min', min)
-      console.log('max', max)
-      let xMin = min.lng
-      let xMax = max.lng
-      let yMin = min.lat
-      let yMax = max.lat
-      yMin = yMin <= -85 ? -85 : yMin
-      yMax = yMax >= 85 ? 85 : yMax
+      let min = bounds.getSouthWest().wrap();
+      let max = bounds.getNorthEast().wrap();
+      console.log("min", min);
+      console.log("max", max);
+      let xMin = min.lng;
+      let xMax = max.lng;
+      let yMin = min.lat;
+      let yMax = max.lat;
+      yMin = yMin <= -85 ? -85 : yMin;
+      yMax = yMax >= 85 ? 85 : yMax;
 
       let extent = {
         xMin: null,
         xMax: null,
         yMin: yMin,
-        yMax: yMax
-      }
-      let extentList = []
-      let ex1 = {}
-      let ex2 = {}
-      let ex3 = {}
+        yMax: yMax,
+      };
+      let extentList = [];
+      let ex1 = {};
+      let ex2 = {};
+      let ex3 = {};
 
       // 转为 0-360 然后再根据要素本身范围进行范围修正 sideBar中
       // 层级3不加载全部
@@ -238,68 +239,67 @@ export default {
       console.log('extentList', extentList)
       this.setExtent(extentList)*/
 
-
-      if(zoom <= 3) {
+      if (zoom <= 3) {
         ex1 = {
           xMin: 180,
           xMax: 360,
           yMin: -85,
-          yMax: 85
-        }
+          yMax: 85,
+        };
         ex2 = {
           xMin: 0,
           xMax: 180,
           yMin: -85,
-          yMax: 85
-        }
-        extentList.push(ex1)
-        extentList.push(ex2)
+          yMax: 85,
+        };
+        extentList.push(ex1);
+        extentList.push(ex2);
       } else {
-        if(xMin < 0 && xMax > 0) {
+        if (xMin < 0 && xMax > 0) {
           ex1 = {
             xMin: xMin + 360,
             xMax: 360,
             yMin: yMin,
-            yMax: yMax
-          }
+            yMax: yMax,
+          };
           ex2 = {
             xMin: 0,
             xMax: xMax,
             yMin: yMin,
-            yMax: yMax
-          }
-          extentList.push(ex1)
-          extentList.push(ex2)
-        } else if(xMin > 0 && xMax < 0) {
+            yMax: yMax,
+          };
+          extentList.push(ex1);
+          extentList.push(ex2);
+        } else if (xMin > 0 && xMax < 0) {
           ex1 = {
             xMin: xMin,
             xMax: 180,
             yMin: yMin,
-            yMax: yMax
-          }
+            yMax: yMax,
+          };
           ex2 = {
             xMin: 180,
             xMax: xMax + 360,
             yMin: yMin,
-            yMax: yMax
-          }
-          extentList.push(ex1)
-          extentList.push(ex2)
-        } else if(xMin <= 0 && xMax <= 0) {
-          extent.xMin = xMin + 360
-          extent.xMax = xMax + 360
-          extentList.push(extent)
+            yMax: yMax,
+          };
+          extentList.push(ex1);
+          extentList.push(ex2);
+        } else if (xMin <= 0 && xMax <= 0) {
+          extent.xMin = xMin + 360;
+          extent.xMax = xMax + 360;
+          extentList.push(extent);
         } else {
-          extent.xMin = xMin
-          extent.xMax = xMax
-          extentList.push(extent)
+          extent.xMin = xMin;
+          extent.xMax = xMax;
+          extentList.push(extent);
         }
       }
-      console.log('extentList', extentList)
-      this.setExtent(extentList)
+      console.log("extentList", extentList);
+      this.setExtent(extentList);
+    },
 
-    }
-  }
+  },
 };
 </script>
 <style lang="scss" scoped>

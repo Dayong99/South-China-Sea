@@ -56,7 +56,6 @@
             />
           </div>
 
-
           <!-- 任务管理 -->
           <ul class="list_task_ul" v-show="item.flag && menuListFlag">
             <li v-for="(item, index) in taskList" :key="index">
@@ -65,7 +64,7 @@
                   <div class="task_dot" :class="{ active: item.checked }"></div>
                   <span>{{ item.name }}</span>
                 </div>
-                <div class="task_operation">
+                <div class="task_operation" style="margin-left: 0">
                   <el-button
                     icon="el-icon-edit-outline"
                     class="table_column_icon green"
