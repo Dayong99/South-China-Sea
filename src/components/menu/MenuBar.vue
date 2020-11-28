@@ -73,13 +73,14 @@
                   icon="el-icon-plus"
                   class="table_column_icon blueDeep"
                   type="text"
-                  @click="addTaskItem(item,index)"
+                  @click="addTaskItem(item, index)"
                 ></el-button>
-                <el-button
+                <!--<el-button
                   icon="el-icon-s-operation"
                   class="table_column_icon purple"
                   type="text"
-                ></el-button>
+                  @click="algorithm(item, index)"
+                ></el-button> -->
               </div>
             </div>
             <div class="task_content_wrapper" v-if="item.checked">
@@ -89,12 +90,21 @@
                 :key="`route${indexRoute}`"
               >
                 <div class="task_content_desc">
-                  <div class="task_content_name">{{ itemRoute.name }}</div>
-                  <img
-                    :src="itemRoute.checked ? downContentUpIcon : downContentDownIcon"
-                    class="down"
-                    @click="routeDetail(itemRoute, indexRoute)"
-                  />
+                  <div class="task_content_name">{{ itemRoute.lineName }}</div>
+                  <div class="control_wrapper">
+                    <img
+                      src="@/assets/images/menu/tree.svg"
+                      @click="algorithm(itemRoute,indexRoute)"
+                    />
+                    <img
+                      :src="
+                        itemRoute.checked
+                          ? downContentUpIcon
+                          : downContentDownIcon
+                      "
+                      @click="routeDetail(itemRoute, indexRoute)"
+                    />
+                  </div>
                 </div>
                 <div class="task_content_route" v-if="itemRoute.checked">
                   <div>评估时间:{{ itemRoute.descList.time }}</div>
@@ -126,33 +136,6 @@ export default {
           },
           checked: false,
         },
-        {
-          name: "航线2",
-          descList: {
-            time: "2020-10-24 00:00:00",
-            assessment1: "xxx",
-            assessment2: "xxx",
-          },
-          checked: false,
-        },
-        {
-          name: "航线3",
-          descList: {
-            time: "2020-10-24 00:00:00",
-            assessment1: "xxx",
-            assessment2: "xxx",
-          },
-          checked: false,
-        },
-        {
-          name: "航线4",
-          descList: {
-            time: "2020-10-24 00:00:00",
-            assessment1: "xxx",
-            assessment2: "xxx",
-          },
-          checked: false,
-        },
       ],
       // 搜索框
       searchFlag: false,
@@ -177,7 +160,8 @@ export default {
     ...mapState({
       menuList: (state) => state.menuBar.menuList,
       TaskManagerOptions: (state) => state.menuBar.TaskManagerOptions,
-      routeDialogOptions: s => s.menuBar.routeDialogOptions
+      routeDialogOptions: (s) => s.menuBar.routeDialogOptions,
+      algorithmOptions: s => s.menuBar.algorithmOptions
     }),
   },
   watch: {
@@ -212,29 +196,50 @@ export default {
     },
     // 航线变化
     routeDialogOptions() {
-      console.log('更新航线信息')
-    }
+      console.log("更新航线信息");
+    },
   },
   mounted() {
     this.loadTaskList();
   },
   methods: {
     ...mapMutations({
+      setAlgorithm: "menuBar/setAlgorithm",
       setMenuList: "menuBar/setMenuList",
       setTaskManagerOptions: "menuBar/setTaskManagerOptions",
-      setRouteDialogOptions: "menuBar/setRouteDialogOptions"
+      setRouteDialogOptions: "menuBar/setRouteDialogOptions",
     }),
+    algorithm(item, index) {
+      console.log(item,index,`algorithm`)
+      this.setAlgorithm([1, item]);
+    },
+    loadRouteList(id) {
+      this.$get(`/api/course`, {
+        plan_Id: id,
+      }).then((res) => {
+        if (res.data.data) {
+          // checked
+          this.routeList = res.data.data.rows.map((e, i) => {
+            return {
+              ...e,
+              checked: false,
+            };
+          });
+
+          console.log(this.routeList, `this.routeList`);
+        }
+      });
+    },
     // 添加航线
-    addTaskItem(item,index) {
-      console.log(item,index,`item`)
-      this.setRouteDialogOptions([1, item])
+    addTaskItem(item, index) {
+      console.log(item, index, `item`);
+      this.setRouteDialogOptions([1, item]);
     },
     routeDetail(item, index) {
       if (item.checked) {
         this.routeList[index].checked = true;
       }
       if (item.checked) {
-        
         this.routeList[index].checked = false;
         return;
       } else {
@@ -247,7 +252,6 @@ export default {
       }
     },
     switchTask(item, index) {
-      console.log(item, index, `item`);
       if (item.checked) {
         this.taskList[index].checked = false;
       } else {
@@ -256,6 +260,7 @@ export default {
           obj.checked = false;
           return obj;
         });
+        this.loadRouteList(item.id);
         this.taskList[index].checked = true;
       }
     },
@@ -366,6 +371,7 @@ export default {
       this.setMenuList(this.menuList);
     },
     //------------end任务管理--------------
+    
   },
 };
 </script>

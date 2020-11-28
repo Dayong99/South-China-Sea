@@ -119,12 +119,12 @@
               type="text"
               @click="deleteItem(row)"
             ></el-button>
-            <el-button
+            <!--<el-button
               icon="el-icon-s-operation"
               class="table_column_icon purple"
               type="text"
               @click="algorithm(row)"
-            ></el-button>
+            ></el-button> -->
           </template>
         </el-table-column>
       </el-table>

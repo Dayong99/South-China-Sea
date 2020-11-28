@@ -134,7 +134,10 @@
                     >
                   </div>
                   <div class="check">
-                    <el-checkbox v-model="item.checked"></el-checkbox>
+                    <el-checkbox
+                      v-model="item.checked"
+                      @change="changeTeamActive(item, index)"
+                    ></el-checkbox>
                   </div>
                 </div>
               </div>
@@ -216,34 +219,34 @@ export default {
       setTaskManagerOptions: "menuBar/setTaskManagerOptions",
     }),
     setData() {
-      this.$get(`/api/plan/sfs`,{
-        id: this.TaskManagerOptions[1].id
+      this.$get(`/api/plan/sfs`, {
+        id: this.TaskManagerOptions[1].id,
       }).then((res) => {
-        if(res.data.data) {
-          res.data.data.forEach((e,i) => {
+        if (res.data.data) {
+          res.data.data.forEach((e, i) => {
             // 编队
-            if(e.type === 0) {
-              this.teamList = this.teamList.map((a,b)=> {
-                let obj = a
-                if(a.id === e.sfId) {
-                  obj.checked = true
+            if (e.type === 0) {
+              this.teamList = this.teamList.map((a, b) => {
+                let obj = a;
+                if (a.id === e.sfId) {
+                  obj.checked = true;
                 }
-                return obj
-              })
+                return obj;
+              });
             }
             // 船舰
-            if(e.type === 1) {
-               this.shipList = this.shipList.map((a,b)=> {
-                let obj = a
-                if(a.id === e.sfId) {
-                  obj.checked = true
+            if (e.type === 1) {
+              this.shipList = this.shipList.map((a, b) => {
+                let obj = a;
+                if (a.id === e.sfId) {
+                  obj.checked = true;
                 }
-                return obj
-              })
+                return obj;
+              });
             }
-          })
+          });
         }
-      })
+      });
       this.formData = {
         id: this.TaskManagerOptions[1].id,
         name: this.TaskManagerOptions[1].name,
@@ -256,27 +259,50 @@ export default {
       this.taskManagerShow = false;
       this.setTaskManagerOptions([0, {}]);
     },
+    changeTeamActive(item, index) {
+      console.log(item, index, `param`);
+      if (!item.checked) {
+        return;
+      }
+      if (item.checked) {
+        console.log(this.teamList, `teamList`);
+        this.teamList = this.teamList.map((e, i) => {
+          let obj = e;
+          if (item.id === e.id) {
+            obj.checked = true;
+          } else {
+            obj.checked = false;
+          }
+          return obj;
+        });
+      }
+    },
     submit() {
       let obj = {};
       obj["name"] = this.formData.name;
       obj["ptype"] = 0;
       obj["planSfs"] = [];
-      this.shipList.forEach((e, i) => {
-        if (e.checked) {
-          let a = {};
-          a["sfId"] = e.id;
-          a["type"] = 1;
-          obj["planSfs"].push(a);
-        }
-      });
-      this.teamList.forEach((e, i) => {
-        if (e.checked) {
-          let a = {};
-          a["sfId"] = e.id;
-          a["type"] = 0;
-          obj["planSfs"].push(a);
-        }
-      });
+      if (this.formData.type === 1) {
+        this.shipList.forEach((e, i) => {
+          if (e.checked) {
+            let a = {};
+            a["sfId"] = e.id;
+            a["type"] = 1;
+            obj["planSfs"].push(a);
+          }
+        });
+      }
+      if (this.formData.type === 2) {
+        this.teamList.forEach((e, i) => {
+          if (e.checked) {
+            let a = {};
+            a["sfId"] = e.id;
+            a["type"] = 0;
+            obj["planSfs"].push(a);
+          }
+        });
+      }
+
       this.$refs.form.validate((valid) => {
         if (valid) {
           if (this.title === "添加任务") {
@@ -301,17 +327,19 @@ export default {
               });
           }
           if (this.title === "修改任务") {
-
-            this.$jsonPut(`/api/plan`,{
-              ...obj,id: this.formData.id
-            }).then(() => {
-              this.$message({
-                message: "任务修改成功",
-                type: "success",
-              });
-              this.reset();
-              this.closeManager();
-            }).catch(() => {
+            this.$jsonPut(`/api/plan`, {
+              ...obj,
+              id: this.formData.id,
+            })
+              .then(() => {
+                this.$message({
+                  message: "任务修改成功",
+                  type: "success",
+                });
+                this.reset();
+                this.closeManager();
+              })
+              .catch(() => {
                 this.$message({
                   message: "任务修改失败",
                   type: "error",
@@ -332,26 +360,30 @@ export default {
       };
     },
     loadShipList() {
-      this.$get(`/api/warship`).then((res) => {
-        if (res.data.data) {
-          this.shipList = res.data.data.rows.map((e, i) => {
-            return { ...e, checked: false };
-          });
-        }
-      }).then(()=> {
-        this.loadTeamList()
-      });
+      this.$get(`/api/warship`)
+        .then((res) => {
+          if (res.data.data) {
+            this.shipList = res.data.data.rows.map((e, i) => {
+              return { ...e, checked: false };
+            });
+          }
+        })
+        .then(() => {
+          this.loadTeamList();
+        });
     },
     loadTeamList() {
-      this.$get(`/api/formation`).then((res) => {
-        if (res.data.data) {
-          this.teamList = res.data.data.rows.map((e, i) => {
-            return { ...e, checked: false };
-          });
-        }
-      }).then(()=> {
-        this.setData()
-      });
+      this.$get(`/api/formation`)
+        .then((res) => {
+          if (res.data.data) {
+            this.teamList = res.data.data.rows.map((e, i) => {
+              return { ...e, checked: false };
+            });
+          }
+        })
+        .then(() => {
+          this.setData();
+        });
     },
   },
 };

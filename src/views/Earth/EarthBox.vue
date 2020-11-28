@@ -24,6 +24,8 @@
     <task-manager></task-manager>
     <!-- 航线管理 -->
     <route-manager></route-manager>
+    <!-- 算法管理 -->
+    <algorithm-manager></algorithm-manager>
   </div>
 </template>
 
@@ -42,6 +44,7 @@ import ShipManager from '@/components/menu/ShipManager/index.vue';
 import TeamManager from '@/components/menu/TeamManager/index.vue'
 import TaskManager from '@/components/menu/TaskManagement/edit.vue'
 import routeManager from '@/components/menu/routeManager/edit.vue'
+import algorithmManager from '@/components/menu/algorithmManager/edit.vue'
 import eventBus from "@/utils/eventBus.js";
 
 export default {
@@ -58,7 +61,8 @@ export default {
     ShipManager: ShipManager,
     TeamManager: TeamManager,
     TaskManager: TaskManager,
-    routeManager: routeManager
+    routeManager: routeManager,
+    algorithmManager: algorithmManager
   },
   data() {
     return {

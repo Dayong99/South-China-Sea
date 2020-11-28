@@ -11,9 +11,7 @@ import L from "leaflet";
 import './utils/leaflet.fix'
 import 'proj4leaflet'
 import lodash from 'lodash'
-
 import map from './utils/map.js'
-
 import store from './store'
 import router from './router'
 

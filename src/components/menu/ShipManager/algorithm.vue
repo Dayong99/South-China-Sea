@@ -129,8 +129,8 @@ export default {
 .dialog_wrapper {
   height: 900px;
   .chart {
-    width: 1400px;
-    height: 800px;
+    width: 865px;
+    height: 500px;
   }
 }
 </style>
