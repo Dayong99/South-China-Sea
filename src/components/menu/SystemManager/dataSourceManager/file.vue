@@ -1,7 +1,7 @@
 <template>
   <!-- eslint-disable-->
   <el-dialog
-    title="资料导入"
+    title="导入资料"
     width="500px"
     top="50px"
     :close-on-click-modal="false"

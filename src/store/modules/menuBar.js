@@ -50,7 +50,7 @@ const state = {
       flag:false
     },
     {
-      name:'hj数值预报数据',
+      name:'数值预报数据',
       flag:false
     },
   ],

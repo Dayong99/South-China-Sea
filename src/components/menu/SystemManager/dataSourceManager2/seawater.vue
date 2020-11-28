@@ -1,7 +1,7 @@
 <template>
   <!-- eslint-disable-->
   <el-dialog
-    title="资料导入"
+    title="导入海流"
     width="500px"
     top="50px"
     :close-on-click-modal="false"
@@ -15,7 +15,7 @@
       :rules="rules"
       label-position="right"
       label-width="100px"
-      style="line-height: 100%"
+      style="line-height: 100%;"
     >
       <!-- 名称 -->
       <el-row>
@@ -89,10 +89,10 @@ export default {
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-            this.$post("/api/numerical-mat/analysis", this.formData)
+            this.$post("/api/numerical-forecast/analysisOceanCurrent", this.formData)
               .then(() => {
                 this.$message({
-                  message: "目标路径导入成功",
+                  message: "海流导入成功",
                   type: "success",
                 });
                 this.reset();
@@ -102,7 +102,7 @@ export default {
               })
               .catch(() => {
                 this.$message({
-                  message: "目标路径导入失败",
+                  message: "海流导入失败",
                   type: "error",
                 });
               });

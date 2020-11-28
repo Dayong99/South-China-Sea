@@ -6,7 +6,7 @@
     style="width: auto; height: auto"
   >
     <div class="manager_title">
-      <span>数据源配置—hj数值预报数据</span>
+      <span>数据源配置—数值预报数据</span>
       <img
         src="@/assets/images/legendbar/close.png"
         @click.stop="closeManager"
@@ -29,14 +29,36 @@
         value-format="yyyy-MM-dd HH:mm:ss"
         type="datetimerange"
         range-separator="-"
-        start-placeholder="开始"
-        end-placeholder="结束"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        @change="search"
       >
       </el-date-picker>
       <el-button class="operation_search" @click="search">搜索</el-button>
       <el-button class="operation_clear" @click="resetSearch">重置</el-button>
-      <el-button icon="el-icon-plus" class="operation_add" @click="add"
-        >资料导入</el-button
+      <el-button
+        icon="el-icon-download"
+        class="operation_add"
+        @click="exportFile"
+        >导入资料</el-button
+      >
+      <el-button
+        icon="el-icon-download"
+        class="operation_add"
+        @click="exportSeawater"
+        >导入海流</el-button
+      >
+      <el-button
+        icon="el-icon-download"
+        class="operation_add"
+        @click="exportTemp"
+        >导入水温</el-button
+      >
+      <el-button
+        icon="el-icon-download"
+        class="operation_add"
+        @click="exportNecp"
+        >导入necp</el-button
       >
     </div>
     <div class="manager_table">
@@ -119,22 +141,32 @@
       />
     </div>
 
-    <edit
-      ref="edit"
+    <file
+      ref="file"
       :dialog-visible="dialog.isVisible"
-      :title="dialog.title"
       @close="closeDialogPage"
     />
+
+    <sea ref="sea" :dialog-visible="seaVisible" @close="closeDialogPage" />
+    <temp ref="temp" :dialog-visible="tempVisible" @close="closeDialogPage" />
+    <necp ref="necp" :dialog-visible="necpVisible" @close="closeDialogPage" />
   </div>
 </template>
 
 <script>
 import Pagination from "@/components/Pagination";
 import { mapState, mapMutations } from "vuex";
-import edit from "./edit.vue";
+import file from "./file.vue";
+import sea from "./seawater.vue";
+import temp from "./temperature.vue";
+import necp from "./necp.vue";
+
 export default {
   components: {
-    edit,
+    file,
+    sea,
+    temp,
+    necp,
     Pagination,
   },
   data() {
@@ -145,6 +177,9 @@ export default {
         isVisible: false,
         title: "",
       },
+      seaVisible: false,
+      tempVisible: false,
+      necpVisible: false,
       // 详细面板显示隐藏
       systemManagerShow: false,
       managerValue: "",
@@ -199,7 +234,7 @@ export default {
           STime: "",
           ETime: "",
         };
-        this.time = []
+        this.time = [];
         this.fetch();
       }
     },
@@ -219,19 +254,37 @@ export default {
       this.time = [];
       this.search();
     },
-    add() {
+    exportFile() {
       this.dialog.isVisible = true;
       this.dialog.title = "添加数据源";
     },
+    exportSeawater() {
+      this.seaVisible = true;
+    },
+    exportTemp() {
+      this.tempVisible = true;
+    },
+    exportNecp() {
+      this.necpVisible = true;
+    },
     // 搜索
     search() {
-      if (this.time.length > 0) {
+      if (this.time) {
         this.queryParams.STime = this.time[0];
         this.queryParams.ETime = this.time[1];
+      } else {
+        this.queryParams.STime = "";
+        this.queryParams.ETime = "";
       }
-      this.fetch({
+      if (this.queryParams.STime) {
+         this.fetch({
         ...this.queryParams,
       });
+      } else {
+        this.fetch({
+          name:this.queryParams.name
+        });
+      }
     },
     // 获取表格数据
     fetch(params = {}) {
@@ -250,6 +303,9 @@ export default {
     // 关闭新增 修改 对话框
     closeDialogPage() {
       this.dialog.isVisible = false;
+      this.seaVisible = false;
+      this.tempVisible = false;
+      this.necpVisible = false;
       this.fetch();
     },
     closeManager() {

@@ -77,7 +77,7 @@
         </el-table-column>
         <el-table-column label="海洋数据" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.isWave }}</span>
+            <span>{{ scope.row.isWave==1?'是':'否' }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -90,11 +90,35 @@
             <span>{{ scope.row.keyword }}</span>
           </template>
         </el-table-column>
+         <!-- <el-table-column label="图标" align="center" min-width="100px">
+          <template slot-scope="scope">
+            <div :class="scope.row.iconImage == null ? null : 'imgdiv'">
+              <img class="itemImg" :src="scope.row.iconImage">
+            </div>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="上传图标" align="center" min-width="100px">
+          <template slot-scope="scope">
+            <el-upload
+              ref="upload"
+              :show-file-list="false"
+              :action="uploadFile()"
+              :auto-upload="true"
+              :on-success="function (res,file) {return ModifySuccess(res,file)}"
+              :on-error="function (res,file) {return ModifyFail(res,file)}"
+              :file-list="fileList">
+              <el-button size="mini" type="primary" @click="changeColumn(scope.row)">上传</el-button>
+            </el-upload>
+          </template>
+        </el-table-column> -->
+
         <el-table-column
           label="操作"
           width="140px"
           header-align="center"
           align="center"
+          fixed="right"
         >
           <template slot-scope="{ row }">
             <el-button
@@ -257,6 +281,10 @@ export default {
       this.dialog.isVisible = true;
       this.dialog.title = "添加数据项";
     },
+        information(row) {
+      this.infoVisible = true;
+      this.$refs.info.setData(row);
+    },
     // 搜索
     search() {
       this.fetch({
@@ -291,9 +319,43 @@ export default {
     closeInfo() {
       this.infoVisible = false;
     },
-    information(row) {
-      this.infoVisible = true;
-      this.$refs.info.setData(row);
+
+
+    // 上传图标
+    // 上传路径
+    uploadFile() {
+      return (
+        // process.env.VUE_APP_BASE_API +
+        globalConfig.baseURL +
+        "gis/api/parameters/imageTobase"
+      );
+    },
+    // 上传失败
+    ModifyFail() {
+      this.$message({
+        message: "图片上传失败",
+        type: "error"
+      });
+    },
+    // 上传图片成功
+    ModifySuccess(res, file) {
+      this.$message({
+        message: "图片上传成功",
+        type: "success"
+      });
+      this.modifyItem.iconImage = res
+
+      this.$put("gis/api/parameters", { ...this.modifyItem }).then(() => {
+        this.search();
+        this.$refs.upload.clearFiles()
+      })
+      .catch(err => {
+        this.$message({
+          message: "图片更新失败",
+          type: "error"
+        });
+      })
+
     },
   },
 };
