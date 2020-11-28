@@ -137,86 +137,6 @@
             </li>
           </ul>
         </li>
-
-        <!-- <ul class="list_task_ul" v-show="menuListFlag">
-          <li v-for="(item, index) in taskList" :key="index">
-            <div class="task_list">
-              <div class="task_name" @click="switchTask(item, index)">
-                <div class="task_dot" :class="{ active: item.checked }"></div>
-                <span>{{ item.name }}</span>
-              </div>
-              <div class="task_operation">
-                <el-button
-                  icon="el-icon-edit-outline"
-                  class="table_column_icon green"
-                  type="text"
-                  @click="editTaskItem(item)"
-                ></el-button>
-                <el-button
-                  icon="el-icon-delete"
-                  class="table_column_icon red"
-                  type="text"
-                  @click="deleteTaskItem(item)"
-                ></el-button>
-                <el-button
-                  icon="el-icon-plus"
-                  class="table_column_icon blueDeep"
-                  type="text"
-                  @click="addTaskItem(item, index)"
-                ></el-button>
-                <el-button
-                  icon="el-icon-s-operation"
-                  class="table_column_icon purple"
-                  type="text"
-                ></el-button>
-              </div>
-            </div>
-            <div class="task_content_wrapper" v-if="item.checked">
-              <div
-                class="task_content"
-                v-for="(itemRoute, indexRoute) in routeList"
-                :key="`route${indexRoute}`"
-              >
-                <div class="task_content_desc">
-                  <div class="task_content_name">{{ itemRoute.name }}</div>
-                  <img
-                    :src="
-                      itemRoute.checked
-                        ? downContentUpIcon
-                        : downContentDownIcon
-                    "
-                    class="down"
-                    @click="routeDetail(itemRoute, indexRoute)"
-                  />
-                </div>
-                <div class="task_content_route" v-if="itemRoute.checked">
-                  <div>评估时间:{{ itemRoute.descList.time }}</div>
-                  <div>评估02:{{ itemRoute.descList.assessment1 }}</div>
-                  <div>评估03:{{ itemRoute.descList.assessment1 }}</div>
-                </div>
-              </div>
-            </div>
-          </li>
-        </ul> -->
-
-        <!-- 系统配置 -->
-        <!-- <ul class="list_task_ul" v-show="systemFlag">
-          <li v-for="(item, index) in systemList" :key="index">
-            <div class="task_list">
-              <div class="task_name" @click="openSystem(index)">
-                <span>{{ item.name }}</span>
-              </div>
-              <div class="task_operation">
-                <el-button
-                  icon="el-icon-s-operation"
-                  class="table_column_icon purple"
-                  type="text"
-                  @click="openSystem(index)"
-                ></el-button>
-              </div>
-            </div>
-          </li>
-        </ul> -->
       </ul>
     </div>
   </div>
@@ -487,16 +407,22 @@ export default {
       this.menuList.forEach((item) => {
         item.flag = false;
       });
-      this.menuListFlag = false;
-      this.systemFlag = false;
 
       // 任务管理需要可以多次切换
       if (index == 2) {
         this.menuList[index].flag = !this.menuListFlag;
-        this.menuListFlag = !this.menuListFlag;
+        if (this.menuList[index].flag) {
+          this.menuListFlag = true;
+        } else {
+          this.menuListFlag = false;
+        }
       } else if (index == 3) {
-        this.menuList[index].flag = !this.menuListFlag;
-        this.systemFlag = !this.menuListFlag;
+        this.menuList[index].flag = !this.systemFlag;
+         if (this.menuList[index].flag) {
+          this.systemFlag = true;
+        } else {
+          this.systemFlag = false;
+        }
       } else {
         this.menuList[index].flag = true;
       }
