@@ -15,7 +15,7 @@
       :rules="rules"
       label-position="right"
       label-width="100px"
-      style="line-height: 100%"
+      style="line-height: 100%;"
     >
       <!-- 名称 -->
       <el-row>
@@ -89,7 +89,7 @@ export default {
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-            this.$post("/api/numerical-json/analysis", this.formData)
+            this.$get("/api/numerical-forecast/analysis", this.formData)
               .then(() => {
                 this.$message({
                   message: "目标路径导入成功",

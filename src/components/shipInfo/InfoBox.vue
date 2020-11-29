@@ -2,38 +2,21 @@
   <div></div>
 </template>
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations } from "vuex";
 export default {
-  components: {
-  },
+  components: {},
   data() {
     return {
-      shipId:'22107',
-      shipImg:require("../../assets/images/ship1.png"),
-      content:{
-        temp:23
-      },
       // 创建的ship图标
       shipIcon: null,
       // 存放站点的list
       stationList: [],
-      // 统一用站点数据
-      station: {
-        callSign: null,
-        buoyName: null,
-        lat: null,
-        lon: null,
-        unit: null,
-        temperature: null,
-        windSpeed: null,
-        windDirection: null,
-        dayTime: null,
-        course: null,
-        speed: null,
-        typeFlag: null,
-        value1: null,
-        value2: null,
-      }
+      shipImg: require("../../assets/images/ship1.png"),
+      buoyImg: require("../../assets/images/buoy.png"),
+      // 浮标
+      buoyList: [],
+      buoyMarkerGroup: [],
+      shipMarkerGroup: [],
     };
   },
   mounted() {
@@ -67,7 +50,7 @@ export default {
         L.DomEvent.disableClickPropagation(wrapper)
           .disableScrollPropagation(this._contentNode)
           .on(wrapper, "contextmenu", L.DomEvent.stopPropagation);
-      }
+      },
     });
 
     // add bindCustomPopup
@@ -109,170 +92,198 @@ export default {
     // //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
     // locationMarker.bindCustomPopup(this.getInfoContent);
 
-    // var locationMarker1 = L.marker([34,120], { icon: icon }).addTo(map);
+    // var locationMarker1 = L.marker([34, 120], { icon: icon }).addTo(map);
     // //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
     // locationMarker1.bindCustomPopup(this.getInfoContent);
-
   },
   computed: {
     ...mapState({
-      realTimeValue: state => state.sideBar.realTimeValue
-    })
+      realTimeValue: (state) => state.sideBar.realTimeValue,
+    }),
   },
   watch: {
     realTimeValue(newval) {
+      map.removeLayer(this.buoyMarkerGroup);
+
       if(newval === 'ship') {
         this.getShipInfo()
-        // var locationMarker = L.marker(map.getCenter(), { icon: icon }).addTo(map);
-        // //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
-        // locationMarker.bindCustomPopup(this.getInfoContent('测试'));
-        // locationMarker.id = this.shipId
-        // locationMarker.on('click', ev => {
-        //   console.log(ev)
-        // })
+      } else if (newval === "buoy") {
+        this.$get("/api/ocean-buoys-live").then((r) => {
+          if (r.status == 200) {
+            this.buoyList = r.data.data;
+            let markerArr = [];
+            this.buoyList.forEach((item, index) => {
+              let icon = new L.Icon({
+                iconUrl: this.buoyImg,
+                iconSize: [30, 30],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41],
+              });
+              let buoy = L.marker([item.lat, item.lon], {
+                icon: icon,
+              });
+              markerArr.push(buoy);
 
-        // var locationMarker1 = L.marker([34,120], { icon: icon }).addTo(map);
-        // //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
-        // locationMarker1.bindCustomPopup(this.getInfoContent('还是测试'));
-      }
-    }
-  },
-  methods: {
-    getValue(val){
-      if(val){
-        return val
-      }else{
-        return '--'
+              // buoy.id = this.shipId;
+              //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
+              // buoy.bindCustomPopup(this.getInfoContent(item.callSign));
+              buoy.on("click", (ev) => {
+                this.$get("/api/ocean-buoys-live/one", {
+                  areaNum: item.areaNum,
+                  localDate: this.$m(new Date()).format("YYYY-MM-DD"),
+                }).then((r) => {
+                  if (r.status == 200) {
+                    let str = this.getBuoyContent({
+                      title: item.areaNum,
+                      content: r.data.data,
+                      lon: item.lon,
+                      lat: item.lat,
+                    });
+                    buoy.bindCustomPopup(str);
+                  }
+                });
+              });
+            });
+            this.buoyMarkerGroup = L.layerGroup(markerArr);
+            map.addLayer(this.buoyMarkerGroup);
+          }
+        });
       }
     },
-    getInfoContent(title) {
-      return `<div
-      id="info_box">
-      <div
-        class="info_title"
-      >
-        <i class="el-icon-ship"></i>
-        <span>`+this.station.callSign+`</span>
-      </div>
-      <div class="info_content">
-        <div class="info">
-          <div>
-            时分:
-            <span>`+this.station.dayTime+`</span>
+  },
+  methods: {
+    getValue(val) {
+      if (val) {
+        return val;
+      } else {
+        return "--";
+      }
+    },
+    getBuoyContent(info) {
+      return (
+        `<div id="info_box">
+          <div class="info_title">
+            <span>浮标` + info.title + `</span>
           </div>
-          <div>
-            位置:
-            <span>`+this.station.lat+`N,`+this.station.lon+`E</span>
+          <div class="info_content">
+            <div class="info">
+              <div>位置:<span>` + info.lon + `N,` + info.lat + `E</span> </div>
+              <div>温度:<span>` + this.getValue(info.content.temperature) + `℃</span> </div>
+              <div>海平面气压:<span>` + this.getValue(info.content.pressure) + `hPa</span></div>
+              <div>湿度:<span>` + this.getValue(info.content.humidity) + `%</span></div>
+              <div>风速:<span>` + this.getValue(info.content.windDirection) + `° ` + this.getValue(info.content.windSpeed) +
+                `m/s</span>
+              </div>
+              <div>风浪周期:<span>` + this.getValue(info.content.wavePeriodFlag1) + `秒</span></div>
+              <div>风浪高度:<span>` + this.getValue(info.content.waveHeightFlag1) + `米</span></div>
+              <div>涌浪周期:<span>` + this.getValue(info.content.wavePeriodFlag20) + `秒</span></div>
+              <div>涌浪高度:<span>` + this.getValue(info.content.waveHeightFlag21) + `米</span></div>
+            </div>
           </div>
-          <div>
-            浮标类型:
-            <span>`+this.station.buoyName+`</span>
-          </div>
-          <div>
-            风向:
-            <span>`+this.station.windDirection+`</span>
-          </div>
-          <div>
-            风速:
-            <span>`+this.station.windSpeed+`m/s</span>
-          </div>
-          <div>
-            风速单位:
-            <span>`+this.station.unit+`</span>
-          </div>
-          <div>
-            温度:
-            <span>`+this.station.temperature+`℃</span>
-          </div>
-          <div>
-            航向:
-            <span>`+this.station.course+`</span>
-          </div>
-          <div>
-            航速:
-            <span>`+this.station.speed+`</span>
-          </div>
-          <div>
-            海洋资料类型:
-            <span>`+this.station.typeFlag+`</span>
-          </div>
-          <div>
-            数值一:
-            <span>`+this.station.value1+`</span>
-          </div>
-          <div>
-            数值二:
-            <span>`+this.station.value2+`</span>
+        </div>`
+      );
+    },
+    getShipContent(info) {
+      return (
+      `<div id="info_box">
+        <div class="info_title"><i class="el-icon-ship"></i><span>`+info.callSign+`</span></div>
+        <div class="info_content">
+          <div class="info">
+            <div>
+              时分:
+              <span>`+info.dayTime+`</span>
+            </div>
+            <div>
+              位置:
+              <span>`+info.lat+`N,`+info.lon+`E</span>
+            </div>
+            <div>
+              浮标类型:
+              <span>`+this.getValue(info.buoyName)+`</span>
+            </div>
+            <div>
+              风向:
+              <span>`+this.getValue(info.windDirection)+`°</span>
+            </div>
+            <div>
+              风速:
+              <span>`+this.getValue(info.windSpeed)+`m/s</span>
+            </div>
+            <div>
+              温度:
+              <span>`+this.getValue(info.temperature)+`℃</span>
+            </div>
+            <div>
+              航向:
+              <span>`+this.getValue(info.course)+`</span>
+            </div>
+            <div>
+              航速:
+              <span>`+this.getValue(info.speed)+`</span>
+            </div>
+            <div>
+              海洋资料类型:
+              <span>`+this.getValue(info.typeFlag)+`</span>
+            </div>
+            <div>
+              数值一:
+              <span>`+this.getValue(info.value1)+`</span>
+            </div>
+            <div>
+              数值二:
+              <span>`+this.getValue(info.value2)+`</span>
+            </div>
           </div>
         </div>
-      </div>
-    </div>`;
+      </div>`)
     },
     getShipInfo() {
       this.$get('/api/ship-live').then(res => {
         if(res.status == 200) {
           console.log(res.data.data)
           let data = res.data.data
+          let markerArr = []
           data.forEach(item => {
             let lat = item.lat
             let lon = item.lon
-            var locationMarker = L.marker(L.latLng(lat, lon), { icon: this.shipIcon }).addTo(map);
+            let shipMarker = L.marker(L.latLng(lat, lon), { icon: this.shipIcon }).addTo(map);
             //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
-            // locationMarker.bindCustomPopup(this.getInfoContent());
-            locationMarker.type = 'ship'
-            locationMarker.callSign = item.callSign
-            this.stationList.push(locationMarker)
-            // locationMarker.id = this.shipId
-            locationMarker.on('click', ev => {
-              console.log(ev)
+            shipMarker.type = 'ship'
+            shipMarker.callSign = item.callSign
+            markerArr.push(shipMarker)
+            shipMarker.on('click', ev => {
               this.$get('/api/ship-live/one', {
                 callSign: ev.target.callSign,
                 localDate: this.$m().format('YYYY-MM-DD')
               }).then(res => {
                 if(res.status == 200) {
                   let station = res.data.data
-                  // station: {
-                  //   callSign: null,
-                  //   buoyName: null,
-                  //   lat: null,
-                  //   lon: null,
-                  //   unit: null,
-                  //   temperature: null,
-                  //   windSpeed: null,
-                  //   windDirection: null,
-                  //   ms: null,
-                  //   course: null,
-                  //   speed: null,
-                  //   typeFlag: null,
-                  //   value1: null,
-                  //   value2: null,
-                  // }
-                  this.station.callSign = station.callSign
-                  this.station.buoyName = station.buoyName
-                  this.station.lat = station.lat
-                  this.station.lon = station.lon
-                  this.station.unit = station.unit
-                  this.station.temperature = station.temperature
-                  this.station.windSpeed = station.windSpeed
-                  this.station.windDirection = station.windDirection
-                  this.station.dayTime = station.dayTime
-                  this.station.course = station.course
-                  this.station.speed = station.speed
-                  this.station.typeFlag = station.typeFlag
-                  this.station.value1 = station.value1
-                  this.station.value2 = station.value2
-                  let i = this.stationList.findIndex(item => {
-                    return item.callSign === ev.target.callSign
-                  })
-                  if(i != -1) {
-                    this.stationList[i].bindCustomPopup(this.getInfoContent())
-                  }
+                  let str = this.getShipContent({
+                    callSign: shipMarker.callSign,
+                    buoyName: station.buoyName,
+                    lat: station.lat,
+                    lon: station.lon,
+                    dataUnit: station.dataUnit,
+                    temperature: station.temperature,
+                    windSpeed: station.windSpeed,
+                    windDirection: station.windDirection,
+                    dayTime: this.$m(station.dayTime).format('HH-mm'),
+                    course: station.course,
+                    speed: station.speed,
+                    typeFlag: station.typeFlag,
+                    value1: station.value1,
+                    value2: station.value2,
+                  });
+                  shipMarker.bindCustomPopup(str)
                 }
               }).catch(error => {
                 this.$message.error('获取站点数据失败')
               })
             })
           })
+          this.shipMarkerGroup = L.layerGroup(markerArr)
+          map.addLayer(this.shipMarkerGroup)
         }
       }).catch(error => {
         this.$message.error('获取船舶站数据失败')

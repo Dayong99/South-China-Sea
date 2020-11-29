@@ -43,21 +43,27 @@
               />
             </div>
             <img
-              :src="downIcon"
+              :src="iconList[0]"
               v-if="index == 2"
               class="down"
               @click.stop="openTask(index)"
             />
             <img
-              :src="sysIcon"
+              :src="iconList[1]"
               v-if="index == 3"
+              class="down"
+              @click.stop="openTask(index)"
+            />
+            <img
+              :src="iconList[2]"
+              v-if="index == 4"
               class="down"
               @click.stop="openTask(index)"
             />
           </div>
 
           <!-- 任务管理 -->
-          <ul class="list_task_ul" v-show="item.flag && menuListFlag">
+          <ul class="list_task_ul" v-show="item.flag && flagList[0]">
             <li v-for="(item, index) in taskList" :key="index">
               <div class="task_list">
                 <div class="task_name" @click="switchTask(item, index)">
@@ -120,7 +126,7 @@
           </ul>
 
           <!-- 系统设置 -->
-          <ul class="list_system_ul" v-show="item.flag && systemFlag">
+          <ul class="list_system_ul" v-show="item.flag && flagList[1]">
             <li v-for="(item, index) in systemList" :key="index">
               <div class="task_list">
                 <div class="task_name" @click="openSystem(index)">
@@ -132,6 +138,25 @@
                     class="table_column_icon purple"
                     type="text"
                     @click="openSystem(index)"
+                  ></el-button>
+                </div>
+              </div>
+            </li>
+          </ul>
+
+          <!-- 数据管理 -->
+          <ul class="list_system_ul" v-show="item.flag && flagList[2]">
+            <li v-for="(item, index) in dataList" :key="index">
+              <div class="task_list">
+                <div class="task_name" @click="openData(index)">
+                  <span>{{ item.name }}</span>
+                </div>
+                <div class="task_operation">
+                  <el-button
+                    icon="el-icon-s-operation"
+                    class="table_column_icon purple"
+                    type="text"
+                    @click="openData(index)"
                   ></el-button>
                 </div>
               </div>
@@ -155,16 +180,19 @@ export default {
       searchIcon: require("@/assets/images/menu/unselect.png"),
       searchValue: "",
 
-      // 任务管理展开
-      menuListFlag: false,
-      downContentDownIcon: require("@/assets/images/menu/down.png"),
-      downContentUpIcon: require("@/assets/images/menu/up.png"),
       downIcon: require("@/assets/images/menu/down.png"),
+      upIcon: require("@/assets/images/menu/up.png"),
+      iconList: [
+        require("@/assets/images/menu/down.png"),
+        require("@/assets/images/menu/down.png"),
+        require("@/assets/images/menu/down.png"),
+      ],
+      flagList: [false, false, false],
+
+      // 任务管理展开
       nowMenuList: [],
 
       // 系统配置展开
-      systemFlag: false,
-      sysIcon: require("@/assets/images/menu/down.png"),
       taskList: [
         {
           name: "1",
@@ -177,6 +205,7 @@ export default {
     ...mapState({
       menuList: (state) => state.menuBar.menuList,
       systemList: (state) => state.menuBar.systemList,
+      dataList: (state) => state.menuBar.dataList,
       TaskManagerOptions: (state) => state.menuBar.TaskManagerOptions,
       routeDialogOptions: (s) => s.menuBar.routeDialogOptions,
       algorithmOptions: (s) => s.menuBar.algorithmOptions,
@@ -188,35 +217,15 @@ export default {
         let i = newval.findIndex((item) => {
           return item.flag == true;
         });
-        if (i != -1) {
-          // 任务管理控制箭头
-          if (i == 2) {
-            this.menuListFlag = true;
-          } else {
-            this.menuListFlag = false;
-          }
-        }
       },
       deep: true,
     },
-    // 任务管理
-    menuListFlag(newval, oldval) {
-      if (newval) {
-        this.sysIcon = require("@/assets/images/menu/down.png");
-        this.downIcon = require("@/assets/images/menu/up.png");
-      } else {
-        this.downIcon = require("@/assets/images/menu/down.png");
-        // this.menuList[2].flag = false
-      }
-    },
-    // 系统配置
-    systemFlag(newval, oldval) {
-      if (newval) {
-        this.downIcon = require("@/assets/images/menu/down.png");
-        this.sysIcon = require("@/assets/images/menu/up.png");
-      } else {
-        this.sysIcon = require("@/assets/images/menu/down.png");
-        // this.menuList[2].flag = false
+    flagList(newval, oldval) {
+      this.iconList = new Array(3).fill(this.downIcon);
+      console.log(newval);
+      let index = this.flagList.indexOf(true);
+      if (index !== -1) {
+        this.iconList[index] = this.upIcon;
       }
     },
     // 任务变化
@@ -237,6 +246,7 @@ export default {
       setMenuList: "menuBar/setMenuList",
       setTaskManagerOptions: "menuBar/setTaskManagerOptions",
       setSystem: "menuBar/setSystem",
+      setData: "menuBar/setData",
       setRouteDialogOptions: "menuBar/setRouteDialogOptions",
       setRouteAlgorithmInfo: "menuBar/setRouteAlgorithmInfo",
     }),
@@ -384,10 +394,8 @@ export default {
           item.flag = false;
         });
         this.setMenuList(this.menuList);
-        this.downIcon = require("@/assets/images/menu/down.png");
-        this.sysIcon = require("@/assets/images/menu/down.png");
-        this.menuListFlag = false;
-        this.systemFlag = false;
+        this.iconList = new Array(3).fill(this.downIcon);
+        this.flagList = new Array(3).fill(false);
       }
     },
     //------------end搜索框--------------
@@ -405,24 +413,16 @@ export default {
       });
 
       // 任务管理需要可以多次切换
-      if (index == 2) {
-        this.menuList[index].flag = !this.menuListFlag;
+      if (index == 2 || index == 3 || index == 4) {
+        this.menuList[index].flag = !this.flagList[index - 2];
+        this.flagList = new Array(3).fill(false);
         if (this.menuList[index].flag) {
-          this.menuListFlag = true;
-          this.systemFlag = false;
-        } else {
-          this.menuListFlag = false;
-        }
-      } else if (index == 3) {
-        this.menuList[index].flag = !this.systemFlag;
-        if (this.menuList[index].flag) {
-          this.systemFlag = true;
-          this.menuListFlag = false;
-        } else {
-          this.systemFlag = false;
+          this.flagList[index - 2] = true;
         }
       } else {
         this.menuList[index].flag = true;
+        this.iconList = new Array(3).fill(this.downIcon);
+        this.flagList = new Array(3).fill(false);
       }
       this.setMenuList(this.menuList);
     },
@@ -431,6 +431,11 @@ export default {
     // 系统配置
     openSystem(index) {
       this.setSystem({ index: index, val: true });
+    },
+
+    // 数据管理
+    openData(index) {
+      this.setData({ index: index, val: true });
     },
   },
 };
