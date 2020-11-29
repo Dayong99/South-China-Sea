@@ -132,7 +132,7 @@ export default {
                 popupAnchor: [1, -34],
                 shadowSize: [41, 41],
               });
-              let buoy = L.marker([item.lat,item.lon], {
+              let buoy = L.marker([item.lat, item.lon], {
                 icon: icon,
               });
               markerArr.push(buoy);
@@ -142,11 +142,16 @@ export default {
               // buoy.bindCustomPopup(this.getInfoContent(item.callSign));
               buoy.on("click", (ev) => {
                 this.$get("/api/ocean-buoys-live/one", {
-                  areaNum:item.areaNum ,
-                  localDate:this.$m(new Date()).format('YYYY-MM-DD')
+                  areaNum: item.areaNum,
+                  localDate: this.$m(new Date()).format("YYYY-MM-DD"),
                 }).then((r) => {
                   if (r.status == 200) {
-                    let str = this.getBuoyContent({title:item.areaNum,content:r.data.data,lon:item.lon,lat:item.lat})
+                    let str = this.getBuoyContent({
+                      title: item.areaNum,
+                      content: r.data.data,
+                      lon: item.lon,
+                      lat: item.lat,
+                    });
                     buoy.bindCustomPopup(str);
                   }
                 });
@@ -183,7 +188,11 @@ export default {
         <div class="info">
           <div>
             位置:
-            <span>`+info.lon+`N,`+info.lat+`E</span>
+            <span>` +
+        info.lon +
+        `N,` +
+        info.lat +
+        `E</span>
           </div>
           <div>
             温度:
@@ -211,6 +220,7 @@ export default {
         this.getValue(info.content.windSpeed) +
         `m/s</span>
           </div>
+          <div>
             风浪周期:
             <span>` +
         this.getValue(info.content.wavePeriodFlag1) +
