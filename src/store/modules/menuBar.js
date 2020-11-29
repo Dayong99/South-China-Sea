@@ -71,7 +71,6 @@ const mutations = {
   },
   setAlgorithm(state, val) {
     state.algorithmOptions = val
-    console.log(state.algorithmOptions,`state.setAlgorithm`)
   },
   setTaskManagerOptions(state,val) {
     state.TaskManagerOptions = val

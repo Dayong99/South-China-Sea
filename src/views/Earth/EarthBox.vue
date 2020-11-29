@@ -45,6 +45,11 @@
     <route-manager></route-manager>
     <!-- 算法管理 -->
     <algorithm-manager></algorithm-manager>
+<<<<<<< HEAD
+    <!-- 评估结果 -->
+    <assessment-manager></assessment-manager>
+=======
+>>>>>>> a301e4e87144c0865be3d80ffe62e514245f9add
     <!-- 船舰详情 -->
     <info-box></info-box>
   </div>
@@ -77,6 +82,7 @@ import InfoBox from '@/components/shipInfo/InfoBox.vue'
 
 import routeManager from '@/components/menu/routeManager/edit.vue'
 import algorithmManager from '@/components/menu/algorithmManager/edit.vue'
+import assessmentManager from '@/components/menu/assessmentManager/index.vue'
 import eventBus from "@/utils/eventBus.js";
 
 export default {
@@ -105,7 +111,8 @@ export default {
     DatasourceManager:DatasourceManager,
     DatasourceManager1:DatasourceManager1,
     DatasourceManager2:DatasourceManager2,
-    InfoBox:InfoBox
+    InfoBox:InfoBox,
+    assessmentManager: assessmentManager
   },
   data() {
     return {
