@@ -302,13 +302,13 @@ export default {
       };
     },
     legendName(val) {
-      return (val) => {
-        for (let i = 0; i < this.legendList.length; i++) {
+      let name
+      for (let i = 0; i < this.legendList.length; i++) {
           if (val == this.legendList[i].id) {
-            return this.legendList[i].legendName;
+            name =  this.legendList[i].legendName;
           }
         }
-      };
+      return name;
     },
     drawType(type) {
       switch (type) {
@@ -322,7 +322,6 @@ export default {
     },
     // 是否是色斑图分组
     isDataGroup(val) {
-      return (val) => {
         if (val == null) {
           return "";
         } else if (val == 0) {
@@ -330,7 +329,6 @@ export default {
         } else if (val == 1) {
           return "是";
         }
-      };
     },
     getLegend() {
       this.$get("/api/legend-config/all").then((res) => {

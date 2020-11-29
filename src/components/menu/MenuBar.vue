@@ -64,7 +64,7 @@
                   <div class="task_dot" :class="{ active: item.checked }"></div>
                   <span class="task_desc">{{ item.name }}</span>
                 </div>
-                <div class="task_operation">
+                <div class="task_operation" style="margin-left: 0">
                   <el-button
                     icon="el-icon-edit-outline"
                     class="table_column_icon green"
@@ -403,16 +403,22 @@ export default {
       this.menuList.forEach((item) => {
         item.flag = false;
       });
-      this.menuListFlag = false;
-      this.systemFlag = false;
 
       // 任务管理需要可以多次切换
       if (index == 2) {
         this.menuList[index].flag = !this.menuListFlag;
-        this.menuListFlag = !this.menuListFlag;
+        if (this.menuList[index].flag) {
+          this.menuListFlag = true;
+        } else {
+          this.menuListFlag = false;
+        }
       } else if (index == 3) {
-        this.menuList[index].flag = !this.menuListFlag;
-        this.systemFlag = !this.menuListFlag;
+        this.menuList[index].flag = !this.systemFlag;
+         if (this.menuList[index].flag) {
+          this.systemFlag = true;
+        } else {
+          this.systemFlag = false;
+        }
       } else {
         this.menuList[index].flag = true;
       }
