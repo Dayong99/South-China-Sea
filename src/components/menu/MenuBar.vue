@@ -241,7 +241,7 @@ export default {
       setRouteAlgorithmInfo: "menuBar/setRouteAlgorithmInfo",
     }),
     routeAlgorithmInfo(item, index) {
-      setRouteAlgorithmInfo([1, item]);
+      this.setRouteAlgorithmInfo([1, item]);
     },
     deleteRoute(item, index) {
       console.log(item, index, `delete`);
