@@ -6,7 +6,7 @@
     style="width: auto; height: auto"
   >
     <div class="manager_title">
-      <span>数据源配置—广东省网</span>
+      <span>数据源配置—数值预报数据</span>
       <img
         src="@/assets/images/legendbar/close.png"
         @click.stop="closeManager"
@@ -31,14 +31,34 @@
         range-separator="-"
         start-placeholder="开始日期"
         end-placeholder="结束日期"
-        class="operation_input"
         @change="search"
       >
       </el-date-picker>
       <el-button class="operation_search" @click="search">搜索</el-button>
       <el-button class="operation_clear" @click="resetSearch">重置</el-button>
-      <el-button icon="el-icon-download" class="operation_add" @click="add"
+      <el-button
+        icon="el-icon-download"
+        class="operation_add"
+        @click="exportFile"
         >导入资料</el-button
+      >
+      <el-button
+        icon="el-icon-download"
+        class="operation_add"
+        @click="exportSeawater"
+        >导入海流</el-button
+      >
+      <el-button
+        icon="el-icon-download"
+        class="operation_add"
+        @click="exportTemp"
+        >导入水温</el-button
+      >
+      <el-button
+        icon="el-icon-download"
+        class="operation_add"
+        @click="exportNecp"
+        >导入necp</el-button
       >
     </div>
     <div class="manager_table">
@@ -126,6 +146,10 @@
       :dialog-visible="dialog.isVisible"
       @close="closeDialogPage"
     />
+
+    <sea ref="sea" :dialog-visible="seaVisible" @close="closeDialogPage" />
+    <temp ref="temp" :dialog-visible="tempVisible" @close="closeDialogPage" />
+    <necp ref="necp" :dialog-visible="necpVisible" @close="closeDialogPage" />
   </div>
 </template>
 
@@ -133,9 +157,16 @@
 import Pagination from "@/components/Pagination";
 import { mapState, mapMutations } from "vuex";
 import file from "./file.vue";
+import sea from "./seawater.vue";
+import temp from "./temperature.vue";
+import necp from "./necp.vue";
+
 export default {
   components: {
     file,
+    sea,
+    temp,
+    necp,
     Pagination,
   },
   data() {
@@ -146,6 +177,9 @@ export default {
         isVisible: false,
         title: "",
       },
+      seaVisible: false,
+      tempVisible: false,
+      necpVisible: false,
       // 详细面板显示隐藏
       systemManagerShow: false,
       managerValue: "",
@@ -155,7 +189,11 @@ export default {
         size: 5,
         num: 1,
       },
-      queryParams: {},
+      queryParams: {
+        name: null,
+        STime: "",
+        ETime: "",
+      },
       time: [],
     };
   },
@@ -163,7 +201,7 @@ export default {
   computed: {
     ...mapState({
       menuList: (state) => state.menuBar.menuList,
-      systemList: (state) => state.menuBar.systemList,
+      dataList: (state) => state.menuBar.dataList,
     }),
   },
   watch: {
@@ -173,15 +211,15 @@ export default {
         let i = newval.findIndex((item) => {
           return item.flag == true;
         });
-        if (i !== 3) {
+        if (i !== 4) {
           this.systemManagerShow = false;
         }
       },
       deep: true,
     },
-    systemList: {
+    dataList: {
       handler(newval, oldval) {
-        if (newval[6].flag) {
+        if (newval[2].flag) {
           this.systemManagerShow = true;
         } else {
           this.systemManagerShow = false;
@@ -191,7 +229,11 @@ export default {
     },
     systemManagerShow(val) {
       if (val) {
-        this.queryParams = {};
+        this.queryParams = {
+          name: null,
+          STime: "",
+          ETime: "",
+        };
         this.time = [];
         this.fetch();
       }
@@ -204,13 +246,26 @@ export default {
 
     // 搜索重置
     resetSearch() {
-      this.queryParams = {};
+      this.queryParams = {
+        name: null,
+        STime: "",
+        ETime: "",
+      };
       this.time = [];
       this.search();
     },
-    add() {
+    exportFile() {
       this.dialog.isVisible = true;
       this.dialog.title = "添加数据源";
+    },
+    exportSeawater() {
+      this.seaVisible = true;
+    },
+    exportTemp() {
+      this.tempVisible = true;
+    },
+    exportNecp() {
+      this.necpVisible = true;
     },
     // 搜索
     search() {
@@ -235,7 +290,7 @@ export default {
     fetch(params = {}) {
       params.pageSize = this.pagination.size;
       params.pageNum = this.pagination.num;
-      this.$get("/api/numerical-json", {
+      this.$get("/api/numerical-forecast", {
         ...params,
       }).then((res) => {
         console.log(res, "res");
@@ -248,6 +303,9 @@ export default {
     // 关闭新增 修改 对话框
     closeDialogPage() {
       this.dialog.isVisible = false;
+      this.seaVisible = false;
+      this.tempVisible = false;
+      this.necpVisible = false;
       this.fetch();
     },
     closeManager() {
