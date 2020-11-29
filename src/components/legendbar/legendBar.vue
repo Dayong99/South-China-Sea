@@ -152,9 +152,9 @@ export default {
     },
     // 获取所有图例数据
     getAllColorList() {
-      this.$get('/api/legend-config').then(res => {
+      this.$get('/api/legend-config/all').then(res => {
         if(res.status == 200) {
-          this.allColorList = res.data.data.rows
+          this.allColorList = res.data.data
           console.log('allColorList', this.allColorList)
         }
       }).catch(error => {
@@ -162,11 +162,15 @@ export default {
       })
     },
     limitLegend(legendColor) {
-      legendColor.legendValues.forEach((item, i) => {
-        if(item > 180) {
-          legendColor.legendValues[i] = Math.round(legendColor.legendValues[i] - 273.15)
-        }
-      })
+      let i = legendColor.type.indexOf('temperature')
+      let j = legendColor.type.indexOf('Temperature')
+      if(i != -1 || j != -1) {
+        legendColor.legendValues.forEach((item, i) => {
+          if(item > 180) {
+            legendColor.legendValues[i] = Math.round(legendColor.legendValues[i] - 273.15)
+          }
+        })
+      }
       // 对图例数据进行抽稀
       if (legendColor.legendValues.length > 15 && legendColor.legendValues.length <= 25) {
         for (let i = 1; i < legendColor.legendValues.length; i += 2) {

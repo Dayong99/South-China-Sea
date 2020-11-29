@@ -389,7 +389,7 @@ export default {
     changeIcon() {
       if (this.iconData === this.playIcon) {
         this.iconData = this.stopIcon;
-        this.timer = setInterval(this.changeLine, 5000);
+        this.timer = setInterval(this.changeLine, 3000);
       } else {
         this.iconData = this.playIcon;
         clearInterval(this.timer);
