@@ -29,14 +29,15 @@
         value-format="yyyy-MM-dd HH:mm:ss"
         type="datetimerange"
         range-separator="-"
-        start-placeholder="开始"
-        end-placeholder="结束"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        @change="search"
       >
       </el-date-picker>
       <el-button class="operation_search" @click="search">搜索</el-button>
       <el-button class="operation_clear" @click="resetSearch">重置</el-button>
-      <el-button icon="el-icon-plus" class="operation_add" @click="add"
-        >资料导入</el-button
+      <el-button icon="el-icon-download" class="operation_add" @click="add"
+        >导入资料</el-button
       >
     </div>
     <div class="manager_table">
@@ -119,10 +120,9 @@
       />
     </div>
 
-    <edit
-      ref="edit"
+    <file
+      ref="file"
       :dialog-visible="dialog.isVisible"
-      :title="dialog.title"
       @close="closeDialogPage"
     />
   </div>
@@ -131,10 +131,10 @@
 <script>
 import Pagination from "@/components/Pagination";
 import { mapState, mapMutations } from "vuex";
-import edit from "./edit.vue";
+import file from "./file.vue";
 export default {
   components: {
-    edit,
+    file,
     Pagination,
   },
   data() {
@@ -199,7 +199,7 @@ export default {
           STime: "",
           ETime: "",
         };
-        this.time = []
+        this.time = [];
         this.fetch();
       }
     },
@@ -225,13 +225,22 @@ export default {
     },
     // 搜索
     search() {
-      if (this.time.length > 0) {
+      if (this.time) {
         this.queryParams.STime = this.time[0];
         this.queryParams.ETime = this.time[1];
+      } else {
+        this.queryParams.STime = "";
+        this.queryParams.ETime = "";
       }
-      this.fetch({
+     if (this.queryParams.STime) {
+         this.fetch({
         ...this.queryParams,
       });
+      } else {
+        this.fetch({
+          name:this.queryParams.name
+        });
+      }
     },
     // 获取表格数据
     fetch(params = {}) {

@@ -2,7 +2,7 @@
   <!-- eslint-disable-->
   <el-dialog
     :title="title"
-    width="700px"
+    width="500px"
     top="50px"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -139,18 +139,7 @@
           </div>
         </el-col>
       </el-row>
-      <!-- 名称 -->
-      <el-row>
-        <el-col :span="18">
-          <div class="grid-content bg-purple-dark">
-            <el-form-item label="数据项名称：" prop="parameterName">
-              <div>
-                {{ formData.parameterName }}
-              </div>
-            </el-form-item>
-          </div>
-        </el-col>
-      </el-row>
+
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
@@ -188,19 +177,17 @@
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
             <el-form-item label="图例：" prop="legendId">
-              <div v-html="showLegend(formData.legendId)"></div>
+              <span>{{legendName(formData.legendId)}}</span>
             </el-form-item>
           </div>
         </el-col>
       </el-row>
-      
+
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
-            <el-form-item label="备注：" prop="remark">
-              <div>
-                {{ formData.remark }}
-              </div>
+            <el-form-item label="绘图类型：" prop="drawType">
+              <div>{{ drawType(formData.drawType) }}</div>
             </el-form-item>
           </div>
         </el-col>
@@ -232,17 +219,20 @@
           <div class="grid-content bg-purple-dark">
             <el-form-item label="色斑图：" prop="dataGroup">
               <div>
-                {{ formData.dataGroup == 1 ? "是" : "否" }}
+                <span>{{ isDataGroup(formData.dataGroup) }}</span>
               </div>
             </el-form-item>
           </div>
         </el-col>
       </el-row>
+
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
-            <el-form-item label="绘图类型：" prop="drawType">
-              <div v-html="showType(formData.drawType)"></div>
+            <el-form-item label="备注：" prop="remark">
+              <div>
+                {{ formData.remark }}
+              </div>
             </el-form-item>
           </div>
         </el-col>
@@ -260,8 +250,6 @@ export default {
       rules: {},
       formData: this.initForm(),
       legendList: [],
-      colorValues: [],
-      legendValues: [],
     };
   },
   props: {
@@ -274,6 +262,7 @@ export default {
       default: "",
     },
   },
+  computed: {},
   watch: {
     dialogVisible(val) {
       if (val) {
@@ -312,24 +301,16 @@ export default {
         isEvaluate: "",
       };
     },
-    getLegend() {
-      this.$get("/api/legend-config/all").then((res) => {
-        this.legendList = res.data.data;
-      });
-    },
-    showLegend(val) {
-      console.log(this.legendList);
-      let name;
-      for (let i = 0; i <= this.legendList.length - 1; i++) {
-        if (Number(val) == Number(this.legendList[i].id)) {
-          this.colorValues = this.legendList[i].colorValues;
-          this.legendValues = this.legendList[i].legendValues;
-          name = this.legendList[i].legendName;
+    legendName(val) {
+      let name
+      for (let i = 0; i < this.legendList.length; i++) {
+          if (val == this.legendList[i].id) {
+            name =  this.legendList[i].legendName;
+          }
         }
-      }
       return name;
     },
-    showType(type) {
+    drawType(type) {
       switch (type) {
         case "point":
           return "点";
@@ -338,6 +319,21 @@ export default {
         case "layer":
           return "图层";
       }
+    },
+    // 是否是色斑图分组
+    isDataGroup(val) {
+        if (val == null) {
+          return "";
+        } else if (val == 0) {
+          return "否";
+        } else if (val == 1) {
+          return "是";
+        }
+    },
+    getLegend() {
+      this.$get("/api/legend-config/all").then((res) => {
+        this.legendList = res.data.data;
+      });
     },
     setData(data) {
       this.formData = {

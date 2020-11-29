@@ -50,8 +50,6 @@
             </el-form-item>
           </div>
         </el-col>
-      </el-row>
-      <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
             <el-form-item label="维度参数" prop="dimensionParameter">
@@ -62,6 +60,9 @@
             </el-form-item>
           </div>
         </el-col>
+      </el-row>
+      <el-row>
+        
       </el-row>
       <el-row>
         <el-col :span="18">
@@ -462,9 +463,6 @@ export default {
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          if (this.formData.legendId === "") {
-            this.source.legendId = 0;
-          }
           if (this.title === "添加数据项") {
             this.$post("/api/parameters", this.formData)
               .then(() => {

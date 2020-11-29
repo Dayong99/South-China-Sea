@@ -3,7 +3,7 @@
     id="ship_manager"
     class="ship_manager"
     v-show="systemManagerShow"
-    style="width: auto"
+    style="width: auto;height:auto;"
   >
     <div class="manager_title">
       <span>数据项配置</span>
@@ -77,7 +77,7 @@
         </el-table-column>
         <el-table-column label="海洋数据" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.isWave }}</span>
+            <span>{{ scope.row.isWave == 1 ? "是" : "否" }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -90,11 +90,37 @@
             <span>{{ scope.row.keyword }}</span>
           </template>
         </el-table-column>
+         <el-table-column label="图标" align="center" width="50px">
+          <template slot-scope="scope">
+            <!-- <span>{{ scope.row.iconImage }}</span> -->
+            <div :class="scope.row.iconImage == null ? null : 'imgdiv'">
+              <img class="itemImg" :src="scope.row.iconImage">
+            </div>
+          </template>
+        </el-table-column>
+
+
+        <el-table-column label="上传图标" align="center" min-width="100px">
+          <template slot-scope="scope">
+            <el-upload
+              ref="upload"
+              :show-file-list="false"
+              :action="uploadFile()"
+              :auto-upload="true"
+              :on-success="function (res,file) {return ModifySuccess(res,file)}"
+              :on-error="function (res,file) {return ModifyFail(res,file)}"
+              :file-list="fileList">
+              <el-button size="mini" type="primary" @click="changeColumn(scope.row)">上传</el-button>
+            </el-upload>
+          </template>
+        </el-table-column>
+
         <el-table-column
           label="操作"
           width="140px"
           header-align="center"
           align="center"
+          fixed="right"
         >
           <template slot-scope="{ row }">
             <el-button
@@ -180,6 +206,8 @@ export default {
         parameterName: null,
       },
       infoVisible: false,
+      modifyItem: {},
+       fileList: [],
     };
   },
   mounted() {},
@@ -257,6 +285,10 @@ export default {
       this.dialog.isVisible = true;
       this.dialog.title = "添加数据项";
     },
+        information(row) {
+      this.infoVisible = true;
+      this.$refs.info.setData(row);
+    },
     // 搜索
     search() {
       this.fetch({
@@ -291,13 +323,70 @@ export default {
     closeInfo() {
       this.infoVisible = false;
     },
-    information(row) {
-      this.infoVisible = true;
-      this.$refs.info.setData(row);
+
+
+    // 上传图标
+    // 上传路径
+    uploadFile() {
+      return (
+        // process.env.VUE_APP_BASE_API +
+        globalConfig.baseURL +
+        "/api/parameters/imageTobase"
+      );
     },
+    // 上传失败
+    ModifyFail() {
+      this.$message({
+        message: "图片上传失败",
+        type: "error"
+      });
+    },
+    // 上传图片成功
+    ModifySuccess(res, file) {
+      this.$message({
+        message: "图片上传成功",
+        type: "success"
+      });
+      this.modifyItem.iconImage = res
+
+      this.$put("/api/parameters", { ...this.modifyItem }).then(() => {
+        this.search();
+        this.$refs.upload.clearFiles()
+      })
+      .catch(err => {
+        this.$message({
+          message: "图片更新失败",
+          type: "error"
+        });
+      })
+
+    },
+    changeColumn(row) {
+      // this.$refs.upload.clearFiles()
+      this.modifyItem = row
+    }
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.imgdiv {
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  background: #F99C00;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img[src=""],img:not([src]) {
+    opacity:0;
+  }
+
+  .itemImg {
+    width: 20px;
+    height: 20px;
+  }
+}
 </style>

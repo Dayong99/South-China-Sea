@@ -1,5 +1,5 @@
 <template>
-  <div id="ship_manager" class="ship_manager" v-show="shipManagerShow">
+  <div id="ship_manager" class="ship_manager" v-show="shipManagerShow" style="width:auto;height:auto;">
     <div class="manager_title">
       <span>船舰管理</span>
       <img
@@ -23,7 +23,7 @@
       >
     </div>
     <div class="manager_table">
-      <el-table :data="tableData" border style="width: 100%" max-height="400px">
+      <el-table :data="tableData" border style="width:auto;">
         <el-table-column
           label="名称"
           prop="role-name"
@@ -119,12 +119,12 @@
               type="text"
               @click="deleteItem(row)"
             ></el-button>
-            <el-button
+            <!--<el-button
               icon="el-icon-s-operation"
               class="table_column_icon purple"
               type="text"
               @click="algorithm(row)"
-            ></el-button>
+            ></el-button> -->
           </template>
         </el-table-column>
       </el-table>

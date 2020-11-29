@@ -9,7 +9,8 @@
     append-to-body
     @close="closeManager"
   >
-    <div class="dialog_wrapper">
+    <div class="dialog_map_wrapper">
+    
       <div class="route_map_wrapper">
         <div id="routeMap" class="routeMap" />
       </div>
@@ -23,11 +24,54 @@
           ></el-slider>
         </div>
       </div>
-      <div class="routeInfo_wrapper">
-        <ul>
-          <li></li>
-          <li></li>
-        </ul>
+      <div
+        class="routeInfo_wrapper"
+      >
+        <div class="routeInfo_item">
+          <div class="item">
+            航线名称：<el-input
+              class="input_wrapper"
+              size="mini"
+              v-model="routeInfoList.name"
+              placeholder="请输入名称"
+            ></el-input>
+          </div>
+          <div class="item">
+            经度：<el-input
+              class="input_wrapper"
+              size="mini"
+              v-model="routePointInfo.lon"
+              placeholder="请输入经度"
+            ></el-input>
+          </div>
+          <div class="item">
+            纬度：<el-input
+              class="input_wrapper"
+              size="mini"
+              v-model="routePointInfo.lat"
+              placeholder="请输入纬度"
+            ></el-input>
+          </div>
+          <div class="item">
+            港口名：<el-input
+              class="input_wrapper"
+              size="mini"
+              v-model="routePointInfo.port"
+              placeholder="请输入港口名"
+            ></el-input>
+          </div>
+          <div class="item">
+            时间：
+            <el-date-picker
+              class="date_wrapper"
+              v-model="routePointInfo.time"
+              type="datetime"
+              size="mini"
+              placeholder="选择日期"
+            >
+            </el-date-picker>
+          </div>
+        </div>
       </div>
       <div
         class="button_wrapper"
@@ -54,6 +98,20 @@ export default {
   components: {},
   data() {
     return {
+      // 航线信息
+      routeInfoList: {
+        name: null,
+        routePoint: []
+      },
+      // 当前航线点信息
+      routePointInfo: {
+        lon: null,
+        lat: null,
+        port: null,
+        time: null
+      },
+      input: "",
+      value1: "",
       value2: 0,
       timeLineStep: 100,
       routeCustomActive: false,
@@ -79,6 +137,7 @@ export default {
           this.title = "修改航线";
         }
         this.routeManagerShow = val[0];
+        console.log(val[1], `val[0]`);
         this.$nextTick(() => {
           this.initMap();
         });
@@ -90,7 +149,7 @@ export default {
       setRouteDialogOptions: "menuBar/setRouteDialogOptions",
     }),
     changeTimeSteap() {
-      console.log(this.value2,`this.value2`);
+      console.log(this.value2, `this.value2`);
     },
     routeCustomClick() {
       this.routeCustomActive = !this.routeCustomActive;
@@ -108,25 +167,6 @@ export default {
       this.routeManagerShow = false;
       this.setRouteDialogOptions([0, {}]);
       window.routeMap.remove();
-    },
-    initMap() {
-      // 底图切换
-      window.routeMap = L.map("routeMap", {
-        attributionControl: false,
-        crs: L.CRS.EPSG3857,
-        minZoom: 2,
-        maxZoom: 13,
-        // zoom: 4,
-        // center: [30.2, 119.7],
-        worldCopyJump: true,
-        zoomControl: false,
-      });
-      L.tileLayer
-        .chinaProvider("Geoq.Normal.PurplishBlue", { maxZoom: 13, minZoom: 2 })
-        .addTo(window.routeMap);
-      window.routeMap.setView([35.09, 102.21], 4);
-      this.changeZoom();
-      this.changeMove();
     },
     draw() {
       var points = [], // 点
@@ -149,7 +189,7 @@ export default {
         });
         window.routeMap.addLayer(node);
         geometry.push(node);
-        that.routeCollect.push(node)
+        that.routeCollect.push(node);
         that.timeLineStep = (100 / geometry.length).toFixed(2);
         window.routeMap.on("mousemove", onMove); //双击地图
       }
@@ -169,10 +209,12 @@ export default {
         window.routeMap.off("mousemove");
         window.routeMap.off("click");
         window.routeMap.off("contextmenu");
-        that.routeEditShow = false;
+        that.routeCustomActive = false;
         tempLines.remove();
       }
     },
+
+    // 
     routeEditClick() {
       this.routeEditShow = !this.routeEditShow;
       if (this.routeEditShow) {
@@ -180,69 +222,89 @@ export default {
         this.editRoute();
       }
     },
-    changeZoom() {
-      window.routeMap.on("zoomend", (ev) => {
-        console.log("zoomend", window.routeMap.getZoom());
-        console.log(ev);
-      });
+
+    // 重置
+    reset() {
+      this.routeEditShow = false;
+      this.routeCollect = [];
+      this.routeCustomActive = false;
     },
-    changeMove() {
-      window.routeMap.on("moveend", (ev) => {
-        console.log("moveend", window.routeMap.getZoom());
-        console.log(ev);
-      });
-    },
+
+    // 编辑 新增 航线
     editRoute() {
-      console.log(`editRoute`,this.routeCollect)
-      console.log(this.routeCollect.length,`this.routeCollect.length`)
       if (this.routeCollect.length) {
         let dataArr = [];
         this.routeCollect.forEach((e, i) => {
-          console.log(e._latlng.lng,e._latlng.lat,`e._latlng.lat`)
+          console.log(e._latlng.lng, e._latlng.lat, `e._latlng.lat`);
           let obj = {
-            "arrivealTime": null,
-            "latitude": null,
-            "longitude": null,
-            "itemIndex": null,
-            "itemName":  null
-          }
-          obj['itemIndex'] = i
-          obj['itemName'] = 'hahah'
-          obj['longitude'] = e._latlng.lng
-          obj['latitude'] = e._latlng.lat
-          obj['arrivealTime'] = '2020-12-01 00:00:00'
-          dataArr.push(obj)
+            arrivealTime: null,
+            latitude: null,
+            longitude: null,
+            itemIndex: null,
+            itemName: null,
+            lineName: null
+          };
+          let timeArr = ["2020-09-01 03:00:00","2020-09-02 04:00:00","2020-09-03 05:00:00"]
+          obj["itemIndex"] = i;
+          obj["itemName"] = "hahah";
+          obj["longitude"] = e._latlng.lng;
+          obj["latitude"] = e._latlng.lat;
+
+          obj["arrivalTime"] = timeArr[i];
+          dataArr.push(obj);
         });
-        console.log(dataArr, `dataArr`);
         let params = {
-          'courseItemList': dataArr,
-          "ctype": 0,
-          "plan_Id": 46
-        }
-        this.$jsonPost(`/api/course`,{
-          ...params
-        }).then(() => {
-          this.$message({
-            message: "航线添加成功",
-            type: "success",
-          });
-        }).catch(() => {
-          this.$message({
-            message: "航线添加失败",
-            type: "error",
-          });
+          courseItemList: dataArr,
+          ctype: 0,
+          plan_Id: this.routeDialogOptions[1].id,
+          lineName: '航线'
+        };
+        this.$jsonPost(`/api/course`, {
+          ...params,
         })
+          .then(() => {
+            this.$message({
+              message: "航线添加成功",
+              type: "success",
+            });
+          })
+          .then(() => {
+            this.setRouteDialogOptions([0, {}]);
+            this.reset();
+          })
+          .catch(() => {
+            this.$message({
+              message: "航线添加失败",
+              type: "error",
+            });
+          });
       }
-      this.routeCollect = []
+      this.routeCollect = [];
     },
+
+    // 航线初始化
+    initMap() {
+      window.routeMap = L.map("routeMap", {
+        attributionControl: false,
+        crs: L.CRS.EPSG3857,
+        minZoom: 2,
+        maxZoom: 13,
+        worldCopyJump: true,
+        zoomControl: false,
+      });
+      L.tileLayer
+        .chinaProvider("Geoq.Normal.PurplishBlue", { maxZoom: 13, minZoom: 2 })
+        .addTo(window.routeMap);
+      window.routeMap.setView([35.09, 102.21], 4);
+    }
   },
 };
 </script>
 
-<style lang="scss">
-.dialog_wrapper {
-  width: 1160px;
-  height: 520px;
+<style lang="scss" scoped>
+.dialog_map_wrapper {
+  width: 1250px;
+  height: 500px;
   .route_map_wrapper {
     width: 1160px;
     height: 400px;
@@ -254,18 +316,39 @@ export default {
     }
   }
   .routeInfo_wrapper {
-    width: 150px;
-    height: 30px;
-    background: #ccc;
+    width: 1100px;
+    height: 50px;
     border-radius: 5px;
+    padding: 5px;
+    margin-left: 20px;
+
+    .routeInfo_item {
+      height: 100%;
+      display: flex;
+      padding-top: 5px;
+      padding-left: 4px;
+      .item {
+        flex: 1;
+        .date_wrapper {
+          width: 170px;
+          height: 30px;
+        }
+        .input_wrapper {
+          width: 120px;
+          height: 30px;
+
+        }
+      }
+    }
   }
   .timeLine_wrapper {
-    margin-top: 25px;
+    margin-top: 5px;
     width: 1160px;
     height: 50px;
     border-radius: 5px;
     padding: 5px;
     .slider_wrapper {
+      width: 1150px;
     }
   }
   .button_wrapper {

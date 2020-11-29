@@ -43,6 +43,10 @@
     <datasource-manager2></datasource-manager2>
     <!-- 航线管理 -->
     <route-manager></route-manager>
+    <!-- 算法管理 -->
+    <algorithm-manager></algorithm-manager>
+    <!-- 船舰详情 -->
+    <info-box></info-box>
   </div>
 </template>
 
@@ -69,8 +73,10 @@ import DataitemManager from '@/components/menu/SystemManager/dataItemManager/ind
 import DatasourceManager from '@/components/menu/SystemManager/dataSourceManager/index.vue'
 import DatasourceManager1 from '@/components/menu/SystemManager/dataSourceManager1/index.vue'
 import DatasourceManager2 from '@/components/menu/SystemManager/dataSourceManager2/index.vue'
+import InfoBox from '@/components/shipInfo/InfoBox.vue'
 
 import routeManager from '@/components/menu/routeManager/edit.vue'
+import algorithmManager from '@/components/menu/algorithmManager/edit.vue'
 import eventBus from "@/utils/eventBus.js";
 
 export default {
@@ -87,6 +93,8 @@ export default {
     ShipManager: ShipManager,
     TeamManager: TeamManager,
     TaskManager: TaskManager,
+    routeManager: routeManager,
+    algorithmManager: algorithmManager,
     LegendManager:LegendManager,
     LineManager:LineManager,
     AreaManager:AreaManager,
@@ -96,7 +104,8 @@ export default {
     routeManager: routeManager,
     DatasourceManager:DatasourceManager,
     DatasourceManager1:DatasourceManager1,
-    DatasourceManager2:DatasourceManager2
+    DatasourceManager2:DatasourceManager2,
+    InfoBox:InfoBox
   },
   data() {
     return {

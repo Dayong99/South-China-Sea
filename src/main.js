@@ -10,9 +10,7 @@ import "leaflet/dist/leaflet.css"
 import L from "leaflet";
 import './utils/leaflet.fix'
 import lodash from 'lodash'
-
 import map from './utils/map.js'
-
 import store from './store'
 import router from './router'
 
