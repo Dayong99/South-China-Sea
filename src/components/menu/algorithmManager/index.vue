@@ -204,7 +204,7 @@ export default {
     // 监听menuList，控制详细面板的显隐
     routeAlgorithmInfo: {
       handler(val) {
-        console.log(val,`val`)
+        console.log(val,`routeAlgorithmInforouteAlgorithmInforouteAlgorithmInforouteAlgorithmInforouteAlgorithmInfo`)
       },
       deep: true,
     },

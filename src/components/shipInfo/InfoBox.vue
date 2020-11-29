@@ -2,6 +2,7 @@
   <div></div>
 </template>
 <script>
+import { mapState, mapMutations } from 'vuex'
 export default {
   components: {
   },
@@ -12,7 +13,7 @@ export default {
       content:{
         temp:23
       }
-};
+    };
   },
   mounted() {
     // create custom popup
@@ -57,6 +58,8 @@ export default {
         if (!this._popupHandlersAdded) {
           this.on({
             click: this._openPopup,
+            // mouseover: this._openPopup,
+            // mouseout: this.closePopup,
             remove: this.closePopup,
             move: this._movePopup,
           });
@@ -66,21 +69,51 @@ export default {
         return this;
       },
     });
-    var icon = new L.Icon({
-      iconUrl: this.shipImg,
-      iconSize: [30, 30],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      shadowSize: [41, 41],
-    });
-    var locationMarker = L.marker(map.getCenter(), { icon: icon }).addTo(map);
-    //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
-    locationMarker.bindCustomPopup(this.getInfoContent);
+    // var icon = new L.Icon({
+    //   iconUrl: this.shipImg,
+    //   iconSize: [30, 30],
+    //   iconAnchor: [12, 41],
+    //   popupAnchor: [1, -34],
+    //   shadowSize: [41, 41],
+    // });
+    // var locationMarker = L.marker(map.getCenter(), { icon: icon }).addTo(map);
+    // //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
+    // locationMarker.bindCustomPopup(this.getInfoContent);
 
-    var locationMarker1 = L.marker([34,120], { icon: icon }).addTo(map);
-    //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
-    locationMarker1.bindCustomPopup(this.getInfoContent);
+    // var locationMarker1 = L.marker([34,120], { icon: icon }).addTo(map);
+    // //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
+    // locationMarker1.bindCustomPopup(this.getInfoContent);
 
+  },
+  computed: {
+    ...mapState({
+      realTimeValue: state => state.sideBar.realTimeValue
+    })
+  },
+  watch: {
+    realTimeValue(newval) {
+      if(newval === 'ground') {
+        this.shipId = 'ground'
+        var icon = new L.Icon({
+          iconUrl: this.shipImg,
+          iconSize: [30, 30],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41],
+        });
+        var locationMarker = L.marker(map.getCenter(), { icon: icon }).addTo(map);
+        //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
+        locationMarker.bindCustomPopup(this.getInfoContent('测试'));
+        locationMarker.id = this.shipId
+        locationMarker.on('click', ev => {
+          console.log(ev)
+        })
+
+        var locationMarker1 = L.marker([34,120], { icon: icon }).addTo(map);
+        //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
+        locationMarker1.bindCustomPopup(this.getInfoContent('还是测试'));
+      }
+    }
   },
   methods: {
     getValue(val){
@@ -90,7 +123,7 @@ export default {
         return '--'
       }
     },
-    getInfoContent() {
+    getInfoContent(title) {
       return `<div
       id="info_box">
       <div
@@ -111,7 +144,7 @@ export default {
           </div>
           <div>
             海平面气压:
-            <span>`+this.getValue()+`hPa</span>
+            <span>`+title+`hPa</span>
           </div>
           <div>
             湿度:
@@ -153,7 +186,7 @@ export default {
   },
 };
 </script>
-<style scoped>
+<style scoped lang='scss'>
 .l-popup {
   &--no-style {
     /* 用不了 &#{&} 这种写法*/

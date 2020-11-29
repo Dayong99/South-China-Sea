@@ -14,7 +14,7 @@
         <div class="input_content">
           <el-input
             v-model="searchValue"
-            placeholder="请输入位置"
+            placeholder="请输入位置（lat, lng）"
             clearable
             class="search_content"
             @keyup.enter.native="location"
@@ -251,7 +251,7 @@ export default {
       setRouteAlgorithmInfo: "menuBar/setRouteAlgorithmInfo",
     }),
     routeAlgorithmInfo(item, index) {
-      setRouteAlgorithmInfo([1, item]);
+      this.setRouteAlgorithmInfo([1, item]);
     },
     deleteRoute(item, index) {
       console.log(item, index, `delete`);

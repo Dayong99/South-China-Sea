@@ -162,9 +162,10 @@ export default {
       })
     },
     limitLegend(legendColor) {
-      let i = legendColor.type.indexOf('temperature')
-      let j = legendColor.type.indexOf('Temperature')
-      if(i != -1 || j != -1) {
+      // let i = legendColor.type.indexOf('temperature')
+      // let j = legendColor.type.indexOf('Temperature')
+      // if(i != -1 || j != -1) {
+      if(legendColor.type === 'Temperature') {
         legendColor.legendValues.forEach((item, i) => {
           if(item > 180) {
             legendColor.legendValues[i] = Math.round(legendColor.legendValues[i] - 273.15)

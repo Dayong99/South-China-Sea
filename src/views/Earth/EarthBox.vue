@@ -51,6 +51,8 @@
     <route-manager></route-manager>
     <!-- 算法管理 -->
     <algorithm-manager></algorithm-manager>
+    <!-- 评估结果 -->
+    <assessment-manager></assessment-manager>
     <!-- 船舰详情 -->
     <info-box></info-box>
   </div>
@@ -83,8 +85,14 @@ import TyphoonManager from "@/components/menu/DataManager/typhoonManager/index.v
 
 import InfoBox from "@/components/shipInfo/InfoBox.vue";
 
+<<<<<<< HEAD
 import routeManager from "@/components/menu/routeManager/edit.vue";
 import algorithmManager from "@/components/menu/algorithmManager/edit.vue";
+=======
+import routeManager from '@/components/menu/routeManager/edit.vue'
+import algorithmManager from '@/components/menu/algorithmManager/edit.vue'
+import assessmentManager from '@/components/menu/assessmentManager/index.vue'
+>>>>>>> 011cea5751b9be41e580e3a5389ce10bee17d096
 import eventBus from "@/utils/eventBus.js";
 
 export default {
@@ -110,11 +118,19 @@ export default {
     ParamManager: ParamManager,
     DataitemManager: DataitemManager,
     routeManager: routeManager,
+<<<<<<< HEAD
     DatasourceManager: DatasourceManager,
     DatasourceManager1: DatasourceManager1,
     DatasourceManager2: DatasourceManager2,
     TyphoonManager:TyphoonManager,
     InfoBox: InfoBox,
+=======
+    DatasourceManager:DatasourceManager,
+    DatasourceManager1:DatasourceManager1,
+    DatasourceManager2:DatasourceManager2,
+    InfoBox:InfoBox,
+    assessmentManager: assessmentManager
+>>>>>>> 011cea5751b9be41e580e3a5389ce10bee17d096
   },
   data() {
     return {
