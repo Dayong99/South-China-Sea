@@ -9,7 +9,6 @@ import utils from './utils/utils'
 import "leaflet/dist/leaflet.css"
 import L from "leaflet";
 import './utils/leaflet.fix'
-import 'proj4leaflet'
 import lodash from 'lodash'
 import map from './utils/map.js'
 import store from './store'
@@ -17,11 +16,12 @@ import router from './router'
 
 import './utils/error-log' // error log
 import request from '@/utils/request'
+import moment from 'moment'
+moment.locale('zh-cn');
 
 import '@/permission' // permission control
 import db from '@/utils/localstorage'
 import echarts from 'echarts';
-Vue.prototype.$echarts = echarts
 if (process.env.NODE_ENV === 'development') {
   window.globalConfig = {
     baseURL: 'http://192.168.1.122:8301/warship'
@@ -49,6 +49,8 @@ Vue.prototype.$db = db
 Vue.prototype.$L = L
 Vue.prototype.$utilsMap = map
 Vue.prototype._ = lodash
+Vue.prototype.$m = moment
+Vue.prototype.$echarts = echarts
 
 // const on = Vue.prototype.$on
 // // 防抖处理

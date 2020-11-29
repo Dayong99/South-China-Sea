@@ -1,7 +1,7 @@
 <template>
-  <div id="ship_manager" class="ship_manager" v-show="teamManagerShow">
+  <div id="ship_manager" class="ship_manager" v-show="shipManagerShow">
     <div class="manager_title">
-      <span>编队管理</span>
+      <span>船舰管理</span>
       <img
         src="@/assets/images/legendbar/close.png"
         @click.stop="closeManager"
@@ -11,7 +11,7 @@
       <el-input
         placeholder="请输入关键词"
         prefix-icon="el-icon-search"
-        v-model="queryParams.name"
+        v-model="queryParams.warshipName"
         class="operation_input"
         clearable
       >
@@ -24,11 +24,6 @@
     </div>
     <div class="manager_table">
       <el-table :data="tableData" border style="width: 100%" max-height="400px">
-        <el-table-column label="序号" width="70px" align="center">
-          <template slot-scope="scope">
-            {{(pagination.num - 1) * pagination.size + scope.$index + 1}}
-          </template>
-        </el-table-column>
         <el-table-column
           label="名称"
           prop="role-name"
@@ -36,17 +31,67 @@
           min-width="100px"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.name }}</span>
+            <span>{{ scope.row.warshipName }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="基本单元"
+          label="类型"
           prop="role-name"
           align="center"
           min-width="100px"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.ships }}</span>
+            <span>{{ scope.row.warshipType }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="编号"
+          prop="role-name"
+          align="center"
+          min-width="100px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.number }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="吨位"
+          prop="role-name"
+          align="center"
+          min-width="100px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.tonnage }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="抗风能力"
+          prop="role-name"
+          align="center"
+          min-width="100px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.windResistant }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="图片"
+          prop="role-name"
+          align="center"
+          min-width="100px"
+        >
+          <template slot-scope="scope">
+            <span>
+              <el-image
+                style="width: 20px; height: 20px"
+                :src="scope.row.shipPhoto"
+                :preview-src-list="[scope.row.shipPhoto]"
+              >
+                <div slot="error" class="image-slot">
+                  <i class="el-icon-picture-outline"></i>
+                </div>
+              </el-image>
+            </span>
           </template>
         </el-table-column>
         <el-table-column
@@ -56,12 +101,12 @@
           align="center"
         >
           <template slot-scope="{ row }">
-            <!--<el-button
+            <el-button
               icon="el-icon-warning-outline"
               class="table_column_icon blue"
               type="text"
               @click="information(row)"
-            ></el-button> -->
+            ></el-button>
             <el-button
               icon="el-icon-edit-outline"
               class="table_column_icon green"
@@ -134,7 +179,7 @@ export default {
         title: "",
       },
       // 详细面板显示隐藏
-      teamManagerShow: false,
+      shipManagerShow: false,
       managerValue: "",
       tableData: [],
       // 分页
@@ -143,8 +188,8 @@ export default {
         num: 1,
       },
       queryParams: {
-        name: null,
-      },
+        warshipName: null
+      }
     };
   },
   mounted() {
@@ -152,23 +197,14 @@ export default {
   },
   computed: {
     ...mapState({
-      menuList: (state) => state.menuBar.menuList,
+      routeAlgorithmInfo: (state) => state.menuBar.routeAlgorithmInfo,
     }),
   },
   watch: {
     // 监听menuList，控制详细面板的显隐
-    menuList: {
-      handler(newval, oldval) {
-        let i = newval.findIndex((item) => {
-          return item.flag == true;
-        });
-                console.log(i)
-
-        if (i != -1 && i == 1) {
-          this.teamManagerShow = true;
-        } else {
-          this.teamManagerShow = false;
-        }
+    routeAlgorithmInfo: {
+      handler(val) {
+        console.log(val,`val`)
       },
       deep: true,
     },
@@ -177,6 +213,11 @@ export default {
     ...mapMutations({
       setMenuList: "menuBar/setMenuList",
     }),
+    editItem(row) {
+      this.$refs.edit.setData(row);
+      this.dialog.isVisible = true;
+      this.dialog.title = "修改船舰";
+    },
     algorithm() {
       this.algorithmDialog.isVisible = true;
       this.algorithmDialog.title = "船舰信息";
@@ -185,25 +226,23 @@ export default {
       this.algorithmDialog.isVisible = false;
       this.fetch();
     },
-    editItem(row) {
-      this.$refs.edit.loadShipList(row);
-      this.dialog.isVisible = true;
-      this.dialog.title = "修改编队";
-    },
     information(row) {
+      console.log(row)
+      this.$refs.edit.setData(row);
       this.dialog.isVisible = true;
       this.dialog.title = "船舰信息";
     },
     // 搜索重置
     resetSearch() {
       this.queryParams = {
-        name: null,
-      };
-      this.search();
+        warshipName: null
+      }
+      this.search()
     },
     // 删除
     deleteItem(row) {
-      this.$delete(`/api/formation`, {
+      console.log(row, `row`);
+      this.$delete(`/api/warship`, {
         id: row.id,
       })
         .then(() => {
@@ -217,9 +256,9 @@ export default {
         });
     },
     add() {
+      console.log("添加");
       this.dialog.isVisible = true;
-      this.dialog.title = "添加编队";
-      this.$refs.edit.loadShipList();
+      this.dialog.title = "添加船舰";
     },
     // 搜索
     search() {
@@ -231,13 +270,15 @@ export default {
     fetch(params = {}) {
       params.pageSize = this.pagination.size;
       params.pageNum = this.pagination.num;
-      this.$get("/api/formation", {
+      console.log("获取表格数据");
+      this.$get("/api/warship", {
         ...params,
       }).then((res) => {
-        console.log(res, "res");
         if (res.data.data) {
+          console.log(res.data.data,`res.data.data`)
           this.total = res.data.data.total;
           this.tableData = res.data.data.rows;
+          console.log(this.tableData)
         }
       });
     },
@@ -247,8 +288,8 @@ export default {
       this.fetch();
     },
     closeManager() {
-      this.teamManagerShow = false;
-      this.menuList[1].flag = false;
+      this.shipManagerShow = false;
+      this.menuList[0].flag = false;
       this.setMenuList(this.menuList);
     },
   },

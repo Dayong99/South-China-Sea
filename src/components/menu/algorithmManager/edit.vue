@@ -275,7 +275,7 @@ export default {
         let objTwo = {
           structure: 1,
           name: "-",
-          value: 0.1,
+          value: 0.5,
         };
         treeArr.push(objTwo);
         if (e.children) {
@@ -285,7 +285,7 @@ export default {
             let objTwo = {
               structure: 2,
               name: "-",
-              value: 0.1,
+              value: 0.5,
             };
             treeArr.push(objTwo);
             this.weatherFactoreOptionsList.forEach((c, d) => {
@@ -295,7 +295,7 @@ export default {
                   let objThree = {
                     structure: 3,
                     name: `${c.id}_${c.parameterStep.split(",")[g]}`,
-                    value: 0.1,
+                    value: 0.5,
                   };
                   treeArr.push(objThree);
                 }

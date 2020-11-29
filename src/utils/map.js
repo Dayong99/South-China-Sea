@@ -18,9 +18,9 @@ const createDivIcon = options => {
  * @return {*} 
  */
 const createMarkerByLatlng = (map, latlngs, options) => {
-  let marker = $L.marker($L.latLng(latlngs[0], latlngs[1]), options)
-  marker.addTo(map)
-  return marker
+  let mark = $L.marker($L.latLng(latlngs[0], latlngs[1]), options)
+  mark.addTo(map)
+  return mark
 }
 
 /**
