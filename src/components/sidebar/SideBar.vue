@@ -28,6 +28,18 @@
       </ul>
     </div>
 
+    <!-- 实况资料 -->
+    <div class="real_time_data">
+      <el-select v-model="realTimeValue" clearable placeholder="实况资料" size="small">
+        <el-option
+          v-for="item in realTimeOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
+    </div>
+
     <!-- 潮汐显示 -->
     <div class="tidal"
       id="tidal"
@@ -236,6 +248,22 @@ export default {
       // marker和tidal信息面板共同控制
       markerMouseFlag: false,
       tidalMouseFlag: false,
+
+      // 实况选择
+      realTimeValue: null,
+      realTimeOptions: [{
+        label: '地面常规观测',
+        value: 'ground'
+      }, {
+        label: '船舶站',
+        value: 'ship'
+      }, {
+        label: '浮标站',
+        value: 'buoy'
+      }, {
+        label: '海洋站',
+        value: 'ocean'
+      }]
     };
   },
   computed: {
@@ -333,6 +361,11 @@ export default {
       }
       this.drawItemList()
     },
+    // 监听实况选择变化
+    realTimeValue(newval) {
+      console.log('实况数据变化监测', newval)
+      this.setRealTimeValue(newval)
+    }
   },
   created() {
     this.initMenuList()
@@ -369,6 +402,7 @@ export default {
       setMenuItemList: 'sideBar/setMenuItemList',
       setLevelList: 'sideBar/setLevelList',
       setImageLayerNum: 'earth/setImageLayerNum',
+      setRealTimeValue: 'sideBar/setRealTimeValue',
     }),
     // 潮汐面板日期切换
     changeTimeIndex(i) {

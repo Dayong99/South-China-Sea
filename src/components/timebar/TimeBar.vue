@@ -11,7 +11,7 @@
       placeholder="选择日期"
       size="mini"
       value-format="yyyy-MM-dd"
-      style="width:125px;position:absolute;left:0;top:-18px;"
+      style="width:125px;position:absolute;left:5px;top:-18px;"
       @change="getDay"
     />
 

@@ -601,7 +601,7 @@ export default {
             this.$post("/api/legend-config", { ...this.color }).then(() => {
               this.isVisible = false;
               this.$message({
-                message: this.$t("tips.createSuccess"),
+                message: "添加成功",
                 type: "success",
               });
               this.$emit("success");
@@ -611,7 +611,7 @@ export default {
             this.$put("/api/legend-config", { ...this.color }).then(() => {
               this.isVisible = false;
               this.$message({
-                message: this.$t("tips.updateSuccess"),
+                message: "修改成功",
                 type: "success",
               });
               this.$emit("success");

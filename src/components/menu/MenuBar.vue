@@ -14,7 +14,7 @@
         <div class="input_content">
           <el-input
             v-model="searchValue"
-            placeholder="请输入位置"
+            placeholder="请输入位置（lat, lng）"
             clearable
             class="search_content"
             @keyup.enter.native="location"

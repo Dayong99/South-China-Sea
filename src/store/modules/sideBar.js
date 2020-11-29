@@ -5,6 +5,14 @@ const state = {
   levelList: [],
   // 当前层级
   nowLevel: null,
+  // 实况信息
+  /**
+   * 地面常规观测--ground
+   * 船舶站--ship
+   * 浮标站--buoy
+   * 海洋站--ocean
+   */
+  realTimeValue: null,
 }
 
 const actions = {
@@ -23,6 +31,9 @@ const mutations = {
   },
   setNowLevel(state, val) {
     state.nowLevel = val
+  },
+  setRealTimeValue(state, val) {
+    state.realTimeValue = val
   }
 }
 
