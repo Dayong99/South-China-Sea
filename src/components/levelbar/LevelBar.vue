@@ -73,7 +73,7 @@ export default {
         if(this.levelShow) {
           // 显示最近缓存的层级
           this.nowcontent = val[val.length - 1].currentLevel
-          let i = val[val.length - 1].level.findIndex(item => {
+          let i = val[val.length - 1].parseIntLevel.findIndex(item => {
             return item == this.nowcontent
           })
 

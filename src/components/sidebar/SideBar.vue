@@ -97,6 +97,9 @@ export default {
   data() {
     return {
       firstFlag: true,
+      // 日期、小时
+      day: null,
+      time: null,
       // 菜单列表数组
       menuList: [{
         id: 0,
@@ -230,6 +233,9 @@ export default {
       tidalSelectIcon: null,
       tidalMarker: [],
       markerId: null,
+      // marker和tidal信息面板共同控制
+      markerMouseFlag: false,
+      tidalMouseFlag: false,
     };
   },
   computed: {
@@ -237,7 +243,7 @@ export default {
       // 范围
       extent: state => JSON.parse(JSON.stringify(state.earth.extent)),
       // 时间
-      time: state => state.time.time,
+      nowTime: state => state.time.time,
       // 当前层级
       nowLevel: state => state.sideBar.nowLevel,
       // 重绘次数
@@ -253,8 +259,6 @@ export default {
       handler(val, oldval) {
         this.setMenuItemList(this.currentItemList)
         console.log('currentItemList', this.currentItemList)
-        // 测试marker
-        // this.createMarker()
       },
       deep: true
     },
@@ -282,6 +286,8 @@ export default {
               break;
             }
           }
+          this.layerNum -= 1
+          this.setImageLayerNum(this.layerNum)
         }
         if(flag) {
           this.layerNum -= 1
@@ -289,13 +295,6 @@ export default {
           await this.drawItemList()
           await this.setImageLayerNum(this.layerNum)
         }
-        
-        
-        // 图层数减一
-        // this.layerNum -= 1
-        // this.extentList = val
-        // await this.drawItemList()
-        // await this.setImageLayerNum(this.layerNum)
       },
       deep: true
     },
@@ -303,13 +302,36 @@ export default {
     nowLevel(newval) {
       // 最近的层级 作为缓存，删除当前要素之后 显示前一个要素的绘制层级
       this.currentItemList[this.currentItemList.length - 1].currentLevel = newval
-      this.currentLevel = newval
+      this.currentItem.currentLevel = newval
       this.clearLayer(this.currentItem)
       this.drawItem()
     },
     // 监听时间
-    time(newval) {
-      console.log(newval)
+    nowTime(newval) {
+      const str = Number(newval[11])
+      this.day = newval.substring(0, 10)
+      this.time = str === 0 ? newval.substring(12, 13) : newval.substring(11, 13)
+
+      // 如果有风羽或波向重新请求数据
+      let windArr = this.currentItemList.filter(item => {
+        return item.drawType === 'point_wind'
+      })
+      let waveArr = this.currentItemList.filter(item => {
+        return item.drawType === 'point_flow'
+      })
+      if(windArr.length) {
+        windArr.forEach(item => {
+          this.clearWindWave(item)
+          this.getAndDrawWind(item)
+        })
+      }
+      if(waveArr.length) {
+        waveArr.forEach(item => {
+          this.clearWindWave(item)
+          this.getAndDrawWave(item)
+        })
+      }
+      this.drawItemList()
     },
   },
   created() {
@@ -359,27 +381,30 @@ export default {
     },
     // 鼠标在面板上移入移出控制面板显隐
     tidalOver(flag) {
+      this.tidalMouseFlag = flag
       this.tidalObj.tidalShow = flag
       // 考虑id替换
+      // 获取鼠标移入的面板  根据名称判断
       let marker = this.tidalMarker.filter(item => {
         return item.name == this.$refs.tidal_name.innerText
       })
       console.log('this.$refs.tidal', this.$refs.tidal_name.innerText)
-      if(flag) {
-        marker[0].setIcon(this.tidalSelectIcon)
-      } else {
-        // this.clearChart()
-        // this.createChart(this.tidalCharts)
+      if(!flag && !this.markerMouseFlag) {
         marker[0].setIcon(this.tidalIcon)
+      } else {
+        marker[0].setIcon(this.tidalSelectIcon)
       }
     },
     // 初始选中
     initMenuList() {
+      // 初始时间
+      this.day = this.$m().format('YYYY-MM-DD')
+      this.time = this.$m().format('HH')
       /**
        * type: 数据源类型   0--EC  1--GFS
        */
       this.$get('/api/parameters/get_type', {
-        type: 0
+        type: 1
       }).then(res => {
         if(res.status == 200) {
           this.menuList = []
@@ -394,6 +419,7 @@ export default {
               legendId: item.legendId,
               mutex: item.dataGroup,
               level: [],
+              parseIntLevel: [],
               grade: null,
               gridSize: item.gridSize,
               xMin: null,
@@ -409,7 +435,15 @@ export default {
             level.forEach(item => {
               obj.level.push(Number(item))
             })
-            obj.currentLevel = Number(level[0])
+            // parseIntLevel 直接取整，页面显示，请求数据用原始层级数据
+            level.forEach(item => {
+              if(Number(item) > 10000) {
+                obj.parseIntLevel.push(parseInt(Number(item / 100)))
+              } else {
+                obj.parseIntLevel.push(parseInt(Number(item)))
+              }
+            })
+            obj.currentLevel = obj.parseIntLevel[0]
             // 处理经纬度范围
             let lat = item.latRange.split(',')
             obj.yMin = lat[1]
@@ -419,7 +453,9 @@ export default {
             obj.xMax = lon[1]
             // 处理格点数据抽稀
             let gradesize = 0
-            if(item.gridSize == 0.125) {
+            if(item.gridSize == 0.1) {
+              gradesize = 10
+            } else if(item.gridSize == 0.125) {
               gradesize = 8
             } else if(item.gridSize == 0.25) {
               gradesize = 4
@@ -435,7 +471,7 @@ export default {
         this.currentItemList.push(this.menuList[0])
         this.currentItem = this.menuList[0]
         this.currentLevel = this.menuList[0].currentLevel
-        this.setLevelList(this.menuList[0].level)
+        this.setLevelList(this.menuList[0].parseIntLevel)
         // 首次加载绘制默认选中的要素
         this.drawItem()
       }).catch(error => {
@@ -449,13 +485,13 @@ export default {
         // 清除单个
         this.clearLayer(this.menuList[index])
         // 海流和风用同一个清除方法
-        if(this.menuList[index].drawType === 'point_flow' || this.menuList[index].drawType === 'point_wind') {
+        if(this.menuList[index].drawType === 'point_flow' || this.menuList[index].drawType === 'point_wind' || this.menuList[index].drawType === 'point') {
           this.clearWindWave(this.menuList[index])
         }
 
         // 取消状态、重置最近缓存的level
         this.menuList[index].flag = false
-        this.menuList[index].currentLevel = this.menuList[index].level[0]
+        this.menuList[index].currentLevel = this.menuList[index].parseIntLevel[0]
         let i = this.currentItemList.findIndex(item => {
           return item.id == this.menuList[index].id
         })
@@ -465,8 +501,8 @@ export default {
         // 当前要素设置为当前要素列表中的最后一个
         if(this.currentItemList.length) {
           this.currentItem = this.currentItemList[this.currentItemList.length - 1]
-          this.currentLevel = this.currentItemList[this.currentItemList.length - 1].level[0]
-          this.setLevelList(this.currentItemList[this.currentItemList.length - 1].level)
+          this.currentLevel = this.currentItemList[this.currentItemList.length - 1].parseIntLevel[0]
+          this.setLevelList(this.currentItemList[this.currentItemList.length - 1].parseIntLevel)
         } else{
           this.currentItem = null
           this.currentLevel = null
@@ -498,8 +534,8 @@ export default {
         }
         // 当前要素设置为当前要素列表中的最后一个
         this.currentItem = this.currentItemList[this.currentItemList.length - 1]
-        this.currentLevel = this.currentItemList[this.currentItemList.length - 1].level[0]
-        this.setLevelList(this.currentItemList[this.currentItemList.length - 1].level)
+        this.currentLevel = this.currentItemList[this.currentItemList.length - 1].parseIntLevel[0]
+        this.setLevelList(this.currentItemList[this.currentItemList.length - 1].parseIntLevel)
 
         // 绘制当前选中的要素
         this.drawItem()
@@ -510,20 +546,6 @@ export default {
       // this.currentLevel = this.currentItemList[this.currentItemList.length - 1].level[0]
 
     },
-    // createMarker() {
-    //   let icon = this.$utilsMap.createIcon({
-    //     iconUrl: require('@/assets/images/sidebar/station.png')
-    //   })
-    //   let marker = this.$utilsMap.createMarkerByLatlng(window.map, [25, 120], {
-    //     icon: icon,
-    //     title: '测试'
-    //   })
-    //   marker.on('mouseover', ev => {
-    //     console.log('mouseover')
-    //   })
-    //   console.log('-----------------------');
-    //   // marker.addTo(map)
-    // },
     // 绘制单个要素
     drawItem() {
       if(this.currentItem.drawType == 'point_flow') {
@@ -533,29 +555,7 @@ export default {
       } else if(this.currentItem.drawType == 'point') {
         this.getAndDrawTidal(this.currentItem)
       } else {
-        // // 需要根据每个要素自带的限制范围进行范围约束
-        // let itemExtentList = []
-        // if(this.currentItem.xMax > 180) {
-        //   let ex1 = {
-        //     xMin: this.currentItem.xMin,
-        //     xMax: 180,
-        //     yMin: this.currentItem.yMin,
-        //     yMax: this.currentItem.yMax
-        //   }
-        //   let ex2 = {
-        //     xMin: -180,
-        //     xMax: this.currentItem.xMax - 360,
-        //     yMin: this.currentItem.yMin,
-        //     yMax: this.currentItem.yMax
-        //   }
-        //   itemExtentList.push(ex1)
-        //   itemExtentList.push(ex2)
-        // } else {
-          
-        // }
-
-
-
+        // 需要根据每个要素自带的限制范围进行范围约束
         let itemExtent = {
           xMin: null,
           xMax: null,
@@ -691,12 +691,13 @@ export default {
     },
     // 获取线的数据并绘制
     getAndDrawLine(currentItem, extent) {
-      let day = this.time.split(' ')[0]
-      let time = this.time.split(' ')[1] + ':00'
+      let levelIndex = currentItem.parseIntLevel.findIndex(item => {
+        return item === currentItem.currentLevel
+      })
       this.$get('/api/numerical-forecast/contours', {
-        day: day,
+        day: this.day,
         grade: currentItem.grade,
-        level: this.currentLevel,
+        level: currentItem.level[levelIndex],
         minX: extent.xMin,
         maxX: extent.xMax,
         minY: extent.yMin,
@@ -706,7 +707,7 @@ export default {
         // minY: -75,
         // maxY: 75,
         num: 30,
-        time: time,
+        time: this.time,
         type: currentItem.id
       }).then(res => {
         if(res.status == 200) {
@@ -736,20 +737,23 @@ export default {
     },
     // 绘制色斑图
     async getAndDrawLayer(currentItem, extent) {
-      let day = this.time.split(' ')[0]
-      let time = this.time.split(' ')[1] + ':00'
+      let levelIndex = currentItem.parseIntLevel.findIndex(item => {
+        return item === currentItem.currentLevel
+      })
+      console.log(this.day);
+      console.log(this.time);
       try {
         let test = await this.$getbuffer('/api/numerical-forecast/mercator-polygonsImage', {
         // this.$getbuffer('/api/numerical-forecast/polygonsImage', {
-          day: day,
+          day: this.day,
           grade: currentItem.grade,
-          level: this.currentLevel,
+          level: currentItem.level[levelIndex],
           minX: extent.xMin,
           maxX: extent.xMax,
           minY: extent.yMin,
           maxY: extent.yMax,
           num: 20,
-          time: time,
+          time: this.time,
           type: currentItem.id
         }, { responseType: 'arraybuffer' })
         
@@ -875,13 +879,14 @@ export default {
       )
     },
     getAndDrawWind(currentItem, extent) {
-      let day = this.time.split(' ')[0]
-      let time = this.time.split(' ')[1] + ':00'
+      let levelIndex = currentItem.parseIntLevel.findIndex(item => {
+        return item === currentItem.currentLevel
+      })
       this.$get('/api/numerical-forecast/wind', {
-        day: day,
-        level: this.currentLevel,
-        time: time,
-        grade: 4,
+        day: this.day,
+        level: currentItem.level[levelIndex],
+        time: this.time,
+        grade: 0,
         type: currentItem.id
       }).then(res => {
         if(res.status == 200) {
@@ -907,12 +912,9 @@ export default {
     },
     // 绘制 洋流\波向
     getAndDrawWave(currentItem) {
-      console.log('wave--', currentItem)
-      let day = this.time.split(' ')[0]
-      let time = this.time.split(' ')[1] + ':00'
       this.$get('/api/numerical-forecast/wave', {
-        day: day,
-        time: time,
+        day: this.day,
+        time: this.time,
         type: currentItem.id,
       }).then(res => {
         console.log('wave--res', res.data.data)
@@ -995,13 +997,18 @@ export default {
         icon: this.tidalIcon,
         title: harbor.hname
       })
-      marker.id = harbor.id
+      marker.harborId = harbor.id
       marker.name = harbor.hname
+      marker.id = this.currentItem.id
       marker.on('mouseover', ev => {
-        this.markerId = ev.target.id
+        // 移入marker置为true
+        this.markerMouseFlag = true
+        this.markerId = ev.target.harborId
         // 请求潮汐数据
-        let time = this.time.split(' ')[0]
-        this.getTidalData(harbor.id, time)
+        let time = this.day
+        if(!this.tidalMouseFlag) {
+          this.getTidalData(harbor.id, time)
+        }
         
         console.log('mouseover', ev)
         // ev.target.   构造数据
@@ -1051,8 +1058,11 @@ export default {
         })
       })
       marker.on('mouseout', ev => {
-        marker.setIcon(this.tidalIcon)
-        this.tidalObj.tidalShow = false
+        this.markerMouseFlag = false
+        if(!this.tidalMouseFlag) {
+          marker.setIcon(this.tidalIcon)
+          this.tidalObj.tidalShow = false
+        }
       })
       this.tidalMarker.push(marker)
       // marker.on('click', ev => {
@@ -1094,12 +1104,12 @@ export default {
             console.log('xdata', this.tidalCharts.xdata);
             console.log('ydata', this.tidalCharts.ydata);
             this.tidalData.tidalList.push(this._.cloneDeep(maxObj))
-            time = this.$m(this.tidalData.tidalList[0].tidalTime).format('hh-mm')
+            time = this.$m(this.tidalData.tidalList[0].tidalTime).format('HH-mm')
             this.tidalData.tidalList[0].tidalTime = time.split('-')[0] + '时' + time.split('-')[1] + '分'
             this.tidalData.tidalList[0].name = '第一高潮'
             this.tidalData.tidalList[0].type = 'max'
             this.tidalData.tidalList.push(this._.cloneDeep(minObj))
-            time =  this.$m(this.tidalData.tidalList[1].tidalTime).format('hh-mm')
+            time =  this.$m(this.tidalData.tidalList[1].tidalTime).format('HH-mm')
             this.tidalData.tidalList[1].tidalTime = time.split('-')[0] + '时' + time.split('-')[1] + '分'
             this.tidalData.tidalList[1].name = '第一低潮'
             this.tidalData.tidalList[1].type = 'min'
@@ -1111,9 +1121,6 @@ export default {
       }).catch(error => {
         this.$message.error('获取潮汐数据失败')
       })
-    },
-    showTidalMessage() {
-      this.$message.warning("此时刻暂无潮汐数据")
     },
     // 创建图表
     createChart(dital) {
@@ -1174,7 +1181,7 @@ export default {
           },
         },
         series: [{
-            name: '订单总笔数',
+            name: '潮高',
             type: 'line',
             smooth: true,
             data: dital.ydata
@@ -1230,6 +1237,14 @@ export default {
       } else if(layer.drawType === 'point_wind' && (this.windLayer !== null)) {
         map.removeLayer(this.windLayer)
         this.windLayer = null
+      } else if(layer.drawType === 'point' && (this.tidalMarker !== null)) {
+        let tidal = this.tidalMarker.filter(item => {
+          return item.id === layer.id
+        })
+        tidal.forEach(item => {
+          map.removeLayer(item)
+        })
+        this.tidalMarker = []
       }
     }
   }
