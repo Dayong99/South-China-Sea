@@ -409,13 +409,15 @@ export default {
         this.menuList[index].flag = !this.menuListFlag;
         if (this.menuList[index].flag) {
           this.menuListFlag = true;
+          this.systemFlag = false;
         } else {
           this.menuListFlag = false;
         }
       } else if (index == 3) {
         this.menuList[index].flag = !this.systemFlag;
-         if (this.menuList[index].flag) {
+        if (this.menuList[index].flag) {
           this.systemFlag = true;
+          this.menuListFlag = false;
         } else {
           this.systemFlag = false;
         }
