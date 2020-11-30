@@ -3,7 +3,7 @@
     id="ship_manager"
     class="ship_manager"
     v-show="systemManagerShow"
-    style="width: auto; height: auto"
+    style="width:auto; height: auto"
   >
     <div class="manager_title">
       <span>数据源配置—广东省网</span>
@@ -78,7 +78,7 @@
             <span>{{ scope.row.fcst }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="修改时间" align="center" min-width="100px">
+        <el-table-column label="修改时间" align="center" min-width="160px">
           <template slot-scope="scope">
             <span>{{ scope.row.modifyTime }}</span>
           </template>

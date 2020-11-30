@@ -65,7 +65,7 @@
             <span>{{ scope.row.domestic }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="生成时间" align="center" min-width="100px">
+        <el-table-column label="生成时间" align="center" min-width="160px">
           <template slot-scope="scope">
             <span>{{ scope.row.createtime }}</span>
           </template>

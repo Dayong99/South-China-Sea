@@ -98,7 +98,7 @@
             <span>{{ scope.row.fcst }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="修改时间" align="center" min-width="100px">
+        <el-table-column label="修改时间" align="center" min-width="160px">
           <template slot-scope="scope">
             <span>{{ scope.row.modifyTime }}</span>
           </template>

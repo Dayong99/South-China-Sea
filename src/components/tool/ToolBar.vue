@@ -102,8 +102,8 @@ export default {
     },
 
     // 清除要素
-    measurearea() {
-      window.map.zoomOut(1);
+    clear() {
+      window.tool.clearTool();
     },
   },
 };
