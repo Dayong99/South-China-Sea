@@ -2,159 +2,80 @@ import { Message } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 class ToolBar {
   constructor(viewer, obj) {
-    this.viewer = viewer
-    this.scene = this.viewer.scene
-    this.camera = this.viewer.camera
-    this.unit = obj.unit
-    this.latDirection = obj.latDirection
-    this.lngDirection = obj.lngDirection
-    this.lngminute = obj.lngminute
-    this.lngdegree = obj.lngdegree
-    this.latminute = obj.latminute
-    this.latdegree = obj.latdegree
-    this.handler = null
+    // this.viewer = viewer
+    // this.scene = this.viewer.scene
+    // this.camera = this.viewer.camera
+    // this.unit = obj.unit
+    // this.latDirection = obj.latDirection
+    // this.lngDirection = obj.lngDirection
+    // this.lngminute = obj.lngminute
+    // this.lngdegree = obj.lngdegree
+    // this.latminute = obj.latminute
+    // this.latdegree = obj.latdegree
+    // this.handler = null
   }
   // 测量距离
   measure() {
     const that = this
-    // 测量距离
-    // console.log('测量距离')
-    // 取消双击事件-追踪该位置
-    that.viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK)
-
-    this.handler = new Cesium.ScreenSpaceEventHandler(that.scene.canvas)
-    var positions = []
-    var poly = null
-    var distance = 0
-    var cartesian = null
-    var floatingPoint
-    let pointArr = []
-
-    this.handler.setInputAction(movement => {
-      const ray = that.camera.getPickRay(movement.endPosition)
-      cartesian = that.scene.globe.pick(ray, that.scene)
-      if (positions.length >= 1) {
-        if (!Cesium.defined(poly)) {
-          poly = new PolyLinePrimitive(positions)
-        } else {
-          positions.pop()
-          positions.push(cartesian)
-        }
-        distance = getSpaceDistance(positions)
+    var distanceMeasure = {
+      points:[],
+      //markers:[],
+      color: "red",
+      layers: L.layerGroup(),
+      polyline: null,
+      marker:null,
+      init:function(){
+        distanceMeasure.points = [];
+        distanceMeasure.polyline = null;
+        distanceMeasure.marker = null;
+        map.on('click', distanceMeasure.click).on('dblclick', distanceMeasure.dblclick);
+      },
+      close:function(latlng){
+        distanceMeasure.marker = L.marker(latlng, { icon: deleteIcon }).addTo(map).on("click", function (e) {
+               //console.log('marker',e); 
+          if(distanceMeasure.polyline)
+             map.removeLayer(distanceMeasure.polyline);
+  
+          if(distanceMeasure.marker)
+            distanceMeasure.marker.remove();
+        });
+  
+  
+      },
+      click:function(e){    
+        map.doubleClickZoom.disable();
+        // 添加点信息
+        distanceMeasure.points.push(e.latlng);
+        // 添加线
+        map.on('mousemove', distanceMeasure.mousemove);
+      },
+      mousemove:function(e){
+        distanceMeasure.points.push(e.latlng);
+        if(distanceMeasure.polyline)
+          map.removeLayer(distanceMeasure.polyline);
+        distanceMeasure.polyline = L.polyline(distanceMeasure.points,{showMeasurements: true, color: 'red'});
+        distanceMeasure.polyline.addTo(distanceMeasure.layers);
+        distanceMeasure.layers.addTo(map);
+        distanceMeasure.points.pop();
+      },
+      dblclick:function(e){ // 双击结束
+        console.log('双击结束',e);
+        distanceMeasure.polyline.addTo(distanceMeasure.layers);
+        distanceMeasure.close(e.latlng);
+        //distanceMeasure.polygon.enableEdit();
+        //map.on('editable:vertex:drag editable:vertex:deleted', distanceMeasure.polygon.updateMeasurements, distanceMeasure.polygon);
+        map.off('click', distanceMeasure.click).off('mousemove', distanceMeasure.mousemove).off('dblclick', distanceMeasure.dblclick);
+      },
+      destory:function(){	
+        if(distanceMeasure.polyline)
+             map.removeLayer(distanceMeasure.polyline);
+  
+        if(distanceMeasure.marker)
+            distanceMeasure.marker.remove();
       }
-    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
-
-    this.handler.setInputAction(movement => {
-      const ray = that.camera.getPickRay(movement.position)
-      cartesian = that.scene.globe.pick(ray, that.scene)
-      if (positions.length == 0) {
-        positions.push(cartesian.clone())
-      }
-      positions.push(cartesian)
-      console.log(positions)
-      // 在三维场景中添加Label
-      // var textDisance
-      // if (this.unit === 'km') {
-      //   textDisance = (distance / 1000).toFixed(1) + 'km'
-      // }
-      // if (this.unit === 'nmi') {
-      //   textDisance = (distance / 1852).toFixed(1) + 'n mile'
-      // }
-      var textDisance =
-        that.unit === 'km'
-          ? (distance / 1000).toFixed(1) + 'km'
-          : (distance / 1852).toFixed(1) + '海里'
-      floatingPoint = that.viewer.entities.add({
-        name: '空间直线距离',
-        position: positions[positions.length - 1],
-        point: {
-          pixelSize: 10,
-          color: Cesium.Color.GOLD,
-          outlineColor: Cesium.Color.WHITE,
-          outlineWidth: 2
-        },
-        label: {
-          text: textDisance,
-          font: '18px sans-serif',
-          fillColor: Cesium.Color.GOLD,
-          style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-          outlineWidth: 2,
-          verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-          pixelOffset: new Cesium.Cartesian2(20, -20)
-        },
-        flag: 'toolbar'
-      })
-      pointArr.push(floatingPoint)
-    }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
-
-    this.handler.setInputAction(movement => {
-      if (positions.length <= 2) {
-        pointArr.forEach(item => {
-          that.viewer.entities.remove(item)
-        })
-
-        // 这里pop可以取消实时绘制多边形
-        positions.pop()
-        Message.warning('距离测量需要至少选取两个点')
-        positions = []
-        poly = null
-        cartesian = null
-        distance = 0
-        pointArr = []
-        return
-      }
-      this.handler.destroy() // 关闭事件句柄
-      this.handler = null
-      positions.pop() // 最后一个点无效
-    }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
-
-    var PolyLinePrimitive = (function() {
-      function _(positions) {
-        this.options = {
-          name: '直线',
-          polyline: {
-            show: true,
-            positions: [],
-            material: Cesium.Color.CHARTREUSE,
-            width: 5,
-            clampToGround: true
-          }
-        }
-        this.positions = positions
-        this._init()
-      }
-
-      _.prototype._init = function() {
-        var _self = this
-        var _update = function() {
-          return _self.positions
-        }
-        // 实时更新polyline.positions
-        this.options.flag = 'toolbar'
-        this.options.polyline.positions = new Cesium.CallbackProperty(_update, false)
-        that.viewer.entities.add(this.options)
-      }
-
-      return _
-    })()
-
-    // 空间两点距离计算函数
-    function getSpaceDistance(positions) {
-      var distance = 0
-      for (var i = 0; i < positions.length - 1; i++) {
-        var point1cartographic = Cesium.Cartographic.fromCartesian(positions[i])
-        var point2cartographic = Cesium.Cartographic.fromCartesian(positions[i + 1])
-        /** 根据经纬度计算出距离**/
-        var geodesic = new Cesium.EllipsoidGeodesic()
-        geodesic.setEndPoints(point1cartographic, point2cartographic)
-        var s = geodesic.surfaceDistance
-        // console.log(Math.sqrt(Math.pow(distance, 2) + Math.pow(endheight, 2)));
-        // 返回两点之间的距离
-        s = Math.sqrt(Math.pow(s, 2) + Math.pow(point2cartographic.height - point1cartographic.height, 2))
-        distance = distance + s
-      }
-      return distance.toFixed(2)
     }
+    distanceMeasure.destory();
+    distanceMeasure.init();
   }
 
   // 测量面积

@@ -14,9 +14,9 @@
     </div>
     <div class="manager_operation">
       <el-input
-        placeholder="任务名称"
+        placeholder="数据源名称"
         prefix-icon="el-icon-search"
-        v-model="queryParams.name"
+        v-model="queryParams.numericalName"
         class="operation_input"
         clearable
         @clear="search"
@@ -227,7 +227,7 @@ export default {
       });
       } else {
         this.fetch({
-          name:this.queryParams.name
+          numericalName:this.queryParams.numericalName
         });
       }
     },
