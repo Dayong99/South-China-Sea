@@ -253,9 +253,11 @@ export default {
               }
             }
             for (let i = 0; i < obj.conclusion.length; i++) {
-              let arr = [obj.conclusion[i].dateTime];
+              let arr = [obj.conclusion[i].dateTime,obj.conclusion[i].value];
               for (let key in obj) {
-                arr.push(obj[key][i].value);
+                if(key != "conclusion"){
+                  arr.push(obj[key][i].value);
+                }
               }
               dataList.push(arr);
             }
