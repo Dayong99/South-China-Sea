@@ -37,7 +37,7 @@
               <input type="text" v-model="item.value"/>
             </div>
             <div class="number_wrapper">
-              <input type="text" v-model="item.value" />
+              <input type="text" v-model="item.type" />
             </div>
             <div class="select_options">
               <div

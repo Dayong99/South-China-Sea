@@ -129,13 +129,14 @@ export default {
   watch: {
     routeDialogOptions: {
       handler: function (val) {
+        console.log(val, `航线新增`);
         if (val[0] === 1) {
           this.title = "添加航线";
         }
         if (val[0] === 2) {
           this.title = "修改航线";
         }
-        this.routeManagerShow = val[0];
+        this.routeManagerShow = val[0] ? true : false;
         this.$nextTick(() => {
           this.initMap();
         });
@@ -146,17 +147,19 @@ export default {
     ...mapMutations({
       setRouteDialogOptions: "menuBar/setRouteDialogOptions",
     }),
-    changeTimeSteap() {},
     routeCustomClick() {
       this.routeCustomActive = !this.routeCustomActive;
       if (this.routeCustomActive) {
-        this.geometry.forEach((e, i) => {
-          e.remove();
-        });
+        if (this.geometry.length) {
+          this.geometry.forEach((e, i) => {
+            e.remove();
+          }); // 清楚之前画的
+        }
+
         this.reset();
         this.draw();
-      } else {
       }
+      console.log(this.routeCustomActive, `this.routeCustomActive draw`);
     },
     closeManager() {
       this.routeManagerShow = false;
@@ -227,7 +230,6 @@ export default {
     reset() {
       this.routeEditShow = false;
       this.routeCollect = [];
-      this.routeCustomActive = false;
       this.routeInfo = [];
       this.activeRoutePoint = 0;
       this.routeInfoList = {
