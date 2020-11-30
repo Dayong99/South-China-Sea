@@ -79,7 +79,7 @@ export default {
         latminute: this.latminute,
         latdegree: this.latdegree,
       };
-      window.tool = new toolBar(window.earth, obj);
+      window.tool = new toolBar(window.map, obj);
     },
     // 地图放大
     zoomIn() {
