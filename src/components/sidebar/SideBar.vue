@@ -276,6 +276,8 @@ export default {
       nowLevel: state => state.sideBar.nowLevel,
       // 重绘次数
       imageLayerNum: state => state.earth.imageLayerNum,
+      // 数据源
+      sourceType: state => state.sideBar.sourceType
     }),
   },
   watch: {
@@ -432,13 +434,13 @@ export default {
     // 初始选中
     initMenuList() {
       // 初始时间
-      this.day = this.$m().format('YYYY-MM-DD')
-      this.time = this.$m().format('HH')
+      // this.day = this.$m().format('YYYY-MM-DD')
+      // this.time = this.$m().format('HH')
       /**
-       * type: 数据源类型   0--EC  1--GFS
+       * this.sourceType: 数据源类型 store sideBar中   0--EC  1--GFS
        */
       this.$get('/api/parameters/get_type', {
-        type: 1
+        type: this.sourceType
       }).then(res => {
         if(res.status == 200) {
           this.menuList = []
@@ -507,7 +509,7 @@ export default {
         this.currentLevel = this.menuList[0].currentLevel
         this.setLevelList(this.menuList[0].parseIntLevel)
         // 首次加载绘制默认选中的要素
-        this.drawItem()
+        // this.drawItem()
       }).catch(error => {
         this.$message.error("获取数据源数据失败")
       })

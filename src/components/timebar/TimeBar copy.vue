@@ -1,7 +1,7 @@
 <template>
   <div id="timebar">
     <!-- 日期 -->
-    <div id="calendar" style="left:180px;width:calc(100% - 220px)">
+    <div id="calendar" style="left:180px;width:calc(100% - 300px)">
       <div v-for="(item,index) in calendarList" :key="index" :style="dayWidth">{{ item.day }}</div>
     </div>
 
@@ -11,7 +11,7 @@
       placeholder="选择日期"
       size="mini"
       value-format="yyyy-MM-dd"
-      style="width:125px;position:absolute;left:10px; top:-19px;"
+      style="width:125px;position:absolute;left:5px;top:-18px;"
       @change="getDay"
     />
 
@@ -21,7 +21,7 @@
         id="tline"
         ref="totalLine"
         class="totalLen"
-        style="width:calc(100% - 220px);"
+        style="width:calc(100% - 300px);"
         @click="loadTo"
         @mouseover="showTip"
         @mousemove="showTip"
@@ -57,7 +57,6 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
 import { parseTime } from "@/utils";
 
 // 监听时间轴尺寸变化
@@ -126,61 +125,20 @@ export default {
       dateList: [],
       timeFlag: true,
       dateVal: null,
-
-      // 获取最近的时间  要素的id
-      currentId: null,
     };
   },
-  created() {
-    // 根据数据源获取第一个要素的id  getTypeTime()根据这个id去获取最近时间
-    this.$get('/api/parameters/get_type', {
-      type: this.sourceType
-    }).then(res => {
-      if(res.status == 200) {
-        this.currentId = res.data.data[0].id
-      }
-    }).catch(error => {
-      this.$message.error('获取要素失败')
-    })
-  },
   computed: {
-    ...mapState({
-      sourceType: state => state.sideBar.sourceType
-    }),
     // 单个日期宽度
     dayWidth: function () {
       return {
         width: "calc(100% / " + this.dayListLength + ")",
       };
     },
-    // 获取时次
-    timeLevel: function () {
-      return this.$store.state.time.timeLevel;
-    },
   },
-  watch: {
-    timeLevel(newval) {
-      this.calendarList.forEach((item, index) => {
-        this.calendarList[index].timeArr = newval;
-      });
-      console.log("object");
-
-      // 时次改变时间轴改变
-      this.resetPlay();
-
-      // 基数
-      this.num = newval.length;
-      // 初始化当前时间
-      this.showday =
-        this.calendarList[0].day + " - " + this.calendarList[0].timeArr[0];
-      // 时间数组长度
-      this.dayListLength = this.calendarList.length;
-      // 分割的总个数
-      this.count = this.dayListLength * newval.length;
-      // 时间段长度
-      this.bItem = this.totalwidth / this.dayListLength;
-      this.sItem = this.totalwidth / this.count;
-    },
+  created() {
+    // 初始化时间
+    this.timeFlag = true
+    this.getLatestTime()
   },
   mounted() {
     // 监听时间轴尺寸变化
@@ -199,37 +157,24 @@ export default {
       // 总长度
       this.totalwidth = width;
 
-      // 初始化时间
-      // this.timeFlag = true
-      // this.getLatestTime()
-      this.timeFlag = false;
-      // this.dateVal = "2020-08-01"
-      this.getTypeTime();
-      // this.getLatestTime()
-      // this.getTypeTime().then(res=>{
-      //   console.log(res);
-      // }).catch(err=>{
-      //   console.log(err);
-      // })
+      // 初始化当前时间
+      this.showday =
+        this.calendarList[0].day + ' ' + this.calendarList[0].timeArr[0]
+      // this.showday = "2020-08-01 03:00"
+      // 时间数组长度
+      this.dayListLength = this.calendarList.length
+      // 分割的总个数
+      this.count = this.dayListLength * this.num
+      // 时间段长度
+      this.bItem = this.totalwidth / this.dayListLength
+      // console.log(this.bItem)
+      this.sItem = this.totalwidth / this.count
 
-      // // 初始化当前时间
-      // this.showday =
-      //   this.calendarList[0].day + ' ' + this.calendarList[0].timeArr[0]
-      // // this.showday = "2020-08-01 03:00"
-      // // 时间数组长度
-      // this.dayListLength = this.calendarList.length
-      // // 分割的总个数
-      // this.count = this.dayListLength * this.num
-      // // 时间段长度
-      // this.bItem = this.totalwidth / this.dayListLength
-      // // console.log(this.bItem)
-      // this.sItem = this.totalwidth / this.count
+      this.$store.commit('changeTime', this.showday)
+      console.log('------------')
+      console.log(this.showday)
 
-      // this.$store.commit('changeTime', this.showday)
-      // console.log('------------')
-      // console.log(this.showday)
-
-      // this.resetPlay()
+      this.resetPlay()
     });
   },
   methods: {
@@ -245,56 +190,6 @@ export default {
       this.getLatestTime();
     },
 
-    //获得最近有数据的时间点
-    getTypeTime() {
-      const date = new Date();
-      const year = date.getFullYear();
-      const month =
-        date.getMonth() + 1 < 10
-          ? "0" + (date.getMonth() + 1)
-          : date.getMonth() + 1;
-      const day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-      const hour =
-        date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-      const minute =
-        date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-      let time = year + "-" + month + "-" + day + " " + hour + ":" + minute;
-      console.log("当前系统时间", time);
-      this.$get("/api/numerical-forecast/trygettime", {
-        time: time,
-        type: this.currentId,
-      }).then((res) => {
-        let timeArr = res.data.data.split(" ");
-        console.log(timeArr);
-        // const hour = Number(timeArr[1])<10?'0'+Number(timeArr[1])<10:Number(timeArr[1])<10
-        this.dateVal = timeArr[0];
-        this.getLatestTime();
-        // 初始化当前时间
-        this.showday =
-          this.calendarList[0].day + " " + this.calendarList[0].timeArr[0];
-        // this.showday = "2020-08-01 03:00"
-        // 时间数组长度
-        this.dayListLength = this.calendarList.length;
-        // 分割的总个数
-        this.count = this.dayListLength * this.num;
-        // 时间段长度
-        this.bItem = this.totalwidth / this.dayListLength;
-        // console.log(this.bItem)
-        this.sItem = this.totalwidth / this.count;
-
-        this.$store.commit("changeTime", this.showday);
-        console.log("------------");
-        console.log(this.showday);
-
-        this.resetPlay();
-      });
-      // .catch(err=>{
-      //   console.log(err.response.status);
-      //   if(err.response.status==404){
-      //     this.getTypeTime()
-      //   }
-      // })
-    },
     // 获取最近三周时间
     getLatestTime() {
       this.dateList = [];
@@ -352,6 +247,8 @@ export default {
       this.calendarList = this.dateList;
       this.showday =
         this.calendarList[0].day + " " + this.calendarList[0].timeArr[0];
+        
+      this.$store.commit('changeTime', this.showday)
 
       // this.item = 1;
       this.dayIndex = 0;
@@ -492,7 +389,7 @@ export default {
     changeIcon() {
       if (this.iconData === this.playIcon) {
         this.iconData = this.stopIcon;
-        this.timer = setInterval(this.changeLine, 5000);
+        this.timer = setInterval(this.changeLine, 3000);
       } else {
         this.iconData = this.playIcon;
         clearInterval(this.timer);
@@ -504,4 +401,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+#timebar {
+  z-index: 999;
+}
 </style>
