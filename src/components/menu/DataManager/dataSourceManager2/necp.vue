@@ -1,7 +1,7 @@
 <template>
   <!-- eslint-disable-->
   <el-dialog
-    title="导入水温"
+    title="导入necp"
     width="500px"
     top="50px"
     :close-on-click-modal="false"
@@ -15,17 +15,34 @@
       :rules="rules"
       label-position="right"
       label-width="100px"
-      style="line-height: 100%;"
+      style="line-height: 100%"
     >
       <!-- 名称 -->
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
-            <el-form-item label="目标路径" prop="filePath">
+            <el-form-item label="目标路径" prop="path">
               <el-input
                 placeholder="请输入目标路径"
-                v-model="formData.filePath"
+                v-model="formData.path"
               ></el-input>
+            </el-form-item>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="18">
+          <div class="grid-content bg-purple-dark">
+            <el-form-item label="开始时间" prop="startTime">
+              <el-date-picker
+                v-model="formData.startTime"
+                type="datetime"
+                placeholder="选择日期时间"
+                format="yyyyMMddHH"
+                value-format="yyyyMMddHH"
+                style="width:260px;"
+              >
+              </el-date-picker>
             </el-form-item>
           </div>
         </el-col>
@@ -40,20 +57,19 @@
 import { toBase64 } from "@/utils/toBase64.js";
 export default {
   data() {
-
-
     return {
       data: {},
       rules: {},
       formData: {
-        filePath:''
+        path: "",
+        startTime:''
       },
       rules: {
-        filePath: {
+        path: {
           required: true,
           message: "目标路径不能为空",
           trigger: "blur",
-        }
+        },
       },
     };
   },
@@ -82,31 +98,31 @@ export default {
       this.$refs.form.clearValidate();
       this.$refs.form.resetFields();
       this.formData = {
-        filePath:''
+        path: "",
       };
     },
     // 添加或修改
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-            this.$post("/api/numerical-forecast/analysisOceanTemperature", this.formData)
-              .then(() => {
-                this.$message({
-                  message: "海温导入成功",
-                  type: "success",
-                });
-                this.reset();
-              })
-              .then(() => {
-                this.$emit("close");
-              })
-              .catch(() => {
-                this.$message({
-                  message: "海温导入失败",
-                  type: "error",
-                });
+          this.$get("/api/numerical-forecast/analysisGFS", this.formData)
+            .then(() => {
+              this.$message({
+                message: "necp导入成功",
+                type: "success",
               });
-          }
+              this.reset();
+            })
+            .then(() => {
+              this.$emit("close");
+            })
+            .catch(() => {
+              this.$message({
+                message: "necp导入失败",
+                type: "error",
+              });
+            });
+        }
       });
     },
   },

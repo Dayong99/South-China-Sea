@@ -1,7 +1,7 @@
 <template>
   <div id="earthBox">
     <!-- 地球 -->
-    <earth ref="earth"/>
+    <earth ref="earth" />
     <!-- 时间播放轴 -->
     <time-bar v-show="timeShow"></time-bar>
     <!-- 工具条 -->
@@ -22,25 +22,31 @@
     <team-manager></team-manager>
     <!-- 任务管理 -->
     <task-manager></task-manager>
+
     <!-- 系统配置 -->
     <!-- 色斑图配置 -->
     <legend-manager></legend-manager>
     <!-- 等值线配置 -->
     <line-manager></line-manager>
-     <!-- 常用区域 -->
+    <!-- 常用区域 -->
     <area-manager></area-manager>
-     <!-- 海区划分 -->
+    <!-- 海区划分 -->
     <sea-manager></sea-manager>
-     <!-- 参数配置 -->
+    <!-- 参数配置 -->
     <param-manager></param-manager>
     <!-- 数据项配置 -->
     <dataitem-manager></dataitem-manager>
+
+    <!-- 数据管理 -->
     <!-- 数据源配置 -->
     <datasource-manager></datasource-manager>
-     <!-- 数据源配置 -->
+    <!-- 数据源配置 -->
     <datasource-manager1></datasource-manager1>
-     <!-- 数据源配置 -->
+    <!-- 数据源配置 -->
     <datasource-manager2></datasource-manager2>
+    <!-- 台风数据 -->
+    <typhoon-manager></typhoon-manager>
+
     <!-- 航线管理 -->
     <route-manager></route-manager>
     <!-- 算法管理 -->
@@ -57,25 +63,27 @@
 import Earth from "@/views/Earth/Earth";
 // 时间轴
 import TimeBar from "@/components/timebar/TimeBar";
-import ToolBar from '@/components/tool/ToolBar.vue';
-import LogoGlobal from '@/components/tool/logoGlobal.vue'
-import ParameterHeading from '@/components/tool/parameterHeading.vue'
-import SideBar from '@/components/sidebar/SideBar.vue';
-import LegendBar from '@/components/legendbar/legendBar.vue'
-import MenuBar from '@/components/menu/MenuBar.vue'
-import ShipManager from '@/components/menu/ShipManager/index.vue';
-import TeamManager from '@/components/menu/TeamManager/index.vue'
-import TaskManager from '@/components/menu/TaskManagement/edit.vue'
-import LegendManager from '@/components/menu/SystemManager/legendManager/index.vue'
-import LineManager from '@/components/menu/SystemManager/lineManager/index.vue'
-import AreaManager from '@/components/menu/SystemManager/areaManager/index.vue'
-import SeaManager from '@/components/menu/SystemManager/seaManager/index.vue'
-import ParamManager from '@/components/menu/SystemManager/paramManager/index.vue'
-import DataitemManager from '@/components/menu/SystemManager/dataItemManager/index.vue'
-import DatasourceManager from '@/components/menu/SystemManager/dataSourceManager/index.vue'
-import DatasourceManager1 from '@/components/menu/SystemManager/dataSourceManager1/index.vue'
-import DatasourceManager2 from '@/components/menu/SystemManager/dataSourceManager2/index.vue'
-import InfoBox from '@/components/shipInfo/InfoBox.vue'
+import ToolBar from "@/components/tool/ToolBar.vue";
+import LogoGlobal from "@/components/tool/logoGlobal.vue";
+import ParameterHeading from "@/components/tool/parameterHeading.vue";
+import SideBar from "@/components/sidebar/SideBar.vue";
+import LegendBar from "@/components/legendbar/legendBar.vue";
+import MenuBar from "@/components/menu/MenuBar.vue";
+import ShipManager from "@/components/menu/ShipManager/index.vue";
+import TeamManager from "@/components/menu/TeamManager/index.vue";
+import TaskManager from "@/components/menu/TaskManagement/edit.vue";
+import LegendManager from "@/components/menu/SystemManager/legendManager/index.vue";
+import LineManager from "@/components/menu/SystemManager/lineManager/index.vue";
+import AreaManager from "@/components/menu/SystemManager/areaManager/index.vue";
+import SeaManager from "@/components/menu/SystemManager/seaManager/index.vue";
+import ParamManager from "@/components/menu/SystemManager/paramManager/index.vue";
+import DataitemManager from "@/components/menu/SystemManager/dataItemManager/index.vue";
+import DatasourceManager from "@/components/menu/DataManager/dataSourceManager/index.vue";
+import DatasourceManager1 from "@/components/menu/DataManager/dataSourceManager1/index.vue";
+import DatasourceManager2 from "@/components/menu/DataManager/dataSourceManager2/index.vue";
+import TyphoonManager from "@/components/menu/DataManager/typhoonManager/index.vue";
+
+import InfoBox from "@/components/shipInfo/InfoBox.vue";
 
 import routeManager from '@/components/menu/routeManager/edit.vue'
 import algorithmManager from '@/components/menu/algorithmManager/edit.vue'
@@ -98,16 +106,17 @@ export default {
     TaskManager: TaskManager,
     routeManager: routeManager,
     algorithmManager: algorithmManager,
-    LegendManager:LegendManager,
-    LineManager:LineManager,
-    AreaManager:AreaManager,
-    SeaManager:SeaManager,
-    ParamManager:ParamManager,
-    DataitemManager:DataitemManager,
+    LegendManager: LegendManager,
+    LineManager: LineManager,
+    AreaManager: AreaManager,
+    SeaManager: SeaManager,
+    ParamManager: ParamManager,
+    DataitemManager: DataitemManager,
     routeManager: routeManager,
-    DatasourceManager:DatasourceManager,
-    DatasourceManager1:DatasourceManager1,
-    DatasourceManager2:DatasourceManager2,
+    DatasourceManager: DatasourceManager,
+    DatasourceManager1: DatasourceManager1,
+    DatasourceManager2: DatasourceManager2,
+    TyphoonManager:TyphoonManager,
     InfoBox:InfoBox,
     assessmentManager: assessmentManager
   },
@@ -116,12 +125,9 @@ export default {
       timeShow: true,
     };
   },
-  watch: {
-  },
-  mounted() {
-  },
-  methods: {
-  }
+  watch: {},
+  mounted() {},
+  methods: {},
 };
 </script>
 

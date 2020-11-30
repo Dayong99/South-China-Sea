@@ -6,14 +6,14 @@
     style="width: auto; height: auto"
   >
     <div class="manager_title">
-      <span>数据源配置—欧格海浪数值预报</span>
+      <span>台风数据</span>
       <img
         src="@/assets/images/legendbar/close.png"
         @click.stop="closeManager"
       />
     </div>
     <div class="manager_operation">
-      <el-input
+      <!-- <el-input
         placeholder="任务名称"
         prefix-icon="el-icon-search"
         v-model="queryParams.name"
@@ -22,16 +22,13 @@
         @clear="search"
         style="width: 260px"
       >
-      </el-input>
+      </el-input> -->
       <el-date-picker
-        v-model="time"
-        format="yyyy-MM-dd HH:mm:ss"
-        value-format="yyyy-MM-dd HH:mm:ss"
-        type="datetimerange"
-        range-separator="-"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-        @change="search"
+        v-model="queryParams.year"
+        type="year"
+        value-format="yyyy"
+        placeholder="选择年"
+        @change="changeDate"
       >
       </el-date-picker>
       <el-button class="operation_search" @click="search">搜索</el-button>
@@ -42,75 +39,74 @@
     </div>
     <div class="manager_table">
       <el-table :data="tableData" border style="width: 100%">
-        <el-table-column label="序号" width="70px" align="center">
-          <template slot-scope="scope">
-            {{ (pagination.num - 1) * pagination.size + scope.$index + 1 }}
-          </template>
-        </el-table-column>
+        
         <el-table-column
-          label="数据源名称"
+          label="台风名称"
           align="center"
           min-width="100px"
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.numericalName }}</span>
+            <span>{{ scope.row.cycloneName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="起报时间" align="center" min-width="160px">
+        <el-table-column label="台风类型" align="center" min-width="160px">
           <template slot-scope="scope">
-            <span>{{ scope.row.startTime }}</span>
+            <span>{{ scope.row.cycloneType }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="预报日期" align="center" min-width="100px">
+        <el-table-column label="国际编号" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.startDay }}</span>
+            <span>{{ scope.row.international }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="预报时间" align="center" min-width="100px">
+        <el-table-column label="国内编号" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.startHours }}</span>
+            <span>{{ scope.row.domestic }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="时效" align="center" min-width="100px">
+        <el-table-column label="生成时间" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.fcst }}</span>
+            <span>{{ scope.row.createtime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="修改时间" align="center" min-width="100px">
+        <el-table-column label="生成时的经度坐标" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.modifyTime }}</span>
+            <span>{{ scope.row.lon }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="修改次数" align="center" min-width="100px">
+        <el-table-column label="生成时的纬度坐标" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.modifyTimes }}</span>
+            <span>{{ scope.row.lat }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="是否可用" align="center" min-width="100px">
+        <el-table-column label="心气压 HPA" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.isAvailable == 1 ? "是" : "否" }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="补充" align="center" min-width="100px">
-          <template slot-scope="scope">
-            <span>{{ scope.row.isSupplement }}</span>
+            <span>{{ scope.row.centerPressure }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="数据来源"
+          label="中心最大风速 M/s"
           align="center"
           min-width="100px"
-          :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.dataSource }}</span>
+            <span>{{ scope.row.centerMaxSppe }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="风圈半径" align="center" min-width="100px" :show-overflow-tooltip="true">
+          <template slot-scope="scope">
+            <span>{{ scope.row.windCircle }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="移动方向" align="center" min-width="100px">
+          <template slot-scope="scope">
+            <span>{{ scope.row.moveDirection }}</span>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <div class="manager_page">
-      <!-- 分页 -->
+    <!-- <div class="manager_page">
       <pagination
         :total="total"
         :page.sync="pagination.num"
@@ -118,7 +114,7 @@
         @pagination="search"
         style="padding-bottom: 0"
       />
-    </div>
+    </div> -->
 
     <file
       ref="file"
@@ -154,19 +150,14 @@ export default {
         size: 5,
         num: 1,
       },
-      queryParams: {
-        name: null,
-        STime: "",
-        ETime: "",
-      },
-      time: [],
+      queryParams: {},
     };
   },
   mounted() {},
   computed: {
     ...mapState({
       menuList: (state) => state.menuBar.menuList,
-      systemList: (state) => state.menuBar.systemList,
+      dataList: (state) => state.menuBar.dataList,
     }),
   },
   watch: {
@@ -176,15 +167,15 @@ export default {
         let i = newval.findIndex((item) => {
           return item.flag == true;
         });
-        if (i !== 3) {
+        if (i !== 4) {
           this.systemManagerShow = false;
         }
       },
       deep: true,
     },
-    systemList: {
+    dataList: {
       handler(newval, oldval) {
-        if (newval[7].flag) {
+        if (newval[3].flag) {
           this.systemManagerShow = true;
         } else {
           this.systemManagerShow = false;
@@ -194,12 +185,7 @@ export default {
     },
     systemManagerShow(val) {
       if (val) {
-        this.queryParams = {
-          name: null,
-          STime: "",
-          ETime: "",
-        };
-        this.time = [];
+        this.queryParams = {};
         this.fetch();
       }
     },
@@ -211,48 +197,35 @@ export default {
 
     // 搜索重置
     resetSearch() {
-      this.queryParams = {
-        name: null,
-        STime: "",
-        ETime: "",
-      };
-      this.time = [];
+      this.queryParams = {};
       this.search();
     },
     add() {
       this.dialog.isVisible = true;
       this.dialog.title = "添加数据源";
     },
+    changeDate() {
+      if (!this.queryParams.year) {
+        this.search();
+      }
+    },
     // 搜索
     search() {
-      if (this.time) {
-        this.queryParams.STime = this.time[0];
-        this.queryParams.ETime = this.time[1];
-      } else {
-        this.queryParams.STime = "";
-        this.queryParams.ETime = "";
-      }
-     if (this.queryParams.STime) {
-         this.fetch({
+      this.fetch({
         ...this.queryParams,
       });
-      } else {
-        this.fetch({
-          name:this.queryParams.name
-        });
-      }
     },
     // 获取表格数据
     fetch(params = {}) {
       params.pageSize = this.pagination.size;
       params.pageNum = this.pagination.num;
-      this.$get("/api/numerical-mat", {
+      this.$get("/api/typhoon", {
         ...params,
       }).then((res) => {
         console.log(res, "res");
         if (res.data.data) {
-          this.total = res.data.data.total;
-          this.tableData = res.data.data.rows;
+          // this.total = res.data.data.total;
+          this.tableData = res.data.data;
         }
       });
     },
