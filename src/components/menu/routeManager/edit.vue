@@ -103,15 +103,10 @@ export default {
   components: {},
   data() {
     return {
+      routePointCollect: [],
       routeInfoList: {
         name: null,
         routePoint: [],
-      },
-      routePointInfo: {
-        lon: null,
-        lat: null,
-        port: null,
-        time: null,
       },
       routeCustomActive: false,
       title: "添加任务",
@@ -178,54 +173,53 @@ export default {
       window.routeMap.remove();
     },
     draw() {
-      var points = []; // 点
-      var lines = new L.polyline(points); // 画线
-      var tempLines = new L.polyline([]); // 移动画线
-      window.routeMap.on("click", onClick); //点击地图
-      window.routeMap.on("contextmenu", onRightClick);
-      const that = this;
-      // 点击事件
-      function onClick(e) {
-        points.push([e.latlng.lat, e.latlng.lng]);
-        lines.addLatLng(e.latlng);
-        window.routeMap.addLayer(lines);
-        const node = L.circle(e.latlng, {
-          color: "#ff0000",
-          fillColor: "ff0000",
-          fillOpacity: 1,
-          radius: 300,
+      this.routePointCollect = [];
+      const nodeStyleOptions = {
+        color: "#ff0000",
+        fillColor: "ff0000",
+        fillOpacity: 1,
+        radius: 300,
+      };
+      var lines = new L.polyline(this.routePointCollect); // 画线
+      var tempLines = new L.polyline([]); // 暂存线
+      window.routeMap.on("click", (e) => {
+        this.routePointCollect.push([e.latlng.lat, e.latlng.lng]); // 储存点信息
+        window.routeMap.addLayer(lines.addLatLng(e.latlng)); // 暂存线绘制
+        const node = L.circle(e.latlng, nodeStyleOptions);
+        window.routeMap.addLayer(node); // 点
+        this.geometry.push(node);
+        this.routeCollect.push(node);
+        this.routeInfo.push({
+          lat: e.latlng.lat,
+          lng: e.latlng.lng,
+          port: null,
+          time: null,
         });
-        window.routeMap.addLayer(node);
-        that.geometry.push(node);
-        that.routeCollect.push(node);
-        that.routePointInfo.lat = e.latlng.lat;
-        that.routePointInfo.lng = e.latlng.lng;
-        that.routePointInfo.port = null;
-        that.routePointInfo.time = null
-        that.routeInfo.push(that.routePointInfo);
-        that.activeRoutePoint = that.routeCollect.length - 1;
-        window.routeMap.on("mousemove", onMove); //双击地图
-      }
-      // 移动事件
-      function onMove(e) {
-        if (points.length > 0) {
-          var ls = [points[points.length - 1], [e.latlng.lat, e.latlng.lng]];
-          tempLines.setLatLngs(ls);
-          window.routeMap.addLayer(tempLines);
-          
-        }
-      }
-      // 右击事件
-      function onRightClick(e) {
-        that.geometry.push(L.polyline(points).addTo(window.routeMap));
-        points = [];
+        this.activeRoutePoint = this.routeCollect.length - 1;
+        window.routeMap.on("mousemove", (e) => {
+          if (this.routePointCollect.length > 0) {
+            var ls = [
+              this.routePointCollect[this.routePointCollect.length - 1],
+              [e.latlng.lat, e.latlng.lng],
+            ];
+            tempLines.setLatLngs(ls);
+            window.routeMap.addLayer(tempLines);
+          }
+        }); //双击地图
+      }); //点击地图
+
+      window.routeMap.on("contextmenu", (e) => {
+        this.geometry.push(
+          L.polyline(this.routePointCollect).addTo(window.routeMap)
+        );
+        this.routePointCollect = [];
         lines.remove();
         window.routeMap.off("mousemove");
         window.routeMap.off("click");
         window.routeMap.off("contextmenu");
-        that.routeCustomActive = false;
+        this.routeCustomActive = false;
         tempLines.remove();
-      }
+      });
     },
 
     routeEditClick() {
@@ -282,7 +276,7 @@ export default {
           courseItemList: dataArr,
           ctype: 0,
           plan_Id: this.routeDialogOptions[1].id,
-          lineName: this.routeInfoList.name
+          lineName: this.routeInfoList.name,
         };
         this.$jsonPost(`/api/course`, {
           ...params,
@@ -322,7 +316,6 @@ export default {
         .addTo(window.routeMap);
       window.routeMap.setView([35.09, 102.21], 4);
     },
-
   },
 };
 </script>

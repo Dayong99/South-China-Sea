@@ -28,7 +28,8 @@
         <div class="factor_param" v-if="activeFactorTitle === 2">
           <div
             class="factore_item"
-            v-for="(item, index) in weatherFactoreOptionsList"
+            v-for="(item, index) in treeData.children[activeWeather.index]
+              .children[activeWeather.childIndex].weatherFactor"
             :key="`weatherFactoreOptionsList${index}`"
           >
             <div class="select_desc">{{ item.parameterName }}</div>
@@ -52,29 +53,18 @@
               </div>
             </div>
           </div>
-          <div
-            class="factore_item"
-            v-for="(item, index) in twoFactoreOptionsList"
-            :key="`twoFactoreOptionsList${index}`"
-          >
-            <div class="select_desc">{{ item.parameterName }}</div>
-            <div class="number_wrapper">
-              <input type="text" :value="item.value" />
-            </div>
-            <div class="select_options"></div>
-          </div>
         </div>
       </div>
 
       <el-dialog
-        title="添加子节点"
+        title="添加船舰影响因素"
         :visible.sync="addThirdNode"
         width="350px"
         center
         append-to-body
       >
         <el-form ref="form" :model="addThirdform" label-width="80px">
-          <el-form-item label="节点名称">
+          <el-form-item label="因素名称">
             <el-input v-model="addThirdform.name"></el-input>
           </el-form-item>
         </el-form>
@@ -97,7 +87,7 @@ export default {
     return {
       alor_type: 0,
       inputStyle: {
-        width: "20px",
+        width: "30px",
         height: "20px",
         outline: "none",
       },
@@ -127,6 +117,7 @@ export default {
           },
         ],
       },
+      activeWeather: {},
       weatherFactoreOptionsList: [],
       activeFactorTitle: 0,
       factorTitleList: ["一级子节点参数", "二级子节点参数", "三级子节点参数"],
@@ -178,12 +169,18 @@ export default {
       });
     },
     factorClick(item, index, itemOptions, indexOptions) {
-      let checked = this.weatherFactoreOptionsList[index].checked[indexOptions]
+      console.log(item, index, itemOptions, indexOptions,`factorClick`)
+      let checked = this.treeData.children[this.activeWeather.index].children[
+        this.activeWeather.childIndex
+      ].weatherFactor[index].checked[indexOptions]
         ? false
         : true;
+      console.log(checked,`checkedcheckedcheckedchecked`)
       let arr = [false, false, false];
       arr[indexOptions] = checked;
-      this.weatherFactoreOptionsList[index].checked = arr;
+      this.treeData.children[this.activeWeather.index].children[
+        this.activeWeather.childIndex
+      ].weatherFactor[index].checked = arr;
       this.$forceUpdate();
     },
     addThirdNodeConfirm() {
@@ -195,11 +192,13 @@ export default {
           return;
         }
       });
+      console.log(this.weatherFactoreOptionsList,`this.weatherFactoreOptionsList 原型`)
       this.treeData.children[index].children.push({
         label: this.addThirdform.name,
         level: 2,
         value: 0,
         id: this.activeSecondNode.id,
+        weatherFactor: JSON.parse(JSON.stringify(this.weatherFactoreOptionsList)),
       });
       this.addThirdNode = false;
       this.addThirdform = {
@@ -224,6 +223,7 @@ export default {
     closeManager() {
       this.algorithmShow = false;
       this.setAlgorithm([0, {}]);
+      this.activeFactorTitle = 0;
     },
     NodeClick(e, data) {
       console.log(e, `e`);
@@ -232,10 +232,9 @@ export default {
       this.factorTitle = data.label;
     },
     renderContent(h, data) {
-      console.log(h, data, `renderContent`);
       return (
         <span>
-          <span>{data.label} </span>
+          <span onclick={() => this.info(data)}>{data.label} </span>
           <input
             v-model={data.value}
             style={this.inputStyle}
@@ -257,21 +256,8 @@ export default {
         return;
       } // 一级节点
       if (data.level === 1) {
-        this.$confirm(`是否在${data.label}下添加影响因素`, {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        })
-          .then(() => {
-            this.addThirdNode = true;
-            this.activeSecondNode = data;
-          })
-          .catch(() => {
-            this.$message({
-              type: "info",
-              message: "取消添加",
-            });
-          });
+        this.addThirdNode = true;
+        this.activeSecondNode = data;
       } // 二级节点
       if (data.level === 2) {
         this.$confirm(`确认删除${data.label}节点么`, {
@@ -283,13 +269,38 @@ export default {
         });
       } // 三级节点
     },
+    info(data) {
+      console.log(this.treeData, data, `info查看信息`);
+      if (data.level === 2) {
+        this.activeWeather = data;
+
+        let index = Number;
+        let childIndex = Number;
+        this.treeData.children.forEach((e, i) => {
+          if (data.id === e.id) {
+            index = i;
+            e.children.forEach((a, b) => {
+              console.log(a, b, `forEach`);
+              if (a.label === data.label) {
+                childIndex = b;
+              }
+            });
+          }
+        });
+        this.activeWeather = {
+          ...this.activeWeather,
+          index: index,
+          childIndex: childIndex,
+        };
+        console.log(this.activeWeather, `this.activeWeather`);
+        console.log(this.treeData,`treeData`)
+      }
+    },
     deleteTreeData(data) {
       let index = Number;
       let childIndex = Number;
-      console.log(data, this.treeData, `deleteTreeData`);
       this.treeData.children.forEach((e, i) => {
         if (e.id === data.id) {
-          console.log("aha");
           index = i;
           e.children.forEach((a, b) => {
             if (a.label === data.label) {
@@ -332,7 +343,6 @@ export default {
             res.data.data.rows.forEach((a, b) => {
               if (a.id === e.sfId) {
                 this.teamList = a;
-                console.log(this.teamList, `this.teamList`);
               }
             });
           });
@@ -370,7 +380,6 @@ export default {
             treeObj.level = 0;
             treeObj.children = teamShipList;
             this.treeData = treeObj;
-            console.log(this.treeData);
           });
         return;
       }
@@ -395,10 +404,11 @@ export default {
         },
       ];
       this.treeData.children.forEach((e, i) => {
+        console.log(e, `treeDatatreeDatatreeDatatreeDatatreeData`);
         let objTwo = {
           structure: 1,
           name: "-",
-          value: 0.5,
+          value: e.value,
           type: "-",
         };
         treeArr.push(objTwo);
@@ -409,18 +419,20 @@ export default {
             let objTwo = {
               structure: 2,
               name: "-",
-              value: 0.5,
+              value: a.value,
               type: "-",
             };
             treeArr.push(objTwo);
-            this.weatherFactoreOptionsList.forEach((c, d) => {
+            console.log(a, `二级`);
+            a.weatherFactor.forEach((c, d) => {
               c.checked.forEach((f, g) => {
                 // 第四级
+                console.log(c, d, f, g, `weatherFactoreOptionsList`);
                 if (f) {
                   let objThree = {
                     structure: 3,
                     name: `${c.id}_${c.parameterStep.split(",")[g]}`,
-                    value: 0.5,
+                    value: a.value,
                     type: "1",
                   };
                   treeArr.push(objThree);
