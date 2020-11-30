@@ -1265,23 +1265,24 @@ export default {
         this.markerMouseFlag = true;
         this.markerId = ev.target.harborId;
         // 请求潮汐数据
-        let time = this.day;
+        let day = this.day;
         if (!this.tidalMouseFlag) {
-          this.getTidalData(harbor.id, time);
+          this.getTidalData(harbor.id, day);
         }
 
         console.log("mouseover", ev);
         // ev.target.   构造数据
-        this.tidalData.time = this.time;
+        let time = Number(this.time) > 10 ? ' ' + this.time : ' 0' + this.time
+        this.tidalData.time = this.day + time + ':00:00';
         this.tidalData.name = ev.target.name;
         // 前三天日期数据
         this.tidalIndex = 2; // 重置选择的日期
         this.tidalData.timeList = [];
-        let now = this.$m(this.time).format("MM-DD");
-        let yestoday = this.$m(this.time)
+        let now = this.$m(this.day).format("MM-DD");
+        let yestoday = this.$m(this.day)
           .subtract(1, "days")
           .format("MM-DD");
-        let lastday = this.$m(this.time)
+        let lastday = this.$m(this.day)
           .subtract(2, "days")
           .format("MM-DD");
         this.tidalData.timeList.push(lastday);
