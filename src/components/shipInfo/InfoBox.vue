@@ -298,7 +298,7 @@ export default {
   },
 };
 </script>
-<style scoped lang='scss'>
+<style scoped lang ='scss'>
 .l-popup {
   &--no-style {
     /* 用不了 &#{&} 这种写法*/
