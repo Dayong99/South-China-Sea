@@ -5,6 +5,15 @@
       leave-active-class="animated slideOutDown"
     >
       <div class="routeInfo" ref="info" v-if="show">
+        <el-tooltip
+          class="item"
+          effect="dark"
+          content="关闭评估"
+          placement="top-start"
+        >
+          <div class="closebtn" @click="close">关闭</div>
+        </el-tooltip>
+
         <div class="title_box">
           <div class="info_btn">
             <div class="img_box" @click="hidInfoBox">
@@ -57,6 +66,7 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
+import eventBus from '@/utils/eventBus.js'
 export default {
   name: "vueName",
   components: {},
@@ -67,260 +77,6 @@ export default {
       //   titleList: ["风险等级", "海浪", "风"],
       //   value: true,
       btnShow: false,
-      //   dataList: [
-      //     [
-      //       {
-      //         name: "时间",
-      //         value: "2020-10-20",
-      //       },
-      //       {
-      //         name: "风险等级",
-      //         value: "1",
-      //       },
-      //       {
-      //         name: "海浪",
-      //         value: "23",
-      //       },
-      //       {
-      //         name: "风",
-      //         value: "5",
-      //       },
-      //     ],
-      //     [
-      //       {
-      //         name: "时间",
-      //         value: "2020-10-21",
-      //       },
-      //       {
-      //         name: "风险等级",
-      //         value: "1",
-      //       },
-      //       {
-      //         name: "海浪",
-      //         value: "23",
-      //       },
-      //       {
-      //         name: "风",
-      //         value: "5",
-      //       },
-      //     ],
-      //     [
-      //       {
-      //         name: "时间",
-      //         value: "2020-10-22",
-      //       },
-      //       {
-      //         name: "风险等级",
-      //         value: "1",
-      //       },
-      //       {
-      //         name: "海浪",
-      //         value: "23",
-      //       },
-      //       {
-      //         name: "风",
-      //         value: "5",
-      //       },
-      //     ],
-      //     [
-      //       {
-      //         name: "时间",
-      //         value: "2020-10-20",
-      //       },
-      //       {
-      //         name: "风险等级",
-      //         value: "1",
-      //       },
-      //       {
-      //         name: "海浪",
-      //         value: "23",
-      //       },
-      //       {
-      //         name: "风",
-      //         value: "5",
-      //       },
-      //     ],
-      //     [
-      //       {
-      //         name: "时间",
-      //         value: "2020-10-20",
-      //       },
-      //       {
-      //         name: "风险等级",
-      //         value: "1",
-      //       },
-      //       {
-      //         name: "海浪",
-      //         value: "23",
-      //       },
-      //       {
-      //         name: "风",
-      //         value: "5",
-      //       },
-      //     ],
-      //     [
-      //       {
-      //         name: "时间",
-      //         value: "2020-10-20",
-      //       },
-      //       {
-      //         name: "风险等级",
-      //         value: "1",
-      //       },
-      //       {
-      //         name: "海浪",
-      //         value: "23",
-      //       },
-      //       {
-      //         name: "风",
-      //         value: "5",
-      //       },
-      //     ],
-      //     [
-      //       {
-      //         name: "时间",
-      //         value: "2020-10-20",
-      //       },
-      //       {
-      //         name: "风险等级",
-      //         value: "1",
-      //       },
-      //       {
-      //         name: "海浪",
-      //         value: "23",
-      //       },
-      //       {
-      //         name: "风",
-      //         value: "5",
-      //       },
-      //     ],
-      //     [
-      //       {
-      //         name: "时间",
-      //         value: "2020-10-20",
-      //       },
-      //       {
-      //         name: "风险等级",
-      //         value: "1",
-      //       },
-      //       {
-      //         name: "海浪",
-      //         value: "23",
-      //       },
-      //       {
-      //         name: "风",
-      //         value: "5",
-      //       },
-      //     ],
-      //     [
-      //       {
-      //         name: "时间",
-      //         value: "2020-10-20",
-      //       },
-      //       {
-      //         name: "风险等级",
-      //         value: "1",
-      //       },
-      //       {
-      //         name: "海浪",
-      //         value: "23",
-      //       },
-      //       {
-      //         name: "风",
-      //         value: "5",
-      //       },
-      //     ],
-      //     [
-      //       {
-      //         name: "时间",
-      //         value: "2020-10-20",
-      //       },
-      //       {
-      //         name: "风险等级",
-      //         value: "1",
-      //       },
-      //       {
-      //         name: "海浪",
-      //         value: "23",
-      //       },
-      //       {
-      //         name: "风",
-      //         value: "5",
-      //       },
-      //     ],
-      //     [
-      //       {
-      //         name: "时间",
-      //         value: "2020-10-20",
-      //       },
-      //       {
-      //         name: "风险等级",
-      //         value: "1",
-      //       },
-      //       {
-      //         name: "海浪",
-      //         value: "23",
-      //       },
-      //       {
-      //         name: "风",
-      //         value: "5",
-      //       },
-      //     ],
-      //     [
-      //       {
-      //         name: "时间",
-      //         value: "2020-10-20",
-      //       },
-      //       {
-      //         name: "风险等级",
-      //         value: "1",
-      //       },
-      //       {
-      //         name: "海浪",
-      //         value: "23",
-      //       },
-      //       {
-      //         name: "风",
-      //         value: "5",
-      //       },
-      //     ],
-      //     [
-      //       {
-      //         name: "时间",
-      //         value: "2020-10-20",
-      //       },
-      //       {
-      //         name: "风险等级",
-      //         value: "1",
-      //       },
-      //       {
-      //         name: "海浪",
-      //         value: "23",
-      //       },
-      //       {
-      //         name: "风",
-      //         value: "5",
-      //       },
-      //     ],
-      //     [
-      //       {
-      //         name: "时间",
-      //         value: "2020-10-20",
-      //       },
-      //       {
-      //         name: "风险等级",
-      //         value: "1",
-      //       },
-      //       {
-      //         name: "海浪",
-      //         value: "23",
-      //       },
-      //       {
-      //         name: "风",
-      //         value: "5",
-      //       },
-      //     ],
-      //   ],
     };
   },
   computed: {
@@ -330,21 +86,23 @@ export default {
       dataList: (state) => state.routeInfo.dataList,
     }),
     routeInfoflag: {
-      get(){
+      get() {
         return this.$store.state.earth.routeInfoflag;
       },
-      set(value){
-          this.setRouteInfoflag(value)
+      set(value) {
+        this.setRouteInfoflag(value);
       },
     },
   },
-  watch: {
+  watch: {},
+  created() {
   },
-  created() {},
-  mounted() {},
+  mounted() {
+  },
   methods: {
     ...mapMutations({
       setRouteInfoflag: "earth/setRouteInfoflag",
+      setCloseflag: "routeInfo/setCloseflag",
     }),
     hidInfoBox() {
       this.show = false;
@@ -361,6 +119,11 @@ export default {
       this.btnShow = false;
       this.show = true;
     },
+
+    //关闭评估页面，清除绘制的评估区域或者航线
+    close(){
+      this.setCloseflag(true)
+    }
   },
 };
 </script>

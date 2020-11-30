@@ -3,7 +3,8 @@ export default {
     state:{
         titleList:[],
         dataList:[],
-        routeInfoShow:false
+        routeInfoShow:false,
+        closeflag:false
     },
     mutations:{
         setTitleList(state,val){
@@ -14,6 +15,9 @@ export default {
         },
         setRouteInfoShow(state,val){
             state.routeInfoShow = val
+        },
+        setCloseflag(state,val){
+            state.closeflag = val
         }
     }
 }

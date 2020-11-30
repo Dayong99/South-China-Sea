@@ -89,6 +89,7 @@
 <script>
 import Pagination from "@/components/Pagination";
 import { mapState, mapMutations } from "vuex";
+import eventBus from '@/utils/eventBus.js'
 export default {
   components: {
     Pagination,
@@ -145,11 +146,13 @@ export default {
   },
   mounted() {
     this.fetch();
+    // eventBus.$emit("getEvent",{close:this.close})
   },
   computed: {
     ...mapState({
       routeAlgorithmInfo: (state) => state.menuBar.routeAlgorithmInfo,
       routeInfoflag: (state) => state.earth.routeInfoflag,
+      closeflag: (state) => state.routeInfo.closeflag,
     }),
   },
   watch: {
@@ -180,6 +183,11 @@ export default {
         this.drawRouteLine();
       }
     },
+    closeflag(val){
+      if(val){
+        this.close()
+      }
+    }
   },
   methods: {
     ...mapMutations({
@@ -187,11 +195,14 @@ export default {
       setTitleList: "routeInfo/setTitleList",
       setDataList: "routeInfo/setDataList",
       setRouteInfoShow: "routeInfo/setRouteInfoShow",
+      setCloseflag: "routeInfo/setCloseflag",
     }),
     //点击打开评估页面，默认显示按区域评估
     detailAssessMentInfo(row) {
       console.log(row, `detailAssessMentInfo`);
+      this.setCloseflag(false)
       this.clearRectangle();
+      this.clearRouteLine();
       this.setRouteInfoShow(false);
       //默认显示风险评估区域
       //获取风险评估区域，绘制
@@ -735,6 +746,13 @@ export default {
       });
       this.linesArr = [];
     },
+
+    //关闭评估页面，清除绘制的评估区域或航线
+    close(){
+      this.setRouteInfoShow(false);
+      this.clearRectangle()
+      this.clearRouteLine()
+    }
   },
 };
 </script>
