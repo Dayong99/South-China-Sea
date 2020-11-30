@@ -3,7 +3,7 @@
     <!-- 地球 -->
     <earth ref="earth" />
     <!-- 时间播放轴 -->
-    <time-bar v-show="timeShow"></time-bar>
+    <time-bar></time-bar>
     <!-- 工具条 -->
     <tool-bar></tool-bar>
     <!-- 标题logo -->
@@ -55,6 +55,8 @@
     <assessment-manager></assessment-manager>
     <!-- 船舰详情 -->
     <info-box></info-box>
+    <!-- 航线评估结果 -->
+    <route-info v-if="routeInfoShow"></route-info>
   </div>
 </template>
 
@@ -85,10 +87,12 @@ import TyphoonManager from "@/components/menu/DataManager/typhoonManager/index.v
 
 import InfoBox from "@/components/shipInfo/InfoBox.vue";
 
-import routeManager from '@/components/menu/routeManager/edit.vue'
-import algorithmManager from '@/components/menu/algorithmManager/edit.vue'
-import assessmentManager from '@/components/menu/assessmentManager/index.vue'
+import routeManager from "@/components/menu/routeManager/edit.vue";
+import algorithmManager from "@/components/menu/algorithmManager/edit.vue";
+import assessmentManager from "@/components/menu/assessmentManager/index.vue";
 import eventBus from "@/utils/eventBus.js";
+import routeInfo from "@/components/menu/routeManager/routeInfo.vue";
+import { mapState } from "vuex";
 
 export default {
   name: "App",
@@ -118,12 +122,20 @@ export default {
     DatasourceManager2: DatasourceManager2,
     TyphoonManager:TyphoonManager,
     InfoBox:InfoBox,
-    assessmentManager: assessmentManager
+    assessmentManager: assessmentManager,
+    InfoBox: InfoBox,
+    assessmentManager: assessmentManager,
+    routeInfo: routeInfo,
   },
   data() {
     return {
-      timeShow: true,
-    };
+      
+    }
+  },
+  computed: {
+    ...mapState({
+      routeInfoShow: (state) => state.routeInfo.routeInfoShow,
+    }),
   },
   watch: {},
   mounted() {},

@@ -13,20 +13,21 @@ import lodash from 'lodash'
 import map from './utils/map.js'
 import store from './store'
 import router from './router'
-
 import './utils/error-log' // error log
 import request from '@/utils/request'
 import moment from 'moment'
 moment.locale('zh-cn');
-
+import Vue2OrgTree from 'vue2-org-tree'
+Vue.use(Vue2OrgTree)
+import "vue2-org-tree/dist/style.css"
 import '@/permission' // permission control
 import db from '@/utils/localstorage'
 import echarts from 'echarts';
-if (process.env.NODE_ENV === 'development') {
-  window.globalConfig = {
-    baseURL: 'http://192.168.1.122:8301/warship'
-  }
-}
+// if (process.env.NODE_ENV === 'development') {
+//   window.globalConfig = {
+//     baseURL: 'http://192.168.1.122:8301/warship'
+//   }
+// }
 
 // L.Proj = Proj
 

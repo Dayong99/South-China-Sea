@@ -2,6 +2,7 @@ const state = {
   extent: null,
   // 图层重绘个数
   imageLayerNum: 0,
+  routeInfoflag:true
 }
 
 const actions = {
@@ -16,6 +17,9 @@ const mutations = {
   },
   setImageLayerNum(state, val) {
     state.imageLayerNum = val
+  },
+  setRouteInfoflag(state,val){
+    state.routeInfoflag = val
   }
 }
 

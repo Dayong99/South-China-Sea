@@ -13,6 +13,8 @@ const state = {
    * 海洋站--ocean
    */
   realTimeValue: null,
+  // 数据源
+  sourceType: 1,
 }
 
 const actions = {
@@ -34,6 +36,9 @@ const mutations = {
   },
   setRealTimeValue(state, val) {
     state.realTimeValue = val
+  },
+  setSourceType(state, val) {
+    state.sourceType = val
   }
 }
 

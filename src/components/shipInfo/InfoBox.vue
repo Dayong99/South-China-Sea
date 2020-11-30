@@ -103,7 +103,8 @@ export default {
   },
   watch: {
     realTimeValue(newval) {
-      map.removeLayer(this.buoyMarkerGroup);
+      // 先清除站点数据
+      this.removeAllLayer()
 
       if(newval === 'ship') {
         this.getShipInfo()
@@ -140,7 +141,7 @@ export default {
                       lon: item.lon,
                       lat: item.lat,
                     });
-                    buoy.bindCustomPopup(str);
+                    buoy.bindCustomPopup(str).openPopup();
                   }
                 });
               });
@@ -268,14 +269,14 @@ export default {
                     temperature: station.temperature,
                     windSpeed: station.windSpeed,
                     windDirection: station.windDirection,
-                    dayTime: this.$m(station.dayTime).format('HH-mm'),
+                    dayTime: this.$m(station.dayTime).format('HH')+'时'+this.$m(station.dayTime).format('mm')+'分',
                     course: station.course,
                     speed: station.speed,
                     typeFlag: station.typeFlag,
                     value1: station.value1,
                     value2: station.value2,
                   });
-                  shipMarker.bindCustomPopup(str)
+                  shipMarker.bindCustomPopup(str).openPopup()
                 }
               }).catch(error => {
                 this.$message.error('获取站点数据失败')
@@ -288,11 +289,16 @@ export default {
       }).catch(error => {
         this.$message.error('获取船舶站数据失败')
       })
-    }
+    },
+    // 清除站点数据
+    removeAllLayer() {
+      map.removeLayer(this.buoyMarkerGroup)
+      map.removeLayer(this.shipMarkerGroup)
+    },
   },
 };
 </script>
-<style scoped lang='scss'>
+<style scoped lang ='scss'>
 .l-popup {
   &--no-style {
     /* 用不了 &#{&} 这种写法*/

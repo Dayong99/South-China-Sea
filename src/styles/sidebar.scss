@@ -11,7 +11,7 @@
         justify-content: center;
         align-items: flex-start;
         max-height: 950px;
-    
+
         ul {
             list-style: none;
             display: flex;
@@ -20,37 +20,37 @@
             align-items: flex-end;
             // align-items: center;
         }
-    
+
         .menu_list {
             border-radius: 15px;
             background: rgba(26, 26, 24, 0.7);
         }
-    
+
         .menu_name {
             margin-right: 15px;
         }
-    
+
         ul,
         li {
             padding: 0;
             margin: 0;
         }
-    
+
         // 蓝色背景
         .bgcolor {
             background: rgba(152, 26, 0, 1) !important;
             border-radius: 15px;
         }
-    
+
         .menuSelect {
             margin-left: 40px;
             margin-top: 5px;
         }
-    
+
         // 菜单栏要素
         li {
             height: 45px;
-    
+
             .menu_left {
                 // width: 110px;
                 height: 45px;
@@ -61,20 +61,20 @@
                 font-weight: normal;
                 color: #fff3e1;
             }
-    
+
             .menu_right {
                 width: 30px;
                 height: 45px;
                 line-height: 45px;
                 text-align: center;
-    
+
                 img {
                     width: 28px;
                     height: 28px;
                     vertical-align: middle;
                 }
             }
-    
+
             .menu_left,
             .menu_right:hover {
                 cursor: pointer;
@@ -118,7 +118,7 @@
         flex-flow: column nowrap;
         align-items: center;
         border-radius: 8px;
-        box-shadow: 2px 2px 8px 0px rgba(0,0,0,0.5);
+        box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.5);
         color: rgba(80, 80, 80, 1);
         background-color: rgba(255, 255, 255, 1);
 
@@ -209,7 +209,7 @@
                     .li_select {
                         color: #fff;
                         background: rgba(152, 26, 0, 1);
-                        
+
                         div {
                             border: none;
                         }
@@ -238,6 +238,7 @@
                     .li_blue {
                         background: rgba(234, 245, 255, 1)
                     }
+
                     .li_red {
                         background: rgba(255, 240, 240, 1);
                     }
@@ -255,6 +256,7 @@
                         .blue {
                             color: rgba(0, 113, 255, 1);
                         }
+
                         .red {
                             color: rgba(208, 36, 0, 1);
                         }
@@ -315,6 +317,174 @@
                     }
                 }
             }
+        }
+    }
+
+    .tylist {
+        width: 375px;
+        // height: 500px;
+        position: fixed;
+        bottom: 230px;
+        right: 165px;
+        background: white;
+        z-index: 9999;
+
+        .tytitle {
+            height: 50px;
+            display: flex;
+            font-size: 16px;
+            font-weight: 700;
+
+            div {
+                text-align: center;
+                line-height: 50px;
+                background: #d7edff;
+            }
+
+            .chooseAll {
+                flex: 1;
+                border: 1px solid #dddddd;
+                border-left: none;
+                border-top: none;
+                cursor: pointer;
+
+                img {
+                    width: 16px;
+                    vertical-align: middle;
+                }
+            }
+
+            .title_num {
+                flex: 2;
+                border: 1px solid #dddddd;
+                border-left: none;
+                border-top: none;
+            }
+
+            .title_cn {
+                flex: 2;
+                border: 1px solid #dddddd;
+                border-left: none;
+                border-top: none;
+            }
+
+            .title_en {
+                flex: 2;
+                border: 1px solid #dddddd;
+                border-left: none;
+                border-top: none;
+                border-right: none;
+            }
+        }
+
+        .tycontent {
+            // width: 300px;
+            height: 328px;
+            font-size: 14px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+
+            &::-webkit-scrollbar {
+                width: 4px;
+                background: rgba(240, 240, 240, 0.6);
+            }
+
+            /* 滚动槽 */
+            &::-webkit-scrollbar-track {
+                border-radius: 10px;
+            }
+
+            /* 滚动条滑块 */
+            &::-webkit-scrollbar-thumb {
+                border-radius: 10px;
+                background-color: rgba(0, 0, 0, 0.5);
+            }
+
+            .content_box {
+                width: 100%;
+
+                .libox {
+                    display: flex;
+
+                    div {
+                        text-align: center;
+                        line-height: 40px;
+                    }
+
+                    .chooseAll {
+                        flex: 1;
+                        border: 1px solid #dddddd;
+                        border-left: none;
+                        border-top: none;
+                        cursor: pointer;
+
+                        img {
+                            width: 16px;
+                            vertical-align: middle;
+                        }
+                    }
+
+                    .title_num {
+                        flex: 2;
+                        border: 1px solid #dddddd;
+                        border-left: none;
+                        border-top: none;
+                    }
+
+                    .title_cn {
+                        flex: 2;
+                        border: 1px solid #dddddd;
+                        border-left: none;
+                        border-top: none;
+                    }
+
+                    .title_en {
+                        flex: 2;
+                        border: 1px solid #dddddd;
+                        border-left: none;
+                        border-top: none;
+                        border-right: none;
+                    }
+                }
+            }
+        }
+    }
+    .ty_color{
+        width: 535px;
+        height: 30px;
+        background: rgba(41, 40, 38, 0.7);
+        position: fixed;
+        bottom: 180px;
+        right: 110px;
+        border-radius: 10px;
+        color: white;
+        display: flex;
+        line-height: 30px;
+
+        p{
+            margin-left: 10px;
+        }
+
+        ul{
+            display: flex;
+            justify-content: space-around;
+            width: 488px;
+            
+            li{
+                // margin-left: 5px;
+                display: flex;
+                line-height: 30px;
+
+                .icon{
+                    width: 12px;
+                    height: 12px;
+                    border: 1px solid black;
+                    border-radius: 50%;
+                    margin-top: 8px;
+                }
+            }
+            
         }
     }
 }

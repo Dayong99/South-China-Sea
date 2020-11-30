@@ -1,0 +1,156 @@
+#app {
+    .route_info {
+        .routeInfo {
+            width: 100vw;
+            // height: 160px;
+            position: fixed;
+            bottom: 0;
+            // background: rgba(26, 26, 24, 0.79);
+            background: rgba(26, 26, 24, 1);
+            z-index: 9999;
+            display: flex;
+
+            .title_box {
+                width: 165px;
+                height: 100%;
+                // border: 1px solid red;
+
+                .info_btn {
+                    height: 40px;
+
+                    .img_box {
+                        width: 30px;
+                        height: 30px;
+                        border-radius: 50%;
+                        background: red;
+                        display: table-cell;
+                        vertical-align: middle;
+                        text-align: center;
+                        cursor: pointer;
+                        position: absolute;
+                        top: 6px;
+                        left: 8px;
+
+                        .btn_img {
+                            width: 20px;
+                            height: 20px;
+                            transform: rotate(90deg);
+                            margin-top: 5px;
+                            margin-right: 1px;
+                        }
+                    }
+
+                    .el-switch {
+                        position: absolute;
+                        top: 10px;
+                        left: 45px;
+
+                        .el-switch__label {
+                            color: white;
+                            font-size: 12px;
+                        }
+
+                        .el-switch__label.is-active {
+                            color: #409EFF;
+                        }
+                    }
+
+                }
+
+                ul {
+                    // border: 1px solid green;
+
+                    li {
+                        height: 40px;
+                        line-height: 40px;
+                        // border: 1px solid blue;
+                        color: white;
+                        text-align: right;
+                        padding-right: 20px;
+                    }
+                }
+
+            }
+
+            .info_content {
+                // height: 160px;
+                width: calc(100vw - 165px);
+
+                .ul1 {
+                    list-style: none;
+                    margin: 0;
+                    padding: 0;
+                    display: flex;
+                    flex-flow: nowrap;
+                    overflow-x: auto;
+
+                    &::-webkit-scrollbar {
+                        // width: 4px;
+                        height: 4px;
+                        background-color: rgba(0, 0, 0, 0.5);
+                    }
+
+                    /* 滚动槽 */
+                    &::-webkit-scrollbar-track {
+                        border-radius: 10px;
+                    }
+
+                    /* 滚动条滑块 */
+                    &::-webkit-scrollbar-thumb {
+                        border-radius: 10px;
+                        background: rgba(240, 240, 240, 0.6);
+                    }
+
+                    &:first-child{
+                        border-left: 1px solid white;
+                    }
+
+                    .li1 {
+                        width: 160px;
+                        // flex: 1;
+                        display: flex;
+                        flex-direction: column;
+                        // float: left;
+                        color: white;
+                        flex-shrink: 0;
+                        border-right: 1px solid white;
+
+
+                        .ul2 {
+                            .li2 {
+                                div {
+                                    height: 40px;
+                                    line-height: 40px;
+                                    text-align: center;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .img_box1 {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: white;
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+            cursor: pointer;
+            position: fixed;
+            // bottom: 48px;
+            bottom: 85px;
+            left: 56px;
+            z-index: 9999;
+
+            .btn_img1 {
+                width: 20px;
+                height: 20px;
+                transform: rotate(-90deg);
+                margin-top: 4px;
+            }
+        }
+    }
+}
