@@ -3,22 +3,32 @@
   <div class="right-top-container" id="toolBar">
     <div class="tool_item zoom" @click.stop="zoomIn">
       <el-tooltip class="item" effect="light" content="放大" placement="bottom">
-        <img src="@/assets/toolList/add.png">
+        <img src="@/assets/toolList/add.png" />
       </el-tooltip>
     </div>
-    <div class="tool_item tool_right zoom" @click.stop="zoomOut">
+    <div class="tool_item tool_right zoom" @click.stop="measurearea">
       <el-tooltip class="item" effect="light" content="缩小" placement="bottom">
-        <img src="@/assets/toolList/minus.png">
+        <img src="@/assets/toolList/minus.png" />
       </el-tooltip>
     </div>
-    <div class="tool_item tool_right">
-      <el-tooltip class="item" effect="light" content="距离量算" placement="bottom">
-        <img src="@/assets/toolList/ruler.png">
+    <div class="tool_item tool_right" @click.stop="measure">
+      <el-tooltip
+        class="item"
+        effect="light"
+        content="距离量算"
+        placement="bottom"
+      >
+        <img src="@/assets/toolList/ruler.png" />
       </el-tooltip>
     </div>
-    <div class="tool_item tool_right">
-      <el-tooltip class="item" effect="light" content="面积量算" placement="bottom">
-        <img src="@/assets/toolList/area.png">
+    <div class="tool_item tool_right" @click.stop="measurearea">
+      <el-tooltip
+        class="item"
+        effect="light"
+        content="面积量算"
+        placement="bottom"
+      >
+        <img src="@/assets/toolList/area.png" />
       </el-tooltip>
     </div>
     <!-- <div class="tool_item tool_right">
@@ -27,43 +37,75 @@
       </el-tooltip>
     </div> -->
     <div class="tool_item tool_right">
-      <el-tooltip class="item" effect="light" content="经纬显示" placement="bottom">
-        <img src="@/assets/toolList/line.png">
+      <el-tooltip
+        class="item"
+        effect="light"
+        content="经纬显示"
+        placement="bottom"
+      >
+        <img src="@/assets/toolList/line.png" />
       </el-tooltip>
     </div>
-    <div class="tool_item tool_right">
-      <el-tooltip class="item" effect="light" content="清除要素" placement="bottom">
-        <img src="@/assets/toolList/clear.png">
+    <div class="tool_item tool_right" @click.stop="clear">
+      <el-tooltip
+        class="item"
+        effect="light"
+        content="清除要素"
+        placement="bottom"
+      >
+        <img src="@/assets/toolList/clear.png" />
       </el-tooltip>
     </div>
   </div>
 </template>
 <script>
+import toolBar from "@/utils/toolBar.js";
+
 export default {
   data() {
-    return {
-      
-    };
+    return {};
   },
-  computed: {
-    
-  },
-  watch: {
-    
-  },
-  mounted() {
-    
-  },
+  computed: {},
+  watch: {},
+  mounted() {},
   methods: {
+    getViewer() {
+      const obj = {
+        unit: this.unit,
+        latDirection: this.latDirection,
+        lngDirection: this.lngDirection,
+        lngminute: this.lngminute,
+        lngdegree: this.lngdegree,
+        latminute: this.latminute,
+        latdegree: this.latdegree,
+      };
+      window.tool = new toolBar(window.earth, obj);
+    },
     // 地图放大
     zoomIn() {
-      window.map.zoomIn(1)
+      window.map.zoomIn(1);
     },
     // 地图缩小
     zoomOut() {
-      window.map.zoomOut(1)
+      window.map.zoomOut(1);
     },
-  }
+    // 距离量算
+    measure() {
+      this.getViewer();
+      window.tool.measure();
+    },
+
+    // 面积量算
+    measurearea() {
+      this.getViewer();
+      window.tool.measurearea();
+    },
+
+    // 清除要素
+    clear() {
+      window.tool.clearTool();
+    },
+  },
 };
 </script>
 <style scoped lang="scss">
@@ -99,7 +141,6 @@ export default {
     //   vertical-align: middle;
     // }
   }
-
 
   .tool_right {
     // width: 30px;
