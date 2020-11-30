@@ -68,19 +68,6 @@
           </div>
         </el-col>
       </el-row>
-      <!-- 算法参数 -->
-      <el-row>
-        <el-col :span="18">
-          <div class="grid-content bg-purple-dark">
-            <el-form-item label="算法参数">
-              <el-input
-                placeholder="请输入算法参数"
-                v-model="formData.warshipName"
-              ></el-input>
-            </el-form-item>
-          </div>
-        </el-col>
-      </el-row>
     </el-form>
     <div class="save_wrapper">
       <button class="save" type="button" @click="submit()">保存</button>
