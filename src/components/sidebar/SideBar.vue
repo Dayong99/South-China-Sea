@@ -79,6 +79,9 @@
           </ul>
           <div class="echarts_content" id="echarts_content"></div>
         </div>
+        <div class="tidal_msg" v-show="tidalMsgFlag">
+          <span>此时刻暂无潮汐数据</span>
+        </div>
         <div class="content_list">
           <ul>
             <li
@@ -299,6 +302,8 @@ export default {
         left: null,
         top: null,
       },
+      // 暂无数据提示消息
+      tidalMsgFlag: false,
       // 面板数据
       tidalData: {
         time: null,
@@ -1154,28 +1159,6 @@ export default {
         .catch((error) => {
           this.$message.error("获取" + currentItem.name + "数据失败");
         })
-        .then((res) => {
-          if (res.status == 200) {
-            console.log("wind--res", res.data.data);
-            if (res.status == 200) {
-              let windList = res.data.data;
-
-              var config = {
-                lat: "0",
-                lng: "1",
-                value: "2",
-                dir: "3",
-                data: windList,
-              };
-              this.windLayer = new WindLayer({}, config);
-              this.windLayer.id = currentItem.id;
-              window.map.addLayer(this.windLayer);
-            }
-          }
-        })
-        .catch((error) => {
-          this.$message.error("获取" + currentItem.name + "数据失败");
-        });
     },
     // 绘制 洋流\波向
     getAndDrawWave(currentItem) {
@@ -1369,6 +1352,7 @@ export default {
             let time = null;
             this.clearChart();
             this.createChart(this.tidalCharts);
+            this.tidalMsgFlag = false
             if (
               tidalList.length &&
               tidalList != null &&
@@ -1410,31 +1394,9 @@ export default {
               this.tidalData.tidalList[1].type = "min";
               console.log("tidalList", this.tidalData.tidalList);
             } else {
-              this.$message.warning("此时刻暂无潮汐数据");
+              this.tidalMsgFlag = true
+              // this.$message.warning("此时刻暂无潮汐数据");
             }
-            // 绘制图表
-            this.createChart(this.tidalCharts);
-            console.log("xdata", this.tidalCharts.xdata);
-            console.log("ydata", this.tidalCharts.ydata);
-            this.tidalData.tidalList.push(this._.cloneDeep(maxObj));
-            time = this.$m(this.tidalData.tidalList[0].tidalTime).format(
-              "HH-mm"
-            );
-            this.tidalData.tidalList[0].tidalTime =
-              time.split("-")[0] + "时" + time.split("-")[1] + "分";
-            this.tidalData.tidalList[0].name = "第一高潮";
-            this.tidalData.tidalList[0].type = "max";
-            this.tidalData.tidalList.push(this._.cloneDeep(minObj));
-            time = this.$m(this.tidalData.tidalList[1].tidalTime).format(
-              "HH-mm"
-            );
-            this.tidalData.tidalList[1].tidalTime =
-              time.split("-")[0] + "时" + time.split("-")[1] + "分";
-            this.tidalData.tidalList[1].name = "第一低潮";
-            this.tidalData.tidalList[1].type = "min";
-            console.log("tidalList", this.tidalData.tidalList);
-          } else {
-            this.$message.warning("此时刻暂无潮汐数据");
           }
         })
         .catch((error) => {
