@@ -382,6 +382,6 @@ export default {
   background: rgba(245, 245, 245, 1);
 }
 .el-input__inner {
-  color: #c0c4cc;
+  color: #2a2c30;
 }
 </style>
