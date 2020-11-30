@@ -45,7 +45,7 @@
             经度：<el-input
               class="input_wrapper"
               size="mini"
-              v-model="routeInfo[activeRoutePoint].lon"
+              v-model="routePointInfo.lon"
               placeholder="请输入经度"
             ></el-input>
           </div>
@@ -53,7 +53,7 @@
             纬度：<el-input
               class="input_wrapper"
               size="mini"
-              v-model="routeInfo[activeRoutePoint].lat"
+              v-model="routePointInfo.lat"
               placeholder="请输入纬度"
             ></el-input>
           </div>
@@ -61,7 +61,7 @@
             港口名：<el-input
               class="input_wrapper"
               size="mini"
-              v-model="routeInfo[activeRoutePoint].port"
+              v-model="routePointInfo.port"
               placeholder="请输入港口名"
             ></el-input>
           </div>
@@ -69,7 +69,7 @@
             时间：
             <el-date-picker
               class="date_wrapper"
-              v-model="routeInfo[activeRoutePoint].time"
+              v-model="routePointInfo.time"
               type="datetime"
               size="mini"
               placeholder="选择日期"
@@ -119,16 +119,20 @@ export default {
       routeEditShow: false,
 
       activeRoutePoint: 0,
-      routeCollect: [], // 航线点集合
-      routeInfo: [
-        {
-          lon: null,
-          lat: null,
-          port: null,
-          time: null,
-        },
-      ], // 航线信息集合
+      routeCollect: [], //  航线点集合
       geometry: [], // 航线全部信息
+      routeLineLayer: [], // 航线线段
+      pointPro: {
+        color: "#ffffff",
+        fillColor: "#2F4F4F",
+        fillOpacity: 0.6,
+        radius: 5000,
+        weight: 2,
+      }, // 画点属性信息
+      linePro: {
+        color: "#BDB76B",
+      }, // 画线属性
+      routeArr: [],
     };
   },
   mounted() {},
@@ -161,12 +165,7 @@ export default {
     routeCustomClick() {
       this.routeCustomActive = !this.routeCustomActive;
       if (this.routeCustomActive) {
-        // this.routeCollect.forEach((e, i) => {
-        //   e.remove();
-        // });
-        this.geometry.forEach((e, i) => {
-          e.remove();
-        });
+        this.removeRoute();
         this.routeCollect = [];
         this.draw();
       } else {
@@ -178,56 +177,100 @@ export default {
       window.routeMap.remove();
     },
     draw() {
+      var geometry = [];
       var points = []; // 点
-      var lines = new L.polyline(points); // 画线
-      var tempLines = new L.polyline([]); // 移动画线
+      var lines = new L.polyline(points, this.linePro); // 画线
+      var tempLines = new L.polyline([], this.linePro); // 移动画线
       window.routeMap.on("click", onClick); //点击地图
       window.routeMap.on("contextmenu", onRightClick);
       const that = this;
       // 点击事件
       function onClick(e) {
-        points.push([e.latlng.lat, e.latlng.lng]);
-        lines.addLatLng(e.latlng);
-        window.routeMap.addLayer(lines);
-        const node = L.circle(e.latlng, {
-          color: "#ff0000",
-          fillColor: "ff0000",
-          fillOpacity: 1,
-          radius: 300,
-        });
-        window.routeMap.addLayer(node);
-        that.geometry.push(node);
-        that.routeCollect.push(node);
-        that.routePointInfo.lat = e.latlng.lat;
-        that.routePointInfo.lng = e.latlng.lng;
-        that.routePointInfo.port = null;
-        that.routePointInfo.time = null
-        that.routeInfo.push(that.routePointInfo);
-        that.activeRoutePoint = that.routeCollect.length - 1;
-        window.routeMap.on("mousemove", onMove); //双击地图
+        points.push([e.latlng.lat, e.latlng.lng]); // 存储点击点
+        lines.addLatLng(e.latlng); // 创建线对象
+        window.routeMap.addLayer(lines); // 画线 d第一次只有一个所以只显示一个
+        const node = L.circle(e.latlng, that.pointPro);
+        window.routeMap.addLayer(node); // 将点显示在地图上
+        geometry.push(node); // 存储图层
+        that.routeCollect.push(node); // 存储点图层
+        that.activeRoutePoint = that.routeCollect.length - 1; // 当前激活的航线点
+        window.routeMap.on("mousemove", onMove); // 开启移动监听事件
       }
       // 移动事件
       function onMove(e) {
         if (points.length > 0) {
-          var ls = [points[points.length - 1], [e.latlng.lat, e.latlng.lng]];
+          // 如果points中有值 即已经左击
+          var ls = [points[points.length - 1], [e.latlng.lat, e.latlng.lng]]; // 最后一个存储点数据和移动的点位置 动态画线
           tempLines.setLatLngs(ls);
           window.routeMap.addLayer(tempLines);
-          
         }
       }
       // 右击事件
       function onRightClick(e) {
-        that.geometry.push(L.polyline(points).addTo(window.routeMap));
+        geometry.push(L.polyline(points, that.linePro).addTo(window.routeMap)); // 存储线信息 geometry存储全部航线信息
         points = [];
-        lines.remove();
-        window.routeMap.off("mousemove");
-        window.routeMap.off("click");
-        window.routeMap.off("contextmenu");
-        that.routeCustomActive = false;
-        tempLines.remove();
+        lines.remove(); // 移除之前点击的线信息
+        tempLines.remove(); // 移除最后一条为左击的动态线
+        geometry.forEach((e, i) => {
+          e.remove();
+        });
+        window.routeMap.off("mousemove"); // 关闭鼠标移动事件
+        window.routeMap.off("click"); // 关闭鼠标左击事件
+        window.routeMap.off("contextmenu"); // 关闭鼠标右击事件
+        that.routeCustomActive = false; // 手动绘制按钮取消高亮
+        that.drawRouteCompute();
       }
     },
+    drawRouteCompute() {
+      this.routeArr = [];
+      let pointArr = [];
+      this.routeCollect.forEach((e, i) => {
+        this.routeArr.push([e._latlng.lat, e._latlng.lng]);
+        // pop内容
+        const content = `<p>纬度：${e._latlng.lat.toFixed(
+          2
+        )}</p><p>纬度：${e._latlng.lng.toFixed(2)}</p>`;
+        const point = L.circle([e._latlng.lat, e._latlng.lng], {
+          id: i,
+          color: "#ffffff",
+          fillColor: "#2F4F4F",
+          fillOpacity: 0.6,
+          radius: 5000,
+          weight: 2,
+        })
+          .addTo(window.routeMap)
+          .bindPopup(content)
+          .on("mouseover", function () {
+            this.openPopup();
+          })
+          .on("mouseout", function () {
+            this.closePopup();
+          })
+          .on("click", clickPoint); // 航线点
+        pointArr.push(point);
+      });
+      this.routeLineLayer = L.polyline(this.routeArr, this.linePro).addTo(
+        window.routeMap
+      ); // 线
+      this.routeCollect = pointArr;
+      pointArr.push(this.routeLineLayer);
+      this.geometry = pointArr;
+      const that = this;
+      function clickPoint(e) {
+        console.log(e.target.options.id, `clickPoint`);
+        console.log(pointArr, `pointArrpointArrpointArr`);
+        that.routeCollect[e.target.options.id].on("mousemove", movePoint);
+        console.log(that.routeCollect[e.target.options.id]._latlng);
+      }
 
+      function movePoint(e) {
+        that.routeCollect[e.target.options.id].setLatLngs = L.latLng(
+          e.latlng.lat,
+          e.latlng.lng
+        );
+        that.routeCollect[e.target.options.id].redraw();
+      }
+    },
     routeEditClick() {
       this.routeEditShow = !this.routeEditShow;
       if (this.routeEditShow) {
@@ -235,7 +278,11 @@ export default {
         this.editRoute();
       }
     },
-
+    removeRoute() {
+      this.geometry.forEach((e, i) => {
+        e.remove();
+      });
+    },
     // 重置
     reset() {
       this.routeEditShow = false;
@@ -282,7 +329,7 @@ export default {
           courseItemList: dataArr,
           ctype: 0,
           plan_Id: this.routeDialogOptions[1].id,
-          lineName: this.routeInfoList.name
+          lineName: "航线",
         };
         this.$jsonPost(`/api/course`, {
           ...params,
@@ -322,7 +369,6 @@ export default {
         .addTo(window.routeMap);
       window.routeMap.setView([35.09, 102.21], 4);
     },
-
   },
 };
 </script>

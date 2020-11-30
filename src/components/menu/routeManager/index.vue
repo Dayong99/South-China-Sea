@@ -1,7 +1,7 @@
 <template>
-  <div id="ship_manager" class="ship_manager" v-show="teamManagerShow">
+  <div id="ship_manager" class="ship_manager" v-show="assessManagerShow">
     <div class="manager_title">
-      <span>编队管理</span>
+      <span>评估结果</span>
       <img
         src="@/assets/images/legendbar/close.png"
         @click.stop="closeManager"
@@ -11,7 +11,7 @@
       <el-input
         placeholder="请输入关键词"
         prefix-icon="el-icon-search"
-        v-model="queryParams.name"
+        v-model="queryParams.warshipName"
         class="operation_input"
         clearable
       >
@@ -24,50 +24,51 @@
     </div>
     <div class="manager_table">
       <el-table :data="tableData" border style="width: 100%" max-height="400px">
-        <el-table-column label="序号" width="70px" align="center">
-          <template slot-scope="scope">
-            {{(pagination.num - 1) * pagination.size + scope.$index + 1}}
-          </template>
-        </el-table-column>
         <el-table-column
-          label="名称"
+          label="评估类型"
           prop="role-name"
           align="center"
           min-width="100px"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.name }}</span>
+            <!--<span>{{ scope.row.warshipType }}</span> -->
+            <span>暂无</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="基本单元"
+          label="评估时间"
           prop="role-name"
           align="center"
           min-width="100px"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.ships }}</span>
+            <span>{{ scope.row.assesstime }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="操作"
-          width="140px"
-          header-align="center"
+          label="配置参数"
+          prop="role-name"
           align="center"
+          min-width="100px"
         >
-          <template slot-scope="{ row }">
-            <el-button
-              icon="el-icon-edit-outline"
-              class="table_column_icon green"
-              type="text"
-              @click="editItem(row)"
-            ></el-button>
-            <el-button
-              icon="el-icon-delete"
-              class="table_column_icon red"
-              type="text"
-              @click="deleteItem(row)"
-            ></el-button>
+          <template slot-scope="scope">
+            <img
+              src="@/assets/images/menu/assessView.png"
+              @click="detailAssessMentInfo(scope.row)"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="评估结果"
+          prop="role-name"
+          align="center"
+          min-width="100px"
+        >
+          <template slot-scope="scope">
+            <img
+              src="@/assets/images/menu/assessView.png"
+              @click="detailAssessMentInfo(scope.row)"
+            />
           </template>
         </el-table-column>
       </el-table>
@@ -81,24 +82,15 @@
         @pagination="search"
       />
     </div>
-
-    <edit
-      ref="edit"
-      :dialog-visible="dialog.isVisible"
-      :title="dialog.title"
-      @close="closeDialogPage"
-    />
   </div>
 </template>
 
 <script>
 import Pagination from "@/components/Pagination";
 import { mapState, mapMutations } from "vuex";
-import edit from "./edit.vue";
 export default {
   components: {
-    edit,
-    Pagination
+    Pagination,
   },
   data() {
     return {
@@ -114,7 +106,7 @@ export default {
         title: "",
       },
       // 详细面板显示隐藏
-      teamManagerShow: false,
+      assessManagerShow: false,
       managerValue: "",
       tableData: [],
       // 分页
@@ -123,7 +115,7 @@ export default {
         num: 1,
       },
       queryParams: {
-        name: null,
+        warshipName: null,
       },
     };
   },
@@ -132,19 +124,19 @@ export default {
   },
   computed: {
     ...mapState({
-      menuList: (state) => state.menuBar.menuList,
+      routeAlgorithmInfo: (state) => state.menuBar.routeAlgorithmInfo,
     }),
   },
   watch: {
-    menuList: {
-      handler(newval, oldval) {
-        let i = newval.findIndex((item) => {
-          return item.flag == true;
-        });
-        if (i != -1 && i == 1) {
-          this.teamManagerShow = true;
+    // 监听menuList，控制详细面板的显隐
+    routeAlgorithmInfo: {
+      handler(val) {
+        if (val[0]) {
+          this.assessManagerShow = true;
+          this.assessMentInfo = val[1];
         } else {
-          this.teamManagerShow = false;
+          this.assessManagerShow = false;
+          this.assessMentInfo = val[1];
         }
       },
       deep: true,
@@ -152,51 +144,21 @@ export default {
   },
   methods: {
     ...mapMutations({
-      setMenuList: "menuBar/setMenuList",
+      setRouteAlgorithmInfo: "menuBar/setRouteAlgorithmInfo",
     }),
-    algorithm() {
-      this.algorithmDialog.isVisible = true;
-      this.algorithmDialog.title = "船舰信息";
-    },
-    closeAlgorithmDialog() {
-      this.algorithmDialog.isVisible = false;
-      this.fetch();
-    },
-    editItem(row) {
-      this.$refs.edit.loadShipList(row);
-      this.dialog.isVisible = true;
-      this.dialog.title = "修改编队";
-    },
-    information(row) {
-      this.dialog.isVisible = true;
-      this.dialog.title = "船舰信息";
+    detailAssessMentInfo(row) {
+      console.log(row, `detailAssessMentInfo`);
     },
     // 搜索重置
     resetSearch() {
       this.queryParams = {
-        name: null,
+        warshipName: null,
       };
       this.search();
     },
-    // 删除
-    deleteItem(row) {
-      this.$delete(`/api/formation`, {
-        id: row.id,
-      })
-        .then(() => {
-          this.$message({
-            message: "舰船删除成功",
-            type: "success",
-          });
-        })
-        .then(() => {
-          this.fetch();
-        });
-    },
     add() {
       this.dialog.isVisible = true;
-      this.dialog.title = "添加编队";
-      this.$refs.edit.loadShipList();
+      this.dialog.title = "添加船舰";
     },
     // 搜索
     search() {
@@ -208,25 +170,20 @@ export default {
     fetch(params = {}) {
       params.pageSize = this.pagination.size;
       params.pageNum = this.pagination.num;
-      this.$get("/api/formation", {
-        ...params,
-      }).then((res) => {
-        console.log(res, "res");
+      console.log("获取表格数据");
+
+      this.$get("/api/assessment").then((res) => {
         if (res.data.data) {
-          this.total = res.data.data.total;
-          this.tableData = res.data.data.rows;
+          console.log(res.data.data, `assessment`);
+          // this.total = res.data.data.total;
+          this.tableData = res.data.data;
+          // console.log(this.tableData);
         }
       });
     },
-    // 关闭新增 修改 对话框
-    closeDialogPage() {
-      this.dialog.isVisible = false;
-      this.fetch();
-    },
     closeManager() {
-      this.teamManagerShow = false;
-      this.menuList[1].flag = false;
-      this.setMenuList(this.menuList);
+      this.assessManagerShow = false;
+      this.setRouteAlgorithmInfo([0, {}]);
     },
   },
 };

@@ -1,26 +1,19 @@
 <template>
-  <div id="ship_manager" class="algorithm_manager" v-show="algorithmShow">
-    <div class="manager_title">
-      <span>算法参数配置</span>
-      <img
-        src="@/assets/images/legendbar/close.png"
-        @click.stop="closeManager"
-      />
-    </div>
-    <div class="manager_operation">
-      <el-input placeholder="请输入内容" v-model="alor_type"> </el-input>
-      <el-button class="operation_add" @click="submit">开始评估</el-button>
-    </div>
-    <div class="manager_table">
+  <el-dialog
+    :title="title"
+    width="1000px"
+    top="80px"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :visible.sync="algorithmShow"
+    append-to-body
+    @close="closeManager"
+  >
+    <div class="dialog_wrapper">
       <div class="tree_wrapper">
-        <vue2-org-tree
-          :data="treeData"
-          :horizontal="true"
-          :label-class-name="labelClassName"
-          @on-node-click="NodeClick"
-          :render-content="renderContent"
-        />
+        <div class="chart" id="chart" ref="chart"></div>
       </div>
+
       <div class="factor_wrapper" v-if="activeFactorTitle">
         <div class="factor_title">
           {{ factorTitleList[activeFactorTitle] }}-{{ factorTitle }}
@@ -32,9 +25,6 @@
             :key="`weatherFactoreOptionsList${index}`"
           >
             <div class="select_desc">{{ item.parameterName }}</div>
-            <div class="number_wrapper">
-              <input type="text" :value="item.value" />
-            </div>
             <div class="number_wrapper">
               <input type="text" :value="item.value" />
             </div>
@@ -64,72 +54,43 @@
             <div class="select_options"></div>
           </div>
         </div>
-      </div>
-
-      <el-dialog
-        title="添加子节点"
-        :visible.sync="addThirdNode"
-        width="350px"
-        center
-        append-to-body
-      >
-        <el-form ref="form" :model="addThirdform" label-width="80px">
-          <el-form-item label="节点名称">
-            <el-input v-model="addThirdform.name"></el-input>
-          </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button size="mini" @click="addThirdNode = false">取 消</el-button>
-          <el-button size="mini" type="primary" @click="addThirdNodeConfirm"
-            >确 定</el-button
+        <div class="factor_param" v-if="activeFactorTitle === 1">
+          <div
+            class="factore_item"
+            v-for="(item, index) in twoFactoreOptionsList"
+            :key="`twoFactoreOptionsList${index}`"
           >
-        </span>
-      </el-dialog>
+            <div class="select_desc">{{ item.parameterName }}</div>
+            <div class="number_wrapper">
+              <input type="text" :value="item.value" />
+            </div>
+            <div class="select_options"></div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
+    <div class="button_wrapper">
+      <el-button type="primary" size="mini" @click="submit">开始评估</el-button>
+    </div>
+  </el-dialog>
 </template>
-
 <script>
 import { mapState, mapMutations } from "vuex";
+import "@/utils/leaflet.ChineseTmsProviders.js";
 export default {
   components: {},
   data() {
     return {
-      alor_type: 0,
-      inputStyle: {
-        width: "20px",
-        height: "20px",
-        outline: "none",
-      },
-      addThirdform: {
-        name: null,
-      },
-      activeSecondNode: null,
-      addThirdNode: false,
-      algorithmShow: false,
       routeInfo: {},
       shipList: [],
-      taskInfo: {},
       teamList: [],
-      factorTitle: "",
-      labelClassName: "bg-color-orange",
-      treeData: {
-        label: "一级节点",
-        level: 0,
-        children: [
-          {
-            label: "二级节点-01",
-            level: 2,
-          },
-          {
-            label: "二级节点-02",
-            level: 1,
-          },
-        ],
-      },
-      weatherFactoreOptionsList: [],
-      activeFactorTitle: 0,
-      factorTitleList: ["一级子节点参数", "二级子节点参数", "三级子节点参数"],
+      taskInfo: {},
+      treeData: {},
+      num: 1.5,
+      algorithmShow: false,
+      title: "任务配置算法参数",
+      value: "",
+      factorTitle: "参数",
       twoFactoreOptionsList: [
         {
           parameterName: "评估权重",
@@ -137,6 +98,10 @@ export default {
           value: 0,
         },
       ],
+      weatherFactoreOptionsList: [],
+      factorTitle: "",
+      factorTitleList: ["一级子节点参数", "二级子节点参数", "三级子节点参数"],
+      activeFactorTitle: 0,
     };
   },
   computed: {
@@ -145,15 +110,13 @@ export default {
     }),
   },
   watch: {
-    // 监听menuList，控制详细面板的显隐
     algorithmOptions: {
-      handler(val) {
+      handler: function (val) {
         val[0] ? (this.algorithmShow = true) : (this.algorithmShow = false);
         this.routeInfo = val[1];
         this.loadTaskData(val[1]);
         this.getFactorOptions();
       },
-      deep: true,
     },
   },
   methods: {
@@ -177,6 +140,92 @@ export default {
         }
       });
     },
+    loadTeamList() {
+      this.$get(`/api/formation`).then((res) => {
+        if (res.data.data) {
+          this.teamList = [];
+          // 取出当前任务选择的编队详细信息
+          this.taskInfo.forEach((e, i) => {
+            res.data.data.rows.forEach((a, b) => {
+              if (a.id === e.sfId) {
+                this.teamList = a;
+              }
+            });
+          });
+          this.compositionTreeStructure(this.teamList, this.taskInfo);
+        }
+      });
+    },
+    loadShipList() {
+      this.$get(`/api/warship`).then((res) => {
+        if (res.data.data) {
+          this.shipList = [];
+          this.allShipList = res.data.data;
+          // 取出当前任务选择的自由编队的船舰详细信息
+          this.taskInfo.forEach((e, i) => {
+            res.data.data.rows.forEach((a, b) => {
+              if (a.id === e.sfId) {
+                let obj = a;
+                obj.name = a.warshipName;
+                obj.level = 1;
+                obj.value = 0;
+                obj.children = [];
+                this.shipList.push(a);
+              }
+            });
+          });
+          this.compositionTreeStructure(this.shipList, this.taskInfo);
+        }
+      });
+    },
+    compositionTreeStructure(detailInfo, taskInfo) {
+      // 选择的任务编队类型 1 为船舰 0 为编队
+      const type = taskInfo[0].type;
+      this.treeData = {};
+      if (type === 0) {
+        const idArr = detailInfo.ships.split(",");
+        let teamShipList = []; // 编队包含船舰
+        // this.treeData.name = detailInfo.name; // 编队名称
+        this.$get(`/api/warship`)
+          .then((res) => {
+            if (res.data.data.rows) {
+              res.data.data.rows.forEach((e, i) => {
+                if (idArr.includes(String(e.id))) {
+                  let obj = e;
+                  obj.name = e.warshipName;
+                  obj.level = 1;
+                  obj.value = 0;
+                  obj.children = [];
+                  teamShipList.push(obj);
+                }
+              });
+            }
+          })
+          .then(() => {
+            let treeObj = {};
+            treeObj.name = detailInfo.name;
+            treeObj.level = 0;
+            treeObj.children = teamShipList;
+            this.treeData = treeObj;
+          })
+          .then(() => {
+            this.$nextTick(() => {
+              this.initCharts();
+            });
+          });
+        return;
+      }
+      if (type === 1) {
+        let treeObj = {};
+        treeObj.name = "自由组队";
+        treeObj.level = 0;
+        treeObj.children = detailInfo;
+        this.treeData = treeObj;
+        this.$nextTick(() => {
+          this.initCharts();
+        });
+      }
+    },
     factorClick(item, index, itemOptions, indexOptions) {
       let checked = this.weatherFactoreOptionsList[index].checked[indexOptions]
         ? false
@@ -185,26 +234,6 @@ export default {
       arr[indexOptions] = checked;
       this.weatherFactoreOptionsList[index].checked = arr;
       this.$forceUpdate();
-    },
-    addThirdNodeConfirm() {
-      let index = Number;
-      console.log(this.treeData, this.addThirdform);
-      this.treeData.children.forEach((e, i) => {
-        if (this.activeSecondNode.id === e.id) {
-          index = i;
-          return;
-        }
-      });
-      this.treeData.children[index].children.push({
-        label: this.addThirdform.name,
-        level: 2,
-        value: 0,
-        id: this.activeSecondNode.id,
-      });
-      this.addThirdNode = false;
-      this.addThirdform = {
-        name: null,
-      };
     },
     getFactorOptions() {
       this.$get(`api/parameters`, {
@@ -221,168 +250,17 @@ export default {
         }
       });
     },
+    reset() {
+      this.routeInfo= {}
+      this.shipList= []
+      this.teamList= []
+      this.taskInfo= {}
+      this.treeData= {}
+    },
     closeManager() {
+      this.treeData = {};
       this.algorithmShow = false;
       this.setAlgorithm([0, {}]);
-    },
-    NodeClick(e, data) {
-      console.log(e, `e`);
-      console.log(data.level, data.label);
-      this.activeFactorTitle = data.level;
-      this.factorTitle = data.label;
-    },
-    renderContent(h, data) {
-      console.log(h, data, `renderContent`);
-      return (
-        <span>
-          <span>{data.label} </span>
-          <input
-            v-model={data.value}
-            style={this.inputStyle}
-            type="text"
-            v-show={data.level}
-          />
-          <span onclick={() => this.open(data)} v-show={data.level === 1}>
-            ➕
-          </span>
-          <span onclick={() => this.open(data)} v-show={data.level === 2}>
-            ➖
-          </span>
-        </span>
-      );
-    },
-    open(data) {
-      console.log(data, `data`);
-      if (data.level === 0) {
-        return;
-      } // 一级节点
-      if (data.level === 1) {
-        this.$confirm(`是否在${data.label}下添加影响因素`, {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        })
-          .then(() => {
-            this.addThirdNode = true;
-            this.activeSecondNode = data;
-          })
-          .catch(() => {
-            this.$message({
-              type: "info",
-              message: "取消添加",
-            });
-          });
-      } // 二级节点
-      if (data.level === 2) {
-        this.$confirm(`确认删除${data.label}节点么`, {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }).then(() => {
-          this.deleteTreeData(data);
-        });
-      } // 三级节点
-    },
-    deleteTreeData(data) {
-      let index = Number;
-      let childIndex = Number;
-      console.log(data, this.treeData, `deleteTreeData`);
-      this.treeData.children.forEach((e, i) => {
-        if (e.id === data.id) {
-          console.log("aha");
-          index = i;
-          e.children.forEach((a, b) => {
-            if (a.label === data.label) {
-              childIndex = b;
-            }
-          });
-        }
-      });
-      this.treeData.children[index].children.splice(childIndex, 1);
-    },
-    loadShipList() {
-      this.$get(`/api/warship`).then((res) => {
-        if (res.data.data) {
-          this.shipList = [];
-          this.allShipList = res.data.data;
-          // 取出当前任务选择的自由编队的船舰详细信息
-          this.taskInfo.forEach((e, i) => {
-            res.data.data.rows.forEach((a, b) => {
-              if (a.id === e.sfId) {
-                let obj = a;
-                obj.name = a.warshipName;
-                obj.level = 1;
-                obj.value = 0;
-                obj.children = [];
-                obj.label = a.warshipName;
-                this.shipList.push(a);
-              }
-            });
-          });
-          this.compositionTreeStructure(this.shipList, this.taskInfo);
-        }
-      });
-    },
-    loadTeamList() {
-      this.$get(`/api/formation`).then((res) => {
-        if (res.data.data) {
-          this.teamList = [];
-          // 取出当前任务选择的编队详细信息
-          this.taskInfo.forEach((e, i) => {
-            res.data.data.rows.forEach((a, b) => {
-              if (a.id === e.sfId) {
-                this.teamList = a;
-                console.log(this.teamList, `this.teamList`);
-              }
-            });
-          });
-          this.compositionTreeStructure(this.teamList, this.taskInfo);
-        }
-      });
-    },
-    compositionTreeStructure(detailInfo, taskInfo) {
-      // 选择的任务编队类型 1 为船舰 0 为编队
-      const type = taskInfo[0].type;
-      this.treeData = {};
-      if (type === 0) {
-        const idArr = detailInfo.ships.split(",");
-        let teamShipList = []; // 编队包含船舰
-        this.$get(`/api/warship`)
-          .then((res) => {
-            if (res.data.data.rows) {
-              res.data.data.rows.forEach((e, i) => {
-                if (idArr.includes(String(e.id))) {
-                  let obj = e;
-                  obj.name = e.warshipName;
-                  obj.label = e.warshipName;
-                  obj.level = 1;
-                  obj.value = 0;
-                  obj.children = [];
-                  teamShipList.push(obj);
-                }
-              });
-            }
-          })
-          .then(() => {
-            let treeObj = {};
-            treeObj.name = detailInfo.name;
-            treeObj.label = detailInfo.name;
-            treeObj.level = 0;
-            treeObj.children = teamShipList;
-            this.treeData = treeObj;
-            console.log(this.treeData);
-          });
-        return;
-      }
-      if (type === 1) {
-        let treeObj = {};
-        treeObj.name = "自由组队";
-        treeObj.level = 0;
-        treeObj.label = "自由组队";
-        treeObj.children = detailInfo;
-        this.treeData = treeObj;
-        console.log(this.treeData);
-      }
     },
     submit() {
       // 取树结构数据
@@ -391,7 +269,7 @@ export default {
           structure: 0,
           name: "-",
           value: "-",
-          type: "-",
+          type: "-"
         },
       ];
       this.treeData.children.forEach((e, i) => {
@@ -399,7 +277,7 @@ export default {
           structure: 1,
           name: "-",
           value: 0.5,
-          type: "-",
+          type: "-"
         };
         treeArr.push(objTwo);
         if (e.children) {
@@ -410,7 +288,7 @@ export default {
               structure: 2,
               name: "-",
               value: 0.5,
-              type: "-",
+              type: '-'
             };
             treeArr.push(objTwo);
             this.weatherFactoreOptionsList.forEach((c, d) => {
@@ -421,7 +299,7 @@ export default {
                     structure: 3,
                     name: `${c.id}_${c.parameterStep.split(",")[g]}`,
                     value: 0.5,
-                    type: "1",
+                    type: '1'
                   };
                   treeArr.push(objThree);
                 }
@@ -430,17 +308,17 @@ export default {
           });
         }
       });
-      console.log(treeArr, `treeArr`);
+      console.log(treeArr,`treeArr`)
       let treeName = [];
       let treeStructure = [];
       let treeValue = [];
       let hydrometeor = [];
-      let treeType = [];
+      let treeType = []
       treeArr.forEach((e, i) => {
         treeName.push(e.name);
         treeStructure.push(e.structure);
         treeValue.push(e.value);
-        treeType.push(e.type);
+        treeType.push(e.type)
         if (e.structure === 3) {
           let objHy = {
             typeId: e.name.split("_")[0],
@@ -457,49 +335,135 @@ export default {
         treeName: treeName.join(","),
         treeStructure: treeStructure.join(","),
         treeValue: treeValue.join(","),
-        treeType: treeType.join(","),
-        algorithm_Type: this.alor_type,
+        treeType: treeType.join(','),
+        algorithm_Type: 2,
       };
       this.$jsonPost(`/api/assessment/evaluate`, {
         ...params,
-      })
-        .then(() => {
-          this.$message({
-            message: "评估成功",
-            type: "success",
-          });
-        })
-        .then(() => {
-          this.closeManager();
-        })
-        .catch(() => {
-          this.$message({
-            message: "评估失败",
-            type: "error",
-          });
+      }).then(() => {
+        this.$message({
+          message: "评估成功",
+          type: "success",
         });
+      }).then(() => {
+        this.closeManager()
+      }).catch(() => {
+        this.$message({
+          message: "评估失败",
+          type: "error",
+        });
+      });
     },
-  },
+    initCharts() {
+      const chart = this.$refs.chart;
+      const eChart = this.$echarts.init(chart);
+      document.oncontextmenu = function () {
+        return false;
+      };
+      eChart.off("click"); 
+      eChart.on("click", LeftClick);
+      eChart.off("contextmenu"); 
+      eChart.on("contextmenu", RightClick);
+      const data = this.treeData;
+      this.$echarts.util.each(data.children, function (datum, index) {
+        datum.label = {
+          color: "red",
+          fontSize: "16",
+        };
+        datum.itemStyle = {
+          normal: {
+            color: "#000fff",
+            fontSize: "16",
+            lineStyle: {
+              color: "#123456",
+            },
+          },
+        };
+      });
+      const option = {
+        tooltip: {
+          trigger: "item",
+          triggerOn: "mousemove",
+        },
+        series: [
+          {
+            type: "tree",
+            data: [data],
+            top: "1%",
+            left: "15%",
+            bottom: "1%",
+            right: "20%",
+            symbolSize: 7,
+            label: {
+              position: "left",
+              verticalAlign: "middle",
+              align: "right",
+              fontSize: 14,
+            },
+            force: {
+              layoutAnimation: false,
+            },
+            leaves: {
+              label: {
+                position: "right",
+                verticalAlign: "middle",
+                align: "left",
+              },
+            },
+            expandAndCollapse: false,
+            animationDuration: 0,
+            animationDurationUpdate: 0,
+          },
+        ],
+      };
+      eChart.clear();
+      eChart.setOption(option);
+      const that = this;
+      function RightClick(param) {
+        let index = Number;
+        that.treeData.children.forEach((e, i) => {
+          if (e.id === param.data.id) {
+            index = i;
+          }
+        });
+        that.activeFactorTitle = param.data.level;
+        that.factorTitle = param.name;
+        const obj = {
+          name: "设备",
+          value: 5,
+          level: 2,
+        };
+        that.treeData.children[index].children.push(obj);
+        eChart.clear();
+        eChart.setOption(option);
+      }
+      function LeftClick(param) {
+        that.activeFactorTitle = param.data.level;
+        that.factorTitle = param.name;
+      }
+    }
+  }
 };
 </script>
 
+
+
 <style lang="scss" scoped>
-.manager_table {
-  width: 100%;
-  height: 80%;
+.dialog_wrapper {
+  width: 1250px;
+  height: 500px;
   display: flex;
+  padding-left: 10px;
   .tree_wrapper {
-    width: 520px;
-    height: 100%;
-    overflow-y: auto;
-    position: relative;
-    .item_wrapper {
-      position: absolute;
+    width: 600px;
+    #chart {
+      width: 600px;
+      height: 500px;
     }
   }
   .factor_wrapper {
-    margin-top: 40px;
-    width: 400px;
+    margin-top: 100px;
+    width: 350px;
     height: 300px;
     line-height: 20px;
     .factor_title {
@@ -521,7 +485,7 @@ export default {
       }
     }
     .factor_param {
-      width: 400px;
+      width: 350px;
       height: 200px;
       padding: 2px 5px 5px 5px;
       border-radius: 5px;
@@ -534,7 +498,7 @@ export default {
         display: flex;
         .select_options {
           display: flex;
-          width: 150px;
+          width: 130px;
           .select_options_item {
             cursor: pointer;
             line-height: 22px;
@@ -552,5 +516,10 @@ export default {
       }
     }
   }
+}
+.button_wrapper {
+  position: absolute;
+  bottom: 25px;
+  right: 50px;
 }
 </style>

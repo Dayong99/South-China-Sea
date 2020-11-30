@@ -1,5 +1,10 @@
 <template>
-  <div id="ship_manager" class="ship_manager" v-show="shipManagerShow" style="width:auto;height:auto;">
+  <div
+    id="ship_manager"
+    class="ship_manager"
+    v-show="shipManagerShow"
+    style="width: auto; height: auto"
+  >
     <div class="manager_title">
       <span>船舰管理</span>
       <img
@@ -23,7 +28,7 @@
       >
     </div>
     <div class="manager_table">
-      <el-table :data="tableData" border style="width:auto;">
+      <el-table :data="tableData" border style="width: auto">
         <el-table-column
           label="名称"
           prop="role-name"
@@ -145,12 +150,6 @@
       :title="dialog.title"
       @close="closeDialogPage"
     />
-
-    <algorithm
-      ref="algorithm"
-      :dialog-visible="algorithmDialog.isVisible"
-      @close="closeAlgorithmDialog"
-    />
   </div>
 </template>
 
@@ -158,12 +157,10 @@
 import Pagination from "@/components/Pagination";
 import { mapState, mapMutations } from "vuex";
 import edit from "./edit.vue";
-import algorithm from "./algorithm.vue";
 export default {
   components: {
     edit,
     Pagination,
-    algorithm
   },
   data() {
     return {
@@ -188,12 +185,9 @@ export default {
         num: 1,
       },
       queryParams: {
-        warshipName: null
-      }
+        warshipName: null,
+      },
     };
-  },
-  mounted() {
-    this.fetch();
   },
   computed: {
     ...mapState({
@@ -209,6 +203,7 @@ export default {
         });
         if (i != -1 && i == 0) {
           this.shipManagerShow = true;
+          this.fetch()
         } else {
           this.shipManagerShow = false;
         }
@@ -234,7 +229,6 @@ export default {
       this.fetch();
     },
     information(row) {
-      console.log(row)
       this.$refs.edit.setData(row);
       this.dialog.isVisible = true;
       this.dialog.title = "船舰信息";
@@ -242,13 +236,12 @@ export default {
     // 搜索重置
     resetSearch() {
       this.queryParams = {
-        warshipName: null
-      }
-      this.search()
+        warshipName: null,
+      };
+      this.search();
     },
     // 删除
     deleteItem(row) {
-      console.log(row, `row`);
       this.$delete(`/api/warship`, {
         id: row.id,
       })
@@ -263,7 +256,6 @@ export default {
         });
     },
     add() {
-      console.log("添加");
       this.dialog.isVisible = true;
       this.dialog.title = "添加船舰";
     },
@@ -277,15 +269,12 @@ export default {
     fetch(params = {}) {
       params.pageSize = this.pagination.size;
       params.pageNum = this.pagination.num;
-      console.log("获取表格数据");
       this.$get("/api/warship", {
         ...params,
       }).then((res) => {
         if (res.data.data) {
-          console.log(res.data.data,`res.data.data`)
           this.total = res.data.data.total;
           this.tableData = res.data.data.rows;
-          console.log(this.tableData)
         }
       });
     },
@@ -298,10 +287,15 @@ export default {
       this.shipManagerShow = false;
       this.menuList[0].flag = false;
       this.setMenuList(this.menuList);
+      this.reset();
+    },
+    reset() {
+      this.tableData = [];
+      this.pagination = {
+        size: 5,
+        num: 1,
+      };
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-</style>

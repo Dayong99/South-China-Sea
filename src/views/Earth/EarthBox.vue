@@ -45,11 +45,8 @@
     <route-manager></route-manager>
     <!-- 算法管理 -->
     <algorithm-manager></algorithm-manager>
-<<<<<<< HEAD
     <!-- 评估结果 -->
     <assessment-manager></assessment-manager>
-=======
->>>>>>> a301e4e87144c0865be3d80ffe62e514245f9add
     <!-- 船舰详情 -->
     <info-box></info-box>
   </div>
