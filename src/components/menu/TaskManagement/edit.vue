@@ -27,6 +27,21 @@
                 v-model="formData.name"
               ></el-input>
             </el-form-item>
+            <el-form-item label="任务类型">
+              <el-select
+                class="select_wrapper"
+                v-model="formData.ptype"
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="item in planTypeList"
+                  :key="item.baseValue"
+                  :label="item.baseKey"
+                  :value="item.baseValue"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
           </div>
         </el-col>
       </el-row>
@@ -42,7 +57,7 @@
               >
                 <el-option
                   v-for="item in options"
-                  :key="item.value"
+                  :key="item.id"
                   :label="item.label"
                   :value="item.value"
                 >
@@ -71,34 +86,6 @@
                           ? '#FF0000'
                           : 'rgba(138, 138, 138, 1)',
                       }"
-                      >{{ item.warshipType }}</span
-                    >
-                  </div>
-                  <div class="check">
-                    <el-checkbox v-model="item.checked"></el-checkbox>
-                  </div>
-                </div>
-                <div
-                  class="content_wrapper"
-                  v-for="(item, index) in shipList"
-                  :key="index"
-                >
-                  <div class="content">
-                    <span
-                      class="content_desc item"
-                      :style="{
-                        color: item.checked ? '#FF0000' : 'rgba(80, 80, 80, 1)',
-                      }"
-                      >{{ item.warshipName }}</span
-                    >
-                    <span
-                      class="content_type item"
-                      :style="{
-                        color: item.checked
-                          ? '#FF0000'
-                          : 'rgba(138, 138, 138, 1)',
-                      }"
-                      v-if="formData.type === 1"
                       >{{ item.warshipType }}</span
                     >
                   </div>
@@ -161,6 +148,7 @@ export default {
       title: "添加任务",
       data: {},
       rules: {},
+      planTypeList: [],
       options: [
         {
           value: 1,
@@ -175,13 +163,13 @@ export default {
       formData: {
         name: "",
         type: 2,
+        ptype: 0,
       },
       // 舰船列表
       shipList: [],
       teamList: [],
     };
   },
-  mounted() {},
   computed: {
     ...mapState({
       TaskManagerOptions: (state) => state.menuBar.TaskManagerOptions,
@@ -197,7 +185,10 @@ export default {
           this.title = "修改任务";
         }
         this.taskManagerShow = val[0];
-        this.loadShipList();
+        if (val[0] === 1 || val[0] === 2) {
+          this.loadShipList();
+        }
+        this.loadPtypeList();
       },
     },
   },
@@ -205,46 +196,72 @@ export default {
     ...mapMutations({
       setTaskManagerOptions: "menuBar/setTaskManagerOptions",
     }),
-    setData() {
-      this.$get(`/api/plan/sfs`, {
-        id: this.TaskManagerOptions[1].id,
+    loadPtypeList() {
+      this.$get(`api/base-info/values`, {
+        type: `任务`,
       }).then((res) => {
-        if (res.data.data) {
-          res.data.data.forEach((e, i) => {
-            // 编队
-            if (e.type === 0) {
-              this.teamList = this.teamList.map((a, b) => {
-                let obj = a;
-                if (a.id === e.sfId) {
-                  obj.checked = true;
-                }
-                return obj;
-              });
-            }
-            // 船舰
-            if (e.type === 1) {
-              this.shipList = this.shipList.map((a, b) => {
-                let obj = a;
-                if (a.id === e.sfId) {
-                  obj.checked = true;
-                }
-                return obj;
-              });
-            }
-          });
+        if (res.status) {
+          this.planTypeList = res.data.data;
+          this.formData.ptype = res.data.data[0].baseValue;
+          console.log(this.formData.ptype, `this.formData.ptype`);
         }
       });
-      this.formData = {
-        id: this.TaskManagerOptions[1].id,
-        name: this.TaskManagerOptions[1].name,
-        ptype: this.TaskManagerOptions[1].ptype,
-        type: 1,
-        createtime: this.TaskManagerOptions[1].createtime,
-      };
+    },
+    setData() {
+      console.log(`setData`, this.TaskManagerOptions[1]);
+      this.$get(`api/base-info/values`, {
+        type: `任务`,
+      })
+        .then((res) => {
+          if (res.status) {
+            this.planTypeList = res.data.data;
+          }
+        })
+        .then(() => {
+          if (this.TaskManagerOptions[0] === 2) {
+            this.$get(`/api/plan/sfs`, {
+              id: this.TaskManagerOptions[1].id,
+            }).then((res) => {
+              if (res.data.data) {
+                res.data.data.forEach((e, i) => {
+                  // 编队
+                  if (e.type === 0) {
+                    this.teamList = this.teamList.map((a, b) => {
+                      let obj = a;
+                      if (a.id === e.sfId) {
+                        obj.checked = true;
+                      }
+                      return obj;
+                    });
+                  }
+                  // 船舰
+                  if (e.type === 1) {
+                    this.shipList = this.shipList.map((a, b) => {
+                      let obj = a;
+                      if (a.id === e.sfId) {
+                        obj.checked = true;
+                      }
+                      return obj;
+                    });
+                  }
+                  console.log(this.shipList, `this.shipListsetData`);
+                });
+              }
+            });
+            this.formData = {
+              id: this.TaskManagerOptions[1].id,
+              name: this.TaskManagerOptions[1].name,
+              ptype: this.TaskManagerOptions[1].ptype,
+              type: 1,
+              createtime: this.TaskManagerOptions[1].createtime,
+            };
+          }
+        });
     },
     closeManager() {
       this.taskManagerShow = false;
       this.setTaskManagerOptions([0, {}]);
+      this.reset();
     },
     changeTeamActive(item, index) {
       if (!item.checked) {
@@ -263,9 +280,10 @@ export default {
       }
     },
     submit() {
+      console.log(this.formData, `this.formDatathis.formData`);
       let obj = {};
       obj["name"] = this.formData.name;
-      obj["ptype"] = 0;
+      obj["ptype"] = this.formData.ptype;
       obj["planSfs"] = [];
       if (this.formData.type === 1) {
         this.shipList.forEach((e, i) => {
@@ -342,15 +360,20 @@ export default {
       this.formData = {
         name: "",
         type: 2,
+        ptype: ""
       };
     },
     loadShipList() {
-      this.$get(`/api/warship`)
+      this.shipList = [];
+      this.$get(`/api/warship`, {
+        pageSize: 10000,
+      })
         .then((res) => {
           if (res.data.data) {
             this.shipList = res.data.data.rows.map((e, i) => {
               return { ...e, checked: false };
             });
+            console.log("船舰数组", this.shipList);
           }
         })
         .then(() => {
@@ -358,6 +381,8 @@ export default {
         });
     },
     loadTeamList() {
+      console.log(`请求编队信息`);
+      this.teamList = [];
       this.$get(`/api/formation`)
         .then((res) => {
           if (res.data.data) {
@@ -365,6 +390,7 @@ export default {
               return { ...e, checked: false };
             });
           }
+          console.log(`编队数组`, this.teamList);
         })
         .then(() => {
           this.setData();

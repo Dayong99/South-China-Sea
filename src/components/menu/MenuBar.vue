@@ -26,11 +26,9 @@
       </div>
     </div>
 
-
     <div class="menu_list" v-show="searchFlag">
       <ul class="list_ul">
         <li v-for="(item, index) in menuList" :key="index" class="list_ul_li">
-
           <div class="title_box">
             <img :src="item.icon" />
             <div class="title">
@@ -65,13 +63,19 @@
             />
           </div>
 
-          <!-- 任务管理 -->
           <ul class="list_task_ul" v-show="item.flag && flagList[0]">
             <li v-for="(item, index) in taskList" :key="index">
               <div class="task_list">
                 <div class="task_name" @click="switchTask(item, index)">
-                  <div class="task_dot" :class="{ active: item.checked }"></div>
-                  <span class="task_desc">{{ item.name }}</span>
+                  <div class="task_dot" v-if="!item.checked">
+                    <img src="@/assets/images/menu/taskTitle.png" />
+                  </div>
+                  <div class="task_dot" v-else>
+                    <img src="@/assets/images/menu/taskTitleActive.png" />
+                  </div>
+                  <span class="task_desc" :class="{ active: item.checked }">{{
+                    item.name
+                  }}</span>
                 </div>
                 <div class="task_operation" style="margin-left: 0">
                   <el-button
@@ -95,43 +99,54 @@
                 </div>
               </div>
 
-              <!-- 航线列表 -->
-              <div class="task_content_wrapper" v-if="item.routeList.length && item.checked">
+              <div
+                class="task_content_wrapper"
+                v-if="item.routeList.length && item.checked"
+              >
                 <div
                   class="task_content"
                   v-for="(itemRoute, indexRoute) in item.routeList"
                   :key="`route${indexRoute}`"
                 >
-
-                  <!-- 航线列表 -->
-                  <div class="task_content_desc">
+                  <div
+                    @click="switchRoute(item, index, itemRoute, indexRoute)"
+                    class="task_content_desc"
+                    :class="{ task_content_desc_active: itemRoute.checked }"
+                  >
+                    <div class="task_content_img">
+                      <img src="@/assets/images/menu/lineTitle.png" alt="" />
+                    </div>
                     <div class="task_content_name">
                       {{ itemRoute.lineName }}
                     </div>
-                    <div class="control_wrapper">
+                    <div class="control_wrapper" v-if="itemRoute.checked">
                       <img
-                        src="@/assets/images/menu/info.png"
+                        src="@/assets/images/menu/route_info.png"
                         @click="algorithm(itemRoute, indexRoute)"
                       />
                       <img
-                        src="@/assets/images/menu/edit.svg"
+                        src="@/assets/images/menu/route_assess.png"
                         @click="algorithm(itemRoute, indexRoute)"
                       />
                       <img
-                        src="@/assets/images/menu/bin.svg"
+                        src="@/assets/images/menu/edit_route.png"
+                        @click="algorithm(itemRoute, indexRoute)"
+                      />
+                      <img
+                        src="@/assets/images/menu/route_delete.png"
                         @click="deleteRoute(itemRoute, indexRoute)"
                       />
                       <img
-                        src="@/assets/images/menu/tree.svg"
-                        @click="algorithm(itemRoute, indexRoute)"
-                      />
-                      <img
-                        src="@/assets/images/menu/down.png"
-                        @click.stop="getAssessItem(itemRoute, indexRoute,item,index)"
+                        :class="{ activeAssess: itemRoute.assessChecked }"
+                        src="@/assets/images/menu/down_content.png"
+                        @click.stop="
+                          loadAssessInfo(itemRoute, indexRoute, item, index)
+                        "
                       />
                     </div>
+                    <div class="control_wrapper" v-else></div>
                   </div>
-                  
+
                   <!-- 评估列表 -->
                   <div class="assess_wrapper">
                     <div
@@ -139,48 +154,119 @@
                       v-for="(itemAssess, indexAssess) in itemRoute.assessList"
                       :key="`assess${indexAssess}`"
                     >
+                      <div class="assess_img">
+                        <img src="@/assets/images/menu/timeTitle.png" />
+                      </div>
                       <div class="assess_desc">
                         {{ itemAssess.assesstime | filterTime }}
                       </div>
-                      <div class="assess_control">
+                      <div class="assess_control" v-if="itemAssess.setting">
                         <img
-                          src="@/assets/images/menu/bin.svg"
+                          src="@/assets/images/menu/alorithm_deactive.svg"
                           class="control_items"
-                          @click="changeAssessTime(itemAssess, indexAssess,itemRoute, indexRoute,item,index)"
+                          @click="
+                            changeAssessTime(
+                              itemAssess,
+                              indexAssess,
+                              itemRoute,
+                              indexRoute,
+                              item,
+                              index
+                            )
+                          "
                         />
                         <img
-                          src="@/assets/images/menu/treeInfo.svg"
+                          src="@/assets/images/menu/table_assess_deactive.svg"
                           class="control_items"
-                          @click="changeAssessTime(itemAssess, indexAssess,itemRoute, indexRoute,item,index)"
+                          @click="
+                            changeAssessTime(
+                              itemAssess,
+                              indexAssess,
+                              itemRoute,
+                              indexRoute,
+                              item,
+                              index
+                            )
+                          "
                         />
                         <img
-                          src="@/assets/images/menu/table.svg"
+                          src="@/assets/images/menu/line_assess_deactvie.svg"
                           class="control_items"
-                          @click="changeAssessTime(itemAssess, indexAssess,itemRoute, indexRoute,item,index)"
+                          @click="
+                            changeAssessTime(
+                              itemAssess,
+                              indexAssess,
+                              itemRoute,
+                              indexRoute,
+                              item,
+                              index
+                            )
+                          "
                         />
                         <img
-                          src="@/assets/images/menu/line.svg"
+                          src="@/assets/images/menu/area_assess_deactive.svg"
                           class="control_items"
-                          @click="changeAssessTime(itemAssess, indexAssess,itemRoute, indexRoute,item,index)"
+                          @click="
+                            changeAssessTime(
+                              itemAssess,
+                              indexAssess,
+                              itemRoute,
+                              indexRoute,
+                              item,
+                              index
+                            )
+                          "
                         />
                         <img
-                          src="@/assets/images/menu/area.svg"
+                          src="@/assets/images/menu/bin_assess_deactive.png"
                           class="control_items"
-                          @click="changeAssessTime(itemAssess, indexAssess,itemRoute, indexRoute,item,index)"
+                          @click="
+                            changeAssessTime(
+                              itemAssess,
+                              indexAssess,
+                              itemRoute,
+                              indexRoute,
+                              item,
+                              index
+                            )
+                          "
                         />
                         <img
-                          src="@/assets/images/menu/next.svg"
+                          src="@/assets/images/menu/time_assess_deactive.png"
                           class="control_items"
-                          @click="changeAssessTime(itemAssess, indexAssess,itemRoute, indexRoute,item,index)"
+                          @click="
+                            changeAssessTime(
+                              itemAssess,
+                              indexAssess,
+                              itemRoute,
+                              indexRoute,
+                              item,
+                              index
+                            )
+                          "
+                        />
+                      </div>
+                      <div class="assess_control_deactive" v-else></div>
+                      <div class="setting_wrapper">
+                        <img
+                          src="@/assets/images/menu/setting_assess_deactive.svg"
+                          class="control_items"
+                          @click="
+                            AssessSetting(
+                              itemAssess,
+                              indexAssess,
+                              itemRoute,
+                              indexRoute,
+                              item,
+                              index
+                            )
+                          "
                         />
                       </div>
                     </div>
                   </div>
-
-
                 </div>
               </div>
-
             </li>
           </ul>
 
@@ -229,7 +315,6 @@
               </div>
             </li>
           </ul>
-
         </li>
       </ul>
     </div>
@@ -241,15 +326,8 @@ import { mapState, mapMutations } from "vuex";
 export default {
   data() {
     return {
-
-      // 任务列表
+      // 任务
       taskList: [],
-      // 任务航线列表
-      routeList: [],
-      // 评估列表
-      assessList: [],
-
-
       searchFlag: false,
       searchIcon: require("@/assets/images/menu/unselect.png"),
       searchValue: "",
@@ -291,7 +369,7 @@ export default {
       }
     },
     // 任务变化
-    TaskManagerOptions() {
+    TaskManagerOptions(val) {
       this.loadTaskList();
     },
     // 航线变化
@@ -301,7 +379,7 @@ export default {
   },
   filters: {
     filterTime(val) {
-      return val.slice(0,-6)
+      return val.slice(0, -6);
     },
   },
   methods: {
@@ -314,11 +392,35 @@ export default {
       setRouteDialogOptions: "menuBar/setRouteDialogOptions",
       setRouteAlgorithmInfo: "menuBar/setRouteAlgorithmInfo",
     }),
+    // 任务树setting
+    AssessSetting(itemAssess, indexAssess, itemRoute, indexRoute, item, index) {
+      (this.taskList[index].routeList[indexRoute].assessList)[
+        indexAssess
+      ].setting = !this.taskList[index].routeList[indexRoute].assessList[
+        indexAssess
+      ].setting;
+    },
     routeAlgorithmInfo(item, index) {
       this.setRouteAlgorithmInfo([1, item]);
     },
-    changeAssessTime(itemAssess, indexAssess,itemRoute, indexRoute,item,index) {
-      console.log(itemAssess, indexAssess,itemRoute, indexRoute,item,index,`changeAssessTime`,this.taskList)
+    changeAssessTime(
+      itemAssess,
+      indexAssess,
+      itemRoute,
+      indexRoute,
+      item,
+      index
+    ) {
+      console.log(
+        itemAssess,
+        indexAssess,
+        itemRoute,
+        indexRoute,
+        item,
+        index,
+        `changeAssessTime`,
+        this.taskList
+      );
     },
     deleteRoute(item, index) {
       console.log(item, index, `delete`);
@@ -338,30 +440,6 @@ export default {
     algorithm(item, index) {
       this.setAlgorithm([1, item]);
     },
-    loadRouteList(item,index) {
-      this.taskList[index].routeList = [] // 清空任务点击之前 航线的内容
-      this.$get(`/api/course`, {
-        plan_Id: item.id
-      })
-        .then((res) => {
-          if (res.status === 200) {
-            this.taskList[index].routeList = res.data.data.rows.map((e, i) => {
-              return {
-                ...e,
-                checked: false,
-                assessList: []
-              };
-            });
-          }
-        })
-        .catch(() => {
-          this.$message({
-            message: "航线列表加载失败",
-            type: "error",
-          });
-        });
-    },
-    // 添加航线
     addTaskItem(item, index) {
       console.log(item, index, `item`);
       this.setRouteDialogOptions([1, item]);
@@ -375,9 +453,13 @@ export default {
           obj.checked = false;
           return obj;
         });
-        this.loadRouteList(item,index);
+        this.loadRouteList(item, index);
         this.taskList[index].checked = true;
       }
+    },
+    switchRoute(item, index, itemRoute, indexRoute) {
+      this.taskList[index].routeList[indexRoute].checked = !this.taskList[index]
+        .routeList[indexRoute].checked;
     },
     editTaskItem(item) {
       this.setTaskManagerOptions([2, item]);
@@ -412,7 +494,7 @@ export default {
           });
         });
     },
-    // 任务列表
+    // 请求任务列表
     loadTaskList() {
       let params = {
         pageSize: 1000000,
@@ -425,12 +507,68 @@ export default {
             return {
               ...e,
               checked: false,
-              routeList: []
+              routeList: [],
             };
           });
-          console.log(this.taskList,`this.taskList`)
+          console.log(this.taskList, `this.taskList`);
         }
       });
+    },
+    // 请求航线列表
+    loadRouteList(item, index) {
+      this.taskList[index].routeList = [];
+      this.$get(`/api/course`, {
+        plan_Id: item.id,
+      })
+        .then((res) => {
+          if (res.status === 200) {
+            this.taskList[index].routeList = res.data.data.rows.map((e, i) => {
+              return {
+                ...e,
+                checked: false,
+                assessChecked: false,
+                assessList: [],
+              };
+            });
+          }
+        })
+        .catch(() => {
+          this.$message({
+            message: "航线列表加载失败",
+            type: "error",
+          });
+        });
+    },
+    // 请求评估列表
+    loadAssessInfo(itemRoute, indexRoute, item, index) {
+      this.taskList[index].routeList[indexRoute].assessChecked = !this.taskList[
+        index
+      ].routeList[indexRoute].assessChecked;
+      const status = this.taskList[index].routeList[indexRoute].assessChecked;
+      if (status) {
+        // 请求该航线评估列表
+        this.$get(`/api/assessment`, {
+          courseId: itemRoute.id,
+        }).then((res) => {
+          if (res.status === 200) {
+            this.taskList[index].routeList[
+              indexRoute
+            ].assessList = res.data.data.map((e, i) => {
+              return {
+                ...e,
+                line: false,
+                area: false,
+                table: false,
+                timeIndex: 0,
+                alorithm: false,
+                setting: false,
+              };
+            });
+          }
+        });
+      } else {
+        this.taskList[index].routeList[indexRoute].assessList = [];
+      }
     },
     // 定位
     location() {
@@ -448,35 +586,6 @@ export default {
       } else {
         this.$message.warning("位置格式不正确");
       }
-    },
-
-    // 点击航线 获取评估结果
-    getAssessItem(itemRoute, indexRoute,item,index) {
-      console.log(itemRoute, indexRoute,item,index, `getAssessItem`);
-      // 获取该航线评估结果
-      this.loadAssessInfo(itemRoute, indexRoute,item,index);
-    },
-
-    // 载入评估结果
-    loadAssessInfo(itemRoute, indexRoute,item,index) {
-      console.log(itemRoute, indexRoute,item,index,`loadAssessInfo`,this.taskList[index].routeList[indexRoute].assessList)
-      this.$get(`/api/assessment`, {
-        courseId: itemRoute.id,
-      }).then((res) => {
-        if (res.status === 200) {
-          this.taskList[index].routeList[indexRoute].assessList = res.data.data.map((e,i) => {
-            return {
-              ...e,
-              line: false,
-              area: false,
-              table: false,
-              timeIndex: 0,
-              alorithm: false
-            }
-          })
-          
-        }
-      });
     },
     //------------start搜索框--------------
     // 改变搜索图标，并显示菜单栏
@@ -503,17 +612,15 @@ export default {
     },
     // 打开任务管理
     openTask(index) {
-      console.log(index,`openTask`)
+      console.log(index, `openTask`);
       // 重置
       this.menuList.forEach((item) => {
         item.flag = false;
       });
       // 任务管理器
       if (index == 2) {
-        this.loadTaskList()
+        this.loadTaskList();
       }
-
-
 
       if (index == 2 || index == 3 || index == 4) {
         this.menuList[index].flag = !this.flagList[index - 2];
