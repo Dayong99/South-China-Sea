@@ -52,19 +52,6 @@ export default {
       setExtent: "earth/setExtent",
       setImageLayerNum: "earth/setImageLayerNum",
     }),
-    loadGeojson() {
-      L.geojson('./static/1.geojosn', {
-        style: function (feature) {
-          var style1 = {
-            color: "#fd8b46",
-            fillColor: "#000",
-            fillOpacity: 0,
-            weight: 2,
-          };
-          return style1;
-        },
-      }).addTo(window.map);
-    },
     initMap() {
       // 底图切换
       window.map = L.map("mapContainer", {
@@ -87,7 +74,6 @@ export default {
       window.map.setView([35.09, 102.21], 4);
       // this.changeZoom();
       this.changeMove();
-      this.loadGeojson()
     },
     async createTileLayer(url, options) {
       let tileLayer = await L.tileLayer(url, options);

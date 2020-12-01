@@ -1,9 +1,9 @@
 #algorith_manager {
   width: 1200px;
-  height: 60%;
+  height: 650px;
   position: fixed;
   top: 42%;
-  left: 50%;
+  left: 55%;
   transform: translate(-50%, -50%);
   padding: 10px 10px 15px 15px;
   z-index: 999;
@@ -87,29 +87,73 @@
   // ------图表------
   .manager_table {
     width: 100%;
-    padding-right: 15px;
-
-    .table_column_icon {
-      font-size: 20px;
+    height: 80%;
+    display: flex;
+    border: 1px solid #706765;
+    border-radius: 5px;
+    .tree_wrapper {
+      width: 600px;
+      height: 100%;
+      overflow-y: auto;
+      .tree {
+        width: 100%;
+        height: 100%;
+      }
     }
-    .blue {
-      color: rgb(13, 10, 214);
-    }
-    .blueDeep {
-      color: rgb(50, 204, 255);
-    }
-    .green {
-      color: rgb(110, 207, 67);
-    }
-    .red {
-      color: rgb(247, 53, 11);
-    }
-    .purple {
-      color: rgb(145, 174, 255);
-    }
-
-    .el-button {
-      margin-left: 0;
+    .factor_wrapper {
+      margin-top: 40px;
+      width: 500px;
+      height: 300px;
+      line-height: 20px;
+      .factor_title {
+        font-weight: 700;
+        padding-left: 8px;
+      }
+      .select_desc {
+        width: 150px;
+      }
+      .number_wrapper {
+        width: 60px;
+        height: 200px;
+        input {
+          width: 40px;
+          outline: none;
+          border: none;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+        }
+      }
+      .factor_param {
+        width: 500px;
+        height: 200px;
+        padding: 2px 5px 5px 5px;
+        border-radius: 5px;
+  
+        .factore_item {
+          flex: 1;
+          justify-content: space-between;
+          padding: 5px;
+          height: 35px;
+          display: flex;
+          .select_options {
+            display: flex;
+            width: 150px;
+            .select_options_item {
+              cursor: pointer;
+              line-height: 22px;
+              flex: 1;
+              width: 40px;
+              margin-left: 4px;
+              text-align: center;
+              border-radius: 5px;
+            }
+            .active {
+              color: #ffffff;
+              background: #981a00;
+            }
+          }
+        }
+      }
     }
   }
 
