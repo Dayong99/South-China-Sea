@@ -38,11 +38,20 @@
           <div class="grid-content bg-purple-dark">
             <el-form-item label="类型">
               <div v-if="title === '船舰信息'">{{ formData.warshipType }}</div>
-              <el-input
+              <el-select v-model="formData.warshipType.baseKey" placeholder="请选择">
+                <el-option
+                  v-for="item in shipTypeList"
+                  :key="item.id"
+                  :label="item.baseKey"
+                  :value="item.baseKey"
+                >
+                </el-option>
+              </el-select>
+              <!--<el-input
                 v-else
                 v-model="formData.warshipType"
                 placeholder="请选择"
-              ></el-input>
+              ></el-input> -->
             </el-form-item>
           </div>
         </el-col>
@@ -176,6 +185,7 @@ export default {
     return {
       data: {},
       rules: {},
+      shipTypeList: [],
       formData: {
         warshipName: "",
         warshipType: "",
@@ -201,16 +211,31 @@ export default {
   methods: {
     // 修改设置参数
     setData(data) {
+      
+      console.log(data,`setData`)
       this.formData = {
         ...this.formData,
         ...data,
       };
+
       this.photoList = [
         {
           name: "图片",
           url: data.shipPhoto,
         },
       ];
+      this.$get(`api/base-info/values`, {
+        type: "船",
+      }).then((res) => {
+        if (res.data.data) {
+          this.shipTypeList = res.data.data;
+          this.shipTypeList.forEach((e,i) => {
+            if(Number(data.warshipType) === Number(e.baseValue)) {
+              this.formData.warshipType = e
+            }
+          })
+        }
+      })
     },
     // 上传文件变化
     getFile(file, fileList) {
@@ -235,8 +260,21 @@ export default {
       };
       this.photoList = [];
     },
+    loadShipType() {
+      this.$get(`api/base-info/values`, {
+        type: "船",
+      }).then((res) => {
+        if (res.data.data) {
+          this.shipTypeList = res.data.data;
+          this.formData.warshipType = this.shipTypeList[0]
+        }
+      });
+    },
     // 添加或修改
     submit() {
+      let obj = this.formData
+      obj.warshipType = this.formData.warshipType.baseValue
+      console.log(this.shipTypeList,`baseKey`)
       this.$refs.form.validate((valid) => {
         if (valid) {
           if (this.title === "添加船舰") {
@@ -293,6 +331,7 @@ export default {
       set() {
         this.close();
         this.reset();
+        this.loadShipType();
       },
     },
   },

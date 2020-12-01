@@ -222,7 +222,6 @@ export default {
     },
     flagList(newval, oldval) {
       this.iconList = new Array(3).fill(this.downIcon);
-      console.log(newval);
       let index = this.flagList.indexOf(true);
       if (index !== -1) {
         this.iconList[index] = this.upIcon;
