@@ -299,9 +299,9 @@ export default {
 };
 </script>
 <style scoped lang ='scss'>
+  /* 用不了 &#{&} 这种写法*/
 .l-popup {
   &--no-style {
-    /* 用不了 &#{&} 这种写法*/
     .leaflet-popup-close-button.leaflet-popup-close-button {
       display: none;
     }

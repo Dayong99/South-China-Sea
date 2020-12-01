@@ -82,6 +82,44 @@
         }
     }
 
+    // 重绘按钮
+    .isDraw {
+        width: 90px;
+        height: 30px;
+        line-height: 30px;
+        position: absolute;
+        bottom: -20px;
+        right: 80px;
+        color: rgba(255, 255, 255, 0.9);
+        background: url('~@/assets/images/sidebar/drawbg.png') no-repeat;
+        background-position: center;
+        // border: 1px solid #fff;
+        // border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        font-weight: 600;
+        // font-family:"Times New Roman",Georgia,Serif;
+        
+        &:hover {
+            cursor: pointer;
+        }
+
+        div {
+            width: 12px;
+            height: 12px;
+            border: 1px solid #fff;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+    }
+    .draw_active {
+        border: none;
+        background: rgba(255, 255, 255, 0.8);
+    }
+
     // 实况资料
     .real_time_data {
         margin-top: 15px;
