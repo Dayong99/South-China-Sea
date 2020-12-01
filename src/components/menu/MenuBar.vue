@@ -91,6 +91,7 @@
                   ></el-button>
                 </div>
               </div>
+              <!-- 航线信息 -->
               <div class="task_content_wrapper" v-if="item.checked">
                 <div
                   class="task_content"
@@ -102,6 +103,10 @@
                       {{ itemRoute.lineName }}
                     </div>
                     <div class="control_wrapper">
+                      <img
+                        src="@/assets/images/menu/info.png"
+                        @click="algorithm(itemRoute, indexRoute)"
+                      />
                       <img
                         src="@/assets/images/menu/edit.svg"
                         @click="algorithm(itemRoute, indexRoute)"
@@ -115,9 +120,52 @@
                         @click="algorithm(itemRoute, indexRoute)"
                       />
                       <img
-                        src="@/assets/images/menu/view.svg"
-                        @click="routeAlgorithmInfo(itemRoute, indexRoute)"
+                        src="@/assets/images/menu/down.png"
+                        @click.stop="getAssessItem(itemRoute, indexRoute)"
                       />
+                    </div>
+                  </div>
+                  <div class="assess_wrapper">
+                    <div
+                      class="assess_items"
+                      v-for="(itemAssess, indexAssess) in assessList"
+                      :key="`assess${indexAssess}`"
+                    >
+                      <div class="assess_desc">
+                        {{ itemAssess.assesstime | filterTime }}
+                      </div>
+                      <div class="assess_control">
+                        <img
+                          src="@/assets/images/menu/bin.svg"
+                          class="control_items"
+                          @click="algorithm(itemRoute, indexRoute)"
+                        />
+                        <img
+                          src="@/assets/images/menu/treeInfo.svg"
+                          class="control_items"
+                          @click="algorithm(itemRoute, indexRoute)"
+                        />
+                        <img
+                          src="@/assets/images/menu/table.svg"
+                          class="control_items"
+                          @click="algorithm(itemRoute, indexRoute)"
+                        />
+                        <img
+                          src="@/assets/images/menu/line.svg"
+                          class="control_items"
+                          @click="algorithm(itemRoute, indexRoute)"
+                        />
+                        <img
+                          src="@/assets/images/menu/area.svg"
+                          class="control_items"
+                          @click="algorithm(itemRoute, indexRoute)"
+                        />
+                        <img
+                          src="@/assets/images/menu/next.svg"
+                          class="control_items"
+                          @click="algorithm(itemRoute, indexRoute)"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -126,7 +174,11 @@
           </ul>
 
           <!-- 系统设置 -->
-          <ul class="list_system_ul" v-show="item.flag && flagList[1]" style="height:auto;overflow-y:hidden;">
+          <ul
+            class="list_system_ul"
+            v-show="item.flag && flagList[1]"
+            style="height: auto; overflow-y: hidden"
+          >
             <li v-for="(item, index) in systemList" :key="index">
               <div class="task_list">
                 <div class="task_name" @click="openSystem(index)">
@@ -145,7 +197,11 @@
           </ul>
 
           <!-- 数据管理 -->
-          <ul class="list_system_ul" v-show="item.flag && flagList[2]" style="height:auto;overflow-y:hidden;">
+          <ul
+            class="list_system_ul"
+            v-show="item.flag && flagList[2]"
+            style="height: auto; overflow-y: hidden"
+          >
             <li v-for="(item, index) in dataList" :key="index">
               <div class="task_list">
                 <div class="task_name" @click="openData(index)">
@@ -173,8 +229,17 @@ import { mapState, mapMutations } from "vuex";
 export default {
   data() {
     return {
+      // 任务列表
+      taskList: [
+        {
+          name: "1",
+          checked: true,
+        },
+      ],
       // 任务航线列表
       routeList: [],
+      // 评估列表
+      assessList: [],
       // 搜索框
       searchFlag: false,
       searchIcon: require("@/assets/images/menu/unselect.png"),
@@ -189,16 +254,7 @@ export default {
       ],
       flagList: [false, false, false],
 
-      // 任务管理展开
       nowMenuList: [],
-
-      // 系统配置展开
-      taskList: [
-        {
-          name: "1",
-          checked: true,
-        },
-      ],
     };
   },
   computed: {
@@ -239,6 +295,11 @@ export default {
   mounted() {
     this.loadTaskList();
   },
+  filters: {
+    filterTime(val) {
+      return val.slice(0,-6)
+    },
+  },
   methods: {
     ...mapMutations({
       setAlgorithm: "menuBar/setAlgorithm",
@@ -252,6 +313,7 @@ export default {
     routeAlgorithmInfo(item, index) {
       this.setRouteAlgorithmInfo([1, item]);
     },
+
     deleteRoute(item, index) {
       console.log(item, index, `delete`);
       this.$delete(`/api/course`, {
@@ -380,6 +442,25 @@ export default {
       } else {
         this.$message.warning("位置格式不正确");
       }
+    },
+
+    // 点击航线 获取评估结果
+    getAssessItem(item, index) {
+      console.log(item, index, `getAssessItem`);
+      // 获取该航线评估结果
+      this.loadAssessInfo(item.id);
+    },
+    // 载入评估结果
+    loadAssessInfo(courseId) {
+      this.$get(`/api/assessment`, {
+        courseId: courseId,
+      }).then((res) => {
+        if (res.status === 200) {
+          console.log(`该航线评估结果列表:`, res.data.data);
+          this.assessList = res.data.data;
+          console.log(this.assessList, `this.assessList`);
+        }
+      });
     },
     //------------start搜索框--------------
     // 改变搜索图标，并显示菜单栏
