@@ -33,13 +33,23 @@
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
+            <el-form-item label="是否显示" prop="isShow">
+              <el-radio v-model="formData.isShow" label="0">不显示</el-radio>
+              <el-radio v-model="formData.isShow" label="1">显示</el-radio>
+            </el-form-item>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="18">
+          <div class="grid-content bg-purple-dark">
             <el-form-item label="geojson" prop="dataGeo">
               <el-input
                 type="textarea"
                 :rows="10"
                 placeholder="请输入geojson"
                 v-model="formData.dataGeo"
-                style="width:100%;"
+                style="width: 100%"
               ></el-input>
             </el-form-item>
           </div>
@@ -61,6 +71,7 @@ export default {
       rules: {},
       formData: {
         name: "",
+        isShow: "0",
         dataGeo: "",
       },
       rules: {
@@ -92,6 +103,7 @@ export default {
       this.formData = {
         ...data,
       };
+      this.formData.isShow += "";
     },
     // 关闭对话框
     close() {

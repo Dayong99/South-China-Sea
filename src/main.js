@@ -33,6 +33,9 @@ Vue.prototype.$G6 = G6
 
 // L.Proj = Proj
 
+import drag from "@/directive/drag/drag.js"
+Vue.directive("drag", drag)
+
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(animate)
