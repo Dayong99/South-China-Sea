@@ -46,6 +46,8 @@
     <datasource-manager2></datasource-manager2>
     <!-- 台风数据 -->
     <typhoon-manager></typhoon-manager>
+    <!-- 实况数据 -->
+    <data-live></data-live>
 
     <!-- 航线管理 -->
     <route-manager></route-manager>
@@ -84,6 +86,7 @@ import DatasourceManager from "@/components/menu/DataManager/dataSourceManager/i
 import DatasourceManager1 from "@/components/menu/DataManager/dataSourceManager1/index.vue";
 import DatasourceManager2 from "@/components/menu/DataManager/dataSourceManager2/index.vue";
 import TyphoonManager from "@/components/menu/DataManager/typhoonManager/index.vue";
+import DataLive from "@/components/menu/DataManager/dataLive/index.vue";
 
 import InfoBox from "@/components/shipInfo/InfoBox.vue";
 
@@ -120,17 +123,16 @@ export default {
     DatasourceManager: DatasourceManager,
     DatasourceManager1: DatasourceManager1,
     DatasourceManager2: DatasourceManager2,
-    TyphoonManager:TyphoonManager,
-    InfoBox:InfoBox,
+    TyphoonManager: TyphoonManager,
+    InfoBox: InfoBox,
     assessmentManager: assessmentManager,
     InfoBox: InfoBox,
     assessmentManager: assessmentManager,
     routeInfo: routeInfo,
+    DataLive:DataLive
   },
   data() {
-    return {
-      
-    }
+    return {};
   },
   computed: {
     ...mapState({

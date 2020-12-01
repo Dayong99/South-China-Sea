@@ -5,7 +5,7 @@
         <img src="@/assets/toolList/add.png" />
       </el-tooltip>
     </div>
-    <div class="tool_item tool_right zoom" @click.stop="measurearea">
+    <div class="tool_item tool_right zoom" @click.stop="zoomOut">
       <el-tooltip class="item" effect="light" content="缩小" placement="bottom">
         <img src="@/assets/toolList/minus.png" />
       </el-tooltip>

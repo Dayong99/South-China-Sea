@@ -3,7 +3,7 @@
     id="ship_manager"
     class="ship_manager"
     v-show="systemManagerShow"
-    style="width: auto; height: auto"
+    style="width: 960px; height: auto"
   >
     <div class="manager_title">
       <span>数据源配置—广东省网</span>
@@ -51,7 +51,7 @@
         <el-table-column
           label="数据源名称"
           align="center"
-          min-width="100px"
+          min-width="260px"
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
@@ -191,10 +191,14 @@ export default {
     },
     systemManagerShow(val) {
       if (val) {
+        //  let dragBox = document.getElementById("datasource");
+        // console.log(dragBox)
+        // dragBox.style.left = "42%";
+        // dragBox.style.top = "50%";
         this.queryParams = {};
         this.time = [];
         this.fetch();
-      }
+      } 
     },
   },
   methods: {

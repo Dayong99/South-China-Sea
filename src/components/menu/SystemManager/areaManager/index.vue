@@ -1,5 +1,5 @@
 <template>
-  <div id="ship_manager" class="ship_manager" v-show="systemManagerShow" style="width:auto;height:auto;">
+  <div id="ship_manager" class="ship_manager" v-show="systemManagerShow" style="width:auto;height:auto;" v-drag>
     <div class="manager_title">
       <span>常用区域</span>
       <img

@@ -1,35 +1,26 @@
 <template>
-  <div
-    id="ship_manager"
-    class="ship_manager"
-    v-show="systemManagerShow"
-    style="width: 960px;height:auto;"
-    v-drag
-  >
-    <div class="manager_title">
-      <span>台风数据</span>
-      <img
-        src="@/assets/images/legendbar/close.png"
-        @click.stop="closeManager"
-      />
-    </div>
+  <div v-show="tabShow" style="width:960px;">
     <div class="manager_operation">
-      <!-- <el-input
-        placeholder="任务名称"
+      <el-input
+        placeholder="数据源名称"
         prefix-icon="el-icon-search"
-        v-model="queryParams.name"
+        v-model="queryParams.numericalName"
         class="operation_input"
         clearable
         @clear="search"
         style="width: 260px"
       >
-      </el-input> -->
+      </el-input>
       <el-date-picker
-        v-model="queryParams.year"
-        type="year"
-        value-format="yyyy"
-        placeholder="选择年"
-        @change="changeDate"
+        v-model="time"
+        format="yyyy-MM-dd HH:mm:ss"
+        value-format="yyyy-MM-dd HH:mm:ss"
+        type="datetimerange"
+        range-separator="-"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        class="operation_input"
+        @change="search"
       >
       </el-date-picker>
       <el-button class="operation_search" @click="search">搜索</el-button>
@@ -40,74 +31,75 @@
     </div>
     <div class="manager_table">
       <el-table :data="tableData" border style="width: 100%">
-        
+        <el-table-column label="序号" width="70px" align="center">
+          <template slot-scope="scope">
+            {{ (pagination.num - 1) * pagination.size + scope.$index + 1 }}
+          </template>
+        </el-table-column>
         <el-table-column
-          label="台风名称"
+          label="数据源名称"
           align="center"
           min-width="100px"
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.cycloneName }}</span>
+            <span>{{ scope.row.numericalName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="台风类型" align="center" min-width="160px">
+        <el-table-column label="起报时间" align="center" min-width="160px">
           <template slot-scope="scope">
-            <span>{{ scope.row.cycloneType }}</span>
+            <span>{{ scope.row.startTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="国际编号" align="center" min-width="100px">
+        <el-table-column label="预报日期" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.international }}</span>
+            <span>{{ scope.row.startDay }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="国内编号" align="center" min-width="100px">
+        <el-table-column label="预报时间" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.domestic }}</span>
+            <span>{{ scope.row.startHours }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="生成时间" align="center" min-width="160px">
+        <el-table-column label="时效" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.createtime }}</span>
+            <span>{{ scope.row.fcst }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="生成时的经度坐标" align="center" min-width="100px">
+        <el-table-column label="修改时间" align="center" min-width="160px">
           <template slot-scope="scope">
-            <span>{{ scope.row.lon }}</span>
+            <span>{{ scope.row.modifyTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="生成时的纬度坐标" align="center" min-width="100px">
+        <el-table-column label="修改次数" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.lat }}</span>
+            <span>{{ scope.row.modifyTimes }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="心气压 HPA" align="center" min-width="100px">
+        <el-table-column label="是否可用" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.centerPressure }}</span>
+            <span>{{ scope.row.isAvailable == 1 ? "是" : "否" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="补充" align="center" min-width="100px">
+          <template slot-scope="scope">
+            <span>{{ scope.row.isSupplement }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="中心最大风速 m/s"
+          label="数据来源"
           align="center"
           min-width="100px"
+          :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.centerMaxSppe }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="风圈半径" align="center" min-width="100px" :show-overflow-tooltip="true">
-          <template slot-scope="scope">
-            <span>{{ scope.row.windCircle }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="移动方向" align="center" min-width="100px">
-          <template slot-scope="scope">
-            <span>{{ scope.row.moveDirection }}</span>
+            <span>{{ scope.row.dataSource }}</span>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <!-- <div class="manager_page">
+    <div class="manager_page">
+      <!-- 分页 -->
       <pagination
         :total="total"
         :page.sync="pagination.num"
@@ -115,7 +107,7 @@
         @pagination="search"
         style="padding-bottom: 0"
       />
-    </div> -->
+    </div>
 
     <file
       ref="file"
@@ -130,6 +122,7 @@ import Pagination from "@/components/Pagination";
 import { mapState, mapMutations } from "vuex";
 import file from "./file.vue";
 export default {
+  props: ["tabShow"],
   components: {
     file,
     Pagination,
@@ -143,7 +136,6 @@ export default {
         title: "",
       },
       // 详细面板显示隐藏
-      systemManagerShow: false,
       managerValue: "",
       tableData: [],
       // 分页
@@ -152,6 +144,7 @@ export default {
         num: 1,
       },
       queryParams: {},
+      time: [],
     };
   },
   mounted() {},
@@ -176,7 +169,7 @@ export default {
     },
     dataList: {
       handler(newval, oldval) {
-        if (newval[3].flag) {
+        if (newval[0].flag) {
           this.systemManagerShow = true;
         } else {
           this.systemManagerShow = false;
@@ -184,9 +177,10 @@ export default {
       },
       deep: true,
     },
-    systemManagerShow(val) {
+    tabShow(val) {
       if (val) {
         this.queryParams = {};
+        this.time = [];
         this.fetch();
       }
     },
@@ -199,34 +193,47 @@ export default {
     // 搜索重置
     resetSearch() {
       this.queryParams = {};
+      this.time = [];
       this.search();
     },
     add() {
       this.dialog.isVisible = true;
       this.dialog.title = "添加数据源";
     },
-    changeDate() {
-      if (!this.queryParams.year) {
-        this.search();
-      }
-    },
     // 搜索
     search() {
-      this.fetch({
-        ...this.queryParams,
-      });
+      if (this.time) {
+        this.queryParams.STime = this.time[0];
+        this.queryParams.ETime = this.time[1];
+      } else {
+        this.queryParams.STime = "";
+        this.queryParams.ETime = "";
+      }
+      if (this.queryParams.STime) {
+        this.fetch({
+          ...this.queryParams,
+        });
+      } else {
+        if (this.queryParams.numericalName) {
+          this.fetch({
+            numericalName: this.queryParams.numericalName,
+          });
+        } else {
+          this.fetch();
+        }
+      }
     },
     // 获取表格数据
     fetch(params = {}) {
       params.pageSize = this.pagination.size;
       params.pageNum = this.pagination.num;
-      this.$get("/api/typhoon", {
+      this.$get("/api/ocean-buoys-live/page", {
         ...params,
       }).then((res) => {
         console.log(res, "res");
         if (res.data.data) {
-          // this.total = res.data.data.total;
-          this.tableData = res.data.data;
+          this.total = res.data.data.total;
+          this.tableData = res.data.data.rows;
         }
       });
     },
@@ -234,11 +241,6 @@ export default {
     closeDialogPage() {
       this.dialog.isVisible = false;
       this.fetch();
-    },
-    closeManager() {
-      this.systemManagerShow = false;
-      this.menuList[1].flag = false;
-      this.setMenuList(this.menuList);
     },
   },
 };
