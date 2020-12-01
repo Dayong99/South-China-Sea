@@ -48,6 +48,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  color:rgba(152, 26, 0, 1);
 
   .logal_image {
     width: 35px;

@@ -269,9 +269,13 @@ export default {
         ...this.queryParams,
       });
       } else {
-        this.fetch({
-          numericalName:this.queryParams.numericalName
-        });
+        if (this.queryParams.numericalName) {
+          this.fetch({
+            numericalName: this.queryParams.numericalName,
+          });
+        } else {
+          this.fetch();
+        }
       }
     },
     // 获取表格数据

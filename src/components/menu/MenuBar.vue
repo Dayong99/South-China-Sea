@@ -126,7 +126,7 @@
           </ul>
 
           <!-- 系统设置 -->
-          <ul class="list_system_ul" v-show="item.flag && flagList[1]">
+          <ul class="list_system_ul" v-show="item.flag && flagList[1]" style="height:auto;overflow-y:hidden;">
             <li v-for="(item, index) in systemList" :key="index">
               <div class="task_list">
                 <div class="task_name" @click="openSystem(index)">
@@ -145,7 +145,7 @@
           </ul>
 
           <!-- 数据管理 -->
-          <ul class="list_system_ul" v-show="item.flag && flagList[2]">
+          <ul class="list_system_ul" v-show="item.flag && flagList[2]" style="height:auto;overflow-y:hidden;">
             <li v-for="(item, index) in dataList" :key="index">
               <div class="task_list">
                 <div class="task_name" @click="openData(index)">

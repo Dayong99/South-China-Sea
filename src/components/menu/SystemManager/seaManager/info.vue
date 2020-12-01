@@ -21,7 +21,7 @@
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
-            <el-form-item label="海区名称：" prop="name">
+            <el-form-item label="海区名称:" prop="name">
               <div>
                 {{formData.name}}
               </div>
@@ -32,7 +32,18 @@
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
-            <el-form-item label="geojson：" prop="dataGeo">
+            <el-form-item label="是否显示:" prop="isShow">
+              <div>
+                {{Number(formData.isShow)==1?"显示":"不显示"}}
+              </div>
+            </el-form-item>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="18">
+          <div class="grid-content bg-purple-dark">
+            <el-form-item label="geojson:" prop="dataGeo">
               <div>
                 {{formData.dataGeo}}
               </div>
@@ -54,6 +65,7 @@ export default {
       rules: {},
       formData: {
         name: "",
+        isShow:"",
         dataGeo: "",
       },
   
@@ -85,6 +97,7 @@ export default {
       this.$refs.form.resetFields();
       this.formData = {
         name: "",
+        isShow:"",
         dataGeo: "",
       };
     },

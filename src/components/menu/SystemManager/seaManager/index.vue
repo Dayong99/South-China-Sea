@@ -35,6 +35,11 @@
             <span>{{ scope.row.name }}</span>
           </template>
         </el-table-column>
+        <el-table-column label="是否显示" align="center" min-width="100px">
+          <template slot-scope="scope">
+            <span>{{ Number(scope.row.isShow) == 0 ? "不显示" : "显示" }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="geojson" align="center" min-width="100px">
           <template slot-scope="scope">
             <span
@@ -83,7 +88,7 @@
         :page.sync="pagination.num"
         :limit.sync="pagination.size"
         @pagination="search"
-        style="padding-bottom:0;"
+        style="padding-bottom: 0"
       />
     </div>
 
@@ -94,7 +99,7 @@
       @close="closeDialogPage"
     />
 
-     <info
+    <info
       ref="info"
       :dialog-visible="infoVisible"
       title="海区详情"
@@ -136,7 +141,13 @@ export default {
         name: null,
       },
 
-      infoVisible:false
+      infoVisible: false,
+      geojsonGroup: [],
+      geoStyle: {
+        color: "#ff7800",
+        weight: 3,
+        opacity: 0.65,
+      },
     };
   },
   mounted() {},
@@ -155,7 +166,7 @@ export default {
         });
         if (i !== 3) {
           this.systemManagerShow = false;
-        } 
+        }
       },
       deep: true,
     },
@@ -174,11 +185,41 @@ export default {
         this.fetch();
       }
     },
+    tableData(val) {
+      this.clearGeojson();
+      this.geojsonGroup = [];
+      val.forEach((item, index) => {
+        if (item.isShow) {
+          let geojson = JSON.parse(item.dataGeo);
+          let data = [];
+          geojson.forEach((item) => {
+            let obj = {};
+            for (let i in item) {
+              obj[i] = item[i];
+            }
+            data.push(obj);
+          });
+
+          let layer = L.geoJSON(data, {
+            style: this.geoStyle,
+          }).addTo(map);
+
+          this.geojsonGroup.push(layer);
+        }
+      });
+    },
   },
   methods: {
     ...mapMutations({
       setMenuList: "menuBar/setMenuList",
     }),
+    clearGeojson() {
+      this.geojsonGroup.forEach((item) => {
+        if (map.hasLayer(item)) {
+          item.removeFrom(map);
+        }
+      });
+    },
     editItem(row) {
       this.$refs.edit.setData(row);
       this.dialog.isVisible = true;
@@ -236,14 +277,14 @@ export default {
       this.dialog.isVisible = false;
       this.fetch();
     },
-    
+
     closeManager() {
       this.systemManagerShow = false;
       this.menuList[1].flag = false;
       this.setMenuList(this.menuList);
     },
     // 海区详情
-    closeInfo(){
+    closeInfo() {
       this.infoVisible = false;
     },
     information(row) {
