@@ -1,5 +1,5 @@
 <template>
-  <div id="ship_manager" class="ship_manager" v-show="systemManagerShow">
+  <div id="ship_manager" class="ship_manager" v-show="systemManagerShow" v-drag>
     <div class="manager_title">
       <span>海区划分</span>
       <img

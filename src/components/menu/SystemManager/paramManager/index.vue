@@ -4,6 +4,7 @@
     class="ship_manager"
     v-show="systemManagerShow"
     style="width: auto; height: auto"
+    v-drag
   >
     <div class="manager_title">
       <span>参数配置</span>
@@ -41,7 +42,7 @@
         <el-table-column
           label="参数名称"
           align="center"
-          min-width="100px"
+          min-width="240px"
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">

@@ -63,6 +63,10 @@ const state = {
     {
       name: '台风数据',
       flag: false
+    },
+    {
+      name: '实况数据',
+      flag: false
     }
   ],
   TaskManagerOptions: 0, // 0 不显示 1 添加 2 修改

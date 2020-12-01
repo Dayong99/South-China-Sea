@@ -20,9 +20,34 @@
             @keyup.enter.native="location"
           ></el-input>
         </div>
-        <div class="input_right">
+        <div class="input_right" @click.stop="showMarkArea">
           <img src="@/assets/images/menu/heart.png" />
         </div>
+      </div>
+    </div>
+
+    <div class="mark_area" v-show="markAreaFlag">
+      <div class="area_top">
+        <div class="area_top_left">
+          <img src="@/assets/images/menu/transform.png">
+          <span>常用区域</span>
+        </div>
+        <div class="area_top_right">
+          <img src="@/assets/images/menu/addarea.png" class="area_add" @click.stop="addItem">
+          <img src="@/assets/images/menu/close.png" class="area_close" @click.stop="showMarkArea">
+        </div>
+      </div>
+      <div class="area_content">
+        <ul>
+          <li v-for="(item, index) in areaList" :key="index">
+            <span class="area_index">{{ index +1 }}</span>
+            <span class="area_name">{{ item.name }}</span>
+            <div class="tolatlon" @click.stop="toLatLon(item)">
+              <img src="@/assets/images/menu/location.png">
+              <span>跳转</span>
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
 
@@ -264,12 +289,23 @@
         </li>
       </ul>
     </div>
+    <edit 
+      ref="edit"
+      :dialog-visible="dialog.isVisible"
+      :title="dialog.title"
+      @close="closeDialogPage"
+      >
+    </edit>
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations } from "vuex";
+import Edit from "@/components/menu/SystemManager/areaManager/edit.vue";
 export default {
+  components: {
+    Edit
+  },
   data() {
     return {
       // 任务列表
@@ -297,6 +333,15 @@ export default {
       routeLine: [],
       //风险等级
       colorArr: ["#00ff00", "#ffff00", "#ff8000", "#9919e5", "#ff0000"],
+
+      // 固定区域面板
+      markAreaFlag: false,
+      areaList: [],
+      // 新增 修改 对话框
+      dialog: {
+        isVisible: false,
+        title: "",
+      },
     };
   },
   computed: {
@@ -1159,6 +1204,36 @@ export default {
           return value2 - value1;
         }
       };
+    },
+    // 区域收藏面板
+    showMarkArea() {
+      this.markAreaFlag = !this.markAreaFlag
+      if(this.markAreaFlag) {
+        this.areaFetch()
+      }
+    },
+    areaFetch() {
+      this.$get('/api/region-division').then(res => {
+        if(res.status == 200) {
+          console.log('常用区域', res)
+          let data = res.data.data.rows
+          this.areaList = data
+        }
+      }).catch(error => {
+        this.$message('获取常用区域失败')
+      })
+    },
+    toLatLon(location) {
+      window.map.flyToBounds(L.latLngBounds([[location.maxLat, location.minLon],[location.minLat, location.maxLon]]))
+    },
+    addItem() {
+      this.dialog.isVisible = true;
+      this.dialog.title = "添加区域";
+    },
+    // 关闭新增 修改 对话框
+    closeDialogPage() {
+      this.dialog.isVisible = false;
+      this.areaFetch();
     },
   },
 };

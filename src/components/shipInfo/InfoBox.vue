@@ -136,7 +136,7 @@ export default {
                 }).then((r) => {
                   if (r.status == 200) {
                     let str = this.getBuoyContent({
-                      title: item.areaNum,
+                      title: '浮标',
                       content: r.data.data,
                       lon: item.lon,
                       lat: item.lat,
@@ -165,21 +165,24 @@ export default {
       return (
         `<div id="info_box">
           <div class="info_title">
-            <span>浮标` + info.title + `</span>
+            <span>` + info.title + `</span>
           </div>
           <div class="info_content">
             <div class="info">
+              <div>区站号:<span>` + info.areaNum + `</span> </div>
+              <div>类型:<span>` + info.type + `</span> </div>
               <div>位置:<span>` + info.lon + `N,` + info.lat + `E</span> </div>
-              <div>温度:<span>` + this.getValue(info.content.temperature) + `℃</span> </div>
-              <div>海平面气压:<span>` + this.getValue(info.content.pressure) + `hPa</span></div>
-              <div>湿度:<span>` + this.getValue(info.content.humidity) + `%</span></div>
               <div>风速:<span>` + this.getValue(info.content.windDirection) + `° ` + this.getValue(info.content.windSpeed) +
                 `m/s</span>
               </div>
-              <div>风浪周期:<span>` + this.getValue(info.content.wavePeriodFlag1) + `秒</span></div>
-              <div>风浪高度:<span>` + this.getValue(info.content.waveHeightFlag1) + `米</span></div>
-              <div>涌浪周期:<span>` + this.getValue(info.content.wavePeriodFlag20) + `秒</span></div>
-              <div>涌浪高度:<span>` + this.getValue(info.content.waveHeightFlag21) + `米</span></div>
+              <div>温度:<span>` + this.getValue(info.content.temperature) + `℃</span> </div>
+              <div>湿度:<span>` + this.getValue(info.content.humidity) + `%</span></div>
+              <div>海平面气压:<span>` + this.getValue(info.content.pressure) + `hPa</span></div>
+              
+              <div>波浪周期:<span>` + this.getValue(info.content.wavePeriod) + `s</span></div>
+              <div>波浪高度:<span>` + this.getValue(info.content.waveHeight) + `m</span></div>
+              <div>波浪方向:<span>` + this.getValue(info.content.waveDirection) + `</span></div>
+              <div>时间:<span>` + this.getValue(info.content.dayTime) + `</span></div>
             </div>
           </div>
         </div>`
@@ -299,9 +302,9 @@ export default {
 };
 </script>
 <style scoped lang ='scss'>
+  /* 用不了 &#{&} 这种写法*/
 .l-popup {
   &--no-style {
-    /* 用不了 &#{&} 这种写法*/
     .leaflet-popup-close-button.leaflet-popup-close-button {
       display: none;
     }

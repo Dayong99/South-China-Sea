@@ -5,7 +5,7 @@
         <img src="@/assets/toolList/add.png" />
       </el-tooltip>
     </div>
-    <div class="tool_item tool_right zoom" @click.stop="measurearea">
+    <div class="tool_item tool_right zoom" @click.stop="zoomOut">
       <el-tooltip class="item" effect="light" content="缩小" placement="bottom">
         <img src="@/assets/toolList/minus.png" />
       </el-tooltip>
@@ -30,11 +30,11 @@
         <img src="@/assets/toolList/area.png" />
       </el-tooltip>
     </div>
-    <!-- <div class="tool_item tool_right">
+    <div class="tool_item tool_right" @click.stop="locationDialog(true)">
       <el-tooltip class="item" effect="light" content="坐标定位" placement="bottom">
         <img src="@/assets/toolList/location.png">
       </el-tooltip>
-    </div> -->
+    </div>
     <div class="tool_item tool_right" @click.stop="graticule">
       <el-tooltip
         class="item"
@@ -64,6 +64,57 @@
       >
         <img src="@/assets/toolList/clear.png" />
       </el-tooltip>
+    </div>
+
+    <!-- 经纬度坐标定位框 -->
+    <div class="location_dialog" v-show="locationShow">
+      <div class="location_top">
+        <div class="top_left">
+          <img src="@/assets/images/toolbar/location.png">
+          <span>坐标定位</span>
+        </div>
+        <div class="top_right" @click.stop="locationDialog(false)">
+          <img src="@/assets/images/legendbar/close.png">
+        </div>
+      </div>
+      <div class="location_content">
+        <div class="content_top">
+          <div class="content_lat">
+            <span>纬度:</span>
+            <div>
+              <input type="text" v-model="lat1">
+              <span>°</span>
+            </div>
+            <div>
+              <input type="text" v-model="lat2">
+              <span>'</span>
+            </div>
+            <div class="lat">
+              <div :class="{ 'lat_n': true, 'lat_active': latflag }" @click.stop="changeLatLng(1, true)">N</div>
+              <div :class="{ 'lat_s': true, 'lat_active': !latflag }" @click.stop="changeLatLng(1, false)">S</div>
+            </div>
+          </div>
+          <div class="content_lon">
+            <span>经度:</span>
+            <div>
+              <input type="text" v-model="lon1">
+              <span>°</span>
+            </div>
+            <div>
+              <input type="text" v-model="lon2">
+              <span>'</span>
+            </div>
+            <div class="lon">
+              <div :class="{ 'lon_w': true, 'lon_active': lonflag }" @click.stop="changeLatLng(2, true)">W</div>
+              <div :class="{ 'lon_e': true, 'lon_active': !lonflag }" @click.stop="changeLatLng(2, false)">E</div>
+            </div>
+          </div>
+        </div>
+        <div class="content_bottom">
+          <div class="content_sure" :class="{ 'btn_active': true }" @click.stop="checkLocation">确定</div>
+          <div class="content_cancle" :class="{ 'btn_active': false }" @click.stop="locationDialog(false)">取消</div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -128,6 +179,14 @@ export default {
         },
       ],
       latlngGraticuleLayer: null,
+      // 定位对话框
+      locationShow: false,
+      lat1: null,
+      lat2: null,
+      lon1: null,
+      lon2: null,
+      latflag: true,
+      lonflag: true,
     };
   },
   computed: {
@@ -279,6 +338,7 @@ export default {
       map.off("click")
       window.tool.clearTool();
     },
+    // 经纬线
     loadGraticule() {
       this.latlngGraticuleLayer = L.latlngGraticule({
         showLabel: true,
@@ -287,12 +347,53 @@ export default {
         zoomInterval: this.graticule_zoom,
       }).addTo(window.map);
     },
+    // 定位窗口
+    locationDialog(flag) {
+      // flag==false 清除数据
+      if(!flag) {
+        this.lat1 = null
+        this.lat2 = null
+        this.lon1 = null
+        this.lon2 = null
+        this.latflag = true
+        this.lonflag = true
+      }
+      this.locationShow = flag
+    },
+    // 定位方法
+    checkLocation() {
+      let lat = this.changeToDu(this.lat1, this.lat2)
+      let lon = this.changeToDu(this.lon1, this.lon2)
+      if(!this.latflag && !this.lonflag) {
+        window.map.flyTo(L.latLng(0 - lat, 0 - lon))
+      } else if(!this.latflag) {
+        window.map.flyTo(L.latLng(0 - lat, lon))
+      } else if(!this.lonflag) {
+        window.map.flyTo(L.latLng(lat, 0 - lon))
+      } else {
+        window.map.flyTo(L.latLng(lat, lon))
+      }
+    },
+    changeToDu(latLng1, latLng2) {
+      let d = latLng1
+      let f = latLng2 || 0
+      let du = parseFloat(f / 60) + parseFloat(d);
+      return du;
+    },
+    // 切换NS、WE
+    changeLatLng(num, flag) {
+      if(num === 1) {
+        this.latflag = flag
+      } else if(num === 2) {
+        this.lonflag = flag
+      }
+    }
   },
 };
 </script>
 <style scoped lang="scss">
 #toolBar {
-  z-index: 999;
+  z-index: 9999;
 }
 .right-top-container {
   position: absolute;
@@ -305,7 +406,7 @@ export default {
   border-radius: 15px;
   background: rgba(109, 109, 109, 0.7);
 
-  div:hover {
+  .tool_item:hover {
     background: rgba(109, 109, 109, 0.9);
   }
 
@@ -343,6 +444,210 @@ export default {
       width: 90%;
       height: 90%;
       vertical-align: middle;
+    }
+  }
+
+  // 定位框
+  .location_dialog {
+    position: fixed;
+    width: 340px;
+    height: 200px;
+    right: 180px;
+    bottom: 200px;
+    border-radius: 8px;
+    background: rgba(76, 75, 70, 0.7);
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+
+    &:hover {
+      background: rgba(76, 75, 70, 0.7);
+    }
+
+    .location_top {
+      flex: 1;
+      width: 100%;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      color: #fff;
+      background: rgba(163, 163, 163, 0.7);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      img {
+        width: 20px;
+        height: 20px;
+      }
+
+      .top_left {
+        margin-left: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        span {
+          margin-left: 5px;
+        }
+      }
+
+      .top_right {
+        margin-right: 8px;
+
+        img {
+          width: 16px;
+          height: 16px;
+        }
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+
+    .location_content {
+      flex: 5;
+      width: 100%;
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+      display: flex;
+      flex-flow: column nowrap;
+      align-items: center;
+
+      .content_top {
+        flex: 3;
+        width: 90%;
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+
+        input {
+          width: 45px;
+          height: 30px;
+          background: #100f0f;
+          border-radius: 4px;
+          opacity: .7;
+          border: none;
+          color: #fff;
+          outline: none;
+          text-align: center;
+        }
+
+        .content_lat {
+          width: 100%;
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+
+          .lat {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            // border: 1px solid #FFBCBC;
+            border-radius: 8px;
+
+            div {
+              width: 30px;
+              height: 30px;
+              line-height: 30px;
+              text-align: center;
+
+              &:hover {
+                cursor: pointer;
+              }
+            }
+
+            .lat_n {
+              border: 1px solid #FFBCBC;
+              border-top-left-radius: 8px;
+              border-bottom-left-radius: 8px;
+            }
+            .lat_s {
+              border: 1px solid #FFBCBC;
+              border-top-right-radius: 8px;
+              border-bottom-right-radius: 8px;
+            }
+            
+            .lat_active {
+              border: none;
+              background: rgba(132, 13, 2, 0.9);
+            }
+          }
+        }
+
+        .content_lon {
+          width: 100%;
+          margin-top: 15px;
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+
+          .lon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            // border: 1px solid #FFBCBC;
+            border-radius: 8px;
+
+            div {
+              width: 30px;
+              height: 30px;
+              line-height: 30px;
+              text-align: center;
+
+              &:hover {
+                cursor: pointer;
+              }
+            }
+
+            .lon_w {
+              border: 1px solid #FFBCBC;
+              border-top-left-radius: 8px;
+              border-bottom-left-radius: 8px;
+            }
+            .lon_e {
+              border: 1px solid #FFBCBC;
+              border-top-right-radius: 8px;
+              border-bottom-right-radius: 8px;
+            }
+            
+            .lon_active {
+              border: none;
+              background: rgba(132, 13, 2, 0.9);
+            }
+          }
+        }
+      }
+
+      .content_bottom {
+        flex: 1;
+        width: 50%;
+        display: flex;
+        justify-content: space-around;
+        align-items: flex-start;
+        color: #FFBCBC;
+
+        div {
+          width: 80px;
+          height: 30px;
+          line-height: 30px;
+          text-align: center;
+          border: 1px solid #FFBCBC;
+          border-radius: 5px;
+
+          &:hover {
+            cursor: pointer;
+          }
+        }
+
+        .btn_active {
+          // background: rgba(152, 26, 0, 0.7);
+          background: rgba(132, 13, 2, 0.9);
+          border: none;
+        }
+      }
     }
   }
 }

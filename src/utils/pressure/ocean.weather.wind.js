@@ -93,20 +93,21 @@ class Wind {
   }
 
   get color() {
-    var speed = this._speed;
-    if(speed <= 7.9) {
-      // 0-4级风
-      return '#D3DE44';
-    } else if(speed > 7.9 && speed <= 17.1) {
-      // 5-7级风
-      return '#E68514';
-    } else if(speed > 17.1 && speed <= 36.9) {
-      // 8-12级风
-      return '#E82318';
-    } else {
-      // 13-17级风
-      return '#B80D75';
-    }
+    // var speed = this._speed;
+    // if(speed <= 7.9) {
+    //   // 0-4级风
+    //   return '#D3DE44';
+    // } else if(speed > 7.9 && speed <= 17.1) {
+    //   // 5-7级风
+    //   return '#E68514';
+    // } else if(speed > 17.1 && speed <= 36.9) {
+    //   // 8-12级风
+    //   return '#E82318';
+    // } else {
+    //   // 13-17级风
+    //   return '#B80D75';
+    // }
+    return '#1e3cff'
   }
 
   _convertToMileS(speed) {
