@@ -848,7 +848,13 @@ export default {
           extentList.forEach((item, index) => {
             if (item.xMax > 180) {
               extentList[index].xMin -= 360;
+              if(extentList[index].xMin == -1) {
+                extentList[index].xMin = 0
+              }
               extentList[index].xMax -= 360;
+              if(extentList[index].xMax == -1) {
+                extentList[index].xMax = 0
+              }
             }
           });
         }
@@ -920,7 +926,13 @@ export default {
           extentList.forEach((item, index) => {
             if (item.xMax > 180) {
               extentList[index].xMin -= 360;
+              if(extentList[index].xMin == -1) {
+                extentList[index].xMin = 0
+              }
               extentList[index].xMax -= 360;
+              if(extentList[index].xMax == -1) {
+                extentList[index].xMax = 0
+              }
             }
           });
         }

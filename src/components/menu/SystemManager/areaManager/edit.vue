@@ -170,7 +170,7 @@ export default {
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          if(this.formData.minLon>=this.formData.maxLon||this.formData.maxLat>=this.formData.maxLat){
+          if(this.formData.minLon>=this.formData.maxLon||this.formData.minLat>=this.formData.maxLat){
             this.$message.warning('请输入正确的经纬度值')
           }else if (this.title === "添加区域") {
             this.$post("/api/region-division", this.formData)

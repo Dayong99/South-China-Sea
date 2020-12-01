@@ -87,9 +87,9 @@
         width: 90px;
         height: 30px;
         line-height: 30px;
-        position: absolute;
-        bottom: -20px;
-        right: 80px;
+        position: fixed;
+        bottom: 80px;
+        right: 145px;
         color: rgba(255, 255, 255, 0.9);
         background: url('~@/assets/images/sidebar/drawbg.png') no-repeat;
         background-position: center;
