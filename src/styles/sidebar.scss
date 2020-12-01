@@ -332,7 +332,8 @@
     }
 
     .tylist {
-        width: 375px;
+        // width: 375px;
+        width: 325px;
         // height: 500px;
         position: fixed;
         bottom: 230px;
@@ -341,7 +342,7 @@
         z-index: 9999;
 
         .tytitle {
-            height: 50px;
+            height: 40px;
             display: flex;
             font-size: 16px;
             font-weight: 700;
@@ -390,7 +391,8 @@
 
         .tycontent {
             // width: 300px;
-            height: 328px;
+            // height: 328px;
+            height: 250px;
             font-size: 14px;
             overflow-y: auto;
             overflow-x: hidden;
@@ -420,7 +422,8 @@
 
                     div {
                         text-align: center;
-                        line-height: 40px;
+                        // line-height: 40px;
+                        line-height: 32px;
                     }
 
                     .chooseAll {
@@ -499,4 +502,5 @@
             
         }
     }
+
 }
