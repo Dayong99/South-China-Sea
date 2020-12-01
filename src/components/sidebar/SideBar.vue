@@ -668,9 +668,11 @@ export default {
         if (this.menuList[index].drawType === "typhoon") {
           console.log("取消台风---------");
           this.typhoonShow = false;
+          this.chooseAllFlag = false
           //清除台风警戒线
           this.clearWarningLine();
           //清除台风
+          this.deleteAllTy()
         }
 
         // 取消状态、重置最近缓存的level
