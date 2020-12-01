@@ -79,6 +79,9 @@
           </ul>
           <div class="echarts_content" id="echarts_content"></div>
         </div>
+        <div class="tidal_msg" v-show="tidalMsgFlag">
+          <span>此时刻暂无潮汐数据</span>
+        </div>
         <div class="content_list">
           <ul>
             <li
@@ -305,6 +308,8 @@ export default {
         left: null,
         top: null,
       },
+      // 暂无数据提示消息
+      tidalMsgFlag: false,
       // 面板数据
       tidalData: {
         time: null,
@@ -382,7 +387,7 @@ export default {
         },
       ],
       chooseAllFlag: false,
-      timer: undefined,
+      // timer: undefined,
       tyDeletArr:[]
     };
   },
@@ -747,7 +752,7 @@ export default {
                 choose: false,
                 cycloneType: item.cycloneType,
                 cycloneName: item.cycloneName,
-                centerMaxSpeed: item.centerMaxSpeed,
+                // centerMaxSpeed: item.centerMaxSpeed,
               });
             });
             console.log(this.tyList);
@@ -1163,7 +1168,7 @@ export default {
         })
         .catch((error) => {
           this.$message.error("获取" + currentItem.name + "数据失败");
-        });
+        })
     },
     // 绘制 洋流\波向
     getAndDrawWave(currentItem) {
@@ -1270,23 +1275,24 @@ export default {
         this.markerMouseFlag = true;
         this.markerId = ev.target.harborId;
         // 请求潮汐数据
-        let time = this.day;
+        let day = this.day;
         if (!this.tidalMouseFlag) {
-          this.getTidalData(harbor.id, time);
+          this.getTidalData(harbor.id, day);
         }
 
         console.log("mouseover", ev);
         // ev.target.   构造数据
-        this.tidalData.time = this.time;
+        let time = Number(this.time) > 10 ? ' ' + this.time : ' 0' + this.time
+        this.tidalData.time = this.day + time + ':00:00';
         this.tidalData.name = ev.target.name;
         // 前三天日期数据
         this.tidalIndex = 2; // 重置选择的日期
         this.tidalData.timeList = [];
-        let now = this.$m(this.time).format("MM-DD");
-        let yestoday = this.$m(this.time)
+        let now = this.$m(this.day).format("MM-DD");
+        let yestoday = this.$m(this.day)
           .subtract(1, "days")
           .format("MM-DD");
-        let lastday = this.$m(this.time)
+        let lastday = this.$m(this.day)
           .subtract(2, "days")
           .format("MM-DD");
         this.tidalData.timeList.push(lastday);
@@ -1357,6 +1363,7 @@ export default {
             let time = null;
             this.clearChart();
             this.createChart(this.tidalCharts);
+            this.tidalMsgFlag = false
             if (
               tidalList.length &&
               tidalList != null &&
@@ -1398,10 +1405,9 @@ export default {
               this.tidalData.tidalList[1].type = "min";
               console.log("tidalList", this.tidalData.tidalList);
             } else {
-              this.$message.warning("此时刻暂无潮汐数据");
+              this.tidalMsgFlag = true
+              // this.$message.warning("此时刻暂无潮汐数据");
             }
-          } else {
-            this.$message.warning("此时刻暂无潮汐数据");
           }
         })
         .catch((error) => {
@@ -1594,6 +1600,7 @@ export default {
           }
         });
         console.log(chooseArr, "取消的集合");
+        this.deleteAllTy()
         //点击全选
       } else {
         this.chooseAllFlag = true;
@@ -1605,6 +1612,9 @@ export default {
           }
         });
         console.log(chooseArr, "选中的集合");
+        chooseArr.forEach(item=>{
+          this.drawTy(this.tyList[item].id)
+        })
       }
     },
 
@@ -1618,7 +1628,7 @@ export default {
         let i = this.tyList.findIndex((item) => {
           return item.choose == true;
         });
-        if ((i = -1)) {
+        if ((i == -1)) {
           this.chooseAllFlag = false;
         }
         this.deleteTy(item.id)
@@ -1629,7 +1639,7 @@ export default {
         let i = this.tyList.findIndex((item) => {
           return item.choose == false;
         });
-        if ((i = -1)) {
+        if ((i == -1)) {
           this.chooseAllFlag = true;
         }
         this.drawTy(item.id);
@@ -1686,7 +1696,7 @@ export default {
         let that = this;
         function test() {
           if (i < trackList.length - 1) {
-            that.timer = setTimeout(() => {
+            let timer = setTimeout(() => {
               let latlngs = [
                 [trackList[i].lat, trackList[i].lon],
                 [trackList[i + 1].lat, trackList[i + 1].lon],
@@ -1712,7 +1722,7 @@ export default {
               test();
             }, 200);
           } else {
-            clearTimeout(that.timer);
+            clearTimeout(timer);
             i = 0;
           }
         }

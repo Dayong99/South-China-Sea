@@ -1,5 +1,5 @@
 <template>
-  <div id="ship_manager" class="algorithm_manager" v-show="algorithmShow">
+  <div id="algorith_manager" class="algorithm_manager" v-show="algorithmShow">
     <div class="manager_title">
       <span>算法参数配置</span>
       <img
@@ -22,7 +22,7 @@
         />
       </div>
       <div class="factor_wrapper" v-if="activeFactorTitle">
-        <div class="factor_title">
+        <div class="factor_title" v-if="activeFactorTitle === 2">
           {{ factorTitleList[activeFactorTitle] }}-{{ factorTitle }}
         </div>
         <div class="factor_param" v-if="activeFactorTitle === 2">
@@ -34,10 +34,10 @@
           >
             <div class="select_desc">{{ item.parameterName }}</div>
             <div class="number_wrapper">
-              <input type="text" :value="item.value" />
+              <input type="text" v-model="item.value"/>
             </div>
             <div class="number_wrapper">
-              <input type="text" :value="item.value" />
+              <input type="text" v-model="item.type" />
             </div>
             <div class="select_options">
               <div
@@ -169,18 +169,22 @@ export default {
       });
     },
     factorClick(item, index, itemOptions, indexOptions) {
-      console.log(item, index, itemOptions, indexOptions,`factorClick`)
+      console.log(this.treeData.children[this.activeWeather.index].children[
+        this.activeWeather.childIndex
+      ].weatherFactor[index],item, index, itemOptions, indexOptions,`factorClick`)
       let checked = this.treeData.children[this.activeWeather.index].children[
         this.activeWeather.childIndex
       ].weatherFactor[index].checked[indexOptions]
         ? false
         : true;
-      console.log(checked,`checkedcheckedcheckedchecked`)
       let arr = [false, false, false];
       arr[indexOptions] = checked;
       this.treeData.children[this.activeWeather.index].children[
         this.activeWeather.childIndex
       ].weatherFactor[index].checked = arr;
+      console.log(this.treeData.children[this.activeWeather.index].children[
+        this.activeWeather.childIndex
+      ].weatherFactor[index],`aaaaaa`)
       this.$forceUpdate();
     },
     addThirdNodeConfirm() {
@@ -215,6 +219,7 @@ export default {
               ...e,
               checked: [false, false, false],
               value: 0,
+              type: 0
             };
           });
         }
@@ -226,8 +231,6 @@ export default {
       this.activeFactorTitle = 0;
     },
     NodeClick(e, data) {
-      console.log(e, `e`);
-      console.log(data.level, data.label);
       this.activeFactorTitle = data.level;
       this.factorTitle = data.label;
     },
@@ -280,7 +283,6 @@ export default {
           if (data.id === e.id) {
             index = i;
             e.children.forEach((a, b) => {
-              console.log(a, b, `forEach`);
               if (a.label === data.label) {
                 childIndex = b;
               }
@@ -501,7 +503,7 @@ export default {
   height: 80%;
   display: flex;
   .tree_wrapper {
-    width: 520px;
+    width: 600px;
     height: 100%;
     overflow-y: auto;
     position: relative;
@@ -511,7 +513,7 @@ export default {
   }
   .factor_wrapper {
     margin-top: 40px;
-    width: 400px;
+    width: 500px;
     height: 300px;
     line-height: 20px;
     .factor_title {
@@ -533,7 +535,7 @@ export default {
       }
     }
     .factor_param {
-      width: 400px;
+      width: 500px;
       height: 200px;
       padding: 2px 5px 5px 5px;
       border-radius: 5px;

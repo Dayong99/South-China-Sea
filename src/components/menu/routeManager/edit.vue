@@ -31,7 +31,7 @@
           </div>
         </div>
       </div>
-      <div class="routeInfo_wrapper">
+      <div class="routeInfo_wrapper" v-if="routeInfo.length">
         <div class="routeInfo_item">
           <div class="item">
             航线名称：<el-input
@@ -45,7 +45,7 @@
             经度：<el-input
               class="input_wrapper"
               size="mini"
-              v-model="routeInfo[activeRoutePoint].lon"
+              v-model="routeInfo[activeRoutePoint].lng"
               placeholder="请输入经度"
             ></el-input>
           </div>
@@ -68,6 +68,7 @@
           <div class="item">
             时间：
             <el-date-picker
+              value-format="yyyy-MM-dd HH:mm:ss"
               class="date_wrapper"
               v-model="routeInfo[activeRoutePoint].time"
               type="datetime"
@@ -115,14 +116,7 @@ export default {
 
       activeRoutePoint: 0,
       routeCollect: [], // 航线点集合
-      routeInfo: [
-        {
-          lon: null,
-          lat: null,
-          port: null,
-          time: null,
-        },
-      ], // 航线信息集合
+      routeInfo: [], // 航线信息集合
       geometry: [], // 航线全部信息
     };
   },
@@ -135,13 +129,14 @@ export default {
   watch: {
     routeDialogOptions: {
       handler: function (val) {
+        console.log(val, `航线新增`);
         if (val[0] === 1) {
           this.title = "添加航线";
         }
         if (val[0] === 2) {
           this.title = "修改航线";
         }
-        this.routeManagerShow = val[0];
+        this.routeManagerShow = val[0] ? true : false;
         this.$nextTick(() => {
           this.initMap();
         });
@@ -152,24 +147,24 @@ export default {
     ...mapMutations({
       setRouteDialogOptions: "menuBar/setRouteDialogOptions",
     }),
-    changeTimeSteap() {},
     routeCustomClick() {
       this.routeCustomActive = !this.routeCustomActive;
       if (this.routeCustomActive) {
-        // this.routeCollect.forEach((e, i) => {
-        //   e.remove();
-        // });
-        this.geometry.forEach((e, i) => {
-          e.remove();
-        });
-        this.routeCollect = [];
+        if (this.geometry.length) {
+          this.geometry.forEach((e, i) => {
+            e.remove();
+          }); // 清楚之前画的
+        }
+
+        this.reset();
         this.draw();
-      } else {
       }
+      console.log(this.routeCustomActive, `this.routeCustomActive draw`);
     },
     closeManager() {
       this.routeManagerShow = false;
       this.setRouteDialogOptions([0, {}]);
+      this.reset();
       window.routeMap.remove();
     },
     draw() {
@@ -190,11 +185,12 @@ export default {
         this.geometry.push(node);
         this.routeCollect.push(node);
         this.routeInfo.push({
-          lat: e.latlng.lat,
-          lng: e.latlng.lng,
+          lat: e.latlng.lat.toFixed(2),
+          lng: e.latlng.lng.toFixed(2),
           port: null,
           time: null,
         });
+        console.log(this.routeInfo, `routeInforouteInforouteInfo`);
         this.activeRoutePoint = this.routeCollect.length - 1;
         window.routeMap.on("mousemove", (e) => {
           if (this.routePointCollect.length > 0) {
@@ -234,14 +230,19 @@ export default {
     reset() {
       this.routeEditShow = false;
       this.routeCollect = [];
-      this.routeCustomActive = false;
+      this.routeInfo = [];
+      this.activeRoutePoint = 0;
+      this.routeInfoList = {
+        name: null,
+        routePoint: [],
+      };
     },
 
     // 编辑 新增 航线
     editRoute() {
       if (this.routeCollect.length) {
         let dataArr = [];
-        this.routeCollect.forEach((e, i) => {
+        this.routeInfo.forEach((e, i) => {
           let obj = {
             arrivalTime: null,
             latitude: null,
@@ -250,26 +251,12 @@ export default {
             itemName: null,
             lineName: null,
           };
-          let timeArr = [
-            "2020-09-01 03:00:00",
-            "2020-09-01 05:00:00",
-            "2020-09-01 07:00:00",
-            "2020-09-01 09:00:00",
-            "2020-09-01 11:00:00",
-            "2020-09-02 05:00:00",
-            "2020-09-02 09:00:00",
-            "2020-09-03 11:00:00",
-            "2020-09-03 20:00:00",
-            "2020-09-04 09:00:00",
-            "2020-09-05 01:00:00",
-            "2020-09-05 11:00:00",
-          ];
+          obj["lineName"] = this.routeInfoList.name;
           obj["itemIndex"] = i;
-          obj["itemName"] = "港口";
-          obj["longitude"] = e._latlng.lng;
-          obj["latitude"] = e._latlng.lat;
-
-          obj["arrivalTime"] = timeArr[i];
+          obj["itemName"] = e.port;
+          obj["longitude"] = e.lng;
+          obj["latitude"] = e.lat;
+          obj["arrivalTime"] = e.time;
           dataArr.push(obj);
         });
         let params = {

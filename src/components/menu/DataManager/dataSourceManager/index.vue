@@ -3,7 +3,7 @@
     id="ship_manager"
     class="ship_manager"
     v-show="systemManagerShow"
-    style="width: auto; height: auto"
+    style="width:auto; height: auto"
   >
     <div class="manager_title">
       <span>数据源配置—广东省网</span>
@@ -14,9 +14,9 @@
     </div>
     <div class="manager_operation">
       <el-input
-        placeholder="任务名称"
+        placeholder="数据源名称"
         prefix-icon="el-icon-search"
-        v-model="queryParams.name"
+        v-model="queryParams.numericalName"
         class="operation_input"
         clearable
         @clear="search"
@@ -78,7 +78,7 @@
             <span>{{ scope.row.fcst }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="修改时间" align="center" min-width="100px">
+        <el-table-column label="修改时间" align="center" min-width="160px">
           <template slot-scope="scope">
             <span>{{ scope.row.modifyTime }}</span>
           </template>
@@ -227,7 +227,7 @@ export default {
       });
       } else {
         this.fetch({
-          name:this.queryParams.name
+          numericalName:this.queryParams.numericalName
         });
       }
     },

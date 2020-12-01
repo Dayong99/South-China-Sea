@@ -18,9 +18,6 @@
       </el-input>
       <el-button class="operation_search" @click="search">搜索</el-button>
       <el-button class="operation_clear" @click="resetSearch">重置</el-button>
-      <el-button icon="el-icon-plus" class="operation_add" @click="add"
-        >添加</el-button
-      >
     </div>
     <div class="manager_table">
       <el-table :data="tableData" border style="width: 100%" max-height="400px">
@@ -68,7 +65,7 @@
             <img
               style="width:20px;cursor:pointer"
               src="@/assets/images/menu/assessView.png"
-              @click="detailAssessMentInfo(scope.row)"
+              @click="detailAssessMentInfo(scope.row,0)"
             />
           </template>
         </el-table-column>
@@ -96,11 +93,6 @@ export default {
   },
   data() {
     return {
-      // 算法弹窗
-      algorithmDialog: {
-        isVisible: false,
-        title: "",
-      },
       total: 0,
       // 新增 修改 对话框
       dialog: {
@@ -142,11 +134,8 @@ export default {
       lineData: [],
       //风险航线 线段点集合，用于删除
       linesArr: [],
+      assessMentInfo: {} // 点击航线信息
     };
-  },
-  mounted() {
-    this.fetch();
-    // eventBus.$emit("getEvent",{close:this.close})
   },
   computed: {
     ...mapState({
@@ -159,9 +148,11 @@ export default {
     // 监听menuList，控制详细面板的显隐
     routeAlgorithmInfo: {
       handler(val) {
+        console.log(val[1],`信息`)
         if (val[0]) {
           this.assessManagerShow = true;
           this.assessMentInfo = val[1];
+          this.fetch();
         } else {
           this.assessManagerShow = false;
           this.assessMentInfo = val[1];
@@ -198,18 +189,19 @@ export default {
       setCloseflag: "routeInfo/setCloseflag",
     }),
     //点击打开评估页面，默认显示按区域评估
-    detailAssessMentInfo(row) {
+    detailAssessMentInfo(row,pointIndex) {
       console.log(row, `detailAssessMentInfo`);
       this.setCloseflag(false)
       this.clearRectangle();
       this.clearRouteLine();
       this.setRouteInfoShow(false);
+      this.riskArr = []
       //默认显示风险评估区域
       //获取风险评估区域，绘制
       this.$get("api/assessment/evaluation-conclusion", {
         assessmentId: row.id, //评估id
         courseTime: "", //航线的时间节点
-        index: 0, //航线第几个时间点
+        index: pointIndex, //航线第几个时间点
       }).then((res) => {
         console.log(res, "评估数据");
         this.riskArr = res.data.data;
@@ -344,10 +336,6 @@ export default {
       };
       this.search();
     },
-    add() {
-      this.dialog.isVisible = true;
-      this.dialog.title = "添加船舰";
-    },
     // 搜索
     search() {
       this.fetch({
@@ -358,14 +346,14 @@ export default {
     fetch(params = {}) {
       params.pageSize = this.pagination.size;
       params.pageNum = this.pagination.num;
-      console.log("获取表格数据");
-
-      this.$get("/api/assessment").then((res) => {
+      // params.courseId = this.assessMentInfo.id;
+      this.$get("/api/assessment", {
+        ...params
+      }).then((res) => {
         if (res.data.data) {
           console.log(res.data.data, `assessment`);
-          // this.total = res.data.data.total;
+          this.total = res.data.data.length;
           this.tableData = res.data.data;
-          // console.log(this.tableData);
         }
       });
     },

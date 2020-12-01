@@ -14,9 +14,9 @@
     </div>
     <div class="manager_operation">
       <el-input
-        placeholder="任务名称"
+        placeholder="数据源名称"
         prefix-icon="el-icon-search"
-        v-model="queryParams.name"
+        v-model="queryParams.numericalName"
         class="operation_input"
         clearable
         @clear="search"
@@ -98,7 +98,7 @@
             <span>{{ scope.row.fcst }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="修改时间" align="center" min-width="100px">
+        <el-table-column label="修改时间" align="center" min-width="160px">
           <template slot-scope="scope">
             <span>{{ scope.row.modifyTime }}</span>
           </template>
@@ -189,11 +189,7 @@ export default {
         size: 5,
         num: 1,
       },
-      queryParams: {
-        name: null,
-        STime: "",
-        ETime: "",
-      },
+      queryParams: {},
       time: [],
     };
   },
@@ -229,11 +225,7 @@ export default {
     },
     systemManagerShow(val) {
       if (val) {
-        this.queryParams = {
-          name: null,
-          STime: "",
-          ETime: "",
-        };
+        this.queryParams = {};
         this.time = [];
         this.fetch();
       }
@@ -246,11 +238,7 @@ export default {
 
     // 搜索重置
     resetSearch() {
-      this.queryParams = {
-        name: null,
-        STime: "",
-        ETime: "",
-      };
+      this.queryParams = {};
       this.time = [];
       this.search();
     },
@@ -282,7 +270,7 @@ export default {
       });
       } else {
         this.fetch({
-          name:this.queryParams.name
+          numericalName:this.queryParams.numericalName
         });
       }
     },
