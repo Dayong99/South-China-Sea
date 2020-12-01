@@ -23,6 +23,8 @@ import "vue2-org-tree/dist/style.css"
 import '@/permission' // permission control
 import db from '@/utils/localstorage'
 import echarts from 'echarts';
+const G6 = require('@antv/g6')
+Vue.prototype.$G6 = G6
 // if (process.env.NODE_ENV === 'development') {
 //   window.globalConfig = {
 //     baseURL: 'http://192.168.1.122:8301/warship'

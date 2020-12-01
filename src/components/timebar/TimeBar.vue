@@ -1,7 +1,7 @@
 <template>
   <div id="timebar">
     <!-- 日期 -->
-    <div id="calendar" style="left:180px;width:calc(100% - 220px)">
+    <div id="calendar" style="left:300px;width:calc(100% - 410px)">
       <div v-for="(item,index) in calendarList" :key="index" :style="dayWidth">{{ item.day }}</div>
     </div>
 
@@ -15,13 +15,30 @@
       @change="getDay"
     />
 
+    <!-- 切换时间间隔 -->
+    <div class="timeInterval">
+      <el-select
+        v-model="timeInterval"
+        placeholder="时间间隔"
+        size="small"
+      >
+        <el-option
+          v-for="item in timeIntervalList"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        >
+        </el-option>
+      </el-select>
+    </div>
+
     <!-- 时间进度条 -->
     <div class="timeline">
       <div
         id="tline"
         ref="totalLine"
         class="totalLen"
-        style="width:calc(100% - 220px);"
+        style="width:calc(100% - 410px);"
         @click="loadTo"
         @mouseover="showTip"
         @mousemove="showTip"
@@ -50,7 +67,7 @@
     </div>
 
     <!-- 播放按钮 -->
-    <div id="playpause" style="left:142px;" @click="changeIcon">
+    <div id="playpause" style="left:262px;" @click="changeIcon">
       <i :class="iconData" />
     </div>
   </div>
@@ -72,8 +89,8 @@ export default {
       barBottom: null,
       // 时间轴长度
       playPosition: 0,
-      nowTime: "140px",
-      circlePosition: "176px",
+      nowTime: "260px",
+      circlePosition: "296px",
       // 显示日期
       showday: null,
       dayListLength: 0,
@@ -84,7 +101,7 @@ export default {
       tipPosition: 0,
       tip: null,
       tipshow: false,
-      tipleft: "142px",
+      tipleft: "262px",
       tiptop: "-3.5em",
       itemcount: 0, // 总个数
       itemdayIndex: 0, // 天数
@@ -129,6 +146,30 @@ export default {
 
       // 获取最近的时间  要素的id
       currentId: null,
+
+      // 时间间隔列表
+      timeIntervalList: [{
+        value: 1,
+        label: '1小时',
+      }, {
+        value: 3,
+        label: '3小时',
+      }, {
+        value: 6,
+        label: '6小时',
+      },
+      // {
+      //   value: 9,
+      //   label: '9小时',
+      // },
+      {
+        value: 12,
+        label: '12小时',
+      }, {
+        value: 24,
+        label: '24小时',
+      }],
+      timeInterval: 3,
     };
   },
   created() {
@@ -181,6 +222,42 @@ export default {
       this.bItem = this.totalwidth / this.dayListLength;
       this.sItem = this.totalwidth / this.count;
     },
+    // 时间间隔变化
+    timeInterval(newval) {
+      if(newval === 1) {
+        this.num = 24
+      } else if(newval === 3) {
+        this.num = 8
+      } else if(newval === 6) {
+        this.num = 4
+      } else if(newval === 12) {
+        this.num = 2
+      } else if(newval === 24) {
+        this.num = 1
+      }
+
+      this.timeFlag = false
+      this.getLatestTime();
+      // 初始化当前时间
+      this.showday =
+        this.calendarList[0].day + " " + this.calendarList[0].timeArr[0];
+      // this.showday = "2020-08-01 03:00"
+      // 时间数组长度
+      this.dayListLength = this.calendarList.length;
+      // 分割的总个数
+      this.count = this.dayListLength * this.num;
+      // 时间段长度
+      this.bItem = this.totalwidth / this.dayListLength;
+      // console.log(this.bItem)
+      this.sItem = this.totalwidth / this.count;
+
+      this.$store.commit("changeTime", this.showday);
+      console.log("------------");
+      console.log(this.showday);
+
+      this.resetPlay();
+      console.log('时间间隔', newval);
+    }
   },
   mounted() {
     // 监听时间轴尺寸变化
@@ -306,19 +383,23 @@ export default {
         this.start = new Date();
         for (let i = 0; i <= 6; i++) {
           const nowDate = this.end.getTime() + 3600 * 1000 * 24 * i;
-          this.dateList.push({
+          // this.dateList.push({
+          //   day: parseTime(nowDate, "{y}-{m}-{d}"),
+          //   timeArr: null,
+          // });
+          let obj = {
             day: parseTime(nowDate, "{y}-{m}-{d}"),
-            timeArr: [
-              "00:00",
-              "03:00",
-              "06:00",
-              "09:00",
-              "12:00",
-              "15:00",
-              "18:00",
-              "21:00",
-            ],
-          });
+            timeArr: null,
+          }
+          let timeArr = []
+          let time = 0
+          while(time < 24) {
+            let str = time < 10 ? '0' + time : time
+            timeArr.push(str + ':00')
+            time += this.timeInterval
+          }
+          obj.timeArr = timeArr
+          this.dateList.push(obj)
         }
       } else {
         this.end = this.date.setFullYear(
@@ -333,19 +414,32 @@ export default {
         );
         for (let i = 0; i <= 6; i++) {
           const nowDate = this.end + 3600 * 1000 * 24 * i;
-          this.dateList.push({
+          // this.dateList.push({
+          //   day: parseTime(nowDate, "{y}-{m}-{d}"),
+          //   timeArr: [
+          //     "00:00",
+          //     "03:00",
+          //     "06:00",
+          //     "09:00",
+          //     "12:00",
+          //     "15:00",
+          //     "18:00",
+          //     "21:00",
+          //   ],
+          // });
+          let obj = {
             day: parseTime(nowDate, "{y}-{m}-{d}"),
-            timeArr: [
-              "00:00",
-              "03:00",
-              "06:00",
-              "09:00",
-              "12:00",
-              "15:00",
-              "18:00",
-              "21:00",
-            ],
-          });
+            timeArr: null,
+          }
+          let timeArr = []
+          let time = 0
+          while(time < 24) {
+            let str = time < 10 ? '0' + time : time
+            timeArr.push(str + ':00')
+            time += this.timeInterval
+          }
+          obj.timeArr = timeArr
+          this.dateList.push(obj)
         }
       }
 
@@ -358,8 +452,8 @@ export default {
       this.timeIndex = 0;
       this.linewidth = 0;
       this.playPosition = 0;
-      this.nowTime = "140px";
-      this.circlePosition = "176px";
+      this.nowTime = "260px";
+      this.circlePosition = "296px";
       this.iconData = "iconfont icon-ziyuan";
       clearInterval(this.timer);
     },
@@ -385,8 +479,8 @@ export default {
     // 进度条滑动场长度
     loadTo(a, b) {
       this.playPosition = event.offsetX + "px";
-      this.nowTime = event.offsetX + 140 + "px";
-      this.circlePosition = event.offsetX + 176 + "px";
+      this.nowTime = event.offsetX + 260 + "px";
+      this.circlePosition = event.offsetX + 296 + "px";
 
       // 播放过程中点击
       this.iconData = this.playIcon;
@@ -417,7 +511,7 @@ export default {
       this.tipshow = true;
 
       // 时间戳偏移量
-      this.tipleft = event.offsetX + 142 + "px";
+      this.tipleft = event.offsetX + 262 + "px";
       const nowVal = parseInt(this.$refs.nowtime.style.left.replace("px", ""));
       const tipVal = parseInt(this.tipleft.replace("px", ""));
       if (Math.abs(nowVal - tipVal) <= 80) {
@@ -434,7 +528,7 @@ export default {
     },
     hideTip() {
       this.tipshow = false;
-      this.tipleft = "142px";
+      this.tipleft = "262px";
     },
 
     // 播放
@@ -453,8 +547,8 @@ export default {
       this.timeIndex = 0;
       this.linewidth = 0;
       this.playPosition = 0;
-      this.nowTime = "140px";
-      this.circlePosition = "176px";
+      this.nowTime = "260px";
+      this.circlePosition = "296px";
       this.iconData = "iconfont icon-ziyuan";
       this.showday =
         this.calendarList[0].day + " " + this.calendarList[0].timeArr[0];
@@ -473,8 +567,8 @@ export default {
         this.showday = this.getNowTip(this.dayIndex, this.timeIndex);
       }
       this.playPosition = this.linewidth + "px";
-      this.nowTime = this.linewidth + 140 + "px";
-      this.circlePosition = this.linewidth + 176 + "px";
+      this.nowTime = this.linewidth + 260 + "px";
+      this.circlePosition = this.linewidth + 296 + "px";
     },
     // 播放时间轴长度
     changeLine() {
@@ -492,7 +586,7 @@ export default {
     changeIcon() {
       if (this.iconData === this.playIcon) {
         this.iconData = this.stopIcon;
-        this.timer = setInterval(this.changeLine, 5000);
+        this.timer = setInterval(this.changeLine, 3000);
       } else {
         this.iconData = this.playIcon;
         clearInterval(this.timer);

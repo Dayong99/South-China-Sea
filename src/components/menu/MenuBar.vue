@@ -25,9 +25,12 @@
         </div>
       </div>
     </div>
+
+
     <div class="menu_list" v-show="searchFlag">
       <ul class="list_ul">
         <li v-for="(item, index) in menuList" :key="index" class="list_ul_li">
+
           <div class="title_box">
             <img :src="item.icon" />
             <div class="title">
@@ -91,17 +94,25 @@
                   ></el-button>
                 </div>
               </div>
-              <div class="task_content_wrapper" v-if="item.checked">
+
+              <!-- 航线列表 -->
+              <div class="task_content_wrapper" v-if="item.routeList.length && item.checked">
                 <div
                   class="task_content"
-                  v-for="(itemRoute, indexRoute) in routeList"
+                  v-for="(itemRoute, indexRoute) in item.routeList"
                   :key="`route${indexRoute}`"
                 >
+
+                  <!-- 航线列表 -->
                   <div class="task_content_desc">
                     <div class="task_content_name">
                       {{ itemRoute.lineName }}
                     </div>
                     <div class="control_wrapper">
+                      <img
+                        src="@/assets/images/menu/info.png"
+                        @click="algorithm(itemRoute, indexRoute)"
+                      />
                       <img
                         src="@/assets/images/menu/edit.svg"
                         @click="algorithm(itemRoute, indexRoute)"
@@ -115,18 +126,70 @@
                         @click="algorithm(itemRoute, indexRoute)"
                       />
                       <img
-                        src="@/assets/images/menu/view.svg"
-                        @click="routeAlgorithmInfo(itemRoute, indexRoute)"
+                        src="@/assets/images/menu/down.png"
+                        @click.stop="getAssessItem(itemRoute, indexRoute,item,index)"
                       />
                     </div>
                   </div>
+                  
+                  <!-- 评估列表 -->
+                  <div class="assess_wrapper">
+                    <div
+                      class="assess_items"
+                      v-for="(itemAssess, indexAssess) in itemRoute.assessList"
+                      :key="`assess${indexAssess}`"
+                    >
+                      <div class="assess_desc">
+                        {{ itemAssess.assesstime | filterTime }}
+                      </div>
+                      <div class="assess_control">
+                        <img
+                          src="@/assets/images/menu/bin.svg"
+                          class="control_items"
+                          @click="changeAssessTime(itemAssess, indexAssess,itemRoute, indexRoute,item,index)"
+                        />
+                        <img
+                          src="@/assets/images/menu/treeInfo.svg"
+                          class="control_items"
+                          @click="changeAssessTime(itemAssess, indexAssess,itemRoute, indexRoute,item,index)"
+                        />
+                        <img
+                          src="@/assets/images/menu/table.svg"
+                          class="control_items"
+                          @click="changeAssessTime(itemAssess, indexAssess,itemRoute, indexRoute,item,index)"
+                        />
+                        <img
+                          src="@/assets/images/menu/line.svg"
+                          class="control_items"
+                          @click="changeAssessTime(itemAssess, indexAssess,itemRoute, indexRoute,item,index)"
+                        />
+                        <img
+                          src="@/assets/images/menu/area.svg"
+                          class="control_items"
+                          @click="changeAssessTime(itemAssess, indexAssess,itemRoute, indexRoute,item,index)"
+                        />
+                        <img
+                          src="@/assets/images/menu/next.svg"
+                          class="control_items"
+                          @click="changeAssessTime(itemAssess, indexAssess,itemRoute, indexRoute,item,index)"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+
                 </div>
               </div>
+
             </li>
           </ul>
 
           <!-- 系统设置 -->
-          <ul class="list_system_ul" v-show="item.flag && flagList[1]" style="height:auto;overflow-y:hidden;">
+          <ul
+            class="list_system_ul"
+            v-show="item.flag && flagList[1]"
+            style="height: auto; overflow-y: hidden"
+          >
             <li v-for="(item, index) in systemList" :key="index">
               <div class="task_list">
                 <div class="task_name" @click="openSystem(index)">
@@ -145,7 +208,11 @@
           </ul>
 
           <!-- 数据管理 -->
-          <ul class="list_system_ul" v-show="item.flag && flagList[2]" style="height:auto;overflow-y:hidden;">
+          <ul
+            class="list_system_ul"
+            v-show="item.flag && flagList[2]"
+            style="height: auto; overflow-y: hidden"
+          >
             <li v-for="(item, index) in dataList" :key="index">
               <div class="task_list">
                 <div class="task_name" @click="openData(index)">
@@ -162,6 +229,7 @@
               </div>
             </li>
           </ul>
+
         </li>
       </ul>
     </div>
@@ -173,13 +241,18 @@ import { mapState, mapMutations } from "vuex";
 export default {
   data() {
     return {
+
+      // 任务列表
+      taskList: [],
       // 任务航线列表
       routeList: [],
-      // 搜索框
+      // 评估列表
+      assessList: [],
+
+
       searchFlag: false,
       searchIcon: require("@/assets/images/menu/unselect.png"),
       searchValue: "",
-
       downIcon: require("@/assets/images/menu/down.png"),
       upIcon: require("@/assets/images/menu/up.png"),
       iconList: [
@@ -188,17 +261,7 @@ export default {
         require("@/assets/images/menu/down.png"),
       ],
       flagList: [false, false, false],
-
-      // 任务管理展开
       nowMenuList: [],
-
-      // 系统配置展开
-      taskList: [
-        {
-          name: "1",
-          checked: true,
-        },
-      ],
     };
   },
   computed: {
@@ -222,7 +285,6 @@ export default {
     },
     flagList(newval, oldval) {
       this.iconList = new Array(3).fill(this.downIcon);
-      console.log(newval);
       let index = this.flagList.indexOf(true);
       if (index !== -1) {
         this.iconList[index] = this.upIcon;
@@ -237,8 +299,10 @@ export default {
       console.log("更新航线信息");
     },
   },
-  mounted() {
-    this.loadTaskList();
+  filters: {
+    filterTime(val) {
+      return val.slice(0,-6)
+    },
   },
   methods: {
     ...mapMutations({
@@ -252,6 +316,9 @@ export default {
     }),
     routeAlgorithmInfo(item, index) {
       this.setRouteAlgorithmInfo([1, item]);
+    },
+    changeAssessTime(itemAssess, indexAssess,itemRoute, indexRoute,item,index) {
+      console.log(itemAssess, indexAssess,itemRoute, indexRoute,item,index,`changeAssessTime`,this.taskList)
     },
     deleteRoute(item, index) {
       console.log(item, index, `delete`);
@@ -271,21 +338,20 @@ export default {
     algorithm(item, index) {
       this.setAlgorithm([1, item]);
     },
-    loadRouteList(id) {
+    loadRouteList(item,index) {
+      this.taskList[index].routeList = [] // 清空任务点击之前 航线的内容
       this.$get(`/api/course`, {
-        plan_Id: id,
+        plan_Id: item.id
       })
         .then((res) => {
-          if (res.data.data) {
-            // checked
-            console.log(res.data.data, `res.data.data`);
-            this.routeList = res.data.data.rows.map((e, i) => {
+          if (res.status === 200) {
+            this.taskList[index].routeList = res.data.data.rows.map((e, i) => {
               return {
                 ...e,
                 checked: false,
+                assessList: []
               };
             });
-            console.log(this.routeList, `this.routeList`);
           }
         })
         .catch(() => {
@@ -309,7 +375,7 @@ export default {
           obj.checked = false;
           return obj;
         });
-        this.loadRouteList(item.id);
+        this.loadRouteList(item,index);
         this.taskList[index].checked = true;
       }
     },
@@ -354,14 +420,15 @@ export default {
       this.$get(`/api/plan`, {
         ...params,
       }).then((res) => {
-        console.log(res, `loadTaskList`);
         if (res.data.data) {
           this.taskList = res.data.data.rows.map((e, i) => {
             return {
               ...e,
               checked: false,
+              routeList: []
             };
           });
+          console.log(this.taskList,`this.taskList`)
         }
       });
     },
@@ -381,6 +448,35 @@ export default {
       } else {
         this.$message.warning("位置格式不正确");
       }
+    },
+
+    // 点击航线 获取评估结果
+    getAssessItem(itemRoute, indexRoute,item,index) {
+      console.log(itemRoute, indexRoute,item,index, `getAssessItem`);
+      // 获取该航线评估结果
+      this.loadAssessInfo(itemRoute, indexRoute,item,index);
+    },
+
+    // 载入评估结果
+    loadAssessInfo(itemRoute, indexRoute,item,index) {
+      console.log(itemRoute, indexRoute,item,index,`loadAssessInfo`,this.taskList[index].routeList[indexRoute].assessList)
+      this.$get(`/api/assessment`, {
+        courseId: itemRoute.id,
+      }).then((res) => {
+        if (res.status === 200) {
+          this.taskList[index].routeList[indexRoute].assessList = res.data.data.map((e,i) => {
+            return {
+              ...e,
+              line: false,
+              area: false,
+              table: false,
+              timeIndex: 0,
+              alorithm: false
+            }
+          })
+          
+        }
+      });
     },
     //------------start搜索框--------------
     // 改变搜索图标，并显示菜单栏
@@ -407,12 +503,18 @@ export default {
     },
     // 打开任务管理
     openTask(index) {
+      console.log(index,`openTask`)
       // 重置
       this.menuList.forEach((item) => {
         item.flag = false;
       });
+      // 任务管理器
+      if (index == 2) {
+        this.loadTaskList()
+      }
 
-      // 任务管理需要可以多次切换
+
+
       if (index == 2 || index == 3 || index == 4) {
         this.menuList[index].flag = !this.flagList[index - 2];
         this.flagList = new Array(3).fill(false);

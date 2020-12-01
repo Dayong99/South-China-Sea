@@ -28,6 +28,11 @@
       </ul>
     </div>
 
+    <div class="isDraw" @click="changeDrawFlag">
+      <div :class="{ 'draw_active': drawFlag }"></div>
+      <span>是否重绘</span>
+    </div>
+
     <!-- 实况资料 -->
     <div class="real_time_data">
       <el-select
@@ -337,6 +342,9 @@ export default {
       markerMouseFlag: false,
       tidalMouseFlag: false,
 
+      // 重绘
+      drawFlag: true,
+
       // 实况选择
       realTimeValue: null,
       realTimeOptions: [
@@ -427,34 +435,38 @@ export default {
     extent: {
       // async handler(val, old) {
       async handler(val, old) {
-        console.log("val", val);
-        console.log("old", old);
-        // flag 为 true 需要重绘
-        let flag = true;
+        console.log('是否重绘', this.drawFlag);
+        
+          console.log("val", val);
+          console.log("old", old);
+          // flag 为 true 标识区域变化，需要重绘
+          let flag = true;
 
-        if (old === null || val.length !== old.length) {
-          flag = true;
-        } else {
-          for (let i = 0; i < val.length; i++) {
-            if (
-              val[i].xMin === old[i].xMin &&
-              val[i].xMax === old[i].xMax &&
-              val[i].yMin === old[i].yMin &&
-              val[i].yMax === old[i].yMax
-            ) {
-              flag = false;
-              break;
+          if (old === null || val.length !== old.length) {
+            flag = true;
+          } else {
+            for (let i = 0; i < val.length; i++) {
+              if (
+                val[i].xMin === old[i].xMin &&
+                val[i].xMax === old[i].xMax &&
+                val[i].yMin === old[i].yMin &&
+                val[i].yMax === old[i].yMax
+              ) {
+                flag = false;
+                break;
+              }
+            }
+            // this.layerNum -= 1;
+            // this.setImageLayerNum(this.layerNum);
+          }
+          if (flag) {
+            this.extentList = val;
+            if(this.drawFlag) {
+              // this.layerNum -= 1;
+              await this.drawItemList();
+              // await this.setImageLayerNum(this.layerNum);
             }
           }
-          this.layerNum -= 1;
-          this.setImageLayerNum(this.layerNum);
-        }
-        if (flag) {
-          this.layerNum -= 1;
-          this.extentList = val;
-          await this.drawItemList();
-          await this.setImageLayerNum(this.layerNum);
-        }
       },
       deep: true,
     },
@@ -541,6 +553,9 @@ export default {
       setImageLayerNum: "earth/setImageLayerNum",
       setRealTimeValue: "sideBar/setRealTimeValue",
     }),
+    changeDrawFlag() {
+      this.drawFlag = !this.drawFlag
+    },
     // 潮汐面板日期切换
     changeTimeIndex(i) {
       this.tidalIndex = i;
@@ -1031,34 +1046,32 @@ export default {
         if (img) {
           let imageLayer = L.imageOverlay(img, bounds);
           imageLayer.id = currentItem.id;
-          imageLayer.on("add", (ev) => {
-            console.log("加载完成", ev);
-            if (this.imageLayerNum >= 0) {
-              window.map.removeLayer(imageLayer);
-            }
-            console.log(this.layerNum);
-            // this.setImageLayerNum(this.layerNum)
-          });
+          // imageLayer.on("add", (ev) => {
+          //   console.log("加载完成", ev);
+          //   if (this.imageLayerNum >= 0) {
+          //     window.map.removeLayer(imageLayer);
+          //   }
+          //   console.log(this.layerNum);
+          // });
           imageLayer.addTo(window.map);
           console.log(imageLayer);
           this.layerList.push(imageLayer);
           let imageLayer1 = L.imageOverlay(img, bounds1);
           imageLayer1.id = currentItem.id;
-          imageLayer1.on("add", (ev) => {
-            if (this.imageLayerNum >= 0) {
-              window.map.removeLayer(imageLayer1);
-            }
-          });
+          // imageLayer1.on("add", (ev) => {
+          //   if (this.imageLayerNum >= 0) {
+          //     window.map.removeLayer(imageLayer1);
+          //   }
+          // });
           imageLayer1.addTo(window.map);
           this.layerList.push(imageLayer1);
           let imageLayer2 = L.imageOverlay(img, bounds2).addTo(window.map);
           imageLayer2.id = currentItem.id;
-          imageLayer2.on("add", (ev) => {
-            if (this.imageLayerNum >= 0) {
-              window.map.removeLayer(imageLayer2);
-            }
-            // this.setImageLayerNum(this.layerNum)
-          });
+          // imageLayer2.on("add", (ev) => {
+          //   if (this.imageLayerNum >= 0) {
+          //     window.map.removeLayer(imageLayer2);
+          //   }
+          // });
           imageLayer2.addTo(window.map);
           this.layerList.push(imageLayer2);
         }
