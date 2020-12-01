@@ -183,6 +183,9 @@ export default {
     systemManagerShow(val) {
       if (val) {
         this.fetch();
+      }else{
+              this.clearGeojson();
+
       }
     },
     tableData(val) {
