@@ -386,7 +386,7 @@
                 height: auto;
                 line-height: 30px;
                 text-align: center;
-
+                margin-top: 2px;
                 display: flex;
                 white-space: nowrap;
                 flex-flow: column;
@@ -431,6 +431,7 @@
                   border-radius: 5px;
                   overflow-y: auto;
                   margin-left: 2px;
+                  height: auto;
                   .assess_items {
                     margin-top: 2px;
                     height: 20px;
