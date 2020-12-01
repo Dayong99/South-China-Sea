@@ -46,7 +46,6 @@ export default {
   },
   mounted() {
     this.initMap();
-
   },
   methods: {
     ...mapMutations({
@@ -298,7 +297,6 @@ export default {
       console.log("extentList", extentList);
       this.setExtent(extentList);
     },
-
   },
 };
 </script>

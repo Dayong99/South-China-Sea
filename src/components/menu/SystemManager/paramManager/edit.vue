@@ -21,10 +21,10 @@
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
-            <el-form-item label="参数名称" prop="baseName">
+            <el-form-item label="参数名称" prop="baseKey">
               <el-input
                 placeholder="请输入参数名称"
-                v-model="formData.baseName"
+                v-model="formData.baseKey"
               ></el-input>
             </el-form-item>
           </div>
@@ -99,7 +99,7 @@ export default {
         ramark:""
       },
       rules: {
-        baseName: {
+        baseKey: {
           required: true,
           message: "参数名称不能为空",
           trigger: "blur",
@@ -130,9 +130,13 @@ export default {
     },
   },
   watch:{
-    'formData.baseValue':{
+    'formData.baseType':{
       handler(val){
-        this.formData.baseKey = val
+        this.typeOption.forEach((item,index)=>{
+          if(Number(val)==Number(item.id)){
+            this.formData.baseName = item.typeName
+          }
+        })
       },
       deep:true
     },

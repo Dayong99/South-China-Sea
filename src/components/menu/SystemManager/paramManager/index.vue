@@ -45,7 +45,7 @@
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.baseName }}</span>
+            <span>{{ scope.row.baseKey }}</span>
           </template>
         </el-table-column>
 

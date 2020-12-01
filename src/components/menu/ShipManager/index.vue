@@ -203,7 +203,7 @@ export default {
         });
         if (i != -1 && i == 0) {
           this.shipManagerShow = true;
-          this.fetch()
+          this.fetch();
         } else {
           this.shipManagerShow = false;
         }
@@ -215,6 +215,7 @@ export default {
     ...mapMutations({
       setMenuList: "menuBar/setMenuList",
     }),
+
     editItem(row) {
       this.$refs.edit.setData(row);
       this.dialog.isVisible = true;
@@ -271,10 +272,31 @@ export default {
       params.pageNum = this.pagination.num;
       this.$get("/api/warship", {
         ...params,
+      })
+        .then((res) => {
+          if (res.data.data) {
+            this.total = res.data.data.total;
+            this.tableData = res.data.data.rows;
+          }
+        })
+        .then(() => {
+          this.loadShipType();
+        });
+    },
+    loadShipType() {
+      this.$get(`api/base-info/values`, {
+        type: "船",
       }).then((res) => {
         if (res.data.data) {
-          this.total = res.data.data.total;
-          this.tableData = res.data.data.rows;
+          this.tableData = this.tableData.map((e, i) => {
+            let obj = e
+            res.data.data.forEach((a, b) => {
+              if (Number(e.warshipType) === Number(a.baseValue)) {
+                obj.warshipType = a.baseKey
+              }
+            });
+            return obj
+          });
         }
       });
     },

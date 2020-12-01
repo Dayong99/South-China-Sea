@@ -3,7 +3,7 @@
     id="ship_manager"
     class="ship_manager"
     v-show="systemManagerShow"
-    style="width:auto; height: auto"
+    style="width: auto; height: auto"
   >
     <div class="manager_title">
       <span>数据源配置—广东省网</span>
@@ -222,13 +222,17 @@ export default {
         this.queryParams.ETime = "";
       }
       if (this.queryParams.STime) {
-         this.fetch({
-        ...this.queryParams,
-      });
-      } else {
         this.fetch({
-          numericalName:this.queryParams.numericalName
+          ...this.queryParams,
         });
+      } else {
+        if (this.queryParams.numericalName) {
+          this.fetch({
+            numericalName: this.queryParams.numericalName,
+          });
+        } else {
+          this.fetch();
+        }
       }
     },
     // 获取表格数据
