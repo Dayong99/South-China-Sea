@@ -3,7 +3,8 @@
     id="ship_manager"
     class="ship_manager"
     v-show="systemManagerShow"
-    style="width: auto; height: auto"
+    style="width: 960px; height: auto"
+    v-drag
   >
     <div class="manager_title">
       <span>等值线配置</span>
@@ -30,6 +31,11 @@
     </div>
     <div class="manager_table">
       <el-table :data="tableData" border style="width: 100%">
+         <el-table-column label="序号" width="70px" align="center">
+          <template slot-scope="scope">
+            {{ (pagination.num - 1) * pagination.size + scope.$index + 1 }}
+          </template>
+        </el-table-column>
         <el-table-column
           label="线名称"
           align="center"
@@ -141,6 +147,7 @@
           width="120px"
           header-align="center"
           align="center"
+          fixed="right"
         >
           <template slot-scope="{ row }">
             <el-button

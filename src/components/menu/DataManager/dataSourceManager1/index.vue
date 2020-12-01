@@ -3,7 +3,8 @@
     id="ship_manager"
     class="ship_manager"
     v-show="systemManagerShow"
-    style="width: auto; height: auto"
+    style="width: 960px;height:auto;"
+    v-drag
   >
     <div class="manager_title">
       <span>数据源配置—欧格海浪数值预报</span>
