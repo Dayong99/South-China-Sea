@@ -10,6 +10,17 @@
             z-index: 9999;
             display: flex;
 
+            .closebtn{
+                // width: 50px;
+                height: 25px;
+                // background: red;
+                position: absolute;
+                top: -25px;
+                // text-align: center;
+                line-height: 25px;
+                cursor: pointer;
+            }
+
             .title_box {
                 width: 165px;
                 height: 100%;

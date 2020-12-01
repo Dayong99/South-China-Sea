@@ -123,7 +123,13 @@
     <div class="tylist" v-if="typhoonShow">
       <div class="tytitle">
         <div class="chooseAll" @click="chooseAll">
-          <img :src="this.chooseAllFlag?require('@/assets/images/sidebar/checked.png'):require('@/assets/images/sidebar/choose.png')" />
+          <img
+            :src="
+              this.chooseAllFlag
+                ? require('@/assets/images/sidebar/checked.png')
+                : require('@/assets/images/sidebar/choose.png')
+            "
+          />
         </div>
         <div class="title_num">类型</div>
         <div class="title_cn">名称</div>
@@ -132,7 +138,7 @@
       <div class="tycontent">
         <div class="content_box">
           <div v-for="(item, index) in tyList" :key="index" class="libox">
-            <div class="chooseAll" @click="chooseOne(item,index)">
+            <div class="chooseAll" @click="chooseOne(item, index)">
               <img
                 :src="
                   item.choose
@@ -380,7 +386,9 @@ export default {
           title: "超强台风",
         },
       ],
-      chooseAllFlag:false
+      chooseAllFlag: false,
+      // timer: undefined,
+      tyDeletArr:[]
     };
   },
   computed: {
@@ -660,9 +668,11 @@ export default {
         if (this.menuList[index].drawType === "typhoon") {
           console.log("取消台风---------");
           this.typhoonShow = false;
+          this.chooseAllFlag = false
           //清除台风警戒线
           this.clearWarningLine();
           //清除台风
+          this.deleteAllTy()
         }
 
         // 取消状态、重置最近缓存的level
@@ -740,9 +750,11 @@ export default {
             this.tyList = [];
             tyData.forEach((item) => {
               this.tyList.push({
+                id: item.id,
                 choose: false,
                 cycloneType: item.cycloneType,
                 cycloneName: item.cycloneName,
+                // centerMaxSpeed: item.centerMaxSpeed,
               });
             });
             console.log(this.tyList);
@@ -970,7 +982,7 @@ export default {
         })
         .catch((error) => {
           this.$message.error("获取" + currentItem.name + "数据失败");
-        })
+        });
     },
     // 绘制色斑图
     async getAndDrawLayer(currentItem, extent) {
@@ -1578,56 +1590,172 @@ export default {
     },
 
     //台风列表全选功能
-    chooseAll(){
+    chooseAll() {
       //全选时，取消全选
-      if(this.chooseAllFlag){
-        this.chooseAllFlag = false
-        let chooseArr = []
-        this.tyList.forEach((item,index)=>{
-          if(item.choose){
-            item.choose = false
-            chooseArr.push(index)
+      if (this.chooseAllFlag) {
+        this.chooseAllFlag = false;
+        let chooseArr = [];
+        this.tyList.forEach((item, index) => {
+          if (item.choose) {
+            item.choose = false;
+            chooseArr.push(index);
           }
-        })
-        console.log(chooseArr,"取消的集合");
+        });
+        console.log(chooseArr, "取消的集合");
+        this.deleteAllTy()
         //点击全选
-      }else{
-        this.chooseAllFlag = true
-        let chooseArr = []
-        this.tyList.forEach((item,index)=>{
-          if(!item.choose){
-            item.choose = true
-            chooseArr.push(index)
+      } else {
+        this.chooseAllFlag = true;
+        let chooseArr = [];
+        this.tyList.forEach((item, index) => {
+          if (!item.choose) {
+            item.choose = true;
+            chooseArr.push(index);
           }
+        });
+        console.log(chooseArr, "选中的集合");
+        chooseArr.forEach(item=>{
+          this.drawTy(this.tyList[item].id)
         })
-        console.log(chooseArr,"选中的集合");
       }
     },
-    
+
     //选择单个台风时
-    chooseOne(item,index){
-      console.log(item,index);
+    chooseOne(item, index) {
+      console.log(item, index);
       //如果点击之前是选中状态，则取消选中，并删除画的该条台风
-      if(item.choose){
-        item.choose = false
+      if (item.choose) {
+        item.choose = false;
         //如果所有的都变为未选中，则将全选置为false
-        let i = this.tyList.findIndex(item=>{
-          return item.choose==true
-        })
-        if(i=-1){
-          this.chooseAllFlag = false
+        let i = this.tyList.findIndex((item) => {
+          return item.choose == true;
+        });
+        if ((i == -1)) {
+          this.chooseAllFlag = false;
         }
+        this.deleteTy(item.id)
         //点击之前是未选中状态时，则选中，并绘制该条台风
-      }else{
-        item.choose = true
+      } else {
+        item.choose = true;
         //如果所有的都变为选中，则将全选置为true
-        let i = this.tyList.findIndex(item=>{
-          return item.choose==false
-        })
-        if(i=-1){
-          this.chooseAllFlag = true
+        let i = this.tyList.findIndex((item) => {
+          return item.choose == false;
+        });
+        if ((i == -1)) {
+          this.chooseAllFlag = true;
+        }
+        this.drawTy(item.id);
+      }
+    },
+
+    //根据id查询台风数据并绘制台风
+    drawTy(id) {
+      //根据id查询台风数据
+      this.$get("api/typhoon/one", {
+        id: id,
+      }).then((res) => {
+        console.log(res.data.data, "单个台风的数据");
+        let trackList = res.data.data.trackList;
+        trackList.forEach((item) => {
+          if (item.centerMaxSpeed >= 10.8 && item.centerMaxSpeed <= 17.1) {
+            item.color = "#33ff26";
+          } else if (
+            item.centerMaxSpeed >= 17.2 &&
+            item.centerMaxSpeed <= 24.4
+          ) {
+            item.color = "#2665f9";
+          } else if (
+            item.centerMaxSpeed >= 24.5 &&
+            item.centerMaxSpeed <= 32.6
+          ) {
+            item.color = "#ffff0a";
+          } else if (
+            item.centerMaxSpeed >= 32.7 &&
+            item.centerMaxSpeed <= 41.4
+          ) {
+            item.color = "#fd8a09";
+          } else if (
+            item.centerMaxSpeed >= 41.5 &&
+            item.centerMaxSpeed <= 50.9
+          ) {
+            item.color = "#f75dfe";
+          } else if (item.centerMaxSpeed >= 51) {
+            item.color = "#f61525";
+          }
+        });
+        console.log(trackList, "台风点----------");
+        let circle = L.circleMarker([trackList[0].lat, trackList[0].lon], {
+          // id: id,
+          radius: 6,
+          fillOpacity: 1,
+          fillColor: trackList[0].color,
+          weight: 0,
+        }).addTo(map);
+        circle.id = id
+        this.tyDeletArr.push(circle)
+
+        let i = 0;
+        let that = this;
+        function test() {
+          if (i < trackList.length - 1) {
+            let timer = setTimeout(() => {
+              let latlngs = [
+                [trackList[i].lat, trackList[i].lon],
+                [trackList[i + 1].lat, trackList[i + 1].lon],
+              ];
+              let polyline = L.polyline(latlngs, { color: "#666666" }).addTo(
+                map
+              );
+              polyline.id = id
+              that.tyDeletArr.push(polyline)
+              let circle = L.circleMarker(
+                [trackList[i + 1].lat, trackList[i + 1].lon],
+                {
+                  // id:id,
+                  radius: 6,
+                  fillOpacity: 1,
+                  fillColor: trackList[i + 1].color,
+                  weight: 0,
+                }
+              ).addTo(map);
+              circle.id = id
+              that.tyDeletArr.push(circle)
+              i++;
+              test();
+            }, 200);
+          } else {
+            clearTimeout(timer);
+            i = 0;
+          }
+        }
+        test();
+      });
+    },
+
+    //根据id清除台风
+    deleteTy(id){
+      console.log(this.tyDeletArr);
+      this.tyDeletArr.forEach((item,index)=>{
+        if(item.id==id){
+          map.removeLayer(item)
+          // this.tyDeletArr.splice(index,1)
+        }
+      })
+      for(let i=0;i<this.tyDeletArr.length;i++){
+        if(this.tyDeletArr[i].id==id){
+          this.tyDeletArr.splice(i,1)
+          i--
         }
       }
+      console.log(this.tyDeletArr);
+    },
+
+    //删除全部台风
+    deleteAllTy(){
+      this.tyDeletArr.forEach(item=>{
+        map.removeLayer(item)
+      })
+      this.tyDeletArr = []
     }
   },
 };

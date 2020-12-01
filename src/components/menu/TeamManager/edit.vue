@@ -101,7 +101,10 @@ export default {
   methods: {
     // 获取舰船列表
     loadShipList(row = {}) {
-      this.$get(`/api/warship`).then((res) => {
+      this.$get(`/api/warship`,{
+        pageSize: 100000,
+        pageNum: 1
+      }).then((res) => {
         if (res.data.data) {
           this.shipList = res.data.data.rows.map((e, i) => {
             return { ...e, checked: false };
