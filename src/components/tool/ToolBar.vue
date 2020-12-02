@@ -410,7 +410,7 @@ export default {
 }
 .right-top-container {
   position: absolute;
-  right: 40px;
+  right: 155px;
   top: 26px;
   display: flex;
   // flex-flow: column nowrap;
