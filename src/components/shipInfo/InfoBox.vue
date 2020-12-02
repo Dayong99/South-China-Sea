@@ -182,7 +182,7 @@ export default {
               </div>
               <div>温度:<span>` + this.getValue(info.content.temperature) + `℃</span> </div>
               <div>湿度:<span>` + this.getValue(info.content.humidity) + `%</span></div>
-              <div>海平面气压:<span>` + this.getValue(info.content.pressure) + `hPa</span></div>
+              <div>气压:<span>` + this.getValue(info.content.pressure) + `hPa</span></div>
               
               <div>波浪周期:<span>` + this.getValue(info.content.wavePeriod) + `s</span></div>
               <div>波浪高度:<span>` + this.getValue(info.content.waveHeight) + `m</span></div>

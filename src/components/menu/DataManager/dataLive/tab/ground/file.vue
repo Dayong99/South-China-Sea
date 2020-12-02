@@ -89,7 +89,7 @@ export default {
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-            this.$get("/api/numerical-json/analysis", this.formData)
+            this.$get("/api/ground-live/analysisGround", this.formData)
               .then(() => {
                 this.$message({
                   message: "目标路径导入成功",

@@ -17,7 +17,7 @@
     <div class="manager_table" style="margin-top:20px;">
       <el-tabs v-model="tabName" type="border-card" @tab-click="handleClick">
         <el-tab-pane :key="'ground'" label="地面" name="ground">
-          <ground :tabShow="flagArr[0]" />
+          <ground ref="ground" :tabShow="flagArr[0]" />
         </el-tab-pane>
         <el-tab-pane :key="'ship'" label="船舶" name="ship">
           <ship :tabShow="flagArr[1]" />
@@ -94,6 +94,7 @@ export default {
         this.$refs.dataliveBox.style.left = "50%";
         this.$refs.dataliveBox.style.top = "42%";
         this.$refs.dataliveBox.style.transform = "translate(-50%, -50%)";
+        this.$refs.ground.fetch()
       }
     }
   },
