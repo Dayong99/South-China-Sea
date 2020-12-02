@@ -35,6 +35,11 @@
         <img src="@/assets/toolList/location.png">
       </el-tooltip>
     </div>
+    <div class="tool_item tool_right" @click.stop="changeTileLayer">
+      <el-tooltip class="item" effect="light" content="底图切换" placement="bottom">
+        <img src="@/assets/images/toolbar/product.png">
+      </el-tooltip>
+    </div>
     <div class="tool_item tool_right" @click.stop="graticule">
       <el-tooltip
         class="item"
@@ -195,11 +200,15 @@ export default {
     },
     ...mapState({
       menuItemList: (state) => state.sideBar.menuItemList,
+      tileLayer: state => state.earth.tileLayer
     }),
   },
   watch: {},
   mounted() {},
   methods: {
+    ...mapMutations({
+      setTileLayer: 'earth/setTileLayer'
+    }),
     getViewer() {
       const obj = {
         unit: this.unit,
@@ -386,6 +395,10 @@ export default {
       } else if(num === 2) {
         this.lonflag = flag
       }
+    },
+    // 切换底图
+    changeTileLayer() {
+      this.setTileLayer(!this.tileLayer)
     }
   },
 };

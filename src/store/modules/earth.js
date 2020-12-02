@@ -2,7 +2,9 @@ const state = {
   extent: null,
   // 图层重绘个数
   imageLayerNum: -1,
-  routeInfoflag:true
+  routeInfoflag:true,
+  // 底图切换
+  tileLayer: false,
 }
 
 const actions = {
@@ -20,6 +22,9 @@ const mutations = {
   },
   setRouteInfoflag(state,val){
     state.routeInfoflag = val
+  },
+  setTileLayer(state, val) {
+    state.tileLayer = val
   }
 }
 

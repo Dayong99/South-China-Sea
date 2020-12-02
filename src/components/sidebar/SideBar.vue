@@ -28,9 +28,17 @@
       </ul>
     </div>
 
-    <div class="isDraw" @click="changeDrawFlag">
-      <div :class="{ 'draw_active': drawFlag }"></div>
-      <span>是否重绘</span>
+    <!-- 是否重绘按钮 -->
+    <div class="other_btn">
+      <div class="latlng">
+        <img src="@/assets/images/sidebar/position.png">
+        <div class="other_lat">{{ latNum }}</div>
+        <div class="other_lon">,{{ lonNum }}</div>
+      </div>
+      <div class="isDraw" @click="changeDrawFlag">
+        <div :class="{ 'draw_active': drawFlag }"></div>
+        <span>是否重绘</span>
+      </div>
     </div>
 
     <!-- 实况资料 -->
@@ -396,7 +404,11 @@ export default {
       ],
       chooseAllFlag: false,
       // timer: undefined,
-      tyDeletArr:[]
+      tyDeletArr:[],
+
+      // 经纬数据
+      latNum: 0,
+      lonNum: 0,
     };
   },
   computed: {
@@ -545,6 +557,14 @@ export default {
         that.screenHeight = window.fullHeight;
       })();
     };
+
+    window.map.on('mousemove', e => {
+      let lat = e.latlng.lat
+      let lon = e.latlng.lng
+      this.latNum = lat > 0 ? Math.abs(lat).toFixed(3) + ' N' : Math.abs(lat).toFixed(3) + ' S'
+      this.lonNum = lon > 0 ? Math.abs(lon).toFixed(3) + ' E' : Math.abs(lon).toFixed(3) + ' W'
+      // console.log('鼠标移动', e);
+    })
   },
   methods: {
     ...mapMutations({
@@ -843,7 +863,7 @@ export default {
           });
           extentList.splice(i, 1);
         });
-        // 色斑图按照 -180~180 请求，
+        // layer 0~180 -180~0   line 0~180 180~360
         if (this.currentItem.drawType == "layer") {
           extentList.forEach((item, index) => {
             if (item.xMax > 180) {
@@ -857,6 +877,12 @@ export default {
               }
             }
           });
+        } else if(this.currentItem.drawType == "line") {
+          extentList.forEach((item, index) => {
+            if(extentList[index].xMax == 359) {
+              extentList[index].xMax = 360
+            }
+          })
         }
         extentList.forEach((item) => {
           this.clearLayer(this.currentItem);
@@ -922,6 +948,7 @@ export default {
           });
           extentList.splice(i, 1);
         });
+        // layer 0~180 -180~0   line 0~180 180~360
         if (currentItem.drawType === "layer") {
           extentList.forEach((item, index) => {
             if (item.xMax > 180) {
@@ -935,6 +962,12 @@ export default {
               }
             }
           });
+        } else if(this.currentItem.drawType == "line") {
+          extentList.forEach((item, index) => {
+            if(extentList[index].xMax == 359) {
+              extentList[index].xMax = 360
+            }
+          })
         }
         extentList.forEach((item) => {
           this.clearLayer(currentItem);
@@ -947,18 +980,6 @@ export default {
         });
         console.log(extentList);
       });
-
-      // this.extentList.forEach(item => {
-      //   this.currentItemList.forEach(item1 => {
-      //     this.clearLayer(item1)
-      //     if(item1.drawType == 'line') {
-      //       this.getAndDrawLine(item1, item)
-      //     } else if(item1.drawType == 'layer') {
-      //       // this.clearLayer(item)
-      //       this.getAndDrawLayer(item1, item)
-      //     }
-      //   })
-      // })
     },
     // 获取线的数据并绘制
     getAndDrawLine(currentItem, extent) {
@@ -984,18 +1005,26 @@ export default {
         .then((res) => {
           if (res.status == 200) {
             let polyline = [];
+            // max 输出最大值
+            // let maxList = []
             res.data.data.forEach((item) => {
               let linedata = [];
+              // let max = 0
               item.PointList.forEach((item1) => {
                 let latlng = [];
+                // if(max < item1.X) {
+                //   max = item1.X
+                // }
                 latlng.push(item1.Y);
                 latlng.push(item1.X);
                 latlng.push(Math.round(item.Value / 100));
                 linedata.push(latlng);
               });
+              // maxList.push(max)
 
               polyline.push(linedata);
             });
+            console.log('最大值', maxList)
             let line = new PressureLayer(
               {},
               {

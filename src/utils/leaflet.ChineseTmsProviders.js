@@ -71,7 +71,7 @@ L.TileLayer.ChinaProvider.providers = {
 
   Google: {
       Normal: {
-          Map: "//www.google.cn/maps/vt?lyrs=m@189&gl=cn&x={x}&y={y}&z={z}"
+          Map: globalConfig.baseURL + '/api/maps/google_img_w/{z}/{y}/{x}'
       },
       Satellite: {
           Map: "//www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}",
