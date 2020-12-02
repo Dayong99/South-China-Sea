@@ -5,6 +5,7 @@
     v-show="systemManagerShow"
     style="width: 960px;height:auto;"
     v-drag
+    ref="typhoonBox"
   >
     <div class="manager_title">
       <span>台风数据</span>
@@ -188,6 +189,9 @@ export default {
       if (val) {
         this.queryParams = {};
         this.fetch();
+        this.$refs.typhoonBox.style.left = "50%";
+        this.$refs.typhoonBox.style.top = "42%";
+        this.$refs.typhoonBox.style.transform = "translate(-50%, -50%)";
       }
     },
   },

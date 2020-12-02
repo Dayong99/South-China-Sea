@@ -5,6 +5,7 @@
     v-show="systemManagerShow"
     style="width: 960px;height:auto;"
     v-drag
+    ref="source2Box"
   >
     <div class="manager_title">
       <span>数据源配置—数值预报数据</span>
@@ -234,6 +235,9 @@ export default {
         this.queryParams = {};
         this.time = [];
         this.fetch();
+        this.$refs.source2Box.style.left = "50%";
+        this.$refs.source2Box.style.top = "42%";
+        this.$refs.source2Box.style.transform = "translate(-50%, -50%)";
       }
     },
   },
