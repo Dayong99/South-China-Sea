@@ -146,6 +146,33 @@
             background: rgba(152, 26, 0, 1);
         }
     }
+
+    // 卫星云图选择
+    .fyType {
+        margin-top: 15px;
+        margin-right: -5px;
+
+        .el-input {
+            width: 120px;
+            color: #fff3e1;
+
+            .el-input__icon {
+                line-height: 28px!important;
+            }
+        }
+
+        .el-input__inner {
+            height: 28px;
+            line-height: 28px;
+            font-size: 14px;
+            font-family: FZLTHJW--GB1-0, FZLTHJW--GB1;
+            font-weight: normal;
+            border-radius: 15px;
+            background: rgba(26, 26, 24, 0.7);
+            color: #fff;
+            border: none;
+        }
+    }
     
     // 实况资料
     .real_time_data {

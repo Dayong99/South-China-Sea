@@ -17,6 +17,7 @@ export default {
       buoyList: [],
       buoyMarkerGroup: [],
       shipMarkerGroup: [],
+      oceanMarkerGroup: [],
     };
   },
   mounted() {
@@ -106,8 +107,12 @@ export default {
       // 先清除站点数据
       this.removeAllLayer()
 
-      if(newval === 'ship') {
+      if(newval === 'ground') {
+        this.getGroundInfo()
+      } else if(newval === 'ship') {
         this.getShipInfo()
+      } else if(newval === 'ocean') {
+        this.getOceanInfo()
       } else if (newval === "buoy") {
         this.$get("/api/ocean-buoys-live").then((r) => {
           if (r.status == 200) {
@@ -242,6 +247,56 @@ export default {
         </div>
       </div>`)
     },
+    getOceanContent(info) {
+      return (
+      `<div id="info_box">
+        <div class="info_title"><i class="el-icon-ship"></i><span>`+info.name+`</span></div>
+        <div class="info_content">
+          <div class="info">
+            <div>
+              时分:
+              <span>`+info.dayTime+`</span>
+            </div>
+            <div>
+              位置:
+              <span>`+info.lat+`N,`+info.lon+`E</span>
+            </div>
+            <div>
+              低云高度:
+              <span>`+this.getValue(info.lowCloudHeight)+`</span>
+            </div>
+            <div>
+              风向:
+              <span>`+this.getValue(info.windDirection)+`°</span>
+            </div>
+            <div>
+              风速:
+              <span>`+this.getValue(info.windSpeed)+' '+info.windUnit+`</span>
+            </div>
+            <div>
+              温度:
+              <span>`+this.getValue(info.temperature)+`℃</span>
+            </div>
+            <div>
+              航向:
+              <span>`+this.getValue(info.course)+`</span>
+            </div>
+            <div>
+              航速:
+              <span>`+this.getValue(info.speed)+`</span>
+            </div>
+            <div>
+              能见度:
+              <span>`+this.getValue(info.visibility)+`</span>
+            </div>
+            <div>
+              海平面气压:
+              <span>`+this.getValue(info.pressure)+`</span>
+            </div>
+          </div>
+        </div>
+      </div>`)
+    },
     getShipInfo() {
       this.$get('/api/ship-live').then(res => {
         if(res.status == 200) {
@@ -291,6 +346,75 @@ export default {
         }
       }).catch(error => {
         this.$message.error('获取船舶站数据失败')
+      })
+    },
+    getGroundInfo() {
+      this.$get('/api/ground-live').then(res => {
+        if(res.status == 200) {
+          console.log('ground', res.data.data);
+          
+        }
+      }).catch(error => {
+        this.$message.error('获取地面站数据失败')
+      })
+    },
+    getOceanInfo() {
+      this.$get('/api/ocean-station-live').then(res => {
+        if(res.status == 200) {
+          console.log('ocean', res.data.data);
+          let data = res.data.data
+          let markerArr = []
+          data.forEach(item => {
+            if(item.lat === null && item.lon === null) {
+              return;
+            }
+            let lat = item.lat
+            let lon = item.lon
+            let oceanMarker = L.marker(L.latLng(lat, lon), { icon: this.shipIcon }).addTo(map);
+            //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
+            oceanMarker.type = 'ocean'
+            oceanMarker.id = item.id
+            markerArr.push(oceanMarker)
+            oceanMarker.on('click', ev => {
+              this.$get('/api/ocean-station-live/one', {
+                id: ev.target.id
+              }).then(res => {
+                if(res.status == 200) {
+                  let station = res.data.data
+                  let unit = null
+                  if(station.windUnit == 1 || station.windUnit == 2) {
+                    unit = 'm/s'
+                  } else if(station.windUnit == 3 || station.windUnit == 4) {
+                    unit = 'nm/h'
+                  }
+                  let str = this.getOceanContent({
+                    name: '海洋站',
+                    lat: station.lat,
+                    lon: station.lon,
+                    lowCloudHeight: station.lowCloudHeight,
+                    temperature: station.temperature,
+                    windSpeed: station.windSpeed,
+                    windDirection: station.windDirection,
+                    dayTime: this.$m(station.dayTime).format('HH')+'时'+this.$m(station.dayTime).format('mm')+'分',
+                    course: station.course,
+                    speed: station.speed,
+                    visibility: station.visibility,
+                    // stationPrecipitationReport: station.stationPrecipitationReport,
+                    windUnit: unit,
+                    pressure: station.pressure
+                  });
+                  oceanMarker.bindCustomPopup(str).openPopup()
+                }
+              }).catch(error => {
+                this.$message.error('获取站点数据失败')
+              })
+            })
+          })
+          this.oceanMarkerGroup = L.layerGroup(markerArr)
+          map.addLayer(this.oceanMarkerGroup)
+        }
+      }).catch(error => {
+        this.$message.error('获取海洋站数据失败')
       })
     },
     // 清除站点数据

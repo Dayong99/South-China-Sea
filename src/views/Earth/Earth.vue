@@ -17,6 +17,7 @@ var tileLayer2 =
   "http://192.168.1.152:8081/num/getOffLine?name={z}/{y}/{x}.png";
 var tileLayer3 = globalConfig.baseURL + "/api/maps/GeoQ_colors/{z}/{y}/{x}";
 var tileLayer4 = globalConfig.baseURL + "/api/maps/ibo_w/{z}/{y}/{x}";
+var tileLayer5 = globalConfig.baseURL + "/api/maps/cia_w/{z}/{y}/{x}";
 
 export default {
   name: "Earth",
@@ -305,6 +306,7 @@ export default {
         .addTo(window.map);
 
         L.tileLayer(tileLayer4, { maxZoom: 13, minZoom: 2 }).addTo(window.map)
+        L.tileLayer(tileLayer5, { maxZoom: 13, minZoom: 2 }).addTo(window.map)
       } else {
         L.tileLayer
         .chinaProvider("Geoq.Normal.PurplishBlue", { maxZoom: 13, minZoom: 2 })
