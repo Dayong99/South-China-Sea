@@ -172,6 +172,18 @@
       </div>
     </div>
 
+    <!-- 台风信息弹框 -->
+    <!-- <div class="ty_infobox">
+      <div class="info_title">VAMCO</div>
+      <div class="info_content">
+        <div>时间: 2020-11-20 06:00</div>
+        <div>纬度: 16.2</div>
+        <div>经度: 120.5</div>
+        <div>中心气压: 995</div>
+        <div>最大速度: 20</div>
+      </div>
+    </div> -->
+
     <!-- 层级轴 -->
     <level-bar></level-bar>
   </div>
@@ -396,7 +408,8 @@ export default {
       ],
       chooseAllFlag: false,
       // timer: undefined,
-      tyDeletArr:[]
+      tyDeletArr: [],
+      flag: true,
     };
   },
   computed: {
@@ -545,6 +558,59 @@ export default {
         that.screenHeight = window.fullHeight;
       })();
     };
+
+    L.CustomPopup = L.Popup.extend({
+      _initLayout: function() {
+        var prefix = "leaflet-popup",
+          container = (this._container = L.DomUtil.create(
+            "div",
+            prefix +
+              " " +
+              (this.options.className || "") +
+              " leaflet-zoom-animated"
+          ));
+
+        var wrapper = container;
+        this._contentNode = L.DomUtil.create(
+          "div",
+          prefix + "-content",
+          wrapper
+        );
+
+        L.DomEvent.disableClickPropagation(wrapper)
+          .disableScrollPropagation(this._contentNode)
+          .on(wrapper, "contextmenu", L.DomEvent.stopPropagation);
+      },
+    });
+
+    // add bindCustomPopup
+    L.Layer.include({
+      bindCustomPopup: function(content, options) {
+        if (content instanceof L.Popup) {
+          L.setOptions(content, options);
+          this._popup = content;
+          content._source = this;
+        } else {
+          if (!this._popup || options) {
+            this._popup = new L.CustomPopup(options, this);
+          }
+          this._popup.setContent(content);
+        }
+
+        if (!this._popupHandlersAdded) {
+          this.on({
+            click: this._openPopup,
+            // mouseover: this._openPopup,
+            // mouseout: this.closePopup,
+            remove: this.closePopup,
+            move: this._movePopup,
+          });
+          this._popupHandlersAdded = true;
+        }
+
+        return this;
+      },
+    });
   },
   methods: {
     ...mapMutations({
@@ -683,11 +749,11 @@ export default {
         if (this.menuList[index].drawType === "typhoon") {
           console.log("取消台风---------");
           this.typhoonShow = false;
-          this.chooseAllFlag = false
+          this.chooseAllFlag = false;
           //清除台风警戒线
           this.clearWarningLine();
           //清除台风
-          this.deleteAllTy()
+          this.deleteAllTy();
         }
 
         // 取消状态、重置最近缓存的level
@@ -848,7 +914,13 @@ export default {
           extentList.forEach((item, index) => {
             if (item.xMax > 180) {
               extentList[index].xMin -= 360;
+              if(extentList[index].xMin == -1) {
+                extentList[index].xMin = 0
+              }
               extentList[index].xMax -= 360;
+              if(extentList[index].xMax == -1) {
+                extentList[index].xMax = 0
+              }
             }
           });
         }
@@ -920,7 +992,13 @@ export default {
           extentList.forEach((item, index) => {
             if (item.xMax > 180) {
               extentList[index].xMin -= 360;
+              if(extentList[index].xMin == -1) {
+                extentList[index].xMin = 0
+              }
               extentList[index].xMax -= 360;
+              if(extentList[index].xMax == -1) {
+                extentList[index].xMax = 0
+              }
             }
           });
         }
@@ -1183,7 +1261,7 @@ export default {
         })
         .catch((error) => {
           this.$message.error("获取" + currentItem.name + "数据失败");
-        })
+        });
     },
     // 绘制 洋流\波向
     getAndDrawWave(currentItem) {
@@ -1297,8 +1375,8 @@ export default {
 
         console.log("mouseover", ev);
         // ev.target.   构造数据
-        let time = Number(this.time) > 10 ? ' ' + this.time : ' 0' + this.time
-        this.tidalData.time = this.day + time + ':00:00';
+        let time = Number(this.time) > 10 ? " " + this.time : " 0" + this.time;
+        this.tidalData.time = this.day + time + ":00:00";
         this.tidalData.name = ev.target.name;
         // 前三天日期数据
         this.tidalIndex = 2; // 重置选择的日期
@@ -1378,7 +1456,7 @@ export default {
             let time = null;
             this.clearChart();
             this.createChart(this.tidalCharts);
-            this.tidalMsgFlag = false
+            this.tidalMsgFlag = false;
             if (
               tidalList.length &&
               tidalList != null &&
@@ -1420,7 +1498,7 @@ export default {
               this.tidalData.tidalList[1].type = "min";
               console.log("tidalList", this.tidalData.tidalList);
             } else {
-              this.tidalMsgFlag = true
+              this.tidalMsgFlag = true;
               // this.$message.warning("此时刻暂无潮汐数据");
             }
           }
@@ -1615,7 +1693,7 @@ export default {
           }
         });
         console.log(chooseArr, "取消的集合");
-        this.deleteAllTy()
+        this.deleteAllTy();
         //点击全选
       } else {
         this.chooseAllFlag = true;
@@ -1627,9 +1705,10 @@ export default {
           }
         });
         console.log(chooseArr, "选中的集合");
-        chooseArr.forEach(item=>{
-          this.drawTy(this.tyList[item].id)
-        })
+        this.flag = true;
+        chooseArr.forEach((item) => {
+          this.drawTy(this.tyList[item].id);
+        });
       }
     },
 
@@ -1643,10 +1722,10 @@ export default {
         let i = this.tyList.findIndex((item) => {
           return item.choose == true;
         });
-        if ((i == -1)) {
+        if (i == -1) {
           this.chooseAllFlag = false;
         }
-        this.deleteTy(item.id)
+        this.deleteTy(item.id);
         //点击之前是未选中状态时，则选中，并绘制该条台风
       } else {
         item.choose = true;
@@ -1654,9 +1733,10 @@ export default {
         let i = this.tyList.findIndex((item) => {
           return item.choose == false;
         });
-        if ((i == -1)) {
+        if (i == -1) {
           this.chooseAllFlag = true;
         }
+        this.flag = true;
         this.drawTy(item.id);
       }
     },
@@ -1669,6 +1749,9 @@ export default {
       }).then((res) => {
         console.log(res.data.data, "单个台风的数据");
         let trackList = res.data.data.trackList;
+        trackList.forEach((item) => {
+          item.tyName = res.data.data.cycloneName;
+        });
         trackList.forEach((item) => {
           if (item.centerMaxSpeed >= 10.8 && item.centerMaxSpeed <= 17.1) {
             item.color = "#33ff26";
@@ -1702,42 +1785,66 @@ export default {
           radius: 6,
           fillOpacity: 1,
           fillColor: trackList[0].color,
-          weight: 0,
+          weight: 6,
+          opacity: 0,
         }).addTo(map);
-        circle.id = id
-        this.tyDeletArr.push(circle)
+        circle.id = id;
+        circle.info = trackList[0];
+        circle.on("mouseover", (e) => {
+          // console.log(e, "-------------------");
+          let content = this.getTyContent(e.target.info);
+          circle.bindCustomPopup(content).openPopup();
+        });
+        circle.on("mouseout", (e) => {
+          circle.closePopup();
+        });
+        this.tyDeletArr.push(circle);
 
         let i = 0;
         let that = this;
         function test() {
           if (i < trackList.length - 1) {
-            let timer = setTimeout(() => {
-              let latlngs = [
-                [trackList[i].lat, trackList[i].lon],
-                [trackList[i + 1].lat, trackList[i + 1].lon],
-              ];
-              let polyline = L.polyline(latlngs, { color: "#666666" }).addTo(
-                map
-              );
-              polyline.id = id
-              that.tyDeletArr.push(polyline)
-              let circle = L.circleMarker(
-                [trackList[i + 1].lat, trackList[i + 1].lon],
-                {
-                  // id:id,
-                  radius: 6,
-                  fillOpacity: 1,
-                  fillColor: trackList[i + 1].color,
-                  weight: 0,
-                }
-              ).addTo(map);
-              circle.id = id
-              that.tyDeletArr.push(circle)
-              i++;
-              test();
-            }, 200);
+            if (that.flag) {
+              let timer = setTimeout(() => {
+                let latlngs = [
+                  [trackList[i].lat, trackList[i].lon],
+                  [trackList[i + 1].lat, trackList[i + 1].lon],
+                ];
+                let polyline = L.polyline(latlngs, { color: "#666666" }).addTo(
+                  map
+                );
+                polyline.id = id;
+                polyline.bringToBack()
+                that.tyDeletArr.push(polyline);
+                let circle = L.circleMarker(
+                  [trackList[i + 1].lat, trackList[i + 1].lon],
+                  {
+                    // id:id,
+                    radius: 6,
+                    fillOpacity: 1,
+                    fillColor: trackList[i + 1].color,
+                    weight: 6,
+                    opacity: 0,
+                  }
+                ).addTo(map);
+                circle.id = id;
+                circle.info = trackList[i + 1];
+                circle.on("click", (e) => {
+                  // console.log(e, "-------------------");
+                  let content = that.getTyContent(e.target.info);
+                  circle.bindCustomPopup(content).openPopup();
+                });
+                circle.on("mouseout", (e) => {
+                  circle.closePopup();
+                });
+                // circle.bringToFront()
+                that.tyDeletArr.push(circle);
+                i++;
+                test();
+              }, 50);
+            }
           } else {
-            clearTimeout(timer);
+            // clearTimeout(timer);
             i = 0;
           }
         }
@@ -1746,30 +1853,63 @@ export default {
     },
 
     //根据id清除台风
-    deleteTy(id){
+    deleteTy(id) {
+      this.flag = false;
       console.log(this.tyDeletArr);
-      this.tyDeletArr.forEach((item,index)=>{
-        if(item.id==id){
-          map.removeLayer(item)
-          // this.tyDeletArr.splice(index,1)
+      setTimeout(() => {
+        this.tyDeletArr.forEach((item, index) => {
+          if (item.id == id) {
+            map.removeLayer(item);
+            // this.tyDeletArr.splice(index,1)
+          }
+        });
+        for (let i = 0; i < this.tyDeletArr.length; i++) {
+          if (this.tyDeletArr[i].id == id) {
+            this.tyDeletArr.splice(i, 1);
+            i--;
+          }
         }
-      })
-      for(let i=0;i<this.tyDeletArr.length;i++){
-        if(this.tyDeletArr[i].id==id){
-          this.tyDeletArr.splice(i,1)
-          i--
-        }
-      }
+      }, 100);
       console.log(this.tyDeletArr);
     },
 
     //删除全部台风
-    deleteAllTy(){
-      this.tyDeletArr.forEach(item=>{
-        map.removeLayer(item)
-      })
-      this.tyDeletArr = []
-    }
+    deleteAllTy() {
+      this.flag = false;
+      setTimeout(() => {
+        this.tyDeletArr.forEach((item) => {
+          map.removeLayer(item);
+        });
+        this.tyDeletArr = [];
+      }, 100);
+    },
+
+    getTyContent(info) {
+      return (
+        `<div id="ty_infobox">
+      <div class="info_title">` +
+        info.tyName +
+        `</div>
+      <div class="info_content">
+        <div>时间: ` +
+        info.dayTime.replace("T", " ") +
+        `</div>
+        <div>纬度: ` +
+        info.lat +
+        `</div>
+        <div>经度: ` +
+        info.lon +
+        `</div>
+        <div>中心气压: ` +
+        info.centerPressure +
+        `</div>
+        <div>最大速度: ` +
+        info.centerMaxSpeed +
+        `</div>
+      </div>
+    </div>`
+      );
+    },
   },
 };
 </script>
