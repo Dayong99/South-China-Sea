@@ -193,80 +193,88 @@
                       <div class="assess_desc">
                         {{ itemAssess.assesstime | filterTime }}
                       </div>
-                      <div class="assess_control" v-if="itemAssess.setting">
-                        <!-- bin -->
-                        <img
-                          src="@/assets/images/menu/bin_assess_deactive.png"
-                          class="control_items"
-                          @click="
-                            changeAssessTime(
-                              itemAssess,
-                              indexAssess,
-                              itemRoute,
-                              indexRoute,
-                              item,
-                              index
-                            )
-                          "
-                        />
-                        <img
-                          :src="
-                            itemAssess.alorithm
-                              ? AssessControlSrc.alorithm.active
-                              : AssessControlSrc.alorithm.deactive
-                          "
-                          class="control_items"
-                          @click="itemAssess.alorithm = !itemAssess.alorithm"
-                        />
-                        
-                        <!-- area -->
-                        <img
-                          :src="
-                            itemAssess.area
-                              ? AssessControlSrc.area.active
-                              : AssessControlSrc.area.deactive
-                          "
-                          class="control_items"
-                          @click="
-                            showAssessArea(itemAssess, indexAssess, itemRoute)
-                          "
-                        />
-                        <img
-                          :src="
-                            itemAssess.line
-                              ? AssessControlSrc.line.active
-                              : AssessControlSrc.line.deactive
-                          "
-                          class="control_items"
-                          @click="
-                            showAssessLine(itemAssess, indexAssess, itemRoute)
-                          "
-                        />
-                        <img
-                          :src="
-                            itemAssess.table
-                              ? AssessControlSrc.table.active
-                              : AssessControlSrc.table.deactive
-                          "
-                          class="control_items"
-                          @click="showAssessInfo(itemAssess)"
-                        />
-                        <img
-                          src="@/assets/images/menu/time_assess_deactive.png"
-                          class="control_items"
-                          @click="
-                            changeAssessTime(
-                              itemAssess,
-                              indexAssess,
-                              itemRoute,
-                              indexRoute,
-                              item,
-                              index
-                            )
-                          "
-                        />
-                      </div>
-                      <div class="assess_control_deactive" v-else></div>
+                      <transition
+                        enter-active-class="animated slideInRight"
+                        leave-active-class="animated slideOutRight"
+                      >
+                        <div class="assess_control" v-if="itemAssess.setting">
+                          <!-- bin -->
+                          <img
+                            src="@/assets/images/menu/bin_assess_deactive.png"
+                            class="control_items"
+                            @click="
+                              changeAssessTime(
+                                itemAssess,
+                                indexAssess,
+                                itemRoute,
+                                indexRoute,
+                                item,
+                                index
+                              )
+                            "
+                          />
+                          <img
+                            :src="
+                              itemAssess.alorithm
+                                ? AssessControlSrc.alorithm.active
+                                : AssessControlSrc.alorithm.deactive
+                            "
+                            class="control_items"
+                            @click="itemAssess.alorithm = !itemAssess.alorithm"
+                          />
+
+                          <!-- area -->
+                          <img
+                            :src="
+                              itemAssess.area
+                                ? AssessControlSrc.area.active
+                                : AssessControlSrc.area.deactive
+                            "
+                            class="control_items"
+                            @click="
+                              showAssessArea(itemAssess, indexAssess, itemRoute)
+                            "
+                          />
+                          <img
+                            :src="
+                              itemAssess.line
+                                ? AssessControlSrc.line.active
+                                : AssessControlSrc.line.deactive
+                            "
+                            class="control_items"
+                            @click="
+                              showAssessLine(itemAssess, indexAssess, itemRoute)
+                            "
+                          />
+                          <img
+                            :src="
+                              itemAssess.table
+                                ? AssessControlSrc.table.active
+                                : AssessControlSrc.table.deactive
+                            "
+                            class="control_items"
+                            @click="showAssessInfo(itemAssess)"
+                          />
+                          <img
+                            src="@/assets/images/menu/time_assess_deactive.png"
+                            class="control_items"
+                            @click="
+                              changeAssessTime(
+                                itemAssess,
+                                indexAssess,
+                                itemRoute,
+                                indexRoute,
+                                item,
+                                index
+                              )
+                            "
+                          />
+                        </div>
+                      </transition>
+                      <div
+                        class="assess_control_deactive"
+                        v-if="!itemAssess.setting"
+                      ></div>
                       <div class="setting_wrapper">
                         <img
                           src="@/assets/images/menu/setting_assess_deactive.svg"
