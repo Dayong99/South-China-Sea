@@ -5,8 +5,9 @@ import 'leaflet-measure-path/leaflet-measure-path.css'
 
 
 var deleteIcon = L.icon({
-  iconUrl: "../assets/images/toolbar/shanchu.png",
+  iconUrl: require("@/assets/images/toolbar/shanchu.png"),
   iconSize: [16, 16],
+  iconAnchor: [10, 20]
 });
 
 // 测量距离

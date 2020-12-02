@@ -34,12 +34,17 @@ export default {
   computed: {
     ...mapState({
       imageLayerNum: (state) => state.earth.imageLayerNum,
+      tileLayer: state => state.earth.tileLayer
     }),
     nowtime() {
       return this.$store.state.time.time;
     },
   },
-  watch: {},
+  watch: {
+    tileLayer(newval) {
+      this.changeTileLayer(newval)
+    }
+  },
   created() {},
   destroyed() {
     window.map = null;
@@ -68,6 +73,10 @@ export default {
       L.tileLayer
         .chinaProvider("Geoq.Normal.PurplishBlue", { maxZoom: 13, minZoom: 2 })
         .addTo(window.map);
+      // google 底图
+      // L.tileLayer
+      //   .chinaProvider("Google.Normal.Map", { maxZoom: 13, minZoom: 2 })
+      //   .addTo(window.map);
       window.map.on("load", (ev) => {
         this.getExtent();
       });
@@ -297,6 +306,18 @@ export default {
       console.log("extentList", extentList);
       this.setExtent(extentList);
     },
+    // 切换底图
+    changeTileLayer(flag) {
+      if(flag) {
+        L.tileLayer
+        .chinaProvider("Google.Normal.Map", { maxZoom: 13, minZoom: 2 })
+        .addTo(window.map);
+      } else {
+        L.tileLayer
+        .chinaProvider("Geoq.Normal.PurplishBlue", { maxZoom: 13, minZoom: 2 })
+        .addTo(window.map);
+      }
+    }
   },
 };
 </script>
