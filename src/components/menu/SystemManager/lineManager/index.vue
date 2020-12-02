@@ -5,6 +5,7 @@
     v-show="systemManagerShow"
     style="width: 960px; height: auto"
     v-drag
+    ref="lineBox"
   >
     <div class="manager_title">
       <span>等值线配置</span>
@@ -256,6 +257,9 @@ export default {
           contourName: null,
         };
         this.fetch();
+        this.$refs.lineBox.style.left = "50%";
+        this.$refs.lineBox.style.top = "42%";
+        this.$refs.lineBox.style.transform = "translate(-50%, -50%)";
       }
     },
   },

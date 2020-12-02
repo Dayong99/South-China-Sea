@@ -4,6 +4,8 @@
     class="ship_manager"
     v-show="systemManagerShow"
     style="width: 960px; height: auto"
+    v-drag
+    ref="sourceBox"
   >
     <div class="manager_title">
       <span>数据源配置—广东省网</span>
@@ -191,13 +193,12 @@ export default {
     },
     systemManagerShow(val) {
       if (val) {
-        //  let dragBox = document.getElementById("datasource");
-        // console.log(dragBox)
-        // dragBox.style.left = "42%";
-        // dragBox.style.top = "50%";
         this.queryParams = {};
         this.time = [];
         this.fetch();
+        this.$refs.sourceBox.style.left = "50%";
+        this.$refs.sourceBox.style.top = "42%";
+        this.$refs.sourceBox.style.transform = "translate(-50%, -50%)";
       } 
     },
   },

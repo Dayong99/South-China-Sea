@@ -1,5 +1,12 @@
 <template>
-  <div id="ship_manager" class="ship_manager" v-show="systemManagerShow" style="width:auto;height:auto;" v-drag>
+  <div
+    id="ship_manager"
+    class="ship_manager"
+    ref="areaBox"
+    v-show="systemManagerShow"
+    style="width: auto; height: auto"
+    v-drag
+  >
     <div class="manager_title">
       <span>常用区域</span>
       <img
@@ -170,6 +177,9 @@ export default {
           name: null,
         };
         this.fetch();
+        this.$refs.areaBox.style.left = "50%";
+        this.$refs.areaBox.style.top = "42%";
+        this.$refs.areaBox.style.transform = "translate(-50%, -50%)";
       }
     },
   },

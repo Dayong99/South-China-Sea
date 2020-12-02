@@ -5,6 +5,7 @@
     v-show="systemManagerShow"
     style="width: auto; height: auto"
     v-drag
+    ref="dataliveBox"
   >
     <div class="manager_title">
       <span>实况数据</span>
@@ -87,9 +88,12 @@ export default {
       deep: true,
     },
     systemManagerShow(val){
-      if(!val){
+      if(val){
         this.tabName = 'ground'
         this.flagArr=[true, false, false, false]
+        this.$refs.dataliveBox.style.left = "50%";
+        this.$refs.dataliveBox.style.top = "42%";
+        this.$refs.dataliveBox.style.transform = "translate(-50%, -50%)";
       }
     }
   },
