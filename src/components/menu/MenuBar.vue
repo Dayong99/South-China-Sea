@@ -29,21 +29,29 @@
     <div class="mark_area" v-show="markAreaFlag">
       <div class="area_top">
         <div class="area_top_left">
-          <img src="@/assets/images/menu/transform.png">
+          <img src="@/assets/images/menu/transform.png" />
           <span>常用区域</span>
         </div>
         <div class="area_top_right">
-          <img src="@/assets/images/menu/addarea.png" class="area_add" @click.stop="addItem">
-          <img src="@/assets/images/menu/close.png" class="area_close" @click.stop="showMarkArea">
+          <img
+            src="@/assets/images/menu/addarea.png"
+            class="area_add"
+            @click.stop="addItem"
+          />
+          <img
+            src="@/assets/images/menu/close.png"
+            class="area_close"
+            @click.stop="showMarkArea"
+          />
         </div>
       </div>
       <div class="area_content">
         <ul>
           <li v-for="(item, index) in areaList" :key="index">
-            <span class="area_index">{{ index +1 }}</span>
+            <span class="area_index">{{ index + 1 }}</span>
             <span class="area_name">{{ item.name }}</span>
             <div class="tolatlon" @click.stop="toLatLon(item)">
-              <img src="@/assets/images/menu/location.png">
+              <img src="@/assets/images/menu/location.png" />
               <span>跳转</span>
             </div>
           </li>
@@ -215,9 +223,7 @@
                         <img
                           src="@/assets/images/menu/table.svg"
                           class="control_items"
-                          @click="
-                            showAssessInfo(itemAssess)
-                          "
+                          @click="showAssessInfo(itemAssess)"
                         />
                         <img
                           src="@/assets/images/menu/next.svg"
@@ -289,12 +295,12 @@
         </li>
       </ul>
     </div>
-    <edit 
+    <edit
       ref="edit"
       :dialog-visible="dialog.isVisible"
       :title="dialog.title"
       @close="closeDialogPage"
-      >
+    >
     </edit>
   </div>
 </template>
@@ -304,7 +310,7 @@ import { mapState, mapMutations } from "vuex";
 import Edit from "@/components/menu/SystemManager/areaManager/edit.vue";
 export default {
   components: {
-    Edit
+    Edit,
   },
   data() {
     return {
@@ -353,6 +359,60 @@ export default {
       routeDialogOptions: (s) => s.menuBar.routeDialogOptions,
       algorithmOptions: (s) => s.menuBar.algorithmOptions,
     }),
+  },
+  mounted() {
+    L.CustomPopup = L.Popup.extend({
+      _initLayout: function() {
+        var prefix = "leaflet-popup",
+          container = (this._container = L.DomUtil.create(
+            "div",
+            prefix +
+              " " +
+              (this.options.className || "") +
+              " leaflet-zoom-animated"
+          ));
+
+        var wrapper = container;
+        this._contentNode = L.DomUtil.create(
+          "div",
+          prefix + "-content",
+          wrapper
+        );
+
+        L.DomEvent.disableClickPropagation(wrapper)
+          .disableScrollPropagation(this._contentNode)
+          .on(wrapper, "contextmenu", L.DomEvent.stopPropagation);
+      },
+    });
+
+    // add bindCustomPopup
+    L.Layer.include({
+      bindCustomPopup: function(content, options) {
+        if (content instanceof L.Popup) {
+          L.setOptions(content, options);
+          this._popup = content;
+          content._source = this;
+        } else {
+          if (!this._popup || options) {
+            this._popup = new L.CustomPopup(options, this);
+          }
+          this._popup.setContent(content);
+        }
+
+        if (!this._popupHandlersAdded) {
+          this.on({
+            click: this._openPopup,
+            // mouseover: this._openPopup,
+            // mouseout: this.closePopup,
+            remove: this.closePopup,
+            move: this._movePopup,
+          });
+          this._popupHandlersAdded = true;
+        }
+
+        return this;
+      },
+    });
   },
   watch: {
     menuList: {
@@ -712,24 +772,24 @@ export default {
     //获取风险等级航线详细信息列表
     showAssessInfo(itemAssess) {
       //互斥，表格只能显示一个
-      console.log(this.taskList,"任务列表----------");
-      this.taskList.forEach(item=>{
-        if(item.routeList.length!=0){
-          item.routeList.forEach(item1=>{
-            if(item1.assessList.length!=0){
-              item1.assessList.forEach(item2=>{
-                if(item2.id!=itemAssess.id){
-                  item2.table = false
-                  this.setRouteInfoShow(false)
+      console.log(this.taskList, "任务列表----------");
+      this.taskList.forEach((item) => {
+        if (item.routeList.length != 0) {
+          item.routeList.forEach((item1) => {
+            if (item1.assessList.length != 0) {
+              item1.assessList.forEach((item2) => {
+                if (item2.id != itemAssess.id) {
+                  item2.table = false;
+                  this.setRouteInfoShow(false);
                 }
-              })
+              });
             }
-          })
+          });
         }
-      })
+      });
 
       itemAssess.table = !itemAssess.table;
-      if(itemAssess.table){
+      if (itemAssess.table) {
         //请求航线详细信息数据，构造显示下方列表
         this.$get("api/assessment/line-conclusion", {
           assessmentId: itemAssess.id,
@@ -756,7 +816,7 @@ export default {
           this.setDataList(dataList);
           this.setRouteInfoShow(true);
         });
-      }else{
+      } else {
         this.setRouteInfoShow(false);
       }
     },
@@ -893,15 +953,36 @@ export default {
             });
           });
           console.log(pointArr);
-          pointArr.forEach((item) => {
+          pointArr.forEach((item, index) => {
             let circle = L.circleMarker(item.position, {
               radius: 6,
               fillOpacity: 1,
               fillColor: item.color,
               weight: 0,
             }).addTo(map);
+            circle.index = index;
             circle.assessmentId = assessmentId;
             circle.courseId = courseId;
+            circle.on("click", (e) => {
+              console.log(e, "航线点的信息--------");
+              //请求单个航线点的信息
+              let info = [
+                {
+                  name: "时间",
+                  value: "2020-01-01 10:00",
+                },
+                {
+                  name: "温度",
+                  value: "23",
+                },
+                {
+                  name: "高度",
+                  value: "1234",
+                },
+              ];
+              let content = this.getPointContent(info);
+              circle.bindCustomPopup(content).openPopup();
+            });
             this.routeLine.push(circle);
           });
         });
@@ -1207,24 +1288,31 @@ export default {
     },
     // 区域收藏面板
     showMarkArea() {
-      this.markAreaFlag = !this.markAreaFlag
-      if(this.markAreaFlag) {
-        this.areaFetch()
+      this.markAreaFlag = !this.markAreaFlag;
+      if (this.markAreaFlag) {
+        this.areaFetch();
       }
     },
     areaFetch() {
-      this.$get('/api/region-division').then(res => {
-        if(res.status == 200) {
-          console.log('常用区域', res)
-          let data = res.data.data.rows
-          this.areaList = data
-        }
-      }).catch(error => {
-        this.$message('获取常用区域失败')
-      })
+      this.$get("/api/region-division")
+        .then((res) => {
+          if (res.status == 200) {
+            console.log("常用区域", res);
+            let data = res.data.data.rows;
+            this.areaList = data;
+          }
+        })
+        .catch((error) => {
+          this.$message("获取常用区域失败");
+        });
     },
     toLatLon(location) {
-      window.map.flyToBounds(L.latLngBounds([[location.maxLat, location.minLon],[location.minLat, location.maxLon]]))
+      window.map.flyToBounds(
+        L.latLngBounds([
+          [location.maxLat, location.minLon],
+          [location.minLat, location.maxLon],
+        ])
+      );
     },
     addItem() {
       this.dialog.isVisible = true;
@@ -1234,6 +1322,24 @@ export default {
     closeDialogPage() {
       this.dialog.isVisible = false;
       this.areaFetch();
+    },
+
+    //配置航线点的弹出框信息
+    getPointContent(info) {
+      let str = "";
+      info.forEach((item) => {
+        str += `<div>` + item.name + `: ` + item.value + `</div>`;
+      });
+      return (
+        `<div id="p_infobox">
+      <div class="info_title">评估信息</div>
+      <div class="info_content">
+         ` +
+        str +
+        `</div>
+      </div>
+    </div>`
+      );
     },
   },
 };

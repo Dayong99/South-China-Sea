@@ -1829,7 +1829,7 @@ export default {
                 ).addTo(map);
                 circle.id = id;
                 circle.info = trackList[i + 1];
-                circle.on("mouseover", (e) => {
+                circle.on("click", (e) => {
                   // console.log(e, "-------------------");
                   let content = that.getTyContent(e.target.info);
                   circle.bindCustomPopup(content).openPopup();
