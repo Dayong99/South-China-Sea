@@ -344,6 +344,7 @@ export default {
     // 清除要素
     clear() {
       map.removeLayer(this.rectangle);
+      map.off("click")
       window.tool.clearTool();
     },
     // 经纬线

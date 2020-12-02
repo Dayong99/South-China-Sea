@@ -1,0 +1,44 @@
+#p_infobox{
+    width: 215px;
+    // height: 250px;
+    position: fixed;
+    top: 10px;
+    left: 65px;
+    box-shadow: 2px 2px 10px 0px rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    font-family: '微软雅黑';
+
+    .info_title{
+        height: 30px;
+        background: #2058ca;
+        color: white;
+        line-height: 30px;
+        padding-left: 10px;
+        text-align: left;
+    }
+
+    .info_title::after {
+        display:block;
+        content:'';
+        border-width:8px 8px 8px 8px;
+        border-style:solid;
+        border-color:  transparent  #2058ca transparent transparent;
+        /* 定位 */
+        position:absolute;
+        left:-16px;
+        top:8px;
+    }
+
+    .info_content{
+        background: white;
+        height: 165px;
+        padding-top: 6px;
+
+        div{
+            line-height: 30px;
+            font-size: 14;
+            margin-left: 10px;
+            text-align: left;
+        }
+    }
+}

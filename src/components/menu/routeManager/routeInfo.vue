@@ -5,27 +5,27 @@
       leave-active-class="animated slideOutDown"
     >
       <div class="routeInfo" ref="info" v-if="show">
-        <el-tooltip
+        <!-- <el-tooltip
           class="item"
           effect="dark"
           content="关闭评估"
           placement="top-start"
         >
           <div class="closebtn" @click="close">关闭</div>
-        </el-tooltip>
+        </el-tooltip> -->
 
         <div class="title_box">
           <div class="info_btn">
             <div class="img_box" @click="hidInfoBox">
               <img src="@/assets/images/routeInfo/btn.svg" class="btn_img" />
             </div>
-            <el-switch
+            <!-- <el-switch
               v-model="routeInfoflag"
               active-text="区域"
               inactive-text="航线"
               :width="30"
             >
-            </el-switch>
+            </el-switch> -->
           </div>
           <ul>
             <li v-for="(item, index) in titleList" :key="index">
