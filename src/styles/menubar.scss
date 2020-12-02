@@ -614,6 +614,7 @@
                   overflow-y: auto;
                   height: auto;
                   background:#756c5d;
+                  overflow-x: hidden;
                   
                   .assess_items {
                     height: 30px;
@@ -641,9 +642,9 @@
                       width: 48%;
                       text-align: right;
                       line-height: 24px;
-                      padding-right: 12px;
+                      padding-right: 15px;
                       background: #463d38;
-                      margin-top: 5px;
+                      margin-top: 3px;
                       height: 20px;
                       border-radius: 12px 0 0 12px;
                       margin-right: 10px;
@@ -657,8 +658,8 @@
                       width: 48%;
                       text-align: right;
                       line-height: 24px;
-                      padding-right: 12px;
-                      margin-top: 5px;
+                      padding-right: 15px;
+                      margin-top: 3px;
                       height: 20px;
                       border-radius: 12px 0 0 12px;
                       margin-right: 10px;
@@ -675,8 +676,8 @@
                       line-height: 40px;  
                       right: 15px;
                       .control_items {
-                        width: 20px;
-                        height: 20px;
+                        width: 22px;
+                        height: 22px;
                         background: #fdb2b3;
                         border-radius: 50%;
                         cursor: pointer;
