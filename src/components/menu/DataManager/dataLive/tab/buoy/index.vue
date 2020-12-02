@@ -112,7 +112,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="海平面气压(hPa)"
+          label="气压(hPa)"
           align="center"
           min-width="100px"
         >

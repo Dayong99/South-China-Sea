@@ -4,7 +4,7 @@
       <el-input
         placeholder="数据源名称"
         prefix-icon="el-icon-search"
-        v-model="queryParams.numericalName"
+        v-model="queryParams.areaNum"
         class="operation_input"
         clearable
         @clear="search"
@@ -36,64 +36,106 @@
             {{ (pagination.num - 1) * pagination.size + scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column
-          label="数据源名称"
+         <el-table-column
+          label="区站号"
           align="center"
           min-width="100px"
-          :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.numericalName }}</span>
+            <span>{{ scope.row.areaNum }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="起报时间" align="center" min-width="160px">
+        <el-table-column
+          label="能见度"
+          align="center"
+          min-width="100px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.visibility }}</span>
+          </template>
+        </el-table-column>
+      
+        <el-table-column
+          label="风向(°)"
+          align="center"
+          min-width="100px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.windDirection }}</span>
+          </template>
+        </el-table-column>
+       
+        <el-table-column
+          label="风速(m/s)"
+          align="center"
+          min-width="100px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.windSpeed }}</span>
+          </template>
+        </el-table-column>
+        
+        <el-table-column
+          label="温度(℃)"
+          align="center"
+          min-width="100px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.temperature }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="露点温度(℃)"
+          align="center"
+          min-width="100px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.dewTemperature }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="气压(hPa)"
+          align="center"
+          min-width="100px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.pressure }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="海平面气压(hPa)"
+          align="center"
+          min-width="100px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.seaLevelPressure }}</span>
+          </template>
+        </el-table-column>
+         <el-table-column
+          label="降水(mm)"
+          align="center"
+          min-width="100px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.precipitation }}</span>
+          </template>
+        </el-table-column>
+         <el-table-column
+          label="起报时间"
+          align="center"
+          min-width="160px"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.startTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="预报日期" align="center" min-width="100px">
-          <template slot-scope="scope">
-            <span>{{ scope.row.startDay }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="预报时间" align="center" min-width="100px">
-          <template slot-scope="scope">
-            <span>{{ scope.row.startHours }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="时效" align="center" min-width="100px">
-          <template slot-scope="scope">
-            <span>{{ scope.row.fcst }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="修改时间" align="center" min-width="160px">
-          <template slot-scope="scope">
-            <span>{{ scope.row.modifyTime }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="修改次数" align="center" min-width="100px">
-          <template slot-scope="scope">
-            <span>{{ scope.row.modifyTimes }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="是否可用" align="center" min-width="100px">
-          <template slot-scope="scope">
-            <span>{{ scope.row.isAvailable == 1 ? "是" : "否" }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="补充" align="center" min-width="100px">
-          <template slot-scope="scope">
-            <span>{{ scope.row.isSupplement }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="数据来源"
+         <el-table-column
+          label="风速单位"
           align="center"
           min-width="100px"
-          :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.dataSource }}</span>
+            <span>{{ scope.row.windUnit }}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -214,9 +256,9 @@ export default {
           ...this.queryParams,
         });
       } else {
-        if (this.queryParams.numericalName) {
+        if (this.queryParams.areaNum) {
           this.fetch({
-            numericalName: this.queryParams.numericalName,
+            areaNum: this.queryParams.areaNum,
           });
         } else {
           this.fetch();
@@ -227,7 +269,7 @@ export default {
     fetch(params = {}) {
       params.pageSize = this.pagination.size;
       params.pageNum = this.pagination.num;
-      this.$get("/api/ocean-buoys-live/page", {
+      this.$get("/api/ground-live/page", {
         ...params,
       }).then((res) => {
         console.log(res, "res");
