@@ -15,28 +15,17 @@
       />
     </div>
     <div class="manager_operation">
-      <el-input
-        placeholder="请输入关键词"
-        prefix-icon="el-icon-search"
-        v-model="queryParams.name"
-        class="operation_input"
-        clearable
-        @clear="search"
-      >
-      </el-input>
-      <el-button class="operation_search" @click="search">搜索</el-button>
-      <el-button class="operation_clear" @click="resetSearch">重置</el-button>
       <el-button icon="el-icon-plus" class="operation_add" @click="add"
         >添加</el-button
       >
     </div>
     <div class="manager_table">
       <el-table :data="tableData" border style="width: 100%" max-height="400px">
-        <el-table-column label="序号" width="70px" align="center">
+        <!-- <el-table-column label="序号" width="70px" align="center">
           <template slot-scope="scope">
             {{ (pagination.num - 1) * pagination.size + scope.$index + 1 }}
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           label="地点名称"
           align="center"
@@ -44,29 +33,25 @@
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.name }}</span>
+            <span>{{ scope.row.placeName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="最小经度" align="center" min-width="100px">
+        <el-table-column label="是否显示" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.minLon }}</span>
+            <span>{{ Number(scope.row.isShow)==0?'不显示':'显示' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="最小纬度" align="center" min-width="100px">
+        <el-table-column label="经度" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.minLat }}</span>
+            <span>{{ scope.row.longitude }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="最大经度" align="center" min-width="100px">
+        <el-table-column label="纬度" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.maxLon }}</span>
+            <span>{{ scope.row.latitude }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="最大纬度" align="center" min-width="100px">
-          <template slot-scope="scope">
-            <span>{{ scope.row.maxLat }}</span>
-          </template>
-        </el-table-column>
+       
         <el-table-column
           label="操作"
           width="140px"
@@ -90,8 +75,7 @@
         </el-table-column>
       </el-table>
     </div>
-    <div class="manager_page">
-      <!-- 分页 -->
+    <!-- <div class="manager_page">
       <pagination
         :total="total"
         :page.sync="pagination.num"
@@ -99,7 +83,7 @@
         @pagination="search"
         style="padding-bottom: 0"
       />
-    </div>
+    </div> -->
 
     <edit
       ref="edit"
@@ -137,7 +121,7 @@ export default {
         num: 1,
       },
       queryParams: {
-        name: null,
+        placeName: null,
       },
     };
   },
@@ -174,7 +158,7 @@ export default {
     systemManagerShow(val) {
       if (val) {
         this.queryParams = {
-          name: null,
+          placeName: null,
         };
         this.fetch();
         this.$refs.siteBox.style.left = "50%";
@@ -196,7 +180,7 @@ export default {
     // 搜索重置
     resetSearch() {
       this.queryParams = {
-        name: null,
+        placeName: null,
       };
       this.search();
     },
@@ -229,13 +213,11 @@ export default {
     fetch(params = {}) {
       params.pageSize = this.pagination.size;
       params.pageNum = this.pagination.num;
-      this.$get("/api/region-division", {
-        ...params,
-      }).then((res) => {
+      this.$get("/api/common-place/list").then((res) => {
         console.log(res, "res");
         if (res.data.data) {
-          this.total = res.data.data.total;
-          this.tableData = res.data.data.rows;
+          // this.total = res.data.data.total;
+          this.tableData = res.data.data;
         }
       });
     },

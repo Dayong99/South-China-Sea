@@ -21,10 +21,10 @@
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
-            <el-form-item label="地点名称" prop="name">
+            <el-form-item label="地点名称" prop="placeName">
               <el-input
                 placeholder="请输入地点名称"
-                v-model="formData.name"
+                v-model="formData.placeName"
               ></el-input>
             </el-form-item>
           </div>
@@ -34,10 +34,20 @@
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
-            <el-form-item label="最小经度" prop="minLon">
+           <el-form-item label="是否显示" prop="isShow">
+                <el-radio v-model="formData.isShow" label="0">不显示</el-radio>
+                <el-radio v-model="formData.isShow" label="1">显示</el-radio>
+              </el-form-item>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="18">
+          <div class="grid-content bg-purple-dark">
+            <el-form-item label="经度" prop="longitude">
               <el-input
-                placeholder="请输入最小经度"
-                v-model="formData.minLon"
+                placeholder="请输入经度值"
+                v-model="formData.longitude"
               ></el-input>
             </el-form-item>
           </div>
@@ -46,34 +56,10 @@
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
-            <el-form-item label="最小纬度" prop="minLat">
+            <el-form-item label="纬度" prop="latitude">
               <el-input
-                placeholder="请输入最小纬度"
-                v-model="formData.minLat"
-              ></el-input>
-            </el-form-item>
-          </div>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="18">
-          <div class="grid-content bg-purple-dark">
-            <el-form-item label="最大经度" prop="maxLon">
-              <el-input
-                placeholder="请输入最大经度"
-                v-model="formData.maxLon"
-              ></el-input>
-            </el-form-item>
-          </div>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="18">
-          <div class="grid-content bg-purple-dark">
-            <el-form-item label="最大纬度" prop="maxLat">
-              <el-input
-                placeholder="请输入最大纬度"
-                v-model="formData.maxLat"
+                placeholder="请输入纬度值"
+                v-model="formData.latitude"
               ></el-input>
             </el-form-item>
           </div>
@@ -115,22 +101,19 @@ export default {
       data: {},
       rules: {},
       formData: {
-        name: "",
-        minLon: "",
-        minLat: "",
-        maxLon: "",
-        maxLat: "",
+        placeName: "",
+        isShow: "0",
+        longitude: "",
+        latitude: "",
       },
       rules: {
-        name: {
+        placeName: {
           required: true,
           message: "地点名称不能为空",
           trigger: "blur",
         },
-        minLon: { validator: checkLon, trigger: "blur" },
-        minLat: { validator: checkLat, trigger: "blur" },
-        maxLon: { validator: checkLon, trigger: "blur" },
-        maxLat: { validator: checkLat, trigger: "blur" },
+        latitude: { validator: checkLat, trigger: "blur" },
+        longitude: { validator: checkLon, trigger: "blur" },
       },
     };
   },
@@ -149,6 +132,7 @@ export default {
       this.formData = {
         ...data,
       };
+      this.formData.isShow += ""
     },
     // 关闭对话框
     close() {
@@ -159,20 +143,17 @@ export default {
       this.$refs.form.clearValidate();
       this.$refs.form.resetFields();
       this.formData = {
-        name: "",
-        minLon: "",
-        minLat: "",
-        maxLon: "",
-        maxLat: "",
+        placeName: "",
+        isShow: "0",
+        longitude: "",
+        latitude: "",
       };
     },
     // 添加或修改
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          if(this.formData.minLon>=this.formData.maxLon||this.formData.maxLat>=this.formData.maxLat){
-            this.$message.warning('请输入正确的经纬度值')
-          }else if (this.title === "添加地点") {
+          if (this.title === "添加地点") {
             this.$post("/api/common-place", this.formData)
               .then(() => {
                 this.$message({
