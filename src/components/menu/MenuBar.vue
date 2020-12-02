@@ -20,9 +20,42 @@
             @keyup.enter.native="location"
           ></el-input>
         </div>
-        <div class="input_right">
+        <div class="input_right" @click.stop="showMarkArea">
           <img src="@/assets/images/menu/heart.png" />
         </div>
+      </div>
+    </div>
+
+    <div class="mark_area" v-show="markAreaFlag">
+      <div class="area_top">
+        <div class="area_top_left">
+          <img src="@/assets/images/menu/transform.png" />
+          <span>常用区域</span>
+        </div>
+        <div class="area_top_right">
+          <img
+            src="@/assets/images/menu/addarea.png"
+            class="area_add"
+            @click.stop="addItem"
+          />
+          <img
+            src="@/assets/images/menu/close.png"
+            class="area_close"
+            @click.stop="showMarkArea"
+          />
+        </div>
+      </div>
+      <div class="area_content">
+        <ul>
+          <li v-for="(item, index) in areaList" :key="index">
+            <span class="area_index">{{ index + 1 }}</span>
+            <span class="area_name">{{ item.name }}</span>
+            <div class="tolatlon" @click.stop="toLatLon(item)">
+              <img src="@/assets/images/menu/location.png" />
+              <span>跳转</span>
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
 
@@ -161,62 +194,7 @@
                         {{ itemAssess.assesstime | filterTime }}
                       </div>
                       <div class="assess_control" v-if="itemAssess.setting">
-                        <img
-                          src="@/assets/images/menu/alorithm_deactive.svg"
-                          class="control_items"
-                          @click="
-                            changeAssessTime(
-                              itemAssess,
-                              indexAssess,
-                              itemRoute,
-                              indexRoute,
-                              item,
-                              index
-                            )
-                          "
-                        />
-                        <img
-                          src="@/assets/images/menu/table_assess_deactive.svg"
-                          class="control_items"
-                          @click="
-                            changeAssessTime(
-                              itemAssess,
-                              indexAssess,
-                              itemRoute,
-                              indexRoute,
-                              item,
-                              index
-                            )
-                          "
-                        />
-                        <img
-                          src="@/assets/images/menu/line_assess_deactvie.svg"
-                          class="control_items"
-                          @click="
-                            changeAssessTime(
-                              itemAssess,
-                              indexAssess,
-                              itemRoute,
-                              indexRoute,
-                              item,
-                              index
-                            )
-                          "
-                        />
-                        <img
-                          src="@/assets/images/menu/area_assess_deactive.svg"
-                          class="control_items"
-                          @click="
-                            changeAssessTime(
-                              itemAssess,
-                              indexAssess,
-                              itemRoute,
-                              indexRoute,
-                              item,
-                              index
-                            )
-                          "
-                        />
+                        <!-- bin -->
                         <img
                           src="@/assets/images/menu/bin_assess_deactive.png"
                           class="control_items"
@@ -230,6 +208,48 @@
                               index
                             )
                           "
+                        />
+                        <img
+                          :src="
+                            itemAssess.alorithm
+                              ? AssessControlSrc.alorithm.active
+                              : AssessControlSrc.alorithm.deactive
+                          "
+                          class="control_items"
+                          @click="itemAssess.alorithm = !itemAssess.alorithm"
+                        />
+                        
+                        <!-- area -->
+                        <img
+                          :src="
+                            itemAssess.area
+                              ? AssessControlSrc.area.active
+                              : AssessControlSrc.area.deactive
+                          "
+                          class="control_items"
+                          @click="
+                            showAssessArea(itemAssess, indexAssess, itemRoute)
+                          "
+                        />
+                        <img
+                          :src="
+                            itemAssess.line
+                              ? AssessControlSrc.line.active
+                              : AssessControlSrc.line.deactive
+                          "
+                          class="control_items"
+                          @click="
+                            showAssessLine(itemAssess, indexAssess, itemRoute)
+                          "
+                        />
+                        <img
+                          :src="
+                            itemAssess.table
+                              ? AssessControlSrc.table.active
+                              : AssessControlSrc.table.deactive
+                          "
+                          class="control_items"
+                          @click="showAssessInfo(itemAssess)"
                         />
                         <img
                           src="@/assets/images/menu/time_assess_deactive.png"
@@ -318,14 +338,51 @@
         </li>
       </ul>
     </div>
+    <edit
+      ref="edit"
+      :dialog-visible="dialog.isVisible"
+      :title="dialog.title"
+      @close="closeDialogPage"
+    >
+    </edit>
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations } from "vuex";
+import Edit from "@/components/menu/SystemManager/areaManager/edit.vue";
 export default {
+  components: {
+    Edit,
+  },
   data() {
     return {
+      AssessControlSrc: {
+        alorithm: {
+          active: require("@/assets/images/menu/alorithm_active.svg"),
+          deactive: require("@/assets/images/menu/alorithm_deactive.svg"),
+        },
+        bin: {
+          active: require("@/assets/images/menu/bin_assess_deactive.png"),
+        },
+        area: {
+          active: require("@/assets/images/menu/area_assess_active.svg"),
+          deactive: require("@/assets/images/menu/area_assess_deactive.svg"),
+        },
+        line: {
+          active: require("@/assets/images/menu/line_assess_actvie.svg"),
+          deactive: require("@/assets/images/menu/line_assess_deactvie.svg"),
+        },
+
+        table: {
+          active: require("@/assets/images/menu/table_assess_active.svg"),
+          deactive: require("@/assets/images/menu/table_assess_deactive.svg"),
+        },
+        time: {
+          active: require("@/assets/images/menu/time_assess_deactive.png"),
+          deactive: require("@/assets/images/menu/time_assess_deactive.png"),
+        },
+      },
       // 任务
       taskList: [],
       searchFlag: false,
@@ -340,6 +397,21 @@ export default {
       ],
       flagList: [false, false, false],
       nowMenuList: [],
+      //风险评估区域集合，用于删除
+      rectangle: [],
+      //风险评估航线集合，用于删除
+      routeLine: [],
+      //风险等级
+      colorArr: ["#00ff00", "#ffff00", "#ff8000", "#9919e5", "#ff0000"],
+
+      // 固定区域面板
+      markAreaFlag: false,
+      areaList: [],
+      // 新增 修改 对话框
+      dialog: {
+        isVisible: false,
+        title: "",
+      },
     };
   },
   computed: {
@@ -391,10 +463,13 @@ export default {
       setData: "menuBar/setData",
       setRouteDialogOptions: "menuBar/setRouteDialogOptions",
       setRouteAlgorithmInfo: "menuBar/setRouteAlgorithmInfo",
+      setTitleList: "routeInfo/setTitleList",
+      setDataList: "routeInfo/setDataList",
+      setRouteInfoShow: "routeInfo/setRouteInfoShow",
     }),
     // 任务树setting
     AssessSetting(itemAssess, indexAssess, itemRoute, indexRoute, item, index) {
-      (this.taskList[index].routeList[indexRoute].assessList)[
+      this.taskList[index].routeList[indexRoute].assessList[
         indexAssess
       ].setting = !this.taskList[index].routeList[indexRoute].assessList[
         indexAssess
@@ -646,9 +721,606 @@ export default {
     openData(index) {
       this.setData({ index: index, val: true });
     },
+
+    //显示评估区域
+    showAssessArea(itemAssess, indexAssess, itemRoute) {
+      console.log(itemAssess, itemRoute, "点击风险评估区域");
+      //单个评估区域和航线互斥
+      itemAssess.line = false;
+      //清除风险等级航线
+      this.clearRouteById(itemAssess.id);
+      //单条航线多个评估互斥
+      itemRoute.assessList.forEach((item) => {
+        if (item.id != itemAssess.id) {
+          item.area = false;
+          item.line = false;
+          this.clearRectangleById(item.id);
+          this.clearRouteById(item.id);
+        }
+      });
+
+      itemAssess.area = !itemAssess.area;
+      //绘制风险等级区域
+      if (itemAssess.area) {
+        this.clearRectangleById(itemAssess.id);
+        this.drawRectangle(
+          itemAssess.id,
+          itemAssess.timeIndex,
+          itemAssess.courseId
+        );
+      } else {
+        //清除该评估的风险区域
+        this.clearRectangleById(itemAssess.id);
+      }
+    },
+
+    //显示评估航线
+    showAssessLine(itemAssess, indexAssess, itemRoute) {
+      console.log(itemAssess, itemRoute, "点击风险评估航线");
+      //单个评估区域和航线互斥
+      itemAssess.area = false;
+      //清除风险等级区域
+      this.clearRectangleById(itemAssess.id);
+      //单条航线多个评估互斥
+      itemRoute.assessList.forEach((item) => {
+        if (item.id != itemAssess.id) {
+          item.area = false;
+          item.line = false;
+          this.clearRectangleById(item.id);
+          this.clearRouteById(item.id);
+        }
+      });
+
+      itemAssess.line = !itemAssess.line;
+      //绘制风险等级航线
+      if (itemAssess.line) {
+        this.clearRouteById(itemAssess.id);
+        this.drawRouteLine(
+          itemAssess.id,
+          itemAssess.timeIndex,
+          itemAssess.courseId
+        );
+      } else {
+        //清除该评估的风险航线
+        this.clearRouteById(itemAssess.id);
+      }
+    },
+
+    //获取风险等级航线详细信息列表
+    showAssessInfo(itemAssess) {
+      //互斥，表格只能显示一个
+      console.log(this.taskList, "任务列表----------");
+      this.taskList.forEach((item) => {
+        if (item.routeList.length != 0) {
+          item.routeList.forEach((item1) => {
+            if (item1.assessList.length != 0) {
+              item1.assessList.forEach((item2) => {
+                if (item2.id != itemAssess.id) {
+                  item2.table = false;
+                  this.setRouteInfoShow(false);
+                }
+              });
+            }
+          });
+        }
+      });
+
+      itemAssess.table = !itemAssess.table;
+      if (itemAssess.table) {
+        //请求航线详细信息数据，构造显示下方列表
+        this.$get("api/assessment/line-conclusion", {
+          assessmentId: itemAssess.id,
+        }).then((res) => {
+          console.log(res.data.data, "航线评估数据-----------");
+          let obj = res.data.data;
+          let titleList = ["风险等级"];
+          let dataList = [];
+          for (let key in obj) {
+            if (key != "conclusion") {
+              titleList.push(key);
+            }
+          }
+          for (let i = 0; i < obj.conclusion.length; i++) {
+            let arr = [obj.conclusion[i].dateTime, obj.conclusion[i].value];
+            for (let key in obj) {
+              if (key != "conclusion") {
+                arr.push(obj[key][i].value);
+              }
+            }
+            dataList.push(arr);
+          }
+          this.setTitleList(titleList);
+          this.setDataList(dataList);
+          this.setRouteInfoShow(true);
+        });
+      } else {
+        this.setRouteInfoShow(false);
+      }
+    },
+
+    //绘制风险等级区域
+    drawRectangle(assessmentId, timeIndex, courseId) {
+      let riskArr = [];
+      //获取风险评估区域，绘制
+      this.$get("api/assessment/evaluation-conclusion", {
+        assessmentId: assessmentId, //评估id
+        courseTime: "", //航线的时间节点
+        index: timeIndex, //航线第几个时间点
+      }).then((res) => {
+        console.log(res, "评估数据");
+        riskArr = res.data.data;
+
+        let reArr = [];
+        let color = "";
+        riskArr.forEach((item) => {
+          item.forEach((item1) => {
+            if (parseInt(Number(item1.value) * 10) != 10) {
+              color = this.colorArr[parseInt((Number(item1.value) * 10) / 2)];
+            } else {
+              color = this.colorArr[this.colorArr.length - 1];
+            }
+            reArr.push({
+              corner1: [Number(item1.lat), Number(item1.lon)],
+              corner2: [
+                Number(item1.lat) - Number(item1.grid),
+                Number(item1.lon) + Number(item1.grid),
+              ],
+              color: color,
+            });
+          });
+        });
+        console.log(reArr, "画风险评估区域---------");
+        reArr.forEach((item) => {
+          let bounds = [item.corner1, item.corner2];
+          let rectangle = L.rectangle(bounds, {
+            fillColor: item.color,
+            color: "#000000",
+            weight: 1,
+            fillOpacity: 0.5,
+          }).addTo(map);
+          rectangle.assessmentId = assessmentId;
+          rectangle.courseId = courseId;
+          this.rectangle.push(rectangle);
+        });
+      });
+    },
+
+    //绘制风险等级航线
+    drawRouteLine(assessmentId, timeIndex, courseId) {
+      let riskArr = [];
+      //获取风险评估区域，绘制
+      this.$get("api/assessment/evaluation-conclusion", {
+        assessmentId: assessmentId, //评估id
+        courseTime: "", //航线的时间节点
+        index: timeIndex, //航线第几个时间点
+      }).then((res) => {
+        // console.log(res, "评估数据");
+        riskArr = res.data.data;
+
+        let reArr = [];
+        let color = "";
+        riskArr.forEach((item) => {
+          item.forEach((item1) => {
+            if (parseInt(Number(item1.value) * 10) != 10) {
+              color = this.colorArr[parseInt((Number(item1.value) * 10) / 2)];
+            } else {
+              color = this.colorArr[this.colorArr.length - 1];
+            }
+            reArr.push({
+              corner1: [Number(item1.lat), Number(item1.lon)],
+              corner2: [
+                Number(item1.lat) - Number(item1.grid),
+                Number(item1.lon) + Number(item1.grid),
+              ],
+              color: color,
+            });
+          });
+        });
+        console.log(reArr, "画风险评估区域---------");
+        //获取单个航线数据
+        this.$get("api/course/one", {
+          id: courseId,
+        }).then((res) => {
+          let lineData = res.data.data.courseItemList;
+          let latlngs = [];
+          lineData.forEach((item) => {
+            latlngs.push([Number(item.latitude), Number(item.longitude)]);
+          });
+          // L.polyline(latlngs, { color: "blue" }).addTo(map);
+          console.log(latlngs, "航线点-------------");
+
+          let allPoint = [];
+          for (let i = 0; i < latlngs.length - 1; i++) {
+            let lineArr = this.cutLine(
+              latlngs[i],
+              latlngs[i + 1],
+              riskArr,
+              reArr
+            );
+            allPoint = [...allPoint, ...lineArr];
+            console.log("lineArr--------------", lineArr);
+            for (let i = 0; i < lineArr.length - 1; i++) {
+              let line = [lineArr[i].position, lineArr[i + 1].position];
+              let lines = L.polyline(line, { color: lineArr[i].color }).addTo(
+                map
+              );
+              lines.assessmentId = assessmentId;
+              lines.courseId = courseId;
+              this.routeLine.push(lines);
+            }
+          }
+          console.log(allPoint, "所有点----------------");
+          allPoint[allPoint.length - 1].color =
+            allPoint[allPoint.length - 2].color;
+          allPoint.forEach((item, index) => {
+            if (item.color == "") {
+              allPoint.splice(index, 1);
+            }
+          });
+          console.log("处理之后的所有点------", allPoint);
+          let pointArr = [];
+          allPoint.forEach((item) => {
+            latlngs.forEach((item1) => {
+              if (
+                item.position[0] == item1[0] &&
+                item.position[1] == item1[1]
+              ) {
+                pointArr.push(item);
+              }
+            });
+          });
+          console.log(pointArr);
+          pointArr.forEach((item) => {
+            let circle = L.circleMarker(item.position, {
+              radius: 6,
+              fillOpacity: 1,
+              fillColor: item.color,
+              weight: 0,
+            }).addTo(map);
+            circle.assessmentId = assessmentId;
+            circle.courseId = courseId;
+            this.routeLine.push(circle);
+          });
+        });
+      });
+    },
+
+    //根据评估id清除图上的风险评估区域
+    clearRectangleById(id) {
+      console.log(this.rectangle, "保存的风险区域----------");
+      for (let i = 0; i < this.rectangle.length; i++) {
+        if (this.rectangle[i].assessmentId == id) {
+          map.removeLayer(this.rectangle[i]);
+          this.rectangle.splice(i, 1);
+          i--;
+        }
+      }
+    },
+    //根据航线id清除图上的风险评估区
+    //根据评估id清除图上的风险评估航线
+    clearRouteById(id) {
+      console.log(this.routeLine, "保存的风险区域----------");
+      for (let i = 0; i < this.routeLine.length; i++) {
+        if (this.routeLine[i].assessmentId == id) {
+          map.removeLayer(this.routeLine[i]);
+          this.routeLine.splice(i, 1);
+          i--;
+        }
+      }
+    },
+
+    //传两个端点,根据风险评估区域给这段线段划分区域，进行变色(point1为这一段的起始点，point2为这一段的结束点)
+    cutLine(point1, point2, riskArr, reArr) {
+      let latArr = [];
+      let lonArr = [];
+      riskArr.forEach((item) => {
+        latArr.push(Number(item[0].lat));
+      });
+      // latArr.push(latArr[latArr.length - 1] - this.arr[0][0].grid);
+      latArr.sort((a, b) => {
+        return a - b;
+      });
+      riskArr[0].forEach((item) => {
+        lonArr.push(Number(item.lon));
+      });
+      // lonArr.push(lonArr[lonArr.length - 1] + this.arr[0][0].grid);
+      lonArr.sort((a, b) => {
+        return a - b;
+      });
+      console.log(latArr, lonArr);
+      //特殊情况  航线为垂直竖线时，即两点经度相等
+      if (point1[1] === point2[1]) {
+        console.log("垂直竖线");
+        //找跟纬度的交叉点
+        let pointArr = [];
+        latArr.forEach((item) => {
+          if (
+            item >= Math.min(point1[0], point2[0]) &&
+            item <= Math.max(point1[0], point2[0])
+          ) {
+            pointArr.push([item, point1[1]]);
+          }
+        });
+        pointArr.push(point1, point2);
+        let newArr = [];
+        //去除重复的点
+        if (point1[0] > point2[0]) {
+          //纬度从高到低排序
+          newArr = this.removeRepeat(pointArr, "y-");
+        } else if (point1[0] < point2[0]) {
+          //纬度从低到高排序
+          newArr = this.removeRepeat(pointArr, "y+");
+        }
+        console.log(newArr);
+        let fArr = [];
+        for (let i = 0; i < newArr.length - 1; i++) {
+          let middleY = (newArr[i][0] + newArr[i + 1][0]) / 2;
+          let middleX = (newArr[i][1] + newArr[i + 1][1]) / 2;
+          for (let j = 0; j < latArr.length - 1; j++) {
+            if (middleY > latArr[j] && middleY < latArr[j + 1]) {
+              console.log(reArr);
+              let index = reArr.findIndex((item) => {
+                return (
+                  item.corner1[0] == latArr[j + 1] &&
+                  middleX > item.corner1[1] &&
+                  middleX <= item.corner2[1]
+                );
+              });
+              if (index != -1) {
+                fArr.push({
+                  position: newArr[i],
+                  color: reArr[index].color,
+                });
+              } else {
+                let index1 = reArr.findIndex((item) => {
+                  return (
+                    item.corner1[0] == latArr[j + 1] &&
+                    middleX >= item.corner1[1] &&
+                    middleX < item.corner2[1]
+                  );
+                });
+                fArr.push({
+                  position: newArr[i],
+                  color: reArr[index1].color,
+                });
+              }
+            }
+          }
+        }
+        fArr.push({
+          position: newArr[newArr.length - 1],
+          color: "",
+        });
+        console.log("最终---------", fArr);
+        return fArr;
+
+        //航线为横着的横线时，即两点纬度相等
+      } else if (point1[0] === point2[0]) {
+        console.log("横线");
+        //找跟经度的交叉点
+        let pointArr = [];
+        lonArr.forEach((item) => {
+          if (
+            item >= Math.min(point1[1], point2[1]) &&
+            item <= Math.max(point1[1], point2[1])
+          ) {
+            pointArr.push([point1[0], item]);
+          }
+        });
+        pointArr.push(point1, point2);
+        let newArr = [];
+        //去除重复的点
+        if (point1[1] > point2[1]) {
+          //经度从高到低排序
+          newArr = this.removeRepeat(pointArr, "x-");
+        } else if (point1[1] < point2[1]) {
+          //纬度从低到高排序
+          newArr = this.removeRepeat(pointArr, "x+");
+        }
+        console.log(newArr);
+        //构建位置，颜色数组，用于循环绘制变色线
+        let fArr = [];
+        for (let i = 0; i < newArr.length - 1; i++) {
+          let middleY = (newArr[i][0] + newArr[i + 1][0]) / 2;
+          let middleX = (newArr[i][1] + newArr[i + 1][1]) / 2;
+          for (let j = 0; j < lonArr.length - 1; j++) {
+            if (middleX > lonArr[j] && middleX < lonArr[j + 1]) {
+              console.log(reArr);
+              let index = reArr.findIndex((item) => {
+                return (
+                  item.corner2[1] == lonArr[j + 1] &&
+                  middleY >= item.corner2[0] &&
+                  middleY < item.corner1[0]
+                );
+              });
+              if (index != -1) {
+                fArr.push({
+                  position: newArr[i],
+                  color: reArr[index].color,
+                });
+              } else {
+                let index1 = reArr.findIndex((item) => {
+                  return (
+                    item.corner2[1] == lonArr[j + 1] &&
+                    middleY > item.corner2[0] &&
+                    middleY <= item.corner1[0]
+                  );
+                });
+                fArr.push({
+                  position: newArr[i],
+                  color: reArr[index1].color,
+                });
+              }
+            }
+          }
+        }
+        fArr.push({
+          position: newArr[newArr.length - 1],
+          color: "",
+        });
+        console.log("最终---------", fArr);
+        return fArr;
+      } else {
+        console.log("斜线-----------");
+        //首先根据这两点构建一个函数
+        let a = (point2[0] - point1[0]) / (point2[1] - point1[1]); //根据两点确定直线函数解析式的斜率
+        let b = point1[0] - a * point1[1]; //确定函数解析式偏移量
+        console.log("斜率", a, "偏移量", b);
+
+        let pointArr = [];
+        //循环纬度，找交叉点
+        latArr.forEach((item) => {
+          if (
+            item >= Math.min(point1[0], point2[0]) &&
+            item <= Math.max(point1[0], point2[0])
+          ) {
+            pointArr.push([item, (item - b) / a]);
+          }
+        });
+        lonArr.forEach((item) => {
+          if (
+            item >= Math.min(point1[1], point2[1]) &&
+            item <= Math.max(point1[1], point2[1])
+          ) {
+            pointArr.push([a * item + b, item]);
+          }
+        });
+        pointArr.push(point1, point2);
+        console.log("去重之前的交点数组-------", pointArr);
+        let newArr = [];
+        //去除重复的点,并排序
+        if (point1[1] > point2[1]) {
+          //经度从高到低排序
+          newArr = this.removeRepeat(pointArr, "x-");
+        } else if (point1[1] < point2[1]) {
+          //纬度从低到高排序
+          newArr = this.removeRepeat(pointArr, "x+");
+        }
+        console.log("去重排序之后的数组-----------", newArr);
+        let index = newArr.findIndex((item) => {
+          return (
+            ((item[0] == point1[0] || item[1] == point1[1]) &&
+              !(item[0] == point1[0] && item[1] == point1[1])) ||
+            ((item[0] == point2[0] || item[1] == point2[1]) &&
+              !(item[0] == point2[0] && item[1] == point2[1]))
+          );
+        });
+        if (index != -1) {
+          newArr.splice(index, 1);
+        }
+
+        //构建位置，颜色数组，用于循环绘制变色线
+        let fArr = [];
+        for (let i = 0; i < newArr.length - 1; i++) {
+          //每两个点计算一下中点位置
+          let middleY = (newArr[i][0] + newArr[i + 1][0]) / 2;
+          let middleX = (newArr[i][1] + newArr[i + 1][1]) / 2;
+          let index = reArr.findIndex((item) => {
+            return (
+              middleX > item.corner1[1] &&
+              middleX < item.corner2[1] &&
+              middleY > item.corner2[0] &&
+              middleY < item.corner1[0]
+            );
+          });
+          if (index != -1) {
+            fArr.push({
+              position: newArr[i],
+              color: reArr[index].color,
+            });
+          }
+        }
+        fArr.push({
+          position: newArr[newArr.length - 1],
+          color: "",
+        });
+        console.log("最终---------", fArr);
+        return fArr;
+      }
+    },
+
+    //点的二维数组去重排序,K表示排序的方式（x+:经度递增排序，x-:经度递减排序，y+:纬度递增排序，y-:纬度递减排序）
+    removeRepeat(pointArr, k) {
+      //先数组去重
+      let newArr = [];
+      pointArr.forEach((item) => {
+        if (newArr.length == 0) {
+          newArr.push(item);
+        } else {
+          let i = newArr.findIndex((item1) => {
+            return item1[0] === item[0] && item1[1] === item[1];
+          });
+          if (i == -1) {
+            newArr.push(item);
+          }
+        }
+      });
+      console.log("排序前-------", newArr);
+      //排序
+      if (k == "x+") {
+        // console.log(newArr.sort(this.compare(1,"+")));
+        return newArr.sort(this.compare(1, "+"));
+      } else if (k == "x-") {
+        // console.log(newArr.sort(this.compare(1,"-")));
+        return newArr.sort(this.compare(1, "-"));
+      } else if (k == "y+") {
+        // console.log(newArr.sort(this.compare(0,"+")));
+        return newArr.sort(this.compare(0, "+"));
+      } else if (k == "y-") {
+        // console.log(newArr.sort(this.compare(0,"-")));
+        return newArr.sort(this.compare(0, "-"));
+      }
+    },
+    compare(property, m) {
+      return function (a, b) {
+        var value1 = a[property];
+        var value2 = b[property];
+        if (m == "+") {
+          return value1 - value2;
+        } else if (m == "-") {
+          return value2 - value1;
+        }
+      };
+    },
+    // 区域收藏面板
+    showMarkArea() {
+      this.markAreaFlag = !this.markAreaFlag;
+      if (this.markAreaFlag) {
+        this.areaFetch();
+      }
+    },
+    areaFetch() {
+      this.$get("/api/region-division")
+        .then((res) => {
+          if (res.status == 200) {
+            console.log("常用区域", res);
+            let data = res.data.data.rows;
+            this.areaList = data;
+          }
+        })
+        .catch((error) => {
+          this.$message("获取常用区域失败");
+        });
+    },
+    toLatLon(location) {
+      window.map.flyToBounds(
+        L.latLngBounds([
+          [location.maxLat, location.minLon],
+          [location.minLat, location.maxLon],
+        ])
+      );
+    },
+    addItem() {
+      this.dialog.isVisible = true;
+      this.dialog.title = "添加区域";
+    },
+    // 关闭新增 修改 对话框
+    closeDialogPage() {
+      this.dialog.isVisible = false;
+      this.areaFetch();
+    },
   },
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

@@ -82,6 +82,44 @@
         }
     }
 
+    // 重绘按钮
+    .isDraw {
+        width: 90px;
+        height: 30px;
+        line-height: 30px;
+        position: fixed;
+        bottom: 80px;
+        right: 145px;
+        color: rgba(255, 255, 255, 0.9);
+        background: url('~@/assets/images/sidebar/drawbg.png') no-repeat;
+        background-position: center;
+        // border: 1px solid #fff;
+        // border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        font-weight: 600;
+        // font-family:"Times New Roman",Georgia,Serif;
+        
+        &:hover {
+            cursor: pointer;
+        }
+
+        div {
+            width: 12px;
+            height: 12px;
+            border: 1px solid #fff;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+    }
+    .draw_active {
+        border: none;
+        background: rgba(255, 255, 255, 0.8);
+    }
+
     // 实况资料
     .real_time_data {
         margin-top: 15px;
@@ -332,7 +370,8 @@
     }
 
     .tylist {
-        width: 375px;
+        // width: 375px;
+        width: 325px;
         // height: 500px;
         position: fixed;
         bottom: 230px;
@@ -341,7 +380,7 @@
         z-index: 9999;
 
         .tytitle {
-            height: 50px;
+            height: 40px;
             display: flex;
             font-size: 16px;
             font-weight: 700;
@@ -390,7 +429,8 @@
 
         .tycontent {
             // width: 300px;
-            height: 328px;
+            // height: 328px;
+            height: 250px;
             font-size: 14px;
             overflow-y: auto;
             overflow-x: hidden;
@@ -420,7 +460,8 @@
 
                     div {
                         text-align: center;
-                        line-height: 40px;
+                        // line-height: 40px;
+                        line-height: 32px;
                     }
 
                     .chooseAll {
@@ -499,4 +540,5 @@
             
         }
     }
+
 }

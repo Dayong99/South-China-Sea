@@ -1,7 +1,7 @@
 const state = {
   extent: null,
   // 图层重绘个数
-  imageLayerNum: 0,
+  imageLayerNum: -1,
   routeInfoflag:true
 }
 

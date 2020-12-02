@@ -1,7 +1,7 @@
 <template>
   <!-- eslint-disable-->
   <el-dialog
-    :title="title"
+    title="导入资料"
     width="500px"
     top="50px"
     :close-on-click-modal="false"
@@ -21,59 +21,10 @@
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
-            <el-form-item label="区域名称" prop="name">
+            <el-form-item label="目标路径" prop="filePath">
               <el-input
-                placeholder="请输入区域名称"
-                v-model="formData.name"
-              ></el-input>
-            </el-form-item>
-          </div>
-        </el-col>
-      </el-row>
-      <!-- 经纬度 -->
-      <el-row>
-        <el-col :span="18">
-          <div class="grid-content bg-purple-dark">
-            <el-form-item label="最小经度" prop="minLon">
-              <el-input
-                placeholder="请输入最小经度"
-                v-model="formData.minLon"
-              ></el-input>
-            </el-form-item>
-          </div>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="18">
-          <div class="grid-content bg-purple-dark">
-            <el-form-item label="最小纬度" prop="minLat">
-              <el-input
-                placeholder="请输入最小纬度"
-                v-model="formData.minLat"
-              ></el-input>
-            </el-form-item>
-          </div>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="18">
-          <div class="grid-content bg-purple-dark">
-            <el-form-item label="最大经度" prop="maxLon">
-              <el-input
-                placeholder="请输入最大经度"
-                v-model="formData.maxLon"
-              ></el-input>
-            </el-form-item>
-          </div>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="18">
-          <div class="grid-content bg-purple-dark">
-            <el-form-item label="最大纬度" prop="maxLat">
-              <el-input
-                placeholder="请输入最大纬度"
-                v-model="formData.maxLat"
+                placeholder="请输入目标路径"
+                v-model="formData.filePath"
               ></el-input>
             </el-form-item>
           </div>
@@ -87,50 +38,22 @@
 </template>
 <script>
 import { toBase64 } from "@/utils/toBase64.js";
-const longreg = /^(\-|\+)?(((\d|[1-9]\d|1[0-7]\d|0{1,3})\.\d{0,6})|(\d|[1-9]\d|1[0-7]\d|0{1,3})|180\.0{0,6}|180)$/;
-const latreg = /^(\-|\+)?([0-8]?\d{1}\.\d{0,6}|90\.0{0,6}|[0-8]?\d{1}|90)$/;
 export default {
   data() {
-    var checkLon = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("经度不能为空"));
-      } else if (!longreg.test(value)) {
-        callback(new Error("经度整数部分为0-180,小数部分为0到6位!"));
-      } else {
-        return callback();
-      }
-    };
 
-    var checkLat = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("纬度不能为空"));
-      } else if (!latreg.test(value)) {
-        callback(new Error("纬度整数部分为0-90,小数部分为0到6位"));
-      } else {
-        return callback();
-      }
-    };
 
     return {
       data: {},
       rules: {},
       formData: {
-        name: "",
-        minLon: "",
-        minLat: "",
-        maxLon: "",
-        maxLat: "",
+        filePath:''
       },
       rules: {
-        name: {
+        filePath: {
           required: true,
-          message: "区域名称不能为空",
+          message: "目标路径不能为空",
           trigger: "blur",
-        },
-        minLon: { validator: checkLon, trigger: "blur" },
-        minLat: { validator: checkLat, trigger: "blur" },
-        maxLon: { validator: checkLon, trigger: "blur" },
-        maxLat: { validator: checkLat, trigger: "blur" },
+        }
       },
     };
   },
@@ -159,24 +82,17 @@ export default {
       this.$refs.form.clearValidate();
       this.$refs.form.resetFields();
       this.formData = {
-        name: "",
-        minLon: "",
-        minLat: "",
-        maxLon: "",
-        maxLat: "",
+        filePath:''
       };
     },
     // 添加或修改
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          if(this.formData.minLon>=this.formData.maxLon||this.formData.minLat>=this.formData.maxLat){
-            this.$message.warning('请输入正确的经纬度值')
-          }else if (this.title === "添加区域") {
-            this.$post("/api/region-division", this.formData)
+            this.$get("/api/ocean-station-live/analysisOceanStation", this.formData)
               .then(() => {
                 this.$message({
-                  message: "区域添加成功",
+                  message: "目标路径导入成功",
                   type: "success",
                 });
                 this.reset();
@@ -186,32 +102,11 @@ export default {
               })
               .catch(() => {
                 this.$message({
-                  message: "区域添加失败",
-                  type: "error",
-                });
-              });
-          } else if (this.title === "修改区域") {
-            this.$put("/api/region-division", {
-              ...this.formData,
-            })
-              .then(() => {
-                this.$message({
-                  message: "区域修改成功",
-                  type: "success",
-                });
-              })
-              .then(() => {
-                this.$emit("close");
-                this.reset();
-              })
-              .catch(() => {
-                this.$message({
-                  message: "区域修改失败",
+                  message: "目标路径导入失败",
                   type: "error",
                 });
               });
           }
-        }
       });
     },
   },

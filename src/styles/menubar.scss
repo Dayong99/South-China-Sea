@@ -79,6 +79,10 @@
           background: rgba(26, 26, 24, 0.7);
         }
 
+        .search_content /deep/ .el-input__icon {
+          line-height: 28px!important;
+        }
+
         .search_content /deep/ .el-input__suffix {
           line-height: 35px;
         }
@@ -94,10 +98,159 @@
         // background: url('~@/assets/images/menu/heart.png');
         border-top-right-radius: 18px;
         border-bottom-right-radius: 18px;
+        
+        &:hover {
+          cursor: pointer;
+        }
 
         img {
           width: 25px;
           height: 25px;
+        }
+      }
+    }
+  }
+
+  // 常用地点
+  .mark_area {
+    width: 240px;
+    height: 300px;
+    position: fixed;
+    top: 26px;
+    left: 335px;
+    color: #fff;
+    background: #fff;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    border-radius: 4px;
+    box-shadow: 2px 2px 6px 0px rgba(0, 0, 0, 0.5);
+
+    .area_top {
+      width: 100%;
+      height: 35px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: rgba(255, 255, 255, 0.9);
+      background: #991A01;
+      border-radius: 4px 4px 0px 0px;
+
+      .area_top_left {
+        margin-left: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        span {
+          margin-left: 8px;
+        }
+      }
+
+      .area_top_right {
+        margin-right: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .area_add {
+
+          &:hover {
+            cursor: pointer;
+          }
+        }
+
+        .area_close {
+          width: 16px;
+          height: 16px;
+          margin-left: 8px;
+
+          &:hover {
+            cursor: pointer;
+          }
+        }
+      }
+
+      img {
+        width: 21px;
+        height: 21px;
+      }
+    }
+
+    .area_content {
+      width: 100%;
+      max-height: 255px;
+      color: rgb(107, 101, 101);
+      font-size: 14px;
+      font-family: MicrosoftYaHei;
+      border-radius: 0px 0px 4px 4px;
+      overflow-y: auto;
+
+      /* 设置滚动条的样式 */
+      &::-webkit-scrollbar {
+        width: 3px;
+        background-color: #fff;
+      }
+
+      /* 滚动槽 */
+      &::-webkit-scrollbar-track {
+        border-radius: 10px;
+      }
+
+      /* 滚动条滑块 */
+      &::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        background: rgba(194, 194, 194, 0.8);
+      }
+
+      ul {
+        padding: 5px 10px;
+
+        li {
+          height: 30px;
+          line-height: 30px;
+          display: flex;
+          align-items: center;
+          margin-top: 2px;
+          padding-top: 1px;
+          border-top: 1px solid #E7E7E7;
+
+          &:first-child {
+            border-top: none;
+          }
+  
+          .area_index {
+            flex: 1;
+            margin-left: 8px;
+          }
+  
+          .area_name {
+            flex: 5;
+          }
+  
+          .tolatlon {
+            flex: 3;
+            width: 70px;
+            height: 25px;
+            line-height: 25px;
+            margin-right: 5px;
+            border-radius: 20px;
+            border: 1px solid rgba(148, 151, 154, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+
+            &:hover {
+              cursor: pointer;
+            }
+
+            img {
+              width: 18px;
+              height: 18px;
+              margin-right: 5px;
+            }
+          }
         }
       }
     }

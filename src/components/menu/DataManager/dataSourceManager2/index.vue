@@ -3,7 +3,8 @@
     id="ship_manager"
     class="ship_manager"
     v-show="systemManagerShow"
-    style="width: auto; height: auto"
+    style="width: 960px;height:auto;"
+    v-drag
   >
     <div class="manager_title">
       <span>数据源配置—数值预报数据</span>
@@ -34,8 +35,13 @@
         @change="search"
       >
       </el-date-picker>
+
       <el-button class="operation_search" @click="search">搜索</el-button>
       <el-button class="operation_clear" @click="resetSearch">重置</el-button>
+     
+    </div>
+    <div class="manager_operation" style="margin-top:0;">
+      
       <el-button
         icon="el-icon-download"
         class="operation_add"
@@ -71,7 +77,7 @@
         <el-table-column
           label="数据源名称"
           align="center"
-          min-width="100px"
+          min-width="260px"
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
