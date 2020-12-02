@@ -1,7 +1,7 @@
 .sideBar {
     position: fixed;
     right: 35px;
-    top: 75px;
+    top: 30px;
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
@@ -101,12 +101,12 @@
             }
 
             div {
-                width: 65px;
+                // width: 65px;
                 margin-left: 5px;
             }
 
             .other_lon {
-                width: 85px;
+                // width: 85px;
             }
         }
 
