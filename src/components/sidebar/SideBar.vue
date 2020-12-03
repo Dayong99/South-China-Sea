@@ -491,20 +491,6 @@ export default {
       handler(val, old) {
         console.log("val", val);
         console.log("old", old);
-        
-        // else {
-        //   this.oldExtent = [{
-        //     xMax: 360,
-        //     xMin: 180,
-        //     yMax: 85,
-        //     yMin: -85,
-        //   }, {
-        //     xMax: 180,
-        //     xMin: 0,
-        //     yMax: 85,
-        //     yMin: -85,
-        //   }]
-        // }
         // flag 为 true 标识区域变化，需要重绘
         let flag = true;
 
@@ -528,7 +514,7 @@ export default {
         if(zoom <= 3 && this.oldZoom > 3) {
           flag = true
         }
-        
+
         if (flag) {
           this.extentList = val;
           // drawFlag 控制重绘的按钮
