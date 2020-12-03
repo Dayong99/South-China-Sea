@@ -38,7 +38,7 @@
         </el-table-column>
         <el-table-column label="是否显示" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ Number(scope.row.isShow)==0?'不显示':'显示' }}</span>
+            <span>{{ Number(scope.row.isShow) == 0 ? "不显示" : "显示" }}</span>
           </template>
         </el-table-column>
         <el-table-column label="经度" align="center" min-width="100px">
@@ -51,7 +51,7 @@
             <span>{{ scope.row.latitude }}</span>
           </template>
         </el-table-column>
-       
+
         <el-table-column
           label="操作"
           width="140px"
@@ -123,6 +123,9 @@ export default {
       queryParams: {
         placeName: null,
       },
+
+      markerGroup: [],
+      placeImg: require("../../../../assets/images/buoy.png"),
     };
   },
   mounted() {},
@@ -164,13 +167,60 @@ export default {
         this.$refs.siteBox.style.left = "50%";
         this.$refs.siteBox.style.top = "42%";
         this.$refs.siteBox.style.transform = "translate(-50%, -50%)";
+      } else {
+        this.clearAllPlace();
       }
+    },
+    tableData: {
+      handler(val) {
+        this.getAllPlace();
+      },
+      deep: true,
     },
   },
   methods: {
     ...mapMutations({
       setMenuList: "menuBar/setMenuList",
     }),
+    getAllPlace() {
+      let markerArr = [];
+      this.tableData.forEach((item, index) => {
+        if (Number(item.isShow) == 1) {
+          let icon = new L.Icon({
+            iconUrl: this.placeImg,
+            iconSize: [30, 30],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41],
+          });
+          let marker = L.marker([item.latitude, item.longitude], {
+            icon: icon,
+          });
+          markerArr.push(marker);
+
+          // buoy.id = this.shipId;
+          //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
+          // buoy.bindCustomPopup(this.getInfoContent(item.callSign));
+          // marker.on("click", (ev) => {
+          //   marker.bindPopup(item.placeName).openPopup();
+          // });
+
+          marker
+            .bindPopup(item.placeName, {
+              autoPan: false,
+              autoClose: false,
+              className: "leaflet-marker-markerTip",
+              keepInView: false,
+            })
+            .openPopup();
+        }
+      });
+      this.markerGroup = L.layerGroup(markerArr);
+      map.addLayer(this.markerGroup);
+    },
+    clearAllPlace() {
+      map.removeLayer(this.markerGroup);
+    },
     editItem(row) {
       this.$refs.edit.setData(row);
       this.dialog.isVisible = true;
@@ -215,9 +265,14 @@ export default {
       params.pageNum = this.pagination.num;
       this.$get("/api/common-place/list").then((res) => {
         console.log(res, "res");
+        this.tableData = [];
         if (res.data.data) {
           // this.total = res.data.data.total;
-          this.tableData = res.data.data;
+          res.data.data.forEach((item) => {
+            if (item.drawType === 0) {
+              this.tableData.push(item);
+            }
+          });
         }
       });
     },

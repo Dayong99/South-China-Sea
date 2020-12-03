@@ -169,7 +169,7 @@ export default {
     },
     systemList: {
       handler(newval, oldval) {
-        if (newval[5].flag) {
+        if (newval[6].flag) {
           this.systemManagerShow = true;
         } else {
           this.systemManagerShow = false;

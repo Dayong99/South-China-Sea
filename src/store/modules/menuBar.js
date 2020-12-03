@@ -38,6 +38,10 @@ const state = {
       flag: false
     },
     {
+      name: '常用标志区',
+      flag: false
+    },
+    {
       name: '海区划分',
       flag: false
     },
