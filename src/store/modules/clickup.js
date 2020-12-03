@@ -11,9 +11,7 @@ export default {
         infoData:[],
         infoTop:200,
         infoLeft:200,
-        infoShow:true
-
-
+        infoShow:false
     },
     mutations:{
         setPointInfoShow(state,val){

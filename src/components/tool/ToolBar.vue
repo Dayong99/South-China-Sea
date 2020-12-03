@@ -41,8 +41,13 @@
       </el-tooltip>
     </div>
     <div class="tool_item tool_right" @click.stop="changeTileLayer">
-      <el-tooltip class="item" effect="light" content="底图切换" placement="bottom">
-        <img src="@/assets/images/toolbar/product.png">
+      <el-tooltip
+        class="item"
+        effect="light"
+        content="底图切换"
+        placement="bottom"
+      >
+        <img src="@/assets/images/toolbar/product.png" />
       </el-tooltip>
     </div>
     <div class="tool_item tool_right" @click.stop="graticule">
@@ -187,14 +192,14 @@
 import { mapState, mapMutations } from "vuex";
 import toolBar from "@/utils/toolBar.js";
 import "@/utils/leaflet.latlng-graticule.js";
-import MarkBox from "./markBox"
+import MarkBox from "./markBox";
 export default {
-  components:{
-      MarkBox:MarkBox
+  components: {
+    MarkBox: MarkBox,
   },
   data() {
     return {
-      markShow:false,
+      markShow: false,
       rectangle: undefined,
       graticule_zoom: [
         {
@@ -265,17 +270,17 @@ export default {
     },
     ...mapState({
       menuItemList: (state) => state.sideBar.menuItemList,
-      tileLayer: state => state.earth.tileLayer
+      tileLayer: (state) => state.earth.tileLayer,
     }),
   },
   watch: {},
   mounted() {},
   methods: {
     ...mapMutations({
-      setInfoData:"clickup/setInfoData",
-      setInfoLocation:"clickup/setInfoLocation",
-      setInfoShow:"clickup/setInfoShow",
-      setTileLayer: 'earth/setTileLayer'
+      setInfoData: "clickup/setInfoData",
+      setInfoLocation: "clickup/setInfoLocation",
+      setInfoShow: "clickup/setInfoShow",
+      setTileLayer: "earth/setTileLayer",
     }),
     getViewer() {
       const obj = {
@@ -432,10 +437,18 @@ export default {
               value: item.value1,
             });
           });
-          console.log(infoData,"单点数据信息--------");
-          this.setInfoData(infoData)
-          this.setInfoLocation(e.containerPoint)
-          this.setInfoShow(true)
+          console.log(infoData, "单点数据信息--------");
+          this.setInfoData(infoData);
+          this.setInfoLocation(e.containerPoint);
+          this.setInfoShow(true);
+          let marker = e;
+          map.on("move", (e) => {
+            let p = map.latLngToContainerPoint(
+              L.latLng(marker.latlng.lat, marker.latlng.lng)
+            );
+            console.log(p);
+            this.setInfoLocation(p);
+          });
         });
       });
     },
@@ -517,17 +530,16 @@ export default {
     },
     // 切换底图
     changeTileLayer() {
-      this.setTileLayer(!this.tileLayer)
+      this.setTileLayer(!this.tileLayer);
     },
-
 
     // 绘图
-    draw(){
-      this.markShow = true
+    draw() {
+      this.markShow = true;
     },
-    closeDraw(){
+    closeDraw() {
       this.markShow = false;
-    }
+    },
   },
 };
 </script>
