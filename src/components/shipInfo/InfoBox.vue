@@ -9,21 +9,44 @@ export default {
     return {
       // 创建的ship图标
       shipIcon: null,
+      groundIcon: null,
+      oceanIcon: null,
       // 存放站点的list
       stationList: [],
-      shipImg: require("../../assets/images/ship1.png"),
-      buoyImg: require("../../assets/images/buoy.png"),
+      shipImg: require("@/assets/images/sidebar/redship.png"),
+      buoyImg: require("@/assets/images/sidebar/redbuoy.png"),
+      groundImg: require("@/assets/images/sidebar/redground.png"),
+      oceanImg: require("@/assets/images/sidebar/redocean.png"),
+      shipImage: require("@/assets/images/sidebar/ship.png"),
+      buoyImage: require("@/assets/images/sidebar/buoy.png"),
+      groundImage: require("@/assets/images/sidebar/ground.png"),
+      oceanImage: require("@/assets/images/sidebar/ocean.png"),
       // 浮标
       buoyList: [],
       buoyMarkerGroup: [],
       shipMarkerGroup: [],
       oceanMarkerGroup: [],
+      groundMarkerGroup: [],
     };
   },
   mounted() {
     // 船舰图标
     this.shipIcon = new L.Icon({
       iconUrl: this.shipImg,
+      iconSize: [30, 30],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41],
+    });
+    this.groundIcon = new L.Icon({
+      iconUrl: this.groundImg,
+      iconSize: [30, 30],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41],
+    });
+    this.oceanIcon = new L.Icon({
+      iconUrl: this.oceanImg,
       iconSize: [30, 30],
       iconAnchor: [12, 41],
       popupAnchor: [1, -34],
@@ -129,20 +152,25 @@ export default {
               let buoy = L.marker([item.lat, item.lon], {
                 icon: icon,
               });
+              buoy.id = item.id
               markerArr.push(buoy);
 
               // buoy.id = this.shipId;
               //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
               // buoy.bindCustomPopup(this.getInfoContent(item.callSign));
               buoy.on("click", (ev) => {
-                this.$get("/api/ocean-buoys-live/one", {
-                  areaNum: item.areaNum,
-                  localDate: this.$m(new Date()).format("YYYY-MM-DD"),
+                this.$get("/api/ocean-buoys-live/one-byId", {
+                  id: ev.target.id,
                 }).then((r) => {
                   if (r.status == 200) {
+                    let data = r.data.data
+                    let day = this.$m(data.dayTime).format('YYYY-MM-DD')
+                    let time = this.$m(data.dayTime).format('HH')+'时'+this.$m(data.dayTime).format('mm')+'分'
                     let str = this.getBuoyContent({
-                      title: '浮标',
+                      title: '浮标站',
                       content: r.data.data,
+                      day: day,
+                      time: time,
                       lon: item.lon,
                       lat: item.lat,
                     });
@@ -170,12 +198,15 @@ export default {
       return (
         `<div id="info_box">
           <div class="info_title">
+            <img src="`+this.buoyImage+`"></img>
             <span>` + info.title + `</span>
           </div>
           <div class="info_content">
             <div class="info">
-              <div>区站号:<span>` + info.areaNum + `</span> </div>
-              <div>类型:<span>` + info.type + `</span> </div>
+              <div>区站号:<span>` + this.getValue(info.content.areaNum) + `</span></div>
+              <div>浮标类型:<span>` + this.getValue(info.content.type) + `</span></div>
+              <div>日期:<span>` + this.getValue(info.day) + `</span></div>
+              <div>时间:<span>` + this.getValue(info.time) + `</span></div>
               <div>位置:<span>` + info.lon + `N,` + info.lat + `E</span> </div>
               <div>风速:<span>` + this.getValue(info.content.windDirection) + `° ` + this.getValue(info.content.windSpeed) +
                 `m/s</span>
@@ -187,7 +218,6 @@ export default {
               <div>波浪周期:<span>` + this.getValue(info.content.wavePeriod) + `s</span></div>
               <div>波浪高度:<span>` + this.getValue(info.content.waveHeight) + `m</span></div>
               <div>波浪方向:<span>` + this.getValue(info.content.waveDirection) + `</span></div>
-              <div>时间:<span>` + this.getValue(info.content.dayTime) + `</span></div>
             </div>
           </div>
         </div>`
@@ -196,12 +226,20 @@ export default {
     getShipContent(info) {
       return (
       `<div id="info_box">
-        <div class="info_title"><i class="el-icon-ship"></i><span>`+info.callSign+`</span></div>
+        <div class="info_title"><img src="`+this.shipImage+`"></img><span>`+info.name+`</span></div>
         <div class="info_content">
           <div class="info">
             <div>
-              时分:
-              <span>`+info.dayTime+`</span>
+              呼号:
+              <span>`+info.callSign+`</span>
+            </div>
+            <div>
+              日期:
+              <span>`+info.day+`</span>
+            </div>
+            <div>
+              时间:
+              <span>`+info.time+`</span>
             </div>
             <div>
               位置:
@@ -250,12 +288,16 @@ export default {
     getOceanContent(info) {
       return (
       `<div id="info_box">
-        <div class="info_title"><i class="el-icon-ship"></i><span>`+info.name+`</span></div>
+        <div class="info_title"><img src="`+this.oceanImage+`"></img><span>`+info.name+`</span></div>
         <div class="info_content">
           <div class="info">
             <div>
-              时分:
-              <span>`+info.dayTime+`</span>
+              日期:
+              <span>`+info.day+`</span>
+            </div>
+            <div>
+              时间:
+              <span>`+info.time+`</span>
             </div>
             <div>
               位置:
@@ -297,6 +339,60 @@ export default {
         </div>
       </div>`)
     },
+    getGroundContent(info) {
+      return (
+      `<div id="info_box">
+        <div class="info_title"><img src="`+this.groundImage+`"></img><span>`+info.name+`</span></div>
+        <div class="info_content">
+          <div class="info">
+            <div>
+              日期:
+              <span>`+info.day+`</span>
+            </div>
+            <div>
+              时间:
+              <span>`+info.time+`</span>
+            </div>
+            <div>
+              位置:
+              <span>`+info.lat+`N,`+info.lon+`E</span>
+            </div>
+            <div>
+              露点温度:
+              <span>`+this.getValue(info.dewTemperature)+`°</span>
+            </div>
+            <div>
+              温度:
+              <span>`+this.getValue(info.temperature)+`°</span>
+            </div>
+            <div>
+              风速:
+              <span>`+this.getValue(info.windSpeed)+' '+info.windUnit+`</span>
+            </div>
+            <div>
+              风向:
+              <span>`+this.getValue(info.windDirection)+`°</span>
+            </div>
+            <div>
+              降水:
+              <span>`+this.getValue(info.precipitation)+`</span>
+            </div>
+            <div>
+              能见度:
+              <span>`+this.getValue(info.visibility)+`</span>
+            </div>
+            <div>
+              气压:
+              <span>`+this.getValue(info.pressure)+`hPa</span>
+            </div>
+            <div>
+              海平面气压:
+              <span>`+this.getValue(info.seaLevelPressure)+`hPa</span>
+            </div>
+          </div>
+        </div>
+      </div>`)
+    },
     getShipInfo() {
       this.$get('/api/ship-live').then(res => {
         if(res.status == 200) {
@@ -310,16 +406,19 @@ export default {
             //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
             shipMarker.type = 'ship'
             shipMarker.callSign = item.callSign
+            shipMarker.id = item.id
             markerArr.push(shipMarker)
             shipMarker.on('click', ev => {
-              this.$get('/api/ship-live/one', {
-                callSign: ev.target.callSign,
-                localDate: this.$m().format('YYYY-MM-DD')
+              this.$get('/api/ship-live/one-byId', {
+                id: ev.target.id,
               }).then(res => {
                 if(res.status == 200) {
                   let station = res.data.data
+                  let day = this.$m(station.dayTime).format('YYYY-MM-DD')
+                  let time = this.$m(station.dayTime).format('HH')+'时'+this.$m(station.dayTime).format('mm')+'分'
                   let str = this.getShipContent({
-                    callSign: shipMarker.callSign,
+                    callSign: station.callSign,
+                    name: '船舶站',
                     buoyName: station.buoyName,
                     lat: station.lat,
                     lon: station.lon,
@@ -327,12 +426,13 @@ export default {
                     temperature: station.temperature,
                     windSpeed: station.windSpeed,
                     windDirection: station.windDirection,
-                    dayTime: this.$m(station.dayTime).format('HH')+'时'+this.$m(station.dayTime).format('mm')+'分',
                     course: station.course,
                     speed: station.speed,
                     typeFlag: station.typeFlag,
                     value1: station.value1,
                     value2: station.value2,
+                    day: day,
+                    time: time,
                   });
                   shipMarker.bindCustomPopup(str).openPopup()
                 }
@@ -352,7 +452,59 @@ export default {
       this.$get('/api/ground-live').then(res => {
         if(res.status == 200) {
           console.log('ground', res.data.data);
-          
+          let data = res.data.data
+          let markerArr = []
+          data.forEach(item => {
+            if(item.lat === null && item.lon === null) {
+              return;
+            }
+            let lat = item.lat
+            let lon = item.lon
+            let groundMarker = L.marker(L.latLng(lat, lon), { icon: this.groundIcon }).addTo(map);
+            //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
+            groundMarker.type = 'ground'
+            groundMarker.id = item.id
+            markerArr.push(groundMarker)
+            groundMarker.on('click', ev => {
+              this.$get('/api/ocean-station-live/one-byId', {
+                id: ev.target.id
+              }).then(res => {
+                if(res.status == 200) {
+                  let station = res.data.data
+                  let unit = null
+                  if(station.windUnit == 3 || station.windUnit == 4) {
+                    unit = 'nm/h'
+                  } else {
+                    unit = 'm/s'
+                  }
+                  let day = this.$m(station.startTime).format('YYYY-MM-DD')
+                  let time = this.$m(station.startTime).format('HH')+'时'+this.$m(station.startTime).format('mm')+'分'
+                  let str = this.getGroundContent({
+                    name: '地面站',
+                    lat: station.lat,
+                    lon: station.lon,
+                    dewTemperature: station.dewTemperature,
+                    temperature: station.temperature,
+                    pressure: station.pressure,
+                    windSpeed: station.windSpeed,
+                    windDirection: station.windDirection,
+                    precipitation: station.precipitation,
+                    seaLevelPressure: station.seaLevelPressure,
+                    visibility: station.visibility,
+                    windUnit: unit,
+                    pressure: station.pressure,
+                    day: day,
+                    time: time,
+                  });
+                  groundMarker.bindCustomPopup(str).openPopup()
+                }
+              }).catch(error => {
+                this.$message.error('获取站点数据失败')
+              })
+            })
+          })
+          this.groundMarkerGroup = L.layerGroup(markerArr)
+          map.addLayer(this.groundMarkerGroup)
         }
       }).catch(error => {
         this.$message.error('获取地面站数据失败')
@@ -370,7 +522,7 @@ export default {
             }
             let lat = item.lat
             let lon = item.lon
-            let oceanMarker = L.marker(L.latLng(lat, lon), { icon: this.shipIcon }).addTo(map);
+            let oceanMarker = L.marker(L.latLng(lat, lon), { icon: this.oceanIcon }).addTo(map);
             //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
             oceanMarker.type = 'ocean'
             oceanMarker.id = item.id
@@ -382,11 +534,13 @@ export default {
                 if(res.status == 200) {
                   let station = res.data.data
                   let unit = null
-                  if(station.windUnit == 1 || station.windUnit == 2) {
-                    unit = 'm/s'
-                  } else if(station.windUnit == 3 || station.windUnit == 4) {
+                  if(station.windUnit == 3 || station.windUnit == 4) {
                     unit = 'nm/h'
+                  } else {
+                    unit = 'm/s'
                   }
+                  let day = this.$m(station.dayTime).format('YYYY-MM-DD')
+                  let time = this.$m(station.dayTime).format('HH')+'时'+this.$m(station.dayTime).format('mm')+'分'
                   let str = this.getOceanContent({
                     name: '海洋站',
                     lat: station.lat,
@@ -395,13 +549,13 @@ export default {
                     temperature: station.temperature,
                     windSpeed: station.windSpeed,
                     windDirection: station.windDirection,
-                    dayTime: this.$m(station.dayTime).format('HH')+'时'+this.$m(station.dayTime).format('mm')+'分',
                     course: station.course,
                     speed: station.speed,
                     visibility: station.visibility,
-                    // stationPrecipitationReport: station.stationPrecipitationReport,
                     windUnit: unit,
-                    pressure: station.pressure
+                    pressure: station.pressure,
+                    day: day,
+                    time: time,
                   });
                   oceanMarker.bindCustomPopup(str).openPopup()
                 }
@@ -422,6 +576,7 @@ export default {
       map.removeLayer(this.buoyMarkerGroup)
       map.removeLayer(this.shipMarkerGroup)
       map.removeLayer(this.oceanMarkerGroup)
+      map.removeLayer(this.groundMarkerGroup)
     },
   },
 };

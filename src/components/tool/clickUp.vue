@@ -187,7 +187,7 @@ export default {
       )
     })
 
-    map.on("click",()=>{
+    map.on("click",() => {
         this.setPointInfoShow(false)
         this.setInfoShow(false)
         this.setTidalShow(false)

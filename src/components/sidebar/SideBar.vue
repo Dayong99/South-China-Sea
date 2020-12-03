@@ -46,8 +46,9 @@
       <el-select
         v-model="fyType"
         clearable
-        placeholder="选择卫星图"
+        placeholder="卫星云图"
         size="small"
+        popper-class='fy_select'
       >
         <el-option
           v-for="item in fyTypeOptions"
@@ -55,6 +56,10 @@
           :label="item.label"
           :value="item.value"
         >
+          <div class="fy_option">
+            <div class="fy_dot"></div>
+            <span>{{ item.label }}</span>
+          </div>
         </el-option>
       </el-select>
     </div>
@@ -66,6 +71,7 @@
         clearable
         placeholder="实况资料"
         size="small"
+        popper-class='real_select'
       >
         <el-option
           v-for="item in realTimeOptions"
@@ -73,6 +79,10 @@
           :label="item.label"
           :value="item.value"
         >
+          <div class="real_option">
+            <img :src="realTimeValue == item.value ? item.selectIcon : item.icon">
+            <span>{{ item.label }}</span>
+          </div>
         </el-option>
       </el-select>
     </div>
@@ -325,41 +335,46 @@ export default {
       drawFlag: true,
 
       // 卫星云图
-      fyTypeOptions: [
-        {
-          value: "channel3",
-          label: "channel3",
-        },
-        {
-          value: "channel12",
-          label: "channel12",
-        },
-        {
-          value: "true_colors",
-          label: "true_colors",
-        },
-      ],
+      fyTypeOptions: [{
+        value: 'channel3',
+        label: '通道3'
+      }, {
+        value: 'channel12',
+        label: '通道12'
+      }, {
+        value: 'true_colors',
+        label: '真彩色'
+      }],
       fyType: null,
       fyTypeGroup: L.layerGroup(),
 
       // 实况选择
+      realImgSrc: '',
       realTimeValue: null,
       realTimeOptions: [
         {
           label: "地面常规观测",
           value: "ground",
+          icon: require('@/assets/images/sidebar/ground.png'),
+          selectIcon: require('@/assets/images/sidebar/redground.png'),
         },
         {
           label: "船舶站",
           value: "ship",
+          icon: require('@/assets/images/sidebar/ship.png'),
+          selectIcon: require('@/assets/images/sidebar/redship.png'),
         },
         {
           label: "浮标站",
           value: "buoy",
+          icon: require('@/assets/images/sidebar/buoy.png'),
+          selectIcon: require('@/assets/images/sidebar/redbuoy.png'),
         },
         {
           label: "海洋站",
           value: "ocean",
+          icon: require('@/assets/images/sidebar/ocean.png'),
+          selectIcon: require('@/assets/images/sidebar/redocean.png'),
         },
       ],
       tyList: [],

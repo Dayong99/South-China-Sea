@@ -183,14 +183,14 @@
             </div>
             <div class="lon">
               <div
-                :class="{ lon_w: true, lon_active: lonflag }"
-                @click.stop="changeLatLng(2, true)"
+                :class="{ lon_w: true, lon_active: !lonflag }"
+                @click.stop="changeLatLng(2, false)"
               >
                 W
               </div>
               <div
-                :class="{ lon_e: true, lon_active: !lonflag }"
-                @click.stop="changeLatLng(2, false)"
+                :class="{ lon_e: true, lon_active: lonflag }"
+                @click.stop="changeLatLng(2, true)"
               >
                 E
               </div>
@@ -293,7 +293,7 @@ export default {
       lon1: null,
       lon2: null,
       latflag: true,
-      lonflag: true,
+      // lonflag: true,
       measureflag: false,
       measureareaflag: false,
       locationflag: false,
@@ -302,6 +302,8 @@ export default {
       getValueflag: false,
       getPointValueflag: false,
       drawflag: false,
+      lonflag: false,
+      locationPoint: null,
     };
   },
   computed: {
@@ -645,21 +647,34 @@ export default {
         this.lon2 = null;
         this.latflag = true;
         this.lonflag = true;
+        window.map.removeLayer(this.locationPoint)
       }
       this.locationShow = flag;
     },
     // 定位方法
     checkLocation() {
+      if(this.locationPoint) {
+        window.map.removeLayer(this.locationPoint)
+      }
+      // latflag --- N(true) S(false)   lonflag --- W(false) E(true)
       let lat = this.changeToDu(this.lat1, this.lat2);
       let lon = this.changeToDu(this.lon1, this.lon2);
       if (!this.latflag && !this.lonflag) {
+        // S W
+        this.locationPoint = L.circleMarker([0 - lat, 0 - lon], {weight: 5, opacity: 0.7, color: '#981a00', radius: 7, fillColor: '#fff', fillOpacity: 0.9}).addTo(map);
         window.map.flyTo(L.latLng(0 - lat, 0 - lon));
       } else if (!this.latflag) {
+        // S E
+        this.locationPoint = L.circleMarker([0 - lat, lon], {weight: 5, opacity: 0.7, color: '#981a00', radius: 7, fillColor: '#fff', fillOpacity: 0.9}).addTo(map);
         window.map.flyTo(L.latLng(0 - lat, lon));
       } else if (!this.lonflag) {
-        window.map.flyTo(L.latLng(lat, lon));
-      } else {
+        // N W
         window.map.flyTo(L.latLng(lat, 0 - lon));
+        this.locationPoint = L.circleMarker([lat, 0 - lon], {weight: 5, opacity: 0.7, color: '#981a00', radius: 7, fillColor: '#fff', fillOpacity: 0.9}).addTo(map);
+      } else {
+        // N E
+        window.map.flyTo(L.latLng(lat, lon));
+        this.locationPoint = L.circleMarker([lat, lon], {weight: 5, opacity: 0.7, color: '#981a00', radius: 7, fillColor: '#fff', fillOpacity: 0.9}).addTo(map);
       }
     },
     changeToDu(latLng1, latLng2) {
