@@ -61,6 +61,7 @@ export default {
         maxZoom: 13,
         worldCopyJump: true,
         zoomControl: false,
+        // closePopupOnClick:false
       });
       L.tileLayer
         .chinaProvider("Geoq.Normal.PurplishBlue", { maxZoom: 13, minZoom: 2 })

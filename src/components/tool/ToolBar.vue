@@ -31,8 +31,13 @@
       </el-tooltip>
     </div>
     <div class="tool_item tool_right" @click.stop="locationDialog(true)">
-      <el-tooltip class="item" effect="light" content="坐标定位" placement="bottom">
-        <img src="@/assets/toolList/location.png">
+      <el-tooltip
+        class="item"
+        effect="light"
+        content="坐标定位"
+        placement="bottom"
+      >
+        <img src="@/assets/toolList/location.png" />
       </el-tooltip>
     </div>
     <div class="tool_item tool_right" @click.stop="changeTileLayer">
@@ -60,6 +65,16 @@
         <img src="@/assets/toolList/getValue.png" />
       </el-tooltip>
     </div>
+    <div class="tool_item tool_right" @click.stop="getPointValue">
+      <el-tooltip
+        class="item"
+        effect="light"
+        content="单点取值"
+        placement="bottom"
+      >
+        <img src="@/assets/toolList/point.png" />
+      </el-tooltip>
+    </div>
     <div class="tool_item tool_right" @click.stop="clear">
       <el-tooltip
         class="item"
@@ -85,11 +100,11 @@
     <div class="location_dialog" v-show="locationShow">
       <div class="location_top">
         <div class="top_left">
-          <img src="@/assets/images/toolbar/location.png">
+          <img src="@/assets/images/toolbar/location.png" />
           <span>坐标定位</span>
         </div>
         <div class="top_right" @click.stop="locationDialog(false)">
-          <img src="@/assets/images/legendbar/close.png">
+          <img src="@/assets/images/legendbar/close.png" />
         </div>
       </div>
       <div class="location_content">
@@ -97,37 +112,69 @@
           <div class="content_lat">
             <span>纬度:</span>
             <div>
-              <input type="text" v-model="lat1">
+              <input type="text" v-model="lat1" />
               <span>°</span>
             </div>
             <div>
-              <input type="text" v-model="lat2">
+              <input type="text" v-model="lat2" />
               <span>'</span>
             </div>
             <div class="lat">
-              <div :class="{ 'lat_n': true, 'lat_active': latflag }" @click.stop="changeLatLng(1, true)">N</div>
-              <div :class="{ 'lat_s': true, 'lat_active': !latflag }" @click.stop="changeLatLng(1, false)">S</div>
+              <div
+                :class="{ lat_n: true, lat_active: latflag }"
+                @click.stop="changeLatLng(1, true)"
+              >
+                N
+              </div>
+              <div
+                :class="{ lat_s: true, lat_active: !latflag }"
+                @click.stop="changeLatLng(1, false)"
+              >
+                S
+              </div>
             </div>
           </div>
           <div class="content_lon">
             <span>经度:</span>
             <div>
-              <input type="text" v-model="lon1">
+              <input type="text" v-model="lon1" />
               <span>°</span>
             </div>
             <div>
-              <input type="text" v-model="lon2">
+              <input type="text" v-model="lon2" />
               <span>'</span>
             </div>
             <div class="lon">
-              <div :class="{ 'lon_w': true, 'lon_active': lonflag }" @click.stop="changeLatLng(2, true)">W</div>
-              <div :class="{ 'lon_e': true, 'lon_active': !lonflag }" @click.stop="changeLatLng(2, false)">E</div>
+              <div
+                :class="{ lon_w: true, lon_active: lonflag }"
+                @click.stop="changeLatLng(2, true)"
+              >
+                W
+              </div>
+              <div
+                :class="{ lon_e: true, lon_active: !lonflag }"
+                @click.stop="changeLatLng(2, false)"
+              >
+                E
+              </div>
             </div>
           </div>
         </div>
         <div class="content_bottom">
-          <div class="content_sure" :class="{ 'btn_active': true }" @click.stop="checkLocation">确定</div>
-          <div class="content_cancle" :class="{ 'btn_active': false }" @click.stop="locationDialog(false)">取消</div>
+          <div
+            class="content_sure"
+            :class="{ btn_active: true }"
+            @click.stop="checkLocation"
+          >
+            确定
+          </div>
+          <div
+            class="content_cancle"
+            :class="{ btn_active: false }"
+            @click.stop="locationDialog(false)"
+          >
+            取消
+          </div>
         </div>
       </div>
     </div>
@@ -225,6 +272,9 @@ export default {
   mounted() {},
   methods: {
     ...mapMutations({
+      setInfoData:"clickup/setInfoData",
+      setInfoLocation:"clickup/setInfoLocation",
+      setInfoShow:"clickup/setInfoShow",
       setTileLayer: 'earth/setTileLayer'
     }),
     getViewer() {
@@ -339,6 +389,56 @@ export default {
           });
       }
     },
+    getPointValue() {
+      map.on("click", (e) => {
+        console.log(e, "点击地图---------------");
+        console.log(this.menuItemList, "侧边栏选择");
+        let level = "";
+        let type = "";
+        this.menuItemList.forEach((item) => {
+          level += item.currentLevel + ",";
+          type += item.id + ",";
+        });
+        console.log(
+          level.substring(0, level.length - 1),
+          type.substring(0, type.length - 1)
+        );
+        this.$get("api/numerical-forecast/summary-info", {
+          day: this.nowtime.substring(0, 10), //日期
+          time: this.nowtime.substring(11, 13), //时间
+          type: type.substring(0, type.length - 1), //要素id
+          level: level.substring(0, level.length - 1), //当前选中的层级
+          lon: e.latlng.lng,
+          lat: e.latlng.lat,
+        }).then((res) => {
+          let dataArr = res.data.data;
+          let infoData = [
+            {
+              name: "时间",
+              value: this.nowtime,
+            },
+            {
+              name: "经度",
+              value: Number(e.latlng.lng).toFixed(3),
+            },
+            {
+              name: "纬度",
+              value: Number(e.latlng.lat).toFixed(3),
+            },
+          ];
+          dataArr.forEach((item) => {
+            infoData.push({
+              name: item.name,
+              value: item.value1,
+            });
+          });
+          console.log(infoData,"单点数据信息--------");
+          this.setInfoData(infoData)
+          this.setInfoLocation(e.containerPoint)
+          this.setInfoShow(true)
+        });
+      });
+    },
     // 距离量算
     measure() {
       this.getViewer();
@@ -362,7 +462,7 @@ export default {
     // 清除要素
     clear() {
       map.removeLayer(this.rectangle);
-      map.off("click")
+      map.off("click");
       window.tool.clearTool();
     },
     // 经纬线
@@ -377,42 +477,42 @@ export default {
     // 定位窗口
     locationDialog(flag) {
       // flag==false 清除数据
-      if(!flag) {
-        this.lat1 = null
-        this.lat2 = null
-        this.lon1 = null
-        this.lon2 = null
-        this.latflag = true
-        this.lonflag = true
+      if (!flag) {
+        this.lat1 = null;
+        this.lat2 = null;
+        this.lon1 = null;
+        this.lon2 = null;
+        this.latflag = true;
+        this.lonflag = true;
       }
-      this.locationShow = flag
+      this.locationShow = flag;
     },
     // 定位方法
     checkLocation() {
-      let lat = this.changeToDu(this.lat1, this.lat2)
-      let lon = this.changeToDu(this.lon1, this.lon2)
-      if(!this.latflag && !this.lonflag) {
-        window.map.flyTo(L.latLng(0 - lat, 0 - lon))
-      } else if(!this.latflag) {
-        window.map.flyTo(L.latLng(0 - lat, lon))
-      } else if(!this.lonflag) {
-        window.map.flyTo(L.latLng(lat, 0 - lon))
+      let lat = this.changeToDu(this.lat1, this.lat2);
+      let lon = this.changeToDu(this.lon1, this.lon2);
+      if (!this.latflag && !this.lonflag) {
+        window.map.flyTo(L.latLng(0 - lat, 0 - lon));
+      } else if (!this.latflag) {
+        window.map.flyTo(L.latLng(0 - lat, lon));
+      } else if (!this.lonflag) {
+        window.map.flyTo(L.latLng(lat, 0 - lon));
       } else {
-        window.map.flyTo(L.latLng(lat, lon))
+        window.map.flyTo(L.latLng(lat, lon));
       }
     },
     changeToDu(latLng1, latLng2) {
-      let d = latLng1
-      let f = latLng2 || 0
+      let d = latLng1;
+      let f = latLng2 || 0;
       let du = parseFloat(f / 60) + parseFloat(d);
       return du;
     },
     // 切换NS、WE
     changeLatLng(num, flag) {
-      if(num === 1) {
-        this.latflag = flag
-      } else if(num === 2) {
-        this.lonflag = flag
+      if (num === 1) {
+        this.latflag = flag;
+      } else if (num === 2) {
+        this.lonflag = flag;
       }
     },
     // 切换底图
@@ -568,7 +668,7 @@ export default {
           height: 30px;
           background: #100f0f;
           border-radius: 4px;
-          opacity: .7;
+          opacity: 0.7;
           border: none;
           color: #fff;
           outline: none;
@@ -600,16 +700,16 @@ export default {
             }
 
             .lat_n {
-              border: 1px solid #FFBCBC;
+              border: 1px solid #ffbcbc;
               border-top-left-radius: 8px;
               border-bottom-left-radius: 8px;
             }
             .lat_s {
-              border: 1px solid #FFBCBC;
+              border: 1px solid #ffbcbc;
               border-top-right-radius: 8px;
               border-bottom-right-radius: 8px;
             }
-            
+
             .lat_active {
               border: none;
               background: rgba(132, 13, 2, 0.9);
@@ -643,16 +743,16 @@ export default {
             }
 
             .lon_w {
-              border: 1px solid #FFBCBC;
+              border: 1px solid #ffbcbc;
               border-top-left-radius: 8px;
               border-bottom-left-radius: 8px;
             }
             .lon_e {
-              border: 1px solid #FFBCBC;
+              border: 1px solid #ffbcbc;
               border-top-right-radius: 8px;
               border-bottom-right-radius: 8px;
             }
-            
+
             .lon_active {
               border: none;
               background: rgba(132, 13, 2, 0.9);
@@ -667,14 +767,14 @@ export default {
         display: flex;
         justify-content: space-around;
         align-items: flex-start;
-        color: #FFBCBC;
+        color: #ffbcbc;
 
         div {
           width: 80px;
           height: 30px;
           line-height: 30px;
           text-align: center;
-          border: 1px solid #FFBCBC;
+          border: 1px solid #ffbcbc;
           border-radius: 5px;
 
           &:hover {
