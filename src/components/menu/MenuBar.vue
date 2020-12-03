@@ -427,6 +427,7 @@ export default {
       menuList: (state) => state.menuBar.menuList,
       systemList: (state) => state.menuBar.systemList,
       dataList: (state) => state.menuBar.dataList,
+      pointInfo: (state) => state.clickup.pointInfo,
       TaskManagerOptions: (state) => state.menuBar.TaskManagerOptions,
       routeDialogOptions: (s) => s.menuBar.routeDialogOptions,
       algorithmOptions: (s) => s.menuBar.algorithmOptions,
@@ -485,6 +486,16 @@ export default {
         return this;
       },
     });
+
+    // map.on("popupopen", (e) => {
+    //   console.log(e, "22222222222222");
+    //   console.log(document.getElementById("des_btn"));
+    //   let btn = document.getElementById("des_btn");
+    //   btn.onclick = function() {
+    //     let str = document.getElementById("des_text").value;
+    //     console.log(str, "文本域内容----------");
+    //   };
+    // });
   },
   watch: {
     menuList: {
@@ -528,6 +539,10 @@ export default {
       setTitleList: "routeInfo/setTitleList",
       setDataList: "routeInfo/setDataList",
       setRouteInfoShow: "routeInfo/setRouteInfoShow",
+      // setMarker: "clickup/setMarker",
+      setLocation: "clickup/setLocation",
+      setPointInfo: "clickup/setPointInfo",
+      setPointInfoShow: "clickup/setPointInfoShow",
     }),
     // 任务树setting
     AssessSetting(itemAssess, indexAssess, itemRoute, indexRoute, item, index) {
@@ -791,6 +806,9 @@ export default {
       itemAssess.line = false;
       //清除风险等级航线
       this.clearRouteById(itemAssess.id);
+      // if (itemAssess.id == this.pointInfo.assessmentId) {
+      //   this.setPointInfoShow(false);
+      // }
       //单条航线多个评估互斥
       itemRoute.assessList.forEach((item) => {
         if (item.id != itemAssess.id) {
@@ -798,6 +816,9 @@ export default {
           item.line = false;
           this.clearRectangleById(item.id);
           this.clearRouteById(item.id);
+          if (item.id == this.pointInfo.assessmentId) {
+            this.setPointInfoShow(false);
+          }
         }
       });
 
@@ -830,6 +851,9 @@ export default {
           item.line = false;
           this.clearRectangleById(item.id);
           this.clearRouteById(item.id);
+          // if (item.id == this.pointInfo.assessmentId) {
+          //   this.setPointInfoShow(false);
+          // }
         }
       });
 
@@ -837,6 +861,9 @@ export default {
       //绘制风险等级航线
       if (itemAssess.line) {
         this.clearRouteById(itemAssess.id);
+        // if (itemAssess.id == this.pointInfo.assessmentId) {
+        //   this.setPointInfoShow(false);
+        // }
         this.drawRouteLine(
           itemAssess.id,
           itemAssess.timeIndex,
@@ -845,6 +872,9 @@ export default {
       } else {
         //清除该评估的风险航线
         this.clearRouteById(itemAssess.id);
+        // if (itemAssess.id == this.pointInfo.assessmentId) {
+        //   this.setPointInfoShow(false);
+        // }
       }
     },
 
@@ -989,7 +1019,7 @@ export default {
             latlngs.push([Number(item.latitude), Number(item.longitude)]);
           });
           // L.polyline(latlngs, { color: "blue" }).addTo(map);
-          console.log(latlngs, "航线点-------------");
+          console.log(latlngs, "航线点-------------", lineData);
 
           let allPoint = [];
           for (let i = 0; i < latlngs.length - 1; i++) {
@@ -1045,25 +1075,64 @@ export default {
             circle.on("click", (e) => {
               console.log(e, "航线点的信息--------");
               //请求单个航线点的信息
-              // this.$get("api/assessment/point-conclusion",{
+              this.$get("api/assessment/point-conclusion", {
+                assessmentId: assessmentId,
+                index: e.target.index,
+              }).then((res) => {
+                console.log(res, "单个点的数据信息");
+                let arr = res.data.data;
+                let singleInfo = {
+                  assessmentId: assessmentId, //评估id
+                  index: e.target.index, //点在航线中的index值
+                  message: arr[0].other,
+                  arr: [
+                    {
+                      name: "时间",
+                      value: arr[0].dateTime,
+                    },
+                  ],
+                };
+                arr.forEach((item) => {
+                  if (item.name == "conclusion") {
+                    singleInfo.arr.push({
+                      name: "风险等级",
+                      value: item.value,
+                    });
+                  } else {
+                    singleInfo.arr.push({
+                      name: item.name,
+                      value: item.value,
+                    });
+                  }
+                });
+                this.setPointInfo(singleInfo);
+                this.setLocation(e.containerPoint);
+                this.setPointInfoShow(true);
 
-              // })
-              // let info = [
-              //   {
-              //     name: "时间",
-              //     value: "2020-01-01 10:00",
-              //   },
-              //   {
-              //     name: "温度",
-              //     value: "23",
-              //   },
-              //   {
-              //     name: "高度",
-              //     value: "1234",
-              //   },
-              // ];
+                let marker = e.target;
+                map.on("move", (e) => {
+                  let p = map.latLngToContainerPoint(
+                    L.latLng(marker._latlng.lat, marker._latlng.lng)
+                  );
+                  console.log(p);
+                  this.setLocation(p);
+                });
+              });
+
               // let content = this.getPointContent(info);
               // circle.bindCustomPopup(content).openPopup();
+              // console.log(document.getElementById("des_btn"));
+              // document.getElementById("des_btn").onclick = () => {
+              //   let str = document.getElementById("des_text").value;
+              //   console.log(str, "文本域内容----------");
+              // };
+              // map.on("popupopen", (e) => {
+              //   console.log(e, "22222222222222");
+              //   document.getElementById("des_btn").onclick = () => {
+              //     let str = document.getElementById("des_text").value;
+              //     console.log(str, "文本域内容----------");
+              //   };
+              // });
             });
             this.routeLine.push(circle);
           });
@@ -1085,6 +1154,9 @@ export default {
     //根据航线id清除图上的风险评估区
     //根据评估id清除图上的风险评估航线
     clearRouteById(id) {
+      if(id==this.pointInfo.assessmentId){
+        this.setPointInfoShow(false)
+      }
       console.log(this.routeLine, "保存的风险区域----------");
       for (let i = 0; i < this.routeLine.length; i++) {
         if (this.routeLine[i].assessmentId == id) {
@@ -1358,7 +1430,7 @@ export default {
       }
     },
     compare(property, m) {
-      return function (a, b) {
+      return function(a, b) {
         var value1 = a[property];
         var value2 = b[property];
         if (m == "+") {
@@ -1418,7 +1490,9 @@ export default {
       <div class="info_content">
          ` +
         str +
-        `</div>
+        `<div class="descriptionBox">描述信息:<button id="des_btn">保存</button><textarea name="description" id="des_text" cols="25" rows="3" style="resize:none;"></textarea></div>
+        
+        </div>
       </div>
     </div>`
       );

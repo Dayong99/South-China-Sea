@@ -61,6 +61,7 @@ export default {
         maxZoom: 13,
         worldCopyJump: true,
         zoomControl: false,
+        // closePopupOnClick:false
       });
       // this.createTileLayer(tileLayer2, {
       //   zoomOffset: 1,
