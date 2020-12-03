@@ -34,6 +34,10 @@ const state = {
       flag: false
     },
     {
+      name: '常用地点',
+      flag: false
+    },
+    {
       name: '海区划分',
       flag: false
     },
@@ -45,7 +49,7 @@ const state = {
       name: '数据项配置',
       flag: false
     },
-
+    
   ],
   dataList: [
     {

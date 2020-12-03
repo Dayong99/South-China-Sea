@@ -155,19 +155,19 @@
                     <div class="control_wrapper" v-if="itemRoute.checked">
                       <img
                         src="@/assets/images/menu/route_info.png"
-                        @click="algorithm(itemRoute, indexRoute)"
+                        @click.stop="algorithm(itemRoute, indexRoute)"
                       />
                       <img
                         src="@/assets/images/menu/route_assess.png"
-                        @click="algorithm(itemRoute, indexRoute)"
+                        @click.stop="algorithm(itemRoute, indexRoute)"
                       />
                       <img
                         src="@/assets/images/menu/edit_route.png"
-                        @click="algorithm(itemRoute, indexRoute)"
+                        @click.stop="algorithm(itemRoute, indexRoute)"
                       />
                       <img
                         src="@/assets/images/menu/route_delete.png"
-                        @click="deleteRoute(itemRoute, indexRoute)"
+                        @click.stop="deleteRoute(itemRoute, indexRoute)"
                       />
                       <img
                         :class="{ activeAssess: itemRoute.assessChecked }"

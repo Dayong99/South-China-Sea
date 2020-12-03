@@ -5,6 +5,7 @@
     v-show="systemManagerShow"
     style="width: 960px;height:auto;"
     v-drag
+    ref="source1Box"
   >
     <div class="manager_title">
       <span>数据源配置—欧格海浪数值预报</span>
@@ -194,6 +195,9 @@ export default {
         this.queryParams = {};
         this.time = [];
         this.fetch();
+        this.$refs.source1Box.style.left = "50%";
+        this.$refs.source1Box.style.top = "42%";
+        this.$refs.source1Box.style.transform = "translate(-50%, -50%)";
       }
     },
   },

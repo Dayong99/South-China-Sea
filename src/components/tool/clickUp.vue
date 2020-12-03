@@ -82,10 +82,16 @@ export default {
   },
   watch: {},
   created() {},
-  mounted() {},
+  mounted() {
+      map.on("click",()=>{
+          this.setPointInfoShow(false)
+          this.setInfoShow(false)
+      })
+  },
   methods: {
     ...mapMutations({
       setPointInfoShow: "clickup/setPointInfoShow",
+      setInfoShow: "clickup/setInfoShow",
     }),
     desPreserve() {
       console.log(this.pointInfo.message);

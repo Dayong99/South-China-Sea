@@ -28,9 +28,35 @@
       </ul>
     </div>
 
-    <div class="isDraw" @click="changeDrawFlag">
-      <div :class="{ 'draw_active': drawFlag }"></div>
-      <span>是否重绘</span>
+    <!-- 是否重绘按钮 -->
+    <div class="other_btn">
+      <div class="latlng">
+        <img src="@/assets/images/sidebar/position.png">
+        <div class="other_lat">{{ latNum }}</div>
+        <div class="other_lon">,{{ lonNum }}</div>
+      </div>
+      <div class="isDraw" @click="changeDrawFlag">
+        <div :class="{ 'draw_active': drawFlag }"></div>
+        <span>是否重绘</span>
+      </div>
+    </div>
+
+    <!-- 卫星云图 和 实况资料样式一样-->
+    <div class="fyType">
+      <el-select
+        v-model="fyType"
+        clearable
+        placeholder="选择卫星图"
+        size="small"
+      >
+        <el-option
+          v-for="item in fyTypeOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        >
+        </el-option>
+      </el-select>
     </div>
 
     <!-- 实况资料 -->
@@ -310,12 +336,15 @@ export default {
       layerList: [],
       // 范围数组
       extentList: [],
+      oldZoom: 4,
       // 海流图层
-      waveLayer: null,
+      waveGroup: L.layerGroup(),
       // 风羽图层
-      windLayer: null,
+      windList: [],
+      windGroup: L.layerGroup(),
       // 图层个数
-      layerNum: null,
+      layerNum: 0,
+      layerGroup: L.layerGroup(),
 
       // 潮汐面板显隐
       tidalObj: {
@@ -356,6 +385,20 @@ export default {
 
       // 重绘
       drawFlag: true,
+
+      // 卫星云图
+      fyTypeOptions: [{
+        value: 'channel3',
+        label: 'channel3'
+      }, {
+        value: 'channel12',
+        label: 'channel12'
+      }, {
+        value: 'true_colors',
+        label: 'true_colors'
+      }],
+      fyType: null,
+      fyTypeGroup: L.layerGroup(),
 
       // 实况选择
       realTimeValue: null,
@@ -410,6 +453,10 @@ export default {
       // timer: undefined,
       tyDeletArr: [],
       flag: true,
+
+      // 经纬数据
+      latNum: 0,
+      lonNum: 0,
     };
   },
   computed: {
@@ -420,16 +467,11 @@ export default {
       nowTime: (state) => state.time.time,
       // 当前层级
       nowLevel: (state) => state.sideBar.nowLevel,
-      // 重绘次数
-      imageLayerNum: (state) => state.earth.imageLayerNum,
       // 数据源
       sourceType: (state) => state.sideBar.sourceType,
     }),
   },
   watch: {
-    imageLayerNum(val, old) {
-      this.layerNum = val;
-    },
     // 当前要素列表的变化
     currentItemList: {
       handler(val, oldval) {
@@ -446,40 +488,54 @@ export default {
     },
     // 范围数组的变化
     extent: {
-      // async handler(val, old) {
-      async handler(val, old) {
-        console.log('是否重绘', this.drawFlag);
+      handler(val, old) {
+        console.log("val", val);
+        console.log("old", old);
         
-          console.log("val", val);
-          console.log("old", old);
-          // flag 为 true 标识区域变化，需要重绘
-          let flag = true;
+        // else {
+        //   this.oldExtent = [{
+        //     xMax: 360,
+        //     xMin: 180,
+        //     yMax: 85,
+        //     yMin: -85,
+        //   }, {
+        //     xMax: 180,
+        //     xMin: 0,
+        //     yMax: 85,
+        //     yMin: -85,
+        //   }]
+        // }
+        // flag 为 true 标识区域变化，需要重绘
+        let flag = true;
 
-          if (old === null || val.length !== old.length) {
-            flag = true;
-          } else {
-            for (let i = 0; i < val.length; i++) {
-              if (
-                val[i].xMin === old[i].xMin &&
-                val[i].xMax === old[i].xMax &&
-                val[i].yMin === old[i].yMin &&
-                val[i].yMax === old[i].yMax
-              ) {
-                flag = false;
-                break;
-              }
-            }
-            // this.layerNum -= 1;
-            // this.setImageLayerNum(this.layerNum);
-          }
-          if (flag) {
-            this.extentList = val;
-            if(this.drawFlag) {
-              // this.layerNum -= 1;
-              await this.drawItemList();
-              // await this.setImageLayerNum(this.layerNum);
+        if (old === null || val.length !== old.length) {
+          flag = true;
+        } else {
+          for (let i = 0; i < val.length; i++) {
+            if (
+              val[i].xMin === old[i].xMin &&
+              val[i].xMax === old[i].xMax &&
+              val[i].yMin === old[i].yMin &&
+              val[i].yMax === old[i].yMax
+            ) {
+              flag = false;
+              break;
             }
           }
+        }
+        // 解决不重绘时，直接跳到小于3层底图时不能再重绘的问题
+        let zoom = window.map.getZoom()
+        if(zoom <= 3 && this.oldZoom > 3) {
+          flag = true
+        }
+        
+        if (flag) {
+          this.extentList = val;
+          // drawFlag 控制重绘的按钮
+          if(this.drawFlag) {
+            this.drawItemList();
+          }
+        }
       },
       deep: true,
     },
@@ -520,12 +576,24 @@ export default {
         });
       }
       this.drawItemList();
+
+      // 切换卫星云图
+      if(this.fyType) {
+        this.getAndDrawFyType(this.fyType)
+      }
     },
     // 监听实况选择变化
     realTimeValue(newval) {
-      console.log("实况数据变化监测", newval);
       this.setRealTimeValue(newval);
     },
+    // 监听卫星云图
+    fyType(newval) {
+      if(newval) {
+        this.getAndDrawFyType(newval)
+      } else {
+        this.fyTypeGroup.clearLayers()
+      }
+    }
   },
   created() {
     this.initMenuList();
@@ -558,6 +626,13 @@ export default {
         that.screenHeight = window.fullHeight;
       })();
     };
+
+    // 经纬度显示
+    window.map.on('mousemove', e => {
+      let latlng = L.latLng(e.latlng.lat, e.latlng.lng).wrap()
+      this.latNum = latlng.lat > 0 ? Math.abs(latlng.lat).toFixed(3) + ' N' : Math.abs(latlng.lat).toFixed(3) + ' S'
+      this.lonNum = latlng.lng > 0 ? Math.abs(latlng.lng).toFixed(3) + ' E' : Math.abs(latlng.lng).toFixed(3) + ' W'
+    })
 
     L.CustomPopup = L.Popup.extend({
       _initLayout: function() {
@@ -616,11 +691,13 @@ export default {
     ...mapMutations({
       setMenuItemList: "sideBar/setMenuItemList",
       setLevelList: "sideBar/setLevelList",
-      setImageLayerNum: "earth/setImageLayerNum",
       setRealTimeValue: "sideBar/setRealTimeValue",
     }),
     changeDrawFlag() {
       this.drawFlag = !this.drawFlag
+      if(!this.drawFlag) {
+        this.oldZoom = window.map.getZoom()
+      }
     },
     // 潮汐面板日期切换
     changeTimeIndex(i) {
@@ -738,6 +815,9 @@ export default {
       if (this.menuList[index].flag) {
         // 清除单个
         this.clearLayer(this.menuList[index]);
+        if(this.menuList[index].drawType === 'layer') {
+          this.layerGroup.clearLayers()
+        }
         // 海流和风用同一个清除方法
         if (
           this.menuList[index].drawType === "point_flow" ||
@@ -909,8 +989,9 @@ export default {
           });
           extentList.splice(i, 1);
         });
-        // 色斑图按照 -180~180 请求，
+        // layer 0~180 -180~0   line 0~180 180~360
         if (this.currentItem.drawType == "layer") {
+          this.layerNum++;
           extentList.forEach((item, index) => {
             if (item.xMax > 180) {
               extentList[index].xMin -= 360;
@@ -923,6 +1004,12 @@ export default {
               }
             }
           });
+        } else if(this.currentItem.drawType == "line") {
+          extentList.forEach((item, index) => {
+            if(extentList[index].xMax == 359) {
+              extentList[index].xMax = 360
+            }
+          })
         }
         extentList.forEach((item) => {
           this.clearLayer(this.currentItem);
@@ -988,7 +1075,9 @@ export default {
           });
           extentList.splice(i, 1);
         });
+        // layer 0~180 -180~0   line 0~180 180~360
         if (currentItem.drawType === "layer") {
+          this.layerNum++;
           extentList.forEach((item, index) => {
             if (item.xMax > 180) {
               extentList[index].xMin -= 360;
@@ -1001,6 +1090,12 @@ export default {
               }
             }
           });
+        } else if(this.currentItem.drawType == "line") {
+          extentList.forEach((item, index) => {
+            if(extentList[index].xMax == 359) {
+              extentList[index].xMax = 360
+            }
+          })
         }
         extentList.forEach((item) => {
           this.clearLayer(currentItem);
@@ -1014,17 +1109,18 @@ export default {
         console.log(extentList);
       });
 
-      // this.extentList.forEach(item => {
-      //   this.currentItemList.forEach(item1 => {
-      //     this.clearLayer(item1)
-      //     if(item1.drawType == 'line') {
-      //       this.getAndDrawLine(item1, item)
-      //     } else if(item1.drawType == 'layer') {
-      //       // this.clearLayer(item)
-      //       this.getAndDrawLayer(item1, item)
-      //     }
-      //   })
-      // })
+      // 清除一下风羽、洋流，避免没有清楚的问题
+      let i = this.currentItemList.filter(item => {
+        return item.drawType === 'point_wind' || item.drawType === 'point_flow'
+      })
+      let windList = this.windGroup.getLayers()
+      let waveList = this.waveGroup.getLayers()
+      if(i != -1) {
+        windList.length > 0 ? this.windGroup.clearLayers() : ''
+        waveList.length > 0 ? this.waveGroup.clearLayers() : ''
+        // this.windGroup.clearLayers()
+        // this.waveGroup.clearLayers()
+      }
     },
     // 获取线的数据并绘制
     getAndDrawLine(currentItem, extent) {
@@ -1050,18 +1146,26 @@ export default {
         .then((res) => {
           if (res.status == 200) {
             let polyline = [];
+            // max 输出最大值
+            // let maxList = []
             res.data.data.forEach((item) => {
               let linedata = [];
+              // let max = 0
               item.PointList.forEach((item1) => {
                 let latlng = [];
+                // if(max < item1.X) {
+                //   max = item1.X
+                // }
                 latlng.push(item1.Y);
                 latlng.push(item1.X);
                 latlng.push(Math.round(item.Value / 100));
                 linedata.push(latlng);
               });
+              // maxList.push(max)
 
               polyline.push(linedata);
             });
+            console.log('最大值', maxList)
             let line = new PressureLayer(
               {},
               {
@@ -1082,8 +1186,6 @@ export default {
       let levelIndex = currentItem.parseIntLevel.findIndex((item) => {
         return item === currentItem.currentLevel;
       });
-      console.log(this.day);
-      console.log(this.time);
       try {
         let test = await this.$getbuffer(
           "/api/numerical-forecast/mercator-polygonsImage",
@@ -1109,6 +1211,7 @@ export default {
         //   ex.xMin = extent.xMin - 360
         //   ex.xMax = extent.xMax - 360
         // }
+        // 往两边扩展
         let bounds = L.latLngBounds(
           L.latLng(extent.yMin, extent.xMin),
           L.latLng(extent.yMax, extent.xMax)
@@ -1124,35 +1227,44 @@ export default {
         if (img) {
           let imageLayer = L.imageOverlay(img, bounds);
           imageLayer.id = currentItem.id;
-          // imageLayer.on("add", (ev) => {
-          //   console.log("加载完成", ev);
-          //   if (this.imageLayerNum >= 0) {
-          //     window.map.removeLayer(imageLayer);
-          //   }
-          //   console.log(this.layerNum);
-          // });
-          imageLayer.addTo(window.map);
-          console.log(imageLayer);
-          this.layerList.push(imageLayer);
+          imageLayer.layerId = this.layerNum;
+          this.layerGroup.addLayer(imageLayer)
+          // imageLayer.addTo(window.map);
+          // this.layerList.push(imageLayer);
           let imageLayer1 = L.imageOverlay(img, bounds1);
           imageLayer1.id = currentItem.id;
-          // imageLayer1.on("add", (ev) => {
-          //   if (this.imageLayerNum >= 0) {
-          //     window.map.removeLayer(imageLayer1);
-          //   }
-          // });
-          imageLayer1.addTo(window.map);
-          this.layerList.push(imageLayer1);
+          imageLayer1.layerId = this.layerNum;
+          this.layerGroup.addLayer(imageLayer1)
+          // imageLayer1.addTo(window.map);
+          // this.layerList.push(imageLayer1);
           let imageLayer2 = L.imageOverlay(img, bounds2).addTo(window.map);
           imageLayer2.id = currentItem.id;
-          // imageLayer2.on("add", (ev) => {
-          //   if (this.imageLayerNum >= 0) {
-          //     window.map.removeLayer(imageLayer2);
+          imageLayer2.layerId = this.layerNum;
+          this.layerGroup.addLayer(imageLayer2)
+
+          // if (layer.drawType === "layer") {
+            // 本次的加载完成，删除上次的图
+            let lastLayer = this.layerGroup.getLayers()
+            lastLayer.forEach(item => {
+              if(item.layerId !== this.layerNum) {
+                this.layerGroup.removeLayer(item)
+              }
+            })
+          // }
+
+          // this.layerGroup.on('add', e => {
+          //   let lastLayer = e.target._layers
+          //   for(let layer in lastLayer) {
+          //     if(lastLayer[layer].layerId !== this.layerNum) {
+          //       window.map.removeLayer(lastLayer[layer])
+          //     }
           //   }
-          // });
-          imageLayer2.addTo(window.map);
-          this.layerList.push(imageLayer2);
+          // })
+          window.map.addLayer(this.layerGroup)
+          // imageLayer2.addTo(window.map);
+          // this.layerList.push(imageLayer2);
         }
+        console.log('layer  test ---', this.layerGroup)
       } catch (error) {
         this.$message.error("获取" + currentItem.name + "数据失败");
       }
@@ -1188,7 +1300,6 @@ export default {
       //         window.map.removeLayer(imageLayer)
       //       }
       //       console.log(this.layerNum)
-      //       // this.setImageLayerNum(this.layerNum)
       //     })
       //     imageLayer.addTo(window.map)
       //     console.log(imageLayer)
@@ -1208,7 +1319,6 @@ export default {
       //       if(this.imageLayerNum >= 1) {
       //         window.map.removeLayer(imageLayer2)
       //       }
-      //       // this.setImageLayerNum(this.layerNum)
       //     })
       //     imageLayer2.addTo(window.map)
       //     this.layerList.push(imageLayer2)
@@ -1244,18 +1354,20 @@ export default {
           if (res.status == 200) {
             console.log("wind--res", res.data.data);
             if (res.status == 200) {
-              let windList = res.data.data;
+              this.windList = []
+              this.windList = res.data.data;
 
               var config = {
                 lat: "0",
                 lng: "1",
                 value: "2",
                 dir: "3",
-                data: windList,
+                data: this.windList,
               };
-              this.windLayer = new WindLayer({}, config);
-              this.windLayer.id = currentItem.id;
-              window.map.addLayer(this.windLayer);
+              let windLayer = new WindLayer({}, config);
+              windLayer.id = currentItem.id;
+              this.windGroup.addLayer(windLayer)
+              window.map.addLayer(this.windGroup);
             }
           }
         })
@@ -1312,9 +1424,10 @@ export default {
               dir: "3",
               data: waveList,
             };
-            this.waveLayer = new FlowLayer({}, config);
-            this.waveLayer.id = currentItem.id;
-            window.map.addLayer(this.waveLayer);
+            let waveLayer = new FlowLayer({}, config);
+            waveLayer.id = currentItem.id;
+            this.waveGroup.addLayer(waveLayer);
+            window.map.addLayer(this.waveGroup);
           }
         })
         .catch((error) => {
@@ -1363,6 +1476,17 @@ export default {
       marker.harborId = harbor.id;
       marker.name = harbor.hname;
       marker.id = this.currentItem.id;
+      // marker.on('click', ev => {
+      //   console.log('------', ev)
+      //   let marker = ev.target
+      //   let point = ev.containerPoint
+      //   map.on('move', e => {
+      //     console.log('----------', marker)
+      //     let p = map.latLngToContainerPoint(L.latLng(marker._latlng.lat, marker._latlng.lng))
+      //     console.log(p)
+      //     console.log(point);
+      //   })
+      // })
       marker.on("mouseover", (ev) => {
         // 移入marker置为true
         this.markerMouseFlag = true;
@@ -1372,8 +1496,6 @@ export default {
         if (!this.tidalMouseFlag) {
           this.getTidalData(harbor.id, day);
         }
-
-        console.log("mouseover", ev);
         // ev.target.   构造数据
         let time = Number(this.time) > 10 ? " " + this.time : " 0" + this.time;
         this.tidalData.time = this.day + time + ":00:00";
@@ -1597,18 +1719,14 @@ export default {
         });
       }
 
-      if (layer.drawType === "layer" && this.layerList.length) {
-        let arr = this.layerList.filter((item) => {
-          return item.id == layer.id;
-        });
-        arr.forEach((item) => {
-          let i = this.layerList.findIndex((item1) => {
-            return item1.id == item.id;
-          });
-          map.removeLayer(this.layerList[i]);
-          this.layerList.splice(i, 1);
-        });
-      }
+      // if (layer.drawType === "layer") {
+      //   let lastLayer = this.layerGroup.getLayers()
+      //   lastLayer.forEach(item => {
+      //     if(item.layerId !== this.layerNum) {
+      //       this.layerGroup.removeLayer(item)
+      //     }
+      //   })
+      // }
 
       // if(layer.drawType === 'point_flow' && (this.waveLayer !== null)) {
       //   map.removeLayer(layer)
@@ -1617,12 +1735,12 @@ export default {
     },
     // wind、wave使用了自动重绘，需要单独清除
     clearWindWave(layer) {
-      if (layer.drawType === "point_flow" && this.waveLayer !== null) {
-        map.removeLayer(this.waveLayer);
-        this.waveLayer = null;
-      } else if (layer.drawType === "point_wind" && this.windLayer !== null) {
-        map.removeLayer(this.windLayer);
-        this.windLayer = null;
+      let windList = this.windGroup.getLayers()
+      let waveList = this.waveGroup.getLayers()
+      if (layer.drawType === "point_flow" && waveList.length) {
+        this.waveGroup.clearLayers()
+      } else if (layer.drawType === "point_wind" && windList.length) {
+        this.windGroup.clearLayers()
       } else if (layer.drawType === "point" && this.tidalMarker !== null) {
         let tidal = this.tidalMarker.filter((item) => {
           return item.id === layer.id;
@@ -1910,6 +2028,62 @@ export default {
     </div>`
       );
     },
+
+    // 获取并添加卫星云图
+    async getAndDrawFyType(type) {
+      let time = this.time > 10 ? this.time + ':00:00' : '0' + this.time + ':00:00'
+      // let bounds = L.latLngBounds(
+      //   L.latLng(-54.96, 49.74),
+      //   L.latLng(54.96, 159.66)
+      // );
+
+      // let imageLayer = L.imageOverlay(globalConfig.baseURL + '/api/fypacket/show_image?areaType=0&dataType=' + type + '&dateTime=' + this.day + ' ' + time, bounds);
+      // imageLayer.id = type;
+      // this.fyTypeGroup.addLayer(imageLayer)
+
+      // let lastLayer = this.fyTypeGroup.getLayers()
+      // // 删除前一个云图
+      // if(lastLayer.length > 1) {
+      //   this.fyTypeGroup.removeLayer(lastLayer[0])
+      // }
+
+      // window.map.addLayer(this.fyTypeGroup)
+
+      try {
+        let fyImage = await this.$getbuffer(
+          "/api/fypacket/show_image",
+          {
+            areaType: 0,
+            dataType: type,
+            dateTime: this.day + ' ' + time,
+          },
+          { responseType: "arraybuffer" }
+        );
+
+        const img = this.toImage(fyImage);
+        let bounds = L.latLngBounds(
+          L.latLng(-54.96, 49.74),
+          L.latLng(54.96, 159.66)
+        );
+        if (img && img !== 'data:image/png;base64,') {
+          let imageLayer = L.imageOverlay(img, bounds);
+          imageLayer.id = type;
+          this.fyTypeGroup.addLayer(imageLayer)
+
+          let lastLayer = this.fyTypeGroup.getLayers()
+          // 删除前一个云图
+          if(lastLayer.length > 1) {
+            this.fyTypeGroup.removeLayer(lastLayer[0])
+          }
+
+          window.map.addLayer(this.fyTypeGroup)
+        } else {
+          this.$message.warning("此时刻暂无" + type + "数据");
+        }
+      } catch (error) {
+        this.$message.error("获取" + type + "数据失败");
+      }
+    }
   },
 };
 </script>

@@ -36,6 +36,8 @@
     <param-manager></param-manager>
     <!-- 数据项配置 -->
     <dataitem-manager></dataitem-manager>
+    <!-- 常用地点 -->
+    <site-manager></site-manager>
 
     <!-- 数据管理 -->
     <!-- 数据源配置 -->
@@ -78,11 +80,16 @@ import MenuBar from "@/components/menu/MenuBar.vue";
 import ShipManager from "@/components/menu/ShipManager/index.vue";
 import TeamManager from "@/components/menu/TeamManager/index.vue";
 import TaskManager from "@/components/menu/TaskManagement/edit.vue";
+
+// 系统配置
 import LegendManager from "@/components/menu/SystemManager/legendManager/index.vue";
 import LineManager from "@/components/menu/SystemManager/lineManager/index.vue";
 import AreaManager from "@/components/menu/SystemManager/areaManager/index.vue";
 import SeaManager from "@/components/menu/SystemManager/seaManager/index.vue";
 import ParamManager from "@/components/menu/SystemManager/paramManager/index.vue";
+import SiteManager from "@/components/menu/SystemManager/siteManager/index.vue";
+
+// 数据管理
 import DataitemManager from "@/components/menu/SystemManager/dataItemManager/index.vue";
 import DatasourceManager from "@/components/menu/DataManager/dataSourceManager/index.vue";
 import DatasourceManager1 from "@/components/menu/DataManager/dataSourceManager1/index.vue";
@@ -121,6 +128,7 @@ export default {
     AreaManager: AreaManager,
     SeaManager: SeaManager,
     ParamManager: ParamManager,
+    SiteManager:SiteManager,
     DataitemManager: DataitemManager,
     routeManager: routeManager,
     DatasourceManager: DatasourceManager,

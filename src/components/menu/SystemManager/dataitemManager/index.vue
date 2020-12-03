@@ -3,7 +3,8 @@
     id="ship_manager"
     class="ship_manager"
     v-show="systemManagerShow"
-    style="width: 900px;height:auto;"
+    ref="dataitemBox"
+    style="width: 900px; height: auto"
     v-drag
   >
     <div class="manager_title">
@@ -91,15 +92,14 @@
             <span>{{ scope.row.keyword }}</span>
           </template>
         </el-table-column>
-         <el-table-column label="图标" align="center" width="50px">
+        <el-table-column label="图标" align="center" width="50px">
           <template slot-scope="scope">
             <!-- <span>{{ scope.row.iconImage }}</span> -->
             <div :class="scope.row.iconImage == null ? null : 'imgdiv'">
-              <img class="itemImg" :src="scope.row.iconImage">
+              <img class="itemImg" :src="scope.row.iconImage" />
             </div>
           </template>
         </el-table-column>
-
 
         <el-table-column label="上传图标" align="center" min-width="100px">
           <template slot-scope="scope">
@@ -108,10 +108,24 @@
               :show-file-list="false"
               :action="uploadFile()"
               :auto-upload="true"
-              :on-success="function (res,file) {return ModifySuccess(res,file)}"
-              :on-error="function (res,file) {return ModifyFail(res,file)}"
-              :file-list="fileList">
-              <el-button size="mini" type="primary" @click="changeColumn(scope.row)">上传</el-button>
+              :on-success="
+                function (res, file) {
+                  return ModifySuccess(res, file);
+                }
+              "
+              :on-error="
+                function (res, file) {
+                  return ModifyFail(res, file);
+                }
+              "
+              :file-list="fileList"
+            >
+              <el-button
+                size="mini"
+                type="primary"
+                @click="changeColumn(scope.row)"
+                >上传</el-button
+              >
             </el-upload>
           </template>
         </el-table-column>
@@ -208,7 +222,7 @@ export default {
       },
       infoVisible: false,
       modifyItem: {},
-       fileList: [],
+      fileList: [],
     };
   },
   mounted() {},
@@ -233,7 +247,7 @@ export default {
     },
     systemList: {
       handler(newval, oldval) {
-        if (newval[5].flag) {
+        if (newval[6].flag) {
           this.systemManagerShow = true;
         } else {
           this.systemManagerShow = false;
@@ -247,6 +261,9 @@ export default {
           parameterName: null,
         };
         this.fetch();
+        this.$refs.dataitemBox.style.left = "50%";
+        this.$refs.dataitemBox.style.top = "42%";
+        this.$refs.dataitemBox.style.transform = "translate(-50%, -50%)";
       }
     },
   },
@@ -286,7 +303,7 @@ export default {
       this.dialog.isVisible = true;
       this.dialog.title = "添加数据项";
     },
-        information(row) {
+    information(row) {
       this.infoVisible = true;
       this.$refs.info.setData(row);
     },
@@ -325,47 +342,45 @@ export default {
       this.infoVisible = false;
     },
 
-
     // 上传图标
     // 上传路径
     uploadFile() {
       return (
         // process.env.VUE_APP_BASE_API +
-        globalConfig.baseURL +
-        "/api/parameters/imageTobase"
+        globalConfig.baseURL + "/api/parameters/imageTobase"
       );
     },
     // 上传失败
     ModifyFail() {
       this.$message({
         message: "图片上传失败",
-        type: "error"
+        type: "error",
       });
     },
     // 上传图片成功
     ModifySuccess(res, file) {
       this.$message({
         message: "图片上传成功",
-        type: "success"
+        type: "success",
       });
-      this.modifyItem.iconImage = res
+      this.modifyItem.iconImage = res;
 
-      this.$put("/api/parameters", { ...this.modifyItem }).then(() => {
-        this.search();
-        this.$refs.upload.clearFiles()
-      })
-      .catch(err => {
-        this.$message({
-          message: "图片更新失败",
-          type: "error"
+      this.$put("/api/parameters", { ...this.modifyItem })
+        .then(() => {
+          this.search();
+          this.$refs.upload.clearFiles();
+        })
+        .catch((err) => {
+          this.$message({
+            message: "图片更新失败",
+            type: "error",
+          });
         });
-      })
-
     },
     changeColumn(row) {
       // this.$refs.upload.clearFiles()
-      this.modifyItem = row
-    }
+      this.modifyItem = row;
+    },
   },
 };
 </script>
@@ -375,14 +390,15 @@ export default {
   width: 30px;
   height: 30px;
   line-height: 30px;
-  background: #F99C00;
+  background: #f99c00;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
 
-  img[src=""],img:not([src]) {
-    opacity:0;
+  img[src=""],
+  img:not([src]) {
+    opacity: 0;
   }
 
   .itemImg {

@@ -40,6 +40,11 @@
         <img src="@/assets/toolList/location.png" />
       </el-tooltip>
     </div>
+    <div class="tool_item tool_right" @click.stop="changeTileLayer">
+      <el-tooltip class="item" effect="light" content="底图切换" placement="bottom">
+        <img src="@/assets/images/toolbar/product.png">
+      </el-tooltip>
+    </div>
     <div class="tool_item tool_right" @click.stop="graticule">
       <el-tooltip
         class="item"
@@ -78,6 +83,16 @@
         placement="bottom"
       >
         <img src="@/assets/toolList/clear.png" />
+      </el-tooltip>
+    </div>
+    <div class="tool_item tool_right" @click.stop="draw">
+      <el-tooltip
+        class="item"
+        effect="light"
+        content="绘制图形"
+        placement="bottom"
+      >
+        <img src="@/assets/toolList/draw.png" />
       </el-tooltip>
     </div>
 
@@ -163,15 +178,23 @@
         </div>
       </div>
     </div>
+
+    <!-- 绘图工具 -->
+    <mark-box :markShow="markShow" @closeDraw="closeDraw"></mark-box>
   </div>
 </template>
 <script>
 import { mapState, mapMutations } from "vuex";
 import toolBar from "@/utils/toolBar.js";
 import "@/utils/leaflet.latlng-graticule.js";
+import MarkBox from "./markBox"
 export default {
+  components:{
+      MarkBox:MarkBox
+  },
   data() {
     return {
+      markShow:false,
       rectangle: undefined,
       graticule_zoom: [
         {
@@ -242,6 +265,7 @@ export default {
     },
     ...mapState({
       menuItemList: (state) => state.sideBar.menuItemList,
+      tileLayer: state => state.earth.tileLayer
     }),
   },
   watch: {},
@@ -251,6 +275,7 @@ export default {
       setInfoData:"clickup/setInfoData",
       setInfoLocation:"clickup/setInfoLocation",
       setInfoShow:"clickup/setInfoShow",
+      setTileLayer: 'earth/setTileLayer'
     }),
     getViewer() {
       const obj = {
@@ -490,6 +515,19 @@ export default {
         this.lonflag = flag;
       }
     },
+    // 切换底图
+    changeTileLayer() {
+      this.setTileLayer(!this.tileLayer)
+    },
+
+
+    // 绘图
+    draw(){
+      this.markShow = true
+    },
+    closeDraw(){
+      this.markShow = false;
+    }
   },
 };
 </script>
@@ -499,7 +537,7 @@ export default {
 }
 .right-top-container {
   position: absolute;
-  right: 40px;
+  right: 155px;
   top: 26px;
   display: flex;
   // flex-flow: column nowrap;
