@@ -150,10 +150,10 @@
     // 卫星云图选择
     .fyType {
         margin-top: 15px;
-        margin-right: -5px;
+        margin-right: -15px;
 
         .el-input {
-            width: 120px;
+            width: 100px;
             color: #fff3e1;
 
             .el-input__icon {
@@ -595,4 +595,54 @@
         }
     }
 
+}
+
+// 卫星云图选择框样式修改
+.fy_select {
+    .el-select-dropdown__item.selected {
+        color: rgb(152, 26, 0);
+    }
+    .el-select-dropdown__item.selected {
+        .fy_dot {
+            background: rgb(152, 26, 0);
+        }
+    }
+
+    .fy_option {
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        .fy_dot {
+            width: 7px;
+            height: 7px;
+            margin-right: 7px;
+            border-radius: 50%;
+            background: #ccc;
+        }
+    }
+}
+
+// 实况样式
+.real_select {
+    .el-select-dropdown__item.selected {
+        color: rgb(152, 26, 0);
+    }
+    .el-select-dropdown__item {
+        padding: 0 10px;
+    }
+
+    .real_option {
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        img {
+            width: 20px;
+            height: 20px;
+            margin-right: 7px;
+        }
+    }
 }
