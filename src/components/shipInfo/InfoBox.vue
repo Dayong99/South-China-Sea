@@ -376,7 +376,7 @@ export default {
             oceanMarker.id = item.id
             markerArr.push(oceanMarker)
             oceanMarker.on('click', ev => {
-              this.$get('/api/ocean-station-live/one', {
+              this.$get('/api/ocean-station-live/one-byId', {
                 id: ev.target.id
               }).then(res => {
                 if(res.status == 200) {
