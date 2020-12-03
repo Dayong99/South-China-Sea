@@ -421,6 +421,7 @@ export default {
     removeAllLayer() {
       map.removeLayer(this.buoyMarkerGroup)
       map.removeLayer(this.shipMarkerGroup)
+      map.removeLayer(this.oceanMarkerGroup)
     },
   },
 };
