@@ -118,24 +118,7 @@
         <img src="@/assets/toolList/clear.png" />
       </el-tooltip>
     </div>
-<<<<<<< HEAD
     
-=======
-    <div
-      class="tool_item tool_right"
-      :class="{ bg: drawflag }"
-      @click.stop="draw"
-    >
-      <el-tooltip
-        class="item"
-        effect="light"
-        content="绘制图形"
-        placement="bottom"
-      >
-        <img src="@/assets/toolList/draw.png" />
-      </el-tooltip>
-    </div>
->>>>>>> f416774c0cf981320626fb88cf6f2bb4094c74d7
 
     <!-- 经纬度坐标定位框 -->
     <div class="location_dialog" v-show="locationShow">
@@ -227,23 +210,12 @@
 import { mapState, mapMutations } from "vuex";
 import toolBar from "@/utils/toolBar.js";
 import "@/utils/leaflet.latlng-graticule.js";
-<<<<<<< HEAD
 
 export default {
   components:{
   },
   data() {
     return {
-=======
-import MarkBox from "./markBox";
-export default {
-  components: {
-    MarkBox: MarkBox,
-  },
-  data() {
-    return {
-      markShow: false,
->>>>>>> f416774c0cf981320626fb88cf6f2bb4094c74d7
       rectangle: undefined,
       graticule_zoom: [
         {
@@ -708,18 +680,8 @@ export default {
       this.setTileLayer(!this.tileLayer);
     },
 
-<<<<<<< HEAD
 
     
-=======
-    // 绘图
-    draw() {
-      this.markShow = true;
-    },
-    closeDraw() {
-      this.markShow = false;
-    },
->>>>>>> f416774c0cf981320626fb88cf6f2bb4094c74d7
   },
 };
 </script>
