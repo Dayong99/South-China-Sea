@@ -40,6 +40,75 @@
         </div>
       </div>
     </div>
+
+    <!-- 潮汐显示 -->
+    <div
+      class="tidal"
+      id="tidal"
+      ref="tidal"
+      :style="{ left: tidalObj.left + 'px', top: tidalObj.top + 'px' }"
+      v-show="tidalShow"
+    >
+      <div class="tidal_title">
+        <div class="title_detail" ref="tidal_name">{{ tidalData.name }}</div>
+        <div class="title_time">
+          <img src="@/assets/images/sidebar/refresh.png" />
+          <span>{{ tidalData.time }}</span>
+        </div>
+      </div>
+      <div class="tidal_content">
+        <div class="content_echarts">
+          <ul class="echarts_time">
+            <li
+              v-for="(item, index) in tidalData.timeList"
+              :key="index"
+              @click.stop="changeTimeIndex(index)"
+              :class="{ li_select: index === changeDateIndex }"
+            >
+              <div>{{ item }}</div>
+            </li>
+          </ul>
+          <div class="echarts_content" id="echarts_content"></div>
+        </div>
+        <div class="tidal_msg" v-show="tidalMsgFlag">
+          <span>此时刻暂无潮汐数据</span>
+        </div>
+        <div class="content_list">
+          <ul>
+            <li
+              v-for="(item, index) in tidalData.tidalList"
+              :key="index"
+              :class="{ li_blue: index % 2 == 0, li_red: index % 2 != 0 }"
+            >
+              <div class="list_top">
+                <img
+                  :src="
+                    index % 2 == 0
+                      ? require('@/assets/images/sidebar/bluetidal.png')
+                      : require('@/assets/images/sidebar/redtidal.png')
+                  "
+                />
+                <span :class="{ blue: index % 2 == 0, red: index % 2 != 0 }">{{
+                  item.name
+                }}</span>
+              </div>
+              <div class="list_bottom">
+                <div class="list_time">
+                  <img src="@/assets/images/sidebar/time.png" />
+                  <span>潮时：</span>
+                  <span>{{ item.tidalTime }}</span>
+                </div>
+                <div class="list_height">
+                  <img src="@/assets/images/sidebar/up.png" />
+                  <span>潮高：</span>
+                  <span>{{ item.height + "cm" }}</span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -66,6 +135,9 @@ export default {
         },
       ],
       //   textValue:""
+
+      // 潮汐面板数据
+      tidalChart: null,
     };
   },
   computed: {
@@ -78,20 +150,55 @@ export default {
       infoLeft: (state) => state.clickup.infoLeft,
       infoShow: (state) => state.clickup.infoShow,
       infoData: (state) => state.clickup.infoData,
+
+      // 潮汐
+      tidalShow: state => state.clickup.tidalShow,
+      tidalObj: state => state.clickup.tidalObj,
+      tidalData: state => state.clickup.tidalData,
+      tidalCharts: state => state.clickup.tidalCharts,
+      tidalMsgFlag: state => state.clickup.tidalMsgFlag,
+      changeDateIndex: state => state.clickup.changeDateIndex,
     }),
   },
-  watch: {},
+  watch: {
+    tidalShow(newval) {
+      console.log('-----------',newval);
+      // this.$nextTick(() => {
+      //   // 初始化图表
+      //   this.tidalChart = this.$echarts.init(
+      //     document.getElementById("echarts_content")
+      //   )
+      // })
+    },
+    tidalCharts: {
+      handler(val, old) {
+        this.createChart(val)
+        console.log(val);
+      },
+      deep: true
+    }
+  },
   created() {},
   mounted() {
-    //   map.on("click",()=>{
-    //       this.setPointInfoShow(false)
-    //       this.setInfoShow(false)
-    //   })
+    this.$nextTick(() => {
+      // 初始化图表
+      this.tidalChart = this.$echarts.init(
+        document.getElementById("echarts_content")
+      )
+    })
+
+    map.on("click",()=>{
+        this.setPointInfoShow(false)
+        this.setInfoShow(false)
+        this.setTidalShow(false)
+    })
   },
   methods: {
     ...mapMutations({
       setPointInfoShow: "clickup/setPointInfoShow",
       setInfoShow: "clickup/setInfoShow",
+      setChangeDateIndex: "clickup/setChangeDateIndex",
+      setTidalShow: "clickup/setTidalShow",
     }),
     desPreserve() {
       console.log(this.pointInfo.message);
@@ -116,8 +223,81 @@ export default {
     },
     infoClose(){
         this.setInfoShow(false)
-        map.off("click")
-    }
+        map.off("click",window.mapClick_p)
+    },
+    changeTimeIndex(i) {
+      this.setChangeDateIndex(i)
+    },
+    // 创建图表
+    createChart(dital) {
+      let option = {
+        backgroundColor: "#fff",
+        color: ["#73A0FA"],
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            type: "cross",
+            crossStyle: {
+              color: "#999",
+            },
+            lineStyle: {
+              type: "dashed",
+            },
+          },
+        },
+        grid: {
+          left: 5,
+          right: 5,
+          bottom: 5,
+          top: 15,
+          containLabel: true,
+        },
+        xAxis: {
+          type: "category",
+          data: dital.xdata,
+          splitLine: {
+            show: false,
+          },
+          axisTick: {
+            show: false,
+          },
+          axisLine: {
+            show: false,
+          },
+        },
+        yAxis: {
+          type: "value",
+          axisLabel: {
+            color: "#999",
+            textStyle: {
+              fontSize: 12,
+            },
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              color: "#F3F4F4",
+            },
+          },
+          axisTick: {
+            show: false,
+          },
+          axisLine: {
+            show: false,
+          },
+        },
+        series: [
+          {
+            name: "潮高",
+            type: "line",
+            smooth: true,
+            data: dital.ydata,
+          },
+        ],
+      };
+
+      this.tidalChart.setOption(option);
+    },
   },
 };
 </script>
