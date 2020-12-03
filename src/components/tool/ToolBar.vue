@@ -509,9 +509,9 @@ export default {
       } else if (!this.latflag) {
         window.map.flyTo(L.latLng(0 - lat, lon));
       } else if (!this.lonflag) {
-        window.map.flyTo(L.latLng(lat, 0 - lon));
-      } else {
         window.map.flyTo(L.latLng(lat, lon));
+      } else {
+        window.map.flyTo(L.latLng(lat, 0 - lon));
       }
     },
     changeToDu(latLng1, latLng2) {

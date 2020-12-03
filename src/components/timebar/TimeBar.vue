@@ -173,16 +173,7 @@ export default {
     };
   },
   created() {
-    // 根据数据源获取第一个要素的id  getTypeTime()根据这个id去获取最近时间
-    this.$get('/api/parameters/get_type', {
-      type: this.sourceType
-    }).then(res => {
-      if(res.status == 200) {
-        this.currentId = res.data.data[0].id
-      }
-    }).catch(error => {
-      this.$message.error('获取要素失败')
-    })
+    
   },
   computed: {
     ...mapState({
@@ -281,7 +272,18 @@ export default {
       // this.getLatestTime()
       this.timeFlag = false;
       // this.dateVal = "2020-08-01"
-      this.getTypeTime();
+      // 根据数据源获取第一个要素的id  getTypeTime()根据这个id去获取最近时间
+      this.$get('/api/parameters/get_type', {
+        type: this.sourceType
+      }).then(res => {
+        if(res.status == 200) {
+          this.currentId = res.data.data[0].id
+          this.getTypeTime();
+        }
+      }).catch(error => {
+        this.$message.error('获取要素失败')
+      })
+      
       // this.getLatestTime()
       // this.getTypeTime().then(res=>{
       //   console.log(res);

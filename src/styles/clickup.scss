@@ -80,4 +80,227 @@
             }
         }
     }
+
+    // 潮汐面板
+    .tidal {
+        position: fixed;
+        width: 320px;
+        // height: 450px;
+        display: flex;
+        flex-flow: column nowrap;
+        align-items: center;
+        border-radius: 8px;
+        box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.5);
+        color: rgba(80, 80, 80, 1);
+        background-color: rgba(255, 255, 255, 1);
+        z-index: 999;
+
+        .tidal_title {
+            width: 100%;
+            // flex: 1;
+            height: 35px;
+            color: rgba(255, 255, 255, 1);
+            border-top-right-radius: 8px;
+            border-top-left-radius: 8px;
+            background: rgba(152, 26, 0, 1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .title_detail {
+                font-size: 18px;
+                font-weight: bold;
+                margin-left: 15px;
+            }
+
+            .title_time {
+                display: flex;
+                align-items: center;
+                font-size: 14px;
+                margin-right: 15px;
+
+                img {
+                    width: 20px;
+                    height: 20px;
+
+                    &:hover {
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+
+        .tidal_content {
+            position: relative;
+            width: 100%;
+            flex: 9;
+            padding: 5px 10px 10px 10px;
+            display: flex;
+            flex-flow: column nowrap;
+            align-items: center;
+
+            // 时间切换和图表
+            .content_echarts {
+                width: 100%;
+                flex: 1;
+                display: flex;
+                flex-flow: column nowrap;
+                justify-content: space-between;
+                align-items: center;
+
+                .echarts_time {
+                    width: 100%;
+                    flex: 1;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    li {
+                        width: 70px;
+                        height: 30px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        border-radius: 8px;
+
+                        div {
+                            width: 100%;
+                            height: 20px;
+                            line-height: 20px;
+                            text-align: center;
+                            border-right: 1px solid #ccc;
+                        }
+
+                        &:last-child div {
+                            border-right: none;
+                        }
+
+                        &:hover {
+                            cursor: pointer;
+                        }
+                    }
+
+                    .li_select {
+                        color: #fff;
+                        background: rgba(152, 26, 0, 1);
+
+                        div {
+                            border: none;
+                        }
+                    }
+                }
+
+                // 表格展示
+                .echarts_content {
+                    width: 300px;
+                    height: 150px;
+                    // flex: 5;
+                }
+            }
+
+            // 潮汐提示消息
+            .tidal_msg {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                color: rgb(152, 26, 0);
+                font-weight: 600;
+            }
+
+            // 高潮低潮列表信息
+            .content_list {
+                width: 100%;
+                flex: 1;
+
+                ul {
+                    display: flex;
+                    flex-flow: row wrap;
+                    justify-content: space-around;
+                    align-items: center;
+
+                    .li_blue {
+                        background: rgba(234, 245, 255, 1)
+                    }
+
+                    .li_red {
+                        background: rgba(255, 240, 240, 1);
+                    }
+
+                    li {
+                        width: 47%;
+                        height: 90px;
+                        margin-top: 5px;
+                        font-size: 14px;
+                        display: flex;
+                        flex-flow: column nowrap;
+                        align-items: center;
+                        border-radius: 5px;
+
+                        .blue {
+                            color: rgba(0, 113, 255, 1);
+                        }
+
+                        .red {
+                            color: rgba(208, 36, 0, 1);
+                        }
+
+                        // 头部标题
+                        .list_top {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            margin: 3px 0;
+
+                            img {
+                                width: 20px;
+                                height: 20px;
+                                margin-right: 5px;
+                            }
+                        }
+
+                        // 内容区域
+                        .list_bottom {
+                            display: flex;
+                            flex-flow: column nowrap;
+                            justify-content: space-around;
+                            align-items: flex-start;
+                            border-top: 1px solid rgba(150, 196, 255, 1);
+
+                            div {
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                margin-top: 8px;
+
+                                img {
+                                    width: 20px;
+                                    height: 20px;
+                                }
+
+                            }
+
+                            .list_time {
+                                span {
+                                    &:last-child {
+                                        color: rgba(65, 65, 65, 1);
+                                        font-size: 16px;
+                                    }
+                                }
+                            }
+
+                            .list_height {
+                                span {
+                                    &:last-child {
+                                        color: rgba(122, 130, 155, 1);
+                                        font-size: 16px;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
