@@ -1,5 +1,6 @@
 <template>
   <div id="menuBar" class="menuBar">
+    <!-- 搜索框 -->
     <div class="search">
       <div
         :class="{ search_bgcolor: searchFlag, search_icon: true }"
