@@ -81,6 +81,7 @@ const state = {
   routeDialogOptions: 0, // 0不显示 1添加航线 2 修改航线
   algorithmOptions: 0, // 0不显示 1新增算法参数 2 修改算法参数
   routeAlgorithmInfo: 0, // 0不显示 1查看评估结果
+  assessLegendShow:false // 评估结果图例
 }
 
 const actions = {
@@ -117,6 +118,9 @@ const mutations = {
   setRouteAlgorithmInfo(state, val) {
     state.routeAlgorithmInfo = val
     console.log('查看评估结果', val)
+  },
+  setAssessLegendShow(state,val){
+    state.assessLegendShow = val
   }
 }
 

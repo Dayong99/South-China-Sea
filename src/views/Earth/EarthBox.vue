@@ -63,6 +63,8 @@
     <info-box></info-box>
     <!-- 航线评估结果 -->
     <route-info v-if="routeInfoShow"></route-info>
+    <!-- 自定义popup -->
+    <click-up></click-up>
   </div>
 </template>
 
@@ -105,6 +107,7 @@ import algorithmManager from "@/components/menu/algorithmManager/edit.vue";
 import assessmentManager from "@/components/menu/assessmentManager/index.vue";
 import eventBus from "@/utils/eventBus.js";
 import routeInfo from "@/components/menu/routeManager/routeInfo.vue";
+import clickUp from "@/components/tool/clickUp.vue"
 import { mapState } from "vuex";
 
 export default {
@@ -143,8 +146,8 @@ export default {
 
     assessmentManager: assessmentManager,
     routeInfo: routeInfo,
-    InfoBox: InfoBox,
-    routeManager: routeManager,
+    DataLive:DataLive,
+    clickUp:clickUp,
   },
   data() {
     return {};

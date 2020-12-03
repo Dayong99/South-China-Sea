@@ -12,6 +12,7 @@
 @import './routeInfo.scss';
 @import './tyPointInfo.scss';
 @import './pointInfo.scss';
+@import './clickup.scss';
 @import "./markBox.scss";
 
 body {
@@ -139,13 +140,17 @@ p {
 .el-message-box {
   .el-message-box__btns {
     .el-button--primary {
-      background: #D49500 !important;
-      border-color: #D49500 !important;
+      background: #981a00 !important;
+      border-color: #981a00 !important;
+      // background: #D49500 !important;
+      // border-color: #D49500 !important;
     }
 
     .el-button--primary:focus .el-button--primary:hover {
-      background: #D49500 !important;
-      border-color: #D49500 !important;
+      background: #981a00 !important;
+      border-color: #981a00 !important;
+      // background: #D49500 !important;
+      // border-color: #D49500 !important;
     }
   }
 }

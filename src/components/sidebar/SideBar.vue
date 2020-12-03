@@ -31,23 +31,24 @@
     <!-- 是否重绘按钮 -->
     <div class="other_btn">
       <div class="latlng">
-        <img src="@/assets/images/sidebar/position.png">
+        <img src="@/assets/images/sidebar/position.png" />
         <div class="other_lat">{{ latNum }}</div>
         <div class="other_lon">,{{ lonNum }}</div>
       </div>
       <div class="isDraw" @click="changeDrawFlag">
-        <div :class="{ 'draw_active': drawFlag }"></div>
+        <div :class="{ draw_active: drawFlag }"></div>
         <span>是否重绘</span>
       </div>
     </div>
 
     <!-- 卫星云图 和 实况资料样式一样-->
-    <div class="real_time_data">
+    <div class="fyType">
       <el-select
         v-model="fyType"
         clearable
         placeholder="卫星云图"
         size="small"
+        popper-class='fy_select'
       >
         <el-option
           v-for="item in fyTypeOptions"
@@ -55,6 +56,10 @@
           :label="item.label"
           :value="item.value"
         >
+          <div class="fy_option">
+            <div class="fy_dot"></div>
+            <span>{{ item.label }}</span>
+          </div>
         </el-option>
       </el-select>
     </div>
@@ -66,6 +71,7 @@
         clearable
         placeholder="实况资料"
         size="small"
+        popper-class='real_select'
       >
         <el-option
           v-for="item in realTimeOptions"
@@ -73,81 +79,12 @@
           :label="item.label"
           :value="item.value"
         >
+          <div class="real_option">
+            <img :src="realTimeValue == item.value ? item.selectIcon : item.icon">
+            <span>{{ item.label }}</span>
+          </div>
         </el-option>
       </el-select>
-    </div>
-
-    <!-- 潮汐显示 -->
-    <div
-      class="tidal"
-      id="tidal"
-      ref="tidal"
-      :style="{ left: tidalObj.left + 'px', top: tidalObj.top + 'px' }"
-      v-show="tidalObj.tidalShow"
-      @mouseover="tidalOver(true)"
-      @mouseout="tidalOver(false)"
-    >
-      <div class="tidal_title">
-        <div class="title_detail" ref="tidal_name">{{ tidalData.name }}</div>
-        <div class="title_time">
-          <img src="@/assets/images/sidebar/refresh.png" />
-          <span>{{ tidalData.time }}</span>
-        </div>
-      </div>
-      <div class="tidal_content">
-        <div class="content_echarts">
-          <!-- ul li 替换 -->
-          <!-- <div class="echarts_time">2020-10</div> -->
-          <ul class="echarts_time">
-            <li
-              v-for="(item, index) in tidalData.timeList"
-              :key="index"
-              @click.stop="changeTimeIndex(index)"
-              :class="{ li_select: index === tidalIndex }"
-            >
-              <div>{{ item }}</div>
-            </li>
-          </ul>
-          <div class="echarts_content" id="echarts_content"></div>
-        </div>
-        <div class="tidal_msg" v-show="tidalMsgFlag">
-          <span>此时刻暂无潮汐数据</span>
-        </div>
-        <div class="content_list">
-          <ul>
-            <li
-              v-for="(item, index) in tidalData.tidalList"
-              :key="index"
-              :class="{ li_blue: index % 2 == 0, li_red: index % 2 != 0 }"
-            >
-              <div class="list_top">
-                <img
-                  :src="
-                    index % 2 == 0
-                      ? require('@/assets/images/sidebar/bluetidal.png')
-                      : require('@/assets/images/sidebar/redtidal.png')
-                  "
-                />
-                <span :class="{ blue: index % 2 == 0, red: index % 2 != 0 }">{{
-                  item.name
-                }}</span>
-              </div>
-              <div class="list_bottom">
-                <div class="list_time">
-                  <img src="@/assets/images/sidebar/time.png" />
-                  <span>潮时：</span>
-                  <span>{{ item.tidalTime }}</span>
-                </div>
-                <div class="list_height">
-                  <img src="@/assets/images/sidebar/up.png" />
-                  <span>潮高：</span>
-                  <span>{{ item.height + "cm" }}</span>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
     </div>
 
     <!-- 台风显示 -->
@@ -157,8 +94,8 @@
           <img
             :src="
               this.chooseAllFlag
-                ? require('@/assets/images/sidebar/checked.png')
-                : require('@/assets/images/sidebar/choose.png')
+                ? require('@/assets/images/sidebar/checked1.png')
+                : require('@/assets/images/sidebar/choose1.png')
             "
           />
         </div>
@@ -173,8 +110,8 @@
               <img
                 :src="
                   item.choose
-                    ? require('@/assets/images/sidebar/checked.png')
-                    : require('@/assets/images/sidebar/choose.png')
+                    ? require('@/assets/images/sidebar/checked1.png')
+                    : require('@/assets/images/sidebar/choose1.png')
                 "
               />
             </div>
@@ -185,16 +122,34 @@
         </div>
       </div>
     </div>
-    <!-- 台风图例 -->
-    <div class="ty_color" v-if="typhoonShow">
-      <p>台风:</p>
-      <div>
-        <ul>
-          <li v-for="(item, index) in colorList" :key="index">
-            <div :style="{ background: item.color }" class="icon"></div>
-            <div>{{ item.title }}</div>
-          </li>
-        </ul>
+    <div class="color_box">
+      <!-- 台风图例 -->
+      <div class="ty_color" v-if="typhoonShow">
+        <p>台风:</p>
+        <div>
+          <ul>
+            <li v-for="(item, index) in colorList" :key="index">
+              <div :style="{ background: item.color }" class="icon"></div>
+              <div>{{ item.title }}</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- 风险评估图例 -->
+      <div class="assess_color" v-if="assessLegendShow">
+        <p class="assess_title">评估等级</p>
+        <div class="color">
+          <ul>
+            <li
+              v-for="(item, index) in assessColor.color"
+              :key="index"
+              :style="{
+                background: item,
+              }"
+              :data-value="assessColor.value[index]"
+            />
+          </ul>
+        </div>
       </div>
     </div>
 
@@ -336,24 +291,21 @@ export default {
       layerList: [],
       // 范围数组
       extentList: [],
+      oldZoom: 4,
       // 海流图层
-      waveLayer: null,
+      waveGroup: L.layerGroup(),
       // 风羽图层
-      windLayer: null,
+      windList: [],
+      windGroup: L.layerGroup(),
       // 图层个数
       layerNum: 0,
-      layerGroup: null,
+      layerGroup: L.layerGroup(),
 
-      // 潮汐面板显隐
       tidalObj: {
-        // 面板显隐
-        tidalShow: false,
         // 定位 left、top
         left: null,
         top: null,
       },
-      // 暂无数据提示消息
-      tidalMsgFlag: false,
       // 面板数据
       tidalData: {
         time: null,
@@ -370,8 +322,6 @@ export default {
       // 屏幕宽高数据
       screenWidth: document.body.clientWidth,
       screenHeight: document.body.clientHeight,
-      // 潮汐面板选择时间
-      tidalIndex: 2,
       // 潮汐图标
       tidalIcon: null,
       tidalSelectIcon: null,
@@ -387,34 +337,44 @@ export default {
       // 卫星云图
       fyTypeOptions: [{
         value: 'channel3',
-        label: 'channel3'
+        label: '通道3'
       }, {
         value: 'channel12',
-        label: 'channel12'
+        label: '通道12'
       }, {
         value: 'true_colors',
-        label: 'true_colors'
+        label: '真彩色'
       }],
       fyType: null,
+      fyTypeGroup: L.layerGroup(),
 
       // 实况选择
+      realImgSrc: '',
       realTimeValue: null,
       realTimeOptions: [
         {
           label: "地面常规观测",
           value: "ground",
+          icon: require('@/assets/images/sidebar/ground.png'),
+          selectIcon: require('@/assets/images/sidebar/redground.png'),
         },
         {
           label: "船舶站",
           value: "ship",
+          icon: require('@/assets/images/sidebar/ship.png'),
+          selectIcon: require('@/assets/images/sidebar/redship.png'),
         },
         {
           label: "浮标站",
           value: "buoy",
+          icon: require('@/assets/images/sidebar/buoy.png'),
+          selectIcon: require('@/assets/images/sidebar/redbuoy.png'),
         },
         {
           label: "海洋站",
           value: "ocean",
+          icon: require('@/assets/images/sidebar/ocean.png'),
+          selectIcon: require('@/assets/images/sidebar/redocean.png'),
         },
       ],
       tyList: [],
@@ -454,6 +414,13 @@ export default {
       // 经纬数据
       latNum: 0,
       lonNum: 0,
+
+      //风险评估图例色值
+      assessColor:{
+        color:["#00ff00", "#ffff00", "#ff8000", "#9919e5", "#ff0000"],
+        value:["0","0.2","0.4","0.6","0.8"]
+      }
+
     };
   },
   computed: {
@@ -466,6 +433,11 @@ export default {
       nowLevel: (state) => state.sideBar.nowLevel,
       // 数据源
       sourceType: (state) => state.sideBar.sourceType,
+      assessLegendShow: (state) => state.menuBar.assessLegendShow,
+      // 潮汐面板切换日期
+      changeDateIndex: state => state.clickup.changeDateIndex,
+      // 潮汐面板隐藏
+      tidalShow: state => state.clickup.tidalShow
     }),
   },
   watch: {
@@ -485,37 +457,40 @@ export default {
     },
     // 范围数组的变化
     extent: {
-      // async handler(val, old) {
-      async handler(val, old) {
-        console.log('是否重绘', this.drawFlag);
-        
-          console.log("val", val);
-          console.log("old", old);
-          // flag 为 true 标识区域变化，需要重绘
-          let flag = true;
+      handler(val, old) {
+        console.log("val", val);
+        console.log("old", old);
+        // flag 为 true 标识区域变化，需要重绘
+        let flag = true;
 
-          if (old === null || val.length !== old.length) {
-            flag = true;
-          } else {
-            for (let i = 0; i < val.length; i++) {
-              if (
-                val[i].xMin === old[i].xMin &&
-                val[i].xMax === old[i].xMax &&
-                val[i].yMin === old[i].yMin &&
-                val[i].yMax === old[i].yMax
-              ) {
-                flag = false;
-                break;
-              }
+        if (old === null || val.length !== old.length) {
+          flag = true;
+        } else {
+          for (let i = 0; i < val.length; i++) {
+            if (
+              val[i].xMin === old[i].xMin &&
+              val[i].xMax === old[i].xMax &&
+              val[i].yMin === old[i].yMin &&
+              val[i].yMax === old[i].yMax
+            ) {
+              flag = false;
+              break;
             }
           }
-          if (flag) {
-            this.extentList = val;
-            // drawFlag 控制重绘的按钮
-            if(this.drawFlag) {
-              await this.drawItemList();
-            }
+        }
+        // 解决不重绘时，直接跳到小于3层底图时不能再重绘的问题
+        let zoom = window.map.getZoom();
+        if (zoom <= 3 && this.oldZoom > 3) {
+          flag = true;
+        }
+
+        if (flag) {
+          this.extentList = val;
+          // drawFlag 控制重绘的按钮
+          if (this.drawFlag) {
+            this.drawItemList();
           }
+        }
       },
       deep: true,
     },
@@ -556,22 +531,41 @@ export default {
         });
       }
       this.drawItemList();
+
+      // 切换卫星云图
+      if (this.fyType) {
+        this.getAndDrawFyType(this.fyType);
+      }
     },
     // 监听实况选择变化
     realTimeValue(newval) {
-      console.log("实况数据变化监测", newval);
       this.setRealTimeValue(newval);
     },
+    // 监听卫星云图
+    fyType(newval) {
+      if (newval) {
+        this.getAndDrawFyType(newval);
+      } else {
+        this.fyTypeGroup.clearLayers();
+      }
+    },
+    // 潮汐面板时间切换
+    changeDateIndex(newval) {
+      this.changeTimeIndex(newval)
+    },
+    // 潮汐面板隐藏时切换图标
+    tidalShow(newval) {
+      if(!newval) {
+        this.tidalMarker.forEach(item => {
+          item.setIcon(this.tidalIcon)
+        })
+      }
+    }
   },
   created() {
-    this.layerGroup = L.layerGroup()
     this.initMenuList();
   },
   mounted() {
-    // 初始化图表
-    this.tidalChart = this.$echarts.init(
-      document.getElementById("echarts_content")
-    );
     // 初始化潮汐图标
     this.tidalIcon = this.$utilsMap.createIcon({
       iconUrl: require("@/assets/images/sidebar/station.png"),
@@ -597,11 +591,17 @@ export default {
     };
 
     // 经纬度显示
-    window.map.on('mousemove', e => {
-      let latlng = L.latLng(e.latlng.lat, e.latlng.lng).wrap()
-      this.latNum = latlng.lat > 0 ? Math.abs(latlng.lat).toFixed(3) + ' N' : Math.abs(latlng.lat).toFixed(3) + ' S'
-      this.lonNum = latlng.lng > 0 ? Math.abs(latlng.lng).toFixed(3) + ' E' : Math.abs(latlng.lng).toFixed(3) + ' W'
-    })
+    window.map.on("mousemove", (e) => {
+      let latlng = L.latLng(e.latlng.lat, e.latlng.lng).wrap();
+      this.latNum =
+        latlng.lat > 0
+          ? Math.abs(latlng.lat).toFixed(3) + " N"
+          : Math.abs(latlng.lat).toFixed(3) + " S";
+      this.lonNum =
+        latlng.lng > 0
+          ? Math.abs(latlng.lng).toFixed(3) + " E"
+          : Math.abs(latlng.lng).toFixed(3) + " W";
+    });
 
     L.CustomPopup = L.Popup.extend({
       _initLayout: function() {
@@ -661,34 +661,26 @@ export default {
       setMenuItemList: "sideBar/setMenuItemList",
       setLevelList: "sideBar/setLevelList",
       setRealTimeValue: "sideBar/setRealTimeValue",
+      setTidalShow: "clickup/setTidalShow",
+      setTidalObj: "clickup/setTidalObj",
+      setTidalData: "clickup/setTidalData",
+      setTidalCharts: "clickup/setTidalCharts",
+      setTidalMsgFlag: "clickup/setTidalMsgFlag",
+      setChangeDateIndex: "clickup/setChangeDateIndex"
     }),
     changeDrawFlag() {
-      this.drawFlag = !this.drawFlag
+      this.drawFlag = !this.drawFlag;
+      if (!this.drawFlag) {
+        this.oldZoom = window.map.getZoom();
+      }
     },
     // 潮汐面板日期切换
     changeTimeIndex(i) {
-      this.tidalIndex = i;
       let time = this.tidalData.timeList[i];
       let date = new Date();
       let year = date.getFullYear();
       let t = year + "-" + time;
       this.getTidalData(this.markerId, t);
-    },
-    // 鼠标在面板上移入移出控制面板显隐
-    tidalOver(flag) {
-      this.tidalMouseFlag = flag;
-      this.tidalObj.tidalShow = flag;
-      // 考虑id替换
-      // 获取鼠标移入的面板  根据名称判断
-      let marker = this.tidalMarker.filter((item) => {
-        return item.name == this.$refs.tidal_name.innerText;
-      });
-      console.log("this.$refs.tidal", this.$refs.tidal_name.innerText);
-      if (!flag && !this.markerMouseFlag) {
-        marker[0].setIcon(this.tidalIcon);
-      } else {
-        marker[0].setIcon(this.tidalSelectIcon);
-      }
     },
     // 初始选中
     initMenuList() {
@@ -781,8 +773,8 @@ export default {
       if (this.menuList[index].flag) {
         // 清除单个
         this.clearLayer(this.menuList[index]);
-        if(this.menuList[index].drawType === 'layer') {
-          this.layerGroup.clearLayers()
+        if (this.menuList[index].drawType === "layer") {
+          this.layerGroup.clearLayers();
         }
         // 海流和风用同一个清除方法
         if (
@@ -961,21 +953,21 @@ export default {
           extentList.forEach((item, index) => {
             if (item.xMax > 180) {
               extentList[index].xMin -= 360;
-              if(extentList[index].xMin == -1) {
-                extentList[index].xMin = 0
+              if (extentList[index].xMin == -1) {
+                extentList[index].xMin = 0;
               }
               extentList[index].xMax -= 360;
-              if(extentList[index].xMax == -1) {
-                extentList[index].xMax = 0
+              if (extentList[index].xMax == -1) {
+                extentList[index].xMax = 0;
               }
             }
           });
-        } else if(this.currentItem.drawType == "line") {
+        } else if (this.currentItem.drawType == "line") {
           extentList.forEach((item, index) => {
-            if(extentList[index].xMax == 359) {
-              extentList[index].xMax = 360
+            if (extentList[index].xMax == 359) {
+              extentList[index].xMax = 360;
             }
-          })
+          });
         }
         extentList.forEach((item) => {
           this.clearLayer(this.currentItem);
@@ -1047,21 +1039,21 @@ export default {
           extentList.forEach((item, index) => {
             if (item.xMax > 180) {
               extentList[index].xMin -= 360;
-              if(extentList[index].xMin == -1) {
-                extentList[index].xMin = 0
+              if (extentList[index].xMin == -1) {
+                extentList[index].xMin = 0;
               }
               extentList[index].xMax -= 360;
-              if(extentList[index].xMax == -1) {
-                extentList[index].xMax = 0
+              if (extentList[index].xMax == -1) {
+                extentList[index].xMax = 0;
               }
             }
           });
-        } else if(this.currentItem.drawType == "line") {
+        } else if (this.currentItem.drawType == "line") {
           extentList.forEach((item, index) => {
-            if(extentList[index].xMax == 359) {
-              extentList[index].xMax = 360
+            if (extentList[index].xMax == 359) {
+              extentList[index].xMax = 360;
             }
-          })
+          });
         }
         extentList.forEach((item) => {
           this.clearLayer(currentItem);
@@ -1074,6 +1066,19 @@ export default {
         });
         console.log(extentList);
       });
+
+      // 清除一下风羽、洋流，避免没有清楚的问题
+      let i = this.currentItemList.filter((item) => {
+        return item.drawType === "point_wind" || item.drawType === "point_flow";
+      });
+      let windList = this.windGroup.getLayers();
+      let waveList = this.waveGroup.getLayers();
+      if (i != -1) {
+        windList.length > 0 ? this.windGroup.clearLayers() : "";
+        waveList.length > 0 ? this.waveGroup.clearLayers() : "";
+        // this.windGroup.clearLayers()
+        // this.waveGroup.clearLayers()
+      }
     },
     // 获取线的数据并绘制
     getAndDrawLine(currentItem, extent) {
@@ -1118,7 +1123,7 @@ export default {
 
               polyline.push(linedata);
             });
-            console.log('最大值', maxList)
+            // console.log('最大值', maxList)
             let line = new PressureLayer(
               {},
               {
@@ -1181,28 +1186,28 @@ export default {
           let imageLayer = L.imageOverlay(img, bounds);
           imageLayer.id = currentItem.id;
           imageLayer.layerId = this.layerNum;
-          this.layerGroup.addLayer(imageLayer)
+          this.layerGroup.addLayer(imageLayer);
           // imageLayer.addTo(window.map);
           // this.layerList.push(imageLayer);
           let imageLayer1 = L.imageOverlay(img, bounds1);
           imageLayer1.id = currentItem.id;
           imageLayer1.layerId = this.layerNum;
-          this.layerGroup.addLayer(imageLayer1)
+          this.layerGroup.addLayer(imageLayer1);
           // imageLayer1.addTo(window.map);
           // this.layerList.push(imageLayer1);
           let imageLayer2 = L.imageOverlay(img, bounds2).addTo(window.map);
           imageLayer2.id = currentItem.id;
           imageLayer2.layerId = this.layerNum;
-          this.layerGroup.addLayer(imageLayer2)
+          this.layerGroup.addLayer(imageLayer2);
 
           // if (layer.drawType === "layer") {
-            // 本次的加载完成，删除上次的图
-            let lastLayer = this.layerGroup.getLayers()
-            lastLayer.forEach(item => {
-              if(item.layerId !== this.layerNum) {
-                this.layerGroup.removeLayer(item)
-              }
-            })
+          // 本次的加载完成，删除上次的图
+          let lastLayer = this.layerGroup.getLayers();
+          lastLayer.forEach((item) => {
+            if (item.layerId !== this.layerNum) {
+              this.layerGroup.removeLayer(item);
+            }
+          });
           // }
 
           // this.layerGroup.on('add', e => {
@@ -1213,11 +1218,11 @@ export default {
           //     }
           //   }
           // })
-          window.map.addLayer(this.layerGroup)
+          window.map.addLayer(this.layerGroup);
           // imageLayer2.addTo(window.map);
           // this.layerList.push(imageLayer2);
         }
-        console.log('layer  test ---', this.layerGroup)
+        console.log("layer  test ---", this.layerGroup);
       } catch (error) {
         this.$message.error("获取" + currentItem.name + "数据失败");
       }
@@ -1307,18 +1312,20 @@ export default {
           if (res.status == 200) {
             console.log("wind--res", res.data.data);
             if (res.status == 200) {
-              let windList = res.data.data;
+              this.windList = [];
+              this.windList = res.data.data;
 
               var config = {
                 lat: "0",
                 lng: "1",
                 value: "2",
                 dir: "3",
-                data: windList,
+                data: this.windList,
               };
-              this.windLayer = new WindLayer({}, config);
-              this.windLayer.id = currentItem.id;
-              window.map.addLayer(this.windLayer);
+              let windLayer = new WindLayer({}, config);
+              windLayer.id = currentItem.id;
+              this.windGroup.addLayer(windLayer);
+              window.map.addLayer(this.windGroup);
             }
           }
         })
@@ -1375,9 +1382,10 @@ export default {
               dir: "3",
               data: waveList,
             };
-            this.waveLayer = new FlowLayer({}, config);
-            this.waveLayer.id = currentItem.id;
-            window.map.addLayer(this.waveLayer);
+            let waveLayer = new FlowLayer({}, config);
+            waveLayer.id = currentItem.id;
+            this.waveGroup.addLayer(waveLayer);
+            window.map.addLayer(this.waveGroup);
           }
         })
         .catch((error) => {
@@ -1390,7 +1398,6 @@ export default {
       this.$get("/api/harbor")
         .then((res) => {
           if (res.status == 200) {
-            console.log("harbor", res.data.data);
             let harborList = res.data.data.rows;
             harborList.forEach((item) => {
               this.createMarker(item);
@@ -1405,16 +1412,6 @@ export default {
     },
     // 根据港口数据创建marker
     createMarker(harbor) {
-      // let icon = this.$utilsMap.createIcon({
-      //   iconUrl: require('@/assets/images/sidebar/station.png'),
-      //   iconSize: [45, 45],
-      //   popupAnchor: [40, 40]
-      // })
-      // let selectIcon = this.$utilsMap.createIcon({
-      //   iconUrl: require('@/assets/images/sidebar/selectStation.png'),
-      //   iconSize: [45, 45],
-      //   popupAnchor: [40, 40]
-      // })
       let marker = this.$utilsMap.createMarkerByLatlng(
         window.map,
         [harbor.lat, harbor.lon],
@@ -1427,29 +1424,30 @@ export default {
       marker.name = harbor.hname;
       marker.id = this.currentItem.id;
       marker.on('click', ev => {
-        console.log('------', ev)
         let marker = ev.target
         let point = ev.containerPoint
-        map.on('move', e => {
-          console.log('----------', marker)
-          console.log(point);
-        })
-      })
-      marker.on("mouseover", (ev) => {
-        // 移入marker置为true
-        this.markerMouseFlag = true;
         this.markerId = ev.target.harborId;
-        // 请求潮汐数据
-        let day = this.day;
-        if (!this.tidalMouseFlag) {
-          this.getTidalData(harbor.id, day);
-        }
+        // 切换图标
+        marker.setIcon(this.tidalSelectIcon);
+        let otherMarker = this.tidalMarker.filter(item => {
+          return item.harborId !== this.markerId
+        })
+        otherMarker.forEach(item => {
+          item.setIcon(this.tidalIcon)
+        })
+
+        // 设置面板位置
+        let p = map.latLngToContainerPoint(L.latLng(marker._latlng.lat, marker._latlng.lng))
+        this.tidalObj.left = p.x
+        this.tidalObj.top = p.y
+        this.setTidalObj(this.tidalObj)
+
         // ev.target.   构造数据
         let time = Number(this.time) > 10 ? " " + this.time : " 0" + this.time;
         this.tidalData.time = this.day + time + ":00:00";
         this.tidalData.name = ev.target.name;
         // 前三天日期数据
-        this.tidalIndex = 2; // 重置选择的日期
+        this.setChangeDateIndex(2)  // 重置为第三个日期
         this.tidalData.timeList = [];
         let now = this.$m(this.day).format("MM-DD");
         let yestoday = this.$m(this.day)
@@ -1462,56 +1460,18 @@ export default {
         this.tidalData.timeList.push(yestoday);
         this.tidalData.timeList.push(now);
 
-        // 潮汐面板显示并重新定位
-        this.tidalObj.tidalShow = true;
-        this.tidalObj.left = ev.containerPoint.x;
-        this.tidalObj.top = ev.containerPoint.y - 50;
-        marker.setIcon(this.tidalSelectIcon);
-        this.$nextTick(() => {
-          // let width = document.querySelector('.tidal').offsetWidth
-          // let height = this.$refs.tidal.clientHeight
-          let width = this.$refs.tidal.offsetWidth;
-          let height = this.$refs.tidal.offsetHeight;
-          // 都在屏幕范围内
-          if (
-            this.screenWidth - ev.containerPoint.x > width + 50 &&
-            this.screenHeight - ev.containerPoint.y > height + 50
-          ) {
-            this.tidalObj.left = ev.containerPoint.x + 10;
-            this.tidalObj.top = ev.containerPoint.y - 50;
-          } else if (this.screenWidth - ev.containerPoint.x > width + 50) {
-            // 高度超出屏幕
-            let offHeight = height - (this.screenHeight - ev.containerPoint.y);
-            this.tidalObj.left = ev.containerPoint.x + 10;
-            this.tidalObj.top = ev.containerPoint.y - offHeight - 50;
-          } else if (this.screenHeight - ev.containerPoint.y > height + 50) {
-            // 宽度超出屏幕
-            let offWidth = width - (this.screenWidth - ev.containerPoint.x);
-            this.tidalObj.left = ev.containerPoint.x - width - 10;
-            this.tidalObj.top = ev.containerPoint.y + 10;
-          } else {
-            // 宽度、高度都超出屏幕
-            let offWidth = width - (this.screenWidth - ev.containerPoint.x);
-            let offHeight = height - (this.screenHeight - ev.containerPoint.y);
-            this.tidalObj.left = ev.containerPoint.x - width - 10;
-            this.tidalObj.top = ev.containerPoint.y - offHeight - 50;
-          }
-        });
-      });
-      marker.on("mouseout", (ev) => {
-        this.markerMouseFlag = false;
-        if (!this.tidalMouseFlag) {
-          marker.setIcon(this.tidalIcon);
-          this.tidalObj.tidalShow = false;
-        }
-      });
-      this.tidalMarker.push(marker);
-      // marker.on('click', ev => {
-      //   console.log('harbor--click', harbor);
-      //   this.tidalObj.left = 500
-      //   this.tidalObj.top = 300
-      //   this.tidalObj.tidalShow = true
-      // })
+        let day = this.day;
+        this.getTidalData(harbor.id, day);
+
+
+        map.on('move', e => {
+          let p = map.latLngToContainerPoint(L.latLng(marker._latlng.lat, marker._latlng.lng))
+          this.tidalObj.left = p.x
+          this.tidalObj.top = p.y
+          this.setTidalObj(this.tidalObj)
+        })
+      })
+      this.tidalMarker.push(marker)
     },
     getTidalData(id, time) {
       this.$get("/api/tidal/one", {
@@ -1525,13 +1485,13 @@ export default {
             this.tidalData.tidalList = [];
             let time = null;
             this.clearChart();
-            this.createChart(this.tidalCharts);
-            this.tidalMsgFlag = false;
+            // this.createChart(this.tidalCharts);
             if (
               tidalList.length &&
               tidalList != null &&
               tidalList != undefined
             ) {
+              this.setTidalMsgFlag(false)
               // 最大值和最小值
               let maxObj = tidalList[0];
               let minObj = tidalList[0];
@@ -1547,9 +1507,8 @@ export default {
                 this.tidalCharts.ydata.push(tidalList[i].height);
               }
               // 绘制图表
-              this.createChart(this.tidalCharts);
-              console.log("xdata", this.tidalCharts.xdata);
-              console.log("ydata", this.tidalCharts.ydata);
+              this.setTidalCharts(this.tidalCharts)
+              
               this.tidalData.tidalList.push(this._.cloneDeep(maxObj));
               time = this.$m(this.tidalData.tidalList[0].tidalTime).format(
                 "hh-mm"
@@ -1567,85 +1526,24 @@ export default {
               this.tidalData.tidalList[1].name = "第一低潮";
               this.tidalData.tidalList[1].type = "min";
               console.log("tidalList", this.tidalData.tidalList);
+
+              // 传递面板数据
+              this.setTidalData(this.tidalData)
+              
             } else {
-              this.tidalMsgFlag = true;
-              // this.$message.warning("此时刻暂无潮汐数据");
+              // 暂无数据
+              this.setTidalMsgFlag(true)
+              // 传递面板数据
+              this.setTidalData(this.tidalData)
             }
+
+            // 显示面板
+            this.setTidalShow(true)
           }
         })
         .catch((error) => {
           this.$message.error("获取潮汐数据失败");
         });
-    },
-    // 创建图表
-    createChart(dital) {
-      let option = {
-        backgroundColor: "#fff",
-        color: ["#73A0FA"],
-        tooltip: {
-          trigger: "axis",
-          axisPointer: {
-            type: "cross",
-            crossStyle: {
-              color: "#999",
-            },
-            lineStyle: {
-              type: "dashed",
-            },
-          },
-        },
-        grid: {
-          left: 5,
-          right: 5,
-          bottom: 5,
-          top: 15,
-          containLabel: true,
-        },
-        xAxis: {
-          type: "category",
-          data: dital.xdata,
-          splitLine: {
-            show: false,
-          },
-          axisTick: {
-            show: false,
-          },
-          axisLine: {
-            show: false,
-          },
-        },
-        yAxis: {
-          type: "value",
-          axisLabel: {
-            color: "#999",
-            textStyle: {
-              fontSize: 12,
-            },
-          },
-          splitLine: {
-            show: true,
-            lineStyle: {
-              color: "#F3F4F4",
-            },
-          },
-          axisTick: {
-            show: false,
-          },
-          axisLine: {
-            show: false,
-          },
-        },
-        series: [
-          {
-            name: "潮高",
-            type: "line",
-            smooth: true,
-            data: dital.ydata,
-          },
-        ],
-      };
-
-      this.tidalChart.setOption(option);
     },
     // 清除图表数据
     clearChart() {
@@ -1683,12 +1581,12 @@ export default {
     },
     // wind、wave使用了自动重绘，需要单独清除
     clearWindWave(layer) {
-      if (layer.drawType === "point_flow" && this.waveLayer !== null) {
-        map.removeLayer(this.waveLayer);
-        this.waveLayer = null;
-      } else if (layer.drawType === "point_wind" && this.windLayer !== null) {
-        map.removeLayer(this.windLayer);
-        this.windLayer = null;
+      let windList = this.windGroup.getLayers();
+      let waveList = this.waveGroup.getLayers();
+      if (layer.drawType === "point_flow" && waveList.length) {
+        this.waveGroup.clearLayers();
+      } else if (layer.drawType === "point_wind" && windList.length) {
+        this.windGroup.clearLayers();
       } else if (layer.drawType === "point" && this.tidalMarker !== null) {
         let tidal = this.tidalMarker.filter((item) => {
           return item.id === layer.id;
@@ -1880,7 +1778,7 @@ export default {
                   map
                 );
                 polyline.id = id;
-                polyline.bringToBack()
+                polyline.bringToBack();
                 that.tyDeletArr.push(polyline);
                 let circle = L.circleMarker(
                   [trackList[i + 1].lat, trackList[i + 1].lon],
@@ -1975,6 +1873,63 @@ export default {
       </div>
     </div>`
       );
+    },
+
+    // 获取并添加卫星云图
+    async getAndDrawFyType(type) {
+      let time =
+        this.time > 10 ? this.time + ":00:00" : "0" + this.time + ":00:00";
+      // let bounds = L.latLngBounds(
+      //   L.latLng(-54.96, 49.74),
+      //   L.latLng(54.96, 159.66)
+      // );
+
+      // let imageLayer = L.imageOverlay(globalConfig.baseURL + '/api/fypacket/show_image?areaType=0&dataType=' + type + '&dateTime=' + this.day + ' ' + time, bounds);
+      // imageLayer.id = type;
+      // this.fyTypeGroup.addLayer(imageLayer)
+
+      // let lastLayer = this.fyTypeGroup.getLayers()
+      // // 删除前一个云图
+      // if(lastLayer.length > 1) {
+      //   this.fyTypeGroup.removeLayer(lastLayer[0])
+      // }
+
+      // window.map.addLayer(this.fyTypeGroup)
+
+      try {
+        let fyImage = await this.$getbuffer(
+          "/api/fypacket/show_image",
+          {
+            areaType: 0,
+            dataType: type,
+            dateTime: this.day + " " + time,
+          },
+          { responseType: "arraybuffer" }
+        );
+
+        const img = this.toImage(fyImage);
+        let bounds = L.latLngBounds(
+          L.latLng(-54.96, 49.74),
+          L.latLng(54.96, 159.66)
+        );
+        if (img && img !== "data:image/png;base64,") {
+          let imageLayer = L.imageOverlay(img, bounds);
+          imageLayer.id = type;
+          this.fyTypeGroup.addLayer(imageLayer);
+
+          let lastLayer = this.fyTypeGroup.getLayers();
+          // 删除前一个云图
+          if (lastLayer.length > 1) {
+            this.fyTypeGroup.removeLayer(lastLayer[0]);
+          }
+
+          window.map.addLayer(this.fyTypeGroup);
+        } else {
+          this.$message.warning("此时刻暂无" + type + "数据");
+        }
+      } catch (error) {
+        this.$message.error("获取" + type + "数据失败");
+      }
     },
   },
 };
