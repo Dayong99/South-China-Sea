@@ -19,6 +19,14 @@
             padding-left: 10px;
             text-align: left;
             border-radius: 5px 5px 0px 0px;
+            position: relative;
+
+            i{
+                position: absolute;
+                top: 7px;
+                right: 10px;
+                cursor: pointer;
+            }
         }
 
         .info_title::after {
@@ -43,7 +51,7 @@
 
             .content_item {
                 line-height: 30px;
-                font-size: 14;
+                font-size: 14px;
                 margin-left: 10px;
                 text-align: left;
             }

@@ -543,6 +543,7 @@ export default {
       setLocation: "clickup/setLocation",
       setPointInfo: "clickup/setPointInfo",
       setPointInfoShow: "clickup/setPointInfoShow",
+      setInfoShow: "clickup/setInfoShow",
     }),
     // 任务树setting
     AssessSetting(itemAssess, indexAssess, itemRoute, indexRoute, item, index) {
@@ -1073,6 +1074,8 @@ export default {
             circle.assessmentId = assessmentId;
             circle.courseId = courseId;
             circle.on("click", (e) => {
+              map.off("click");
+              this.setInfoShow(false);
               console.log(e, "航线点的信息--------");
               //请求单个航线点的信息
               this.$get("api/assessment/point-conclusion", {
@@ -1107,6 +1110,7 @@ export default {
                 });
                 this.setPointInfo(singleInfo);
                 this.setLocation(e.containerPoint);
+                // this.setInfoShow(false)
                 this.setPointInfoShow(true);
 
                 let marker = e.target;
@@ -1154,8 +1158,8 @@ export default {
     //根据航线id清除图上的风险评估区
     //根据评估id清除图上的风险评估航线
     clearRouteById(id) {
-      if(id==this.pointInfo.assessmentId){
-        this.setPointInfoShow(false)
+      if (id == this.pointInfo.assessmentId) {
+        this.setPointInfoShow(false);
       }
       console.log(this.routeLine, "保存的风险区域----------");
       for (let i = 0; i < this.routeLine.length; i++) {
