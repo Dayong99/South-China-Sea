@@ -33,7 +33,7 @@
       v-if="infoShow"
       :style="{ top: infoTop - 14 + 'px', left: infoLeft + 14 + 'px' }"
     >
-      <div class="info_title">水文信息</div>
+      <div class="info_title">水文信息<i class="el-icon-close" @click="infoClose"></i></div>
       <div class="info_content">
         <div v-for="(item, index) in infoData" :key="index">
           <div class="content_item">{{ item.name }}: {{ item.value }}</div>
@@ -220,6 +220,10 @@ export default {
     },
     desClose() {
       this.setPointInfoShow(false);
+    },
+    infoClose(){
+        this.setInfoShow(false)
+        map.off("click",window.mapClick_p)
     },
     changeTimeIndex(i) {
       this.setChangeDateIndex(i)

@@ -167,7 +167,9 @@
                       />
                       <img
                         src="@/assets/images/menu/route_delete.png"
-                        @click.stop="deleteRoute(itemRoute, indexRoute)"
+                        @click.stop="
+                          deleteRoute(itemRoute, indexRoute, item, index)
+                        "
                       />
                       <img
                         :class="{ activeAssess: itemRoute.assessChecked }"
@@ -203,9 +205,8 @@
                             src="@/assets/images/menu/bin_assess_deactive.png"
                             class="control_items"
                             @click="
-                              changeAssessTime(
+                              deleteAssessItem(
                                 itemAssess,
-                                indexAssess,
                                 itemRoute,
                                 indexRoute,
                                 item,
@@ -432,6 +433,26 @@ export default {
       routeDialogOptions: (s) => s.menuBar.routeDialogOptions,
       algorithmOptions: (s) => s.menuBar.algorithmOptions,
     }),
+
+    assessflag() {
+      let arr = [];
+      this.taskList.forEach((item) => {
+        if (item.routeList.length != 0) {
+          item.routeList.forEach((item1) => {
+            if (item1.assessList.length != 0) {
+              item1.assessList.forEach((item2) => {
+                arr.push(item2);
+              });
+            }
+          });
+        }
+      });
+
+      let index = arr.findIndex((item) => {
+        return item.area || item.line;
+      });
+      return index;
+    },
   },
   mounted() {
     L.CustomPopup = L.Popup.extend({
@@ -521,6 +542,16 @@ export default {
     routeDialogOptions() {
       console.log("更新航线信息");
     },
+    assessflag(val) {
+      console.log(val, "有无选中评估------");
+      if (val != -1) {
+        //有选中评估区域或航线，显示图例
+        this.setAssessLegendShow(true);
+      } else {
+        //没有选中评估区域或航线，隐藏图例
+        this.setAssessLegendShow(false);
+      }
+    },
   },
   filters: {
     filterTime(val) {
@@ -543,6 +574,8 @@ export default {
       setLocation: "clickup/setLocation",
       setPointInfo: "clickup/setPointInfo",
       setPointInfoShow: "clickup/setPointInfoShow",
+      setInfoShow: "clickup/setInfoShow",
+      setAssessLegendShow: "menuBar/setAssessLegendShow",
     }),
     // 任务树setting
     AssessSetting(itemAssess, indexAssess, itemRoute, indexRoute, item, index) {
@@ -574,19 +607,28 @@ export default {
         this.taskList
       );
     },
-    deleteRoute(item, index) {
+    deleteRoute(item, index, taskItem, taskIndex) {
       console.log(item, index, `delete`);
-      this.$delete(`/api/course`, {
-        id: item.id,
-      })
+      this.$confirm("确认删除该航线吗")
         .then(() => {
-          this.$message({
-            message: "航线删除成功",
-            type: "success",
-          });
+          this.$delete(`/api/course`, {
+            id: item.id,
+          })
+            .then(() => {
+              this.$message({
+                message: "航线删除成功",
+                type: "success",
+              });
+            })
+            .then(() => {
+              this.loadRouteList(taskItem, taskIndex);
+            });
         })
-        .then(() => {
-          this.loadRouteList(plan_Id);
+        .catch(() => {
+          this.$message({
+            message: "取消删除",
+            type: "information",
+          });
         });
     },
     algorithm(item, index) {
@@ -640,6 +682,28 @@ export default {
             });
         })
         .catch((_) => {
+          this.$message({
+            message: "取消删除",
+            type: "information",
+          });
+        });
+    },
+    //删除评估
+    deleteAssessItem(itemAssess, itemRoute, indexRoute, item, index) {
+      console.log(itemAssess, itemRoute, indexRoute, item, index);
+      this.$confirm("确认删除该评估吗")
+        .then(() => {
+          this.$delete("api/assessment", {
+            id: itemAssess.id,
+          }).then((res) => {
+            this.$message({
+              message: "评估删除成功",
+              type: "success",
+            });
+            this.loadAssessInfo(itemRoute, indexRoute, item, index);
+          });
+        })
+        .catch(() => {
           this.$message({
             message: "取消删除",
             type: "information",
@@ -1073,6 +1137,8 @@ export default {
             circle.assessmentId = assessmentId;
             circle.courseId = courseId;
             circle.on("click", (e) => {
+              map.off("click", window.mapClick_p);
+              this.setInfoShow(false);
               console.log(e, "航线点的信息--------");
               //请求单个航线点的信息
               this.$get("api/assessment/point-conclusion", {
@@ -1107,6 +1173,7 @@ export default {
                 });
                 this.setPointInfo(singleInfo);
                 this.setLocation(e.containerPoint);
+                // this.setInfoShow(false)
                 this.setPointInfoShow(true);
 
                 let marker = e.target;
@@ -1154,8 +1221,8 @@ export default {
     //根据航线id清除图上的风险评估区
     //根据评估id清除图上的风险评估航线
     clearRouteById(id) {
-      if(id==this.pointInfo.assessmentId){
-        this.setPointInfoShow(false)
+      if (id == this.pointInfo.assessmentId) {
+        this.setPointInfoShow(false);
       }
       console.log(this.routeLine, "保存的风险区域----------");
       for (let i = 0; i < this.routeLine.length; i++) {
