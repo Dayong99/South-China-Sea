@@ -347,7 +347,7 @@ export default {
         label: '红外'
       }, {
         value: 'true_colors',
-        label: '真彩色'
+        label: '红外增强'
       }],
       fyType: null,
       fyTypeGroup: L.layerGroup(),
