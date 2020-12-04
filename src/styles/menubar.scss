@@ -542,11 +542,14 @@
                                         line-height: 36px;
                                         display: flex;
                                         justify-content: space-between;
+                                        .assess_item {
+                                            display: flex;
+                                        }
                                         .assess_img {
                                             margin-left: 7px;
                                             img {
-                                                width: 16px;
-                                                height: 16px;
+                                                width: 14px;
+                                                height: 14px;
                                             }
                                         }
                                         .assess_desc {
@@ -559,27 +562,24 @@
                                             padding-left: 4px;
                                         }
                                         .assess_control {
-                                            width: 48%;
-                                            text-align: right;
+                                            width: 46%;
                                             line-height: 24px;
-                                            padding-right: 15px;
-                                            background: #463d38;
-                                            margin-top: 3px;
+                                            background: rgba(57, 46, 46, 0.5);
+                                            margin-top: 4px;
+                                            margin-right: -12px;
                                             height: 20px;
                                             border-radius: 12px 0 0 12px;
-                                            margin-right: 10px;
                                             .control_items {
-                                                width: 14px;
-                                                height: 14px;
+                                                width: 12px;
+                                                height: 12px;
                                                 cursor: pointer;
                                             }
                                         }
                                         .assess_control_deactive {
-                                            width: 48%;
-                                            text-align: right;
+                                            width: 56%;
                                             line-height: 24px;
-                                            padding-right: 15px;
-                                            margin-top: 3px;
+                                            margin-right: 6px;
+                                            margin-top: 4px;
                                             height: 20px;
                                             border-radius: 12px 0 0 12px;
                                             margin-right: 10px;
@@ -592,11 +592,10 @@
                                         .setting_wrapper {
                                             height: 30px;
                                             line-height: 40px;
-                                            padding-top: 2px;
+                                            margin-top: -1px;
                                             padding-right: 5px;
                                             .control_items {
-                                                width: 22px;
-                                                height: 22px;
+                                                width: 18px;
                                                 background: #fdb2b3;
                                                 border-radius: 50%;
                                                 cursor: pointer;
