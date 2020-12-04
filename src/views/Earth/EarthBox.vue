@@ -148,7 +148,7 @@ export default {
     routeInfo: routeInfo,
     DataLive:DataLive,
     clickUp:clickUp,
-    InfoBox:InfoBox
+    InfoBox: InfoBox,
   },
   data() {
     return {};

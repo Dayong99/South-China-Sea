@@ -150,9 +150,9 @@ export default {
       infoVisible: false,
       geojsonGroup: [],
       geoStyle: {
-        color: "#ff7800",
-        weight: 3,
-        opacity: 0.65,
+        color: "#685ac6",
+        weight: 1,
+        opacity: 0.9,
       },
     };
   },

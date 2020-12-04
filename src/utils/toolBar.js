@@ -187,6 +187,16 @@ class ToolBar {
     distanceMeasure.destory();
     areaMeasure.destory();
   }
+
+  clearMeasure(){
+    distanceMeasure.destory();
+    map.off('click', distanceMeasure.click).off('mousemove', distanceMeasure.mousemove).off('dblclick', distanceMeasure.dblclick);
+  }
+
+  clearAreaMeasure(){
+    areaMeasure.destory();
+    map.off('click', areaMeasure.click).off('mousemove', areaMeasure.mousemove).off('dblclick', areaMeasure.dblclick);
+  }
 }
 
 export default ToolBar
