@@ -38,7 +38,7 @@ const state = {
       flag: false
     },
     {
-      name: '常用标志区',
+      name: '常用警戒线和任务区',
       flag: false
     },
     {
@@ -61,7 +61,7 @@ const state = {
       flag: false
     },
     {
-      name: '欧格海浪数值预报',
+      name: 'hycom海流数值预报数据',
       flag: false
     },
     {

@@ -62,7 +62,7 @@ export default {
       // },
       /* 关闭 */
       {
-        src: require("@/assets/toolList/shape/close.svg"),
+        src: require("@/assets/toolList/shape/quit.svg"),
         events: "close",
         type: 'close'
       }

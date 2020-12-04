@@ -142,30 +142,31 @@
                 >
                   <div
                     @click="switchRoute(item, index, itemRoute, indexRoute)"
+                    @click.stop="loadAssessInfo(itemRoute, indexRoute, item, index)"
                     class="task_content_desc"
                     :class="{ task_content_desc_active: itemRoute.checked }"
                   >
                     <div class="task_content_img">
-                      <img src="@/assets/images/menu/lineTitle.png" alt="" />
+                      <img src="@/assets/images/menu/lineTitle.svg" alt="" />
                     </div>
                     <div class="task_content_name">
                       {{ itemRoute.lineName }}
                     </div>
                     <div class="control_wrapper">
                       <img
-                        src="@/assets/images/menu/route_info.png"
+                        src="@/assets/images/menu/route_info.svg"
                         @click.stop="showRoute(itemRoute, indexRoute)"
                       />
                       <img
-                        src="@/assets/images/menu/route_assess.png"
+                        src="@/assets/images/menu/route_assess.svg"
                         @click.stop="algorithm(itemRoute, indexRoute)"
                       />
                       <img
-                        src="@/assets/images/menu/edit_route.png"
+                        src="@/assets/images/menu/edit_route.svg"
                         @click.stop="algorithm(itemRoute, indexRoute)"
                       />
                       <img
-                        src="@/assets/images/menu/route_delete.png"
+                        src="@/assets/images/menu/route_delete.svg"
                         @click.stop="
                           deleteRoute(itemRoute, indexRoute, item, index)
                         "
@@ -173,6 +174,7 @@
                       <img
                         :class="{ activeAssess: itemRoute.assessChecked }"
                         src="@/assets/images/menu/down_content.png"
+                        id="down_img"
                         @click.stop="
                           loadAssessInfo(itemRoute, indexRoute, item, index)
                         "
@@ -181,18 +183,21 @@
                   </div>
 
                   <!-- 评估列表 -->
-                  <div class="assess_wrapper">
+                  <div class="assess_wrapper" >
                     <div
                       class="assess_items"
                       v-for="(itemAssess, indexAssess) in itemRoute.assessList"
                       :key="`assess${indexAssess}`"
                     >
-                      <div class="assess_img">
-                        <img src="@/assets/images/menu/timeTitle.png" />
+                      <div class="assess_item">
+                        <div class="assess_img">
+                          <img src="@/assets/images/menu/timeTitle.png" />
+                        </div>
+                        <div class="assess_desc">
+                          {{ itemAssess.assesstime | filterTime }}
+                        </div>
                       </div>
-                      <div class="assess_desc">
-                        {{ itemAssess.assesstime | filterTime }}
-                      </div>
+                      
                       <transition
                         enter-active-class="animated slideInRight"
                         leave-active-class="animated slideOutRight"
@@ -298,10 +303,15 @@
           >
             <li v-for="(item, index) in systemList" :key="index">
               <div class="task_list">
-                <div class="task_name" @click="openSystem(index)">
-                  <span>{{ item.name }}</span>
+                <div class="task_label">
+                  <div class="task_dot">
+                    <img src="@/assets/images/menu/taskSettle.svg" />
+                  </div>
+                  <div class="task_name" @click="openSystem(index)">{{
+                    item.name
+                  }}</div>
                 </div>
-                <div class="task_operation">
+                <div class="task_operation" style="margin-left:0;">
                   <el-button
                     icon="el-icon-s-operation"
                     class="table_column_icon purple"
@@ -315,15 +325,25 @@
 
           <!-- 数据管理 -->
           <ul
-            class="list_system_ul"
+            class="list_data_ul list_system_ul"
             v-show="item.flag && flagList[2]"
             style="height: auto; overflow-y: hidden"
           >
             <li v-for="(item, index) in dataList" :key="index">
               <div class="task_list">
-                <div class="task_name" @click="openData(index)">
-                  <span>{{ item.name }}</span>
+
+                <div class="task_label">
+                  <div class="task_dot">
+                    <img src="@/assets/images/menu/taskSettle.svg" />
+                  </div>
+                  <div class="task_name" @click="openSystem(index)">{{
+                    item.name
+                  }}</div>
                 </div>
+                
+                <!-- <div class="task_name" @click="openData(index)">
+                  <span>{{ item.name }}</span>
+                </div> -->
                 <div class="task_operation">
                   <el-button
                     icon="el-icon-s-operation"
