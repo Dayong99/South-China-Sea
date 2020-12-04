@@ -125,7 +125,7 @@ export default {
       },
 
       markerGroup: [],
-      placeImg: require("../../../../assets/images/place.png"),
+      placeImg: require("../../../../assets/images/place.svg"),
     };
   },
   mounted() {
@@ -189,7 +189,7 @@ export default {
         if (Number(item.isShow) == 1) {
           let icon = new L.Icon({
             iconUrl: this.placeImg,
-            iconSize: [30, 30],
+            iconSize: [26, 26],
             iconAnchor: [12, 41],
             popupAnchor: [1, -34],
             shadowSize: [41, 41],
