@@ -157,7 +157,7 @@
                 cursor: -moz-grab;
                 cursor: grab;
                 position: relative;
-                // background-color: #d49500;
+                background-color: #d49500;
                 color: white;
                 height: 1.8em;
                 box-sizing: border-box;
@@ -167,7 +167,8 @@
                 display: table-cell;
                 vertical-align: middle;
                 border: none;
-                // border-radius: .5em;
+                border-radius: .5em;
+                opacity: 0.6;
                 // box-shadow: 0 0 4px 0 black;
 
                 // &::before {

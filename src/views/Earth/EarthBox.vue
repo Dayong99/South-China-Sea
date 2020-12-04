@@ -36,7 +36,8 @@
     <param-manager></param-manager>
     <!-- 数据项配置 -->
     <dataitem-manager></dataitem-manager>
-
+    <!-- 评估条件因子管理 -->
+    <Evaluation-manager></Evaluation-manager>
     <!-- 数据管理 -->
     <!-- 数据源配置 -->
     <datasource-manager></datasource-manager>
@@ -59,6 +60,8 @@
     <info-box></info-box>
     <!-- 航线评估结果 -->
     <route-info v-if="routeInfoShow"></route-info>
+    
+
   </div>
 </template>
 
@@ -81,7 +84,10 @@ import LineManager from "@/components/menu/SystemManager/lineManager/index.vue";
 import AreaManager from "@/components/menu/SystemManager/areaManager/index.vue";
 import SeaManager from "@/components/menu/SystemManager/seaManager/index.vue";
 import ParamManager from "@/components/menu/SystemManager/paramManager/index.vue";
-import DataitemManager from "@/components/menu/SystemManager/dataItemManager/index.vue";
+import DataitemManager from "@/components/menu/SystemManager/evaluationManager/index.vue";
+
+
+import EvaluationManager from "@/components/menu/SystemManager/dataItemManager/index.vue";
 import DatasourceManager from "@/components/menu/DataManager/dataSourceManager/index.vue";
 import DatasourceManager1 from "@/components/menu/DataManager/dataSourceManager1/index.vue";
 import DatasourceManager2 from "@/components/menu/DataManager/dataSourceManager2/index.vue";
@@ -119,6 +125,7 @@ export default {
     SeaManager: SeaManager,
     ParamManager: ParamManager,
     DataitemManager: DataitemManager,
+    EvaluationManager: EvaluationManager,
     routeManager: routeManager,
     DatasourceManager: DatasourceManager,
     DatasourceManager1: DatasourceManager1,

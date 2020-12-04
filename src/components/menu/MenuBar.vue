@@ -571,7 +571,7 @@ export default {
           });
         })
         .then(() => {
-          this.loadRouteList(plan_Id);
+          this.loadRouteList(item, index);
         });
     },
     algorithm(item, index) {
@@ -653,12 +653,13 @@ export default {
     },
     // 请求航线列表
     loadRouteList(item, index) {
-      this.taskList[index].routeList = [];
+      item.routeList = [];
       this.$get(`/api/course`, {
         plan_Id: item.id,
       })
         .then((res) => {
           if (res.status === 200) {
+            console.log(this.taskList[index].routeList,`this.taskList[index].routeList`)
             this.taskList[index].routeList = res.data.data.rows.map((e, i) => {
               return {
                 ...e,
