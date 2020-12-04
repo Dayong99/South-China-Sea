@@ -2,7 +2,9 @@
   <div id="timebar">
     <!-- 日期 -->
     <div id="calendar" style="left:300px;width:calc(100% - 410px)">
-      <div v-for="(item,index) in calendarList" :key="index" :style="dayWidth">{{ item.day }}</div>
+      <div v-for="(item, index) in calendarList" :key="index" :style="dayWidth">
+        {{ item.day }}
+      </div>
     </div>
 
     <el-date-picker
@@ -17,11 +19,7 @@
 
     <!-- 切换时间间隔 -->
     <div class="timeInterval">
-      <el-select
-        v-model="timeInterval"
-        placeholder="时间间隔"
-        size="small"
-      >
+      <el-select v-model="timeInterval" placeholder="时间间隔" size="small">
         <el-option
           v-for="item in timeIntervalList"
           :key="item.value"
@@ -47,7 +45,7 @@
       <div
         ref="line"
         class="playLen"
-        :style="{'width':playPosition}"
+        :style="{ width: playPosition }"
         @click="loadTo"
         @mouseover="showTip"
         @mousemove="showTip"
@@ -56,13 +54,21 @@
     </div>
 
     <!-- 划过提示框 -->
-    <div v-show="tipshow" class="timecode ghost-timecode" :style="{'left':tipleft,'top':tiptop}">
+    <div
+      v-show="tipshow"
+      class="timecode ghost-timecode"
+      :style="{ left: tipleft, top: tiptop }"
+    >
       <div class="box">{{ tip }}</div>
     </div>
 
     <!-- 当前时间 -->
-    <div class="circle" :style="{'left':circlePosition}" />
-    <div ref="nowtime" class="timecode main-timecode" :style="{'left':nowTime}">
+    <div class="circle" :style="{ left: circlePosition }" />
+    <div
+      ref="nowtime"
+      class="timecode main-timecode"
+      :style="{ left: nowTime }"
+    >
       <div class="box">{{ showday }}</div>
     </div>
 
@@ -74,7 +80,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations } from "vuex";
 import { parseTime } from "@/utils";
 
 // 监听时间轴尺寸变化
@@ -148,45 +154,48 @@ export default {
       currentId: null,
 
       // 时间间隔列表
-      timeIntervalList: [{
-        value: 1,
-        label: '1小时',
-      }, {
-        value: 3,
-        label: '3小时',
-      }, {
-        value: 6,
-        label: '6小时',
-      },
-      // {
-      //   value: 9,
-      //   label: '9小时',
-      // },
-      {
-        value: 12,
-        label: '12小时',
-      }, {
-        value: 24,
-        label: '24小时',
-      }],
+      timeIntervalList: [
+        {
+          value: 1,
+          label: "1小时",
+        },
+        {
+          value: 3,
+          label: "3小时",
+        },
+        {
+          value: 6,
+          label: "6小时",
+        },
+        // {
+        //   value: 9,
+        //   label: '9小时',
+        // },
+        {
+          value: 12,
+          label: "12小时",
+        },
+        {
+          value: 24,
+          label: "24小时",
+        },
+      ],
       timeInterval: 3,
     };
   },
-  created() {
-    
-  },
+  created() {},
   computed: {
     ...mapState({
-      sourceType: state => state.sideBar.sourceType
+      sourceType: (state) => state.sideBar.sourceType,
     }),
     // 单个日期宽度
-    dayWidth: function () {
+    dayWidth: function() {
       return {
         width: "calc(100% / " + this.dayListLength + ")",
       };
     },
     // 获取时次
-    timeLevel: function () {
+    timeLevel: function() {
       return this.$store.state.time.timeLevel;
     },
   },
@@ -215,19 +224,19 @@ export default {
     },
     // 时间间隔变化
     timeInterval(newval) {
-      if(newval === 1) {
-        this.num = 24
-      } else if(newval === 3) {
-        this.num = 8
-      } else if(newval === 6) {
-        this.num = 4
-      } else if(newval === 12) {
-        this.num = 2
-      } else if(newval === 24) {
-        this.num = 1
+      if (newval === 1) {
+        this.num = 24;
+      } else if (newval === 3) {
+        this.num = 8;
+      } else if (newval === 6) {
+        this.num = 4;
+      } else if (newval === 12) {
+        this.num = 2;
+      } else if (newval === 24) {
+        this.num = 1;
       }
 
-      this.timeFlag = false
+      this.timeFlag = false;
       this.getLatestTime();
       // 初始化当前时间
       this.showday =
@@ -247,8 +256,8 @@ export default {
       console.log(this.showday);
 
       this.resetPlay();
-      console.log('时间间隔', newval);
-    }
+      console.log("时间间隔", newval);
+    },
   },
   mounted() {
     // 监听时间轴尺寸变化
@@ -273,17 +282,19 @@ export default {
       this.timeFlag = false;
       // this.dateVal = "2020-08-01"
       // 根据数据源获取第一个要素的id  getTypeTime()根据这个id去获取最近时间
-      this.$get('/api/parameters/get_type', {
-        type: this.sourceType
-      }).then(res => {
-        if(res.status == 200) {
-          this.currentId = res.data.data[0].id
-          this.getTypeTime();
-        }
-      }).catch(error => {
-        this.$message.error('获取要素失败')
+      this.$get("/api/parameters/get_type", {
+        type: this.sourceType,
       })
-      
+        .then((res) => {
+          if (res.status == 200) {
+            this.currentId = res.data.data[0].id;
+            this.getTypeTime();
+          }
+        })
+        .catch((error) => {
+          this.$message.error("获取要素失败");
+        });
+
       // this.getLatestTime()
       // this.getTypeTime().then(res=>{
       //   console.log(res);
@@ -392,16 +403,16 @@ export default {
           let obj = {
             day: parseTime(nowDate, "{y}-{m}-{d}"),
             timeArr: null,
+          };
+          let timeArr = [];
+          let time = 0;
+          while (time < 24) {
+            let str = time < 10 ? "0" + time : time;
+            timeArr.push(str + ":00");
+            time += this.timeInterval;
           }
-          let timeArr = []
-          let time = 0
-          while(time < 24) {
-            let str = time < 10 ? '0' + time : time
-            timeArr.push(str + ':00')
-            time += this.timeInterval
-          }
-          obj.timeArr = timeArr
-          this.dateList.push(obj)
+          obj.timeArr = timeArr;
+          this.dateList.push(obj);
         }
       } else {
         this.end = this.date.setFullYear(
@@ -432,16 +443,16 @@ export default {
           let obj = {
             day: parseTime(nowDate, "{y}-{m}-{d}"),
             timeArr: null,
+          };
+          let timeArr = [];
+          let time = 0;
+          while (time < 24) {
+            let str = time < 10 ? "0" + time : time;
+            timeArr.push(str + ":00");
+            time += this.timeInterval;
           }
-          let timeArr = []
-          let time = 0
-          while(time < 24) {
-            let str = time < 10 ? '0' + time : time
-            timeArr.push(str + ':00')
-            time += this.timeInterval
-          }
-          obj.timeArr = timeArr
-          this.dateList.push(obj)
+          obj.timeArr = timeArr;
+          this.dateList.push(obj);
         }
       }
 
@@ -599,5 +610,4 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>
+<style scoped></style>

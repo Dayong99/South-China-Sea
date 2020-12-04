@@ -21,9 +21,9 @@
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
-            <el-form-item label="地点名称" prop="placeName">
+            <el-form-item label="标志区名称" prop="placeName">
               <el-input
-                placeholder="请输入地点名称"
+                placeholder="请输入标志区名称"
                 v-model="formData.placeName"
               ></el-input>
             </el-form-item>
@@ -34,37 +34,14 @@
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
-            <el-form-item label="是否显示" prop="isShow">
-              <el-radio v-model="formData.isShow" label="0">不显示</el-radio>
-              <el-radio v-model="formData.isShow" label="1">显示</el-radio>
-            </el-form-item>
+           <el-form-item label="是否显示" prop="isShow">
+                <el-radio v-model="formData.isShow" label="0">不显示</el-radio>
+                <el-radio v-model="formData.isShow" label="1">显示</el-radio>
+              </el-form-item>
           </div>
         </el-col>
       </el-row>
-      <el-row>
-        <el-col :span="18">
-          <div class="grid-content bg-purple-dark">
-            <el-form-item label="经度" prop="longitude">
-              <el-input
-                placeholder="请输入经度值"
-                v-model="formData.longitude"
-              ></el-input>
-            </el-form-item>
-          </div>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="18">
-          <div class="grid-content bg-purple-dark">
-            <el-form-item label="纬度" prop="latitude">
-              <el-input
-                placeholder="请输入纬度值"
-                v-model="formData.latitude"
-              ></el-input>
-            </el-form-item>
-          </div>
-        </el-col>
-      </el-row>
+      
     </el-form>
     <div class="save_wrapper">
       <button class="save" type="button" @click="submit()">保存</button>
@@ -73,8 +50,6 @@
 </template>
 <script>
 import { toBase64 } from "@/utils/toBase64.js";
-const longreg = /^(\-|\+)?(((\d|[1-9]\d|1[0-7]\d|0{1,3})\.\d{0,6})|(\d|[1-9]\d|1[0-7]\d|0{1,3})|180\.0{0,6}|180)$/;
-const latreg = /^(\-|\+)?([0-8]?\d{1}\.\d{0,6}|90\.0{0,6}|[0-8]?\d{1}|90)$/;
 export default {
   data() {
     var checkLon = (rule, value, callback) => {
@@ -101,21 +76,20 @@ export default {
       data: {},
       rules: {},
       formData: {
-         placeName: "",
-        isShow: "0",
+        placeName: "",
+        isShow: "",
         longitude: "",
         latitude: "",
         coordinates: null,
-        drawType: 0,
+        drawType: null,
       },
       rules: {
         placeName: {
           required: true,
-          message: "地点名称不能为空",
+          message: "标志区名称不能为空",
           trigger: "blur",
         },
-        latitude: { validator: checkLat, trigger: "blur" },
-        longitude: { validator: checkLon, trigger: "blur" },
+        
       },
     };
   },
@@ -134,7 +108,7 @@ export default {
       this.formData = {
         ...data,
       };
-      this.formData.isShow += "";
+      this.formData.isShow += ""
     },
     // 关闭对话框
     close() {
@@ -146,42 +120,24 @@ export default {
       this.$refs.form.resetFields();
       this.formData = {
         placeName: "",
-        isShow: "0",
+        isShow: "",
         longitude: "",
         latitude: "",
         coordinates: null,
-        drawType: 0,
+        drawType: null,
       };
     },
     // 添加或修改
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          if (this.title === "添加地点") {
-            this.$post("/api/common-place", this.formData)
-              .then(() => {
-                this.$message({
-                  message: "地点添加成功",
-                  type: "success",
-                });
-                this.reset();
-              })
-              .then(() => {
-                this.$emit("close");
-              })
-              .catch(() => {
-                this.$message({
-                  message: "地点添加失败",
-                  type: "error",
-                });
-              });
-          } else if (this.title === "修改地点") {
+          if (this.title === "修改标志区") {
             this.$put("/api/common-place", {
               ...this.formData,
             })
               .then(() => {
                 this.$message({
-                  message: "地点修改成功",
+                  message: "标志区修改成功",
                   type: "success",
                 });
               })
@@ -191,7 +147,7 @@ export default {
               })
               .catch(() => {
                 this.$message({
-                  message: "地点修改失败",
+                  message: "标志区修改失败",
                   type: "error",
                 });
               });

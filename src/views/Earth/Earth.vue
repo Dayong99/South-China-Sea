@@ -30,6 +30,14 @@ export default {
       tile2: null,
       tile3: null,
       tile4: null,
+
+      // geojson
+      divisionGroup: L.layerGroup(),
+      geoStyle: {
+        color: "#ff7800",
+        weight: 3,
+        opacity: 0.65,
+      },
     };
   },
   computed: {
@@ -46,6 +54,7 @@ export default {
     }
   },
   created() {
+    // 根据需要显示的geojson数据进行绘制
     this.getAndDrawSeaDivision()
   },
   destroyed() {
@@ -326,7 +335,33 @@ export default {
     },
     // 绘制海区geojson
     getAndDrawSeaDivision() {
+      this.$get('/api/sea-division/all').then(res => {
+        if(res.status == 200) {
+          let data = res.data.data
+          let divisionList = data.filter(item => {
+            return item.isShow
+          })
+          divisionList.forEach(item => {
+            let geojson = JSON.parse(item.dataGeo);
+            let data = [];
+            geojson.forEach((item1) => {
+              let obj = {};
+              for (let i in item1) {
+                obj[i] = item1[i];
+              }
+              data.push(obj);
+            });
 
+            let layer = L.geoJSON(data, {
+              style: this.geoStyle,
+            })
+            this.divisionGroup.addLayer(layer)
+          })
+          this.divisionGroup.addTo(map)
+        }
+      }).catch(error => {
+        this.$message.error('获取海区划分数据失败')
+      })
     },
   },
 };
