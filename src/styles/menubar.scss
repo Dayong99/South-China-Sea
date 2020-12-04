@@ -1,767 +1,658 @@
 #menuBar {
-  width: 300px;
-  position: fixed;
-  top: 26px;
-  left: 35px;
-  z-index: 999;
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
-  height: auto;
-
-  ul,
-  li {
-    list-style: none;
-    padding: none;
-    margin: none;
-  }
-
-  .search {
-    width: 95%;
-    height: 35px;
-    display: flex;
-    justify-content: space-between;
-
-    .search_icon {
-      width: 35px;
-      height: 35px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 50%;
-      background: rgba(26, 26, 24, 0.7);
-
-      &:hover {
-        cursor: pointer;
-      }
-
-      img {
-        width: 20px;
-        height: 20px;
-      }
-    }
-
-    .search_bgcolor {
-      background: rgba(152, 26, 0, 1);
-    }
-
-    // input输入框加左右图标
-    .search_input {
-      flex: 1; // 防止挤压左侧
-      display: flex;
-      align-items: center;
-      margin-left: 10px;
-
-      .input_left {
-        width: 35px;
-        height: 100%;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        background: rgba(26, 26, 24, 0.7);
-        border-top-left-radius: 18px;
-        border-bottom-left-radius: 18px;
-
-        img {
-          width: 25px;
-          height: 25px;
-        }
-      }
-
-      .input_content {
-        .search_content /deep/ .el-input__inner {
-          height: 35px;
-          line-height: 35px;
-          color: rgb(192, 192, 192);
-          border: none;
-          border-radius: 0;
-          padding-left: 0;
-          background: rgba(26, 26, 24, 0.7);
-        }
-
-        .search_content /deep/ .el-input__icon {
-          line-height: 28px!important;
-        }
-
-        .search_content /deep/ .el-input__suffix {
-          line-height: 35px;
-        }
-      }
-
-      .input_right {
-        width: 35px;
-        height: 100%;
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        background-color: rgba(26, 26, 24, 0.7);
-        // background: url('~@/assets/images/menu/heart.png');
-        border-top-right-radius: 18px;
-        border-bottom-right-radius: 18px;
-        
-        &:hover {
-          cursor: pointer;
-        }
-
-        img {
-          width: 25px;
-          height: 25px;
-        }
-      }
-    }
-  }
-
-  // 常用地点
-  .mark_area {
-    width: 240px;
-    height: 300px;
+    width: 300px;
     position: fixed;
     top: 26px;
-    left: 335px;
-    color: #fff;
-    background: #fff;
+    left: 35px;
+    z-index: 999;
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
-    border-radius: 4px;
-    box-shadow: 2px 2px 6px 0px rgba(0, 0, 0, 0.5);
-
-    .area_top {
-      width: 100%;
-      height: 35px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: rgba(255, 255, 255, 0.9);
-      background: #991A01;
-      border-radius: 4px 4px 0px 0px;
-
-      .area_top_left {
-        margin-left: 8px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        span {
-          margin-left: 8px;
-        }
-      }
-
-      .area_top_right {
-        margin-right: 8px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        .area_add {
-
-          &:hover {
-            cursor: pointer;
-          }
-        }
-
-        .area_close {
-          width: 16px;
-          height: 16px;
-          margin-left: 8px;
-
-          &:hover {
-            cursor: pointer;
-          }
-        }
-      }
-
-      img {
-        width: 21px;
-        height: 21px;
-      }
+    height: auto;
+    ul,
+    li {
+        list-style: none;
+        padding: none;
+        margin: none;
     }
-
-    .area_content {
-      width: 100%;
-      max-height: 255px;
-      color: rgb(107, 101, 101);
-      font-size: 14px;
-      font-family: MicrosoftYaHei;
-      border-radius: 0px 0px 4px 4px;
-      overflow-y: auto;
-
-      /* 设置滚动条的样式 */
-      &::-webkit-scrollbar {
-        width: 3px;
-        background-color: #fff;
-      }
-
-      /* 滚动槽 */
-      &::-webkit-scrollbar-track {
-        border-radius: 10px;
-      }
-
-      /* 滚动条滑块 */
-      &::-webkit-scrollbar-thumb {
-        border-radius: 10px;
-        background: rgba(194, 194, 194, 0.8);
-      }
-
-      ul {
-        padding: 5px 10px;
-
-        li {
-          height: 30px;
-          line-height: 30px;
-          display: flex;
-          align-items: center;
-          margin-top: 2px;
-          padding-top: 1px;
-          border-top: 1px solid #E7E7E7;
-
-          &:first-child {
-            border-top: none;
-          }
-  
-          .area_index {
-            flex: 1;
-            margin-left: 8px;
-          }
-  
-          .area_name {
-            flex: 5;
-          }
-  
-          .tolatlon {
-            flex: 3;
-            width: 70px;
-            height: 25px;
-            line-height: 25px;
-            margin-right: 5px;
-            border-radius: 20px;
-            border: 1px solid rgba(148, 151, 154, 0.6);
+    .search {
+        width: 95%;
+        height: 35px;
+        display: flex;
+        justify-content: space-between;
+        .search_icon {
+            width: 35px;
+            height: 35px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 12px;
-
+            border-radius: 50%;
+            background: rgba(26, 26, 24, 0.7);
             &:hover {
-              cursor: pointer;
+                cursor: pointer;
             }
-
             img {
-              width: 18px;
-              height: 18px;
-              margin-right: 5px;
+                width: 20px;
+                height: 20px;
             }
-          }
         }
-      }
-    }
-  }
-
-  // 菜单栏
-  .menu_list {
-    width: 95%;
-    color: rgba(80, 80, 80, 1);
-    margin-top: 15px;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.8);
-    box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.5);
-
-    .list_ul {
-      width: 100%;
-      display: flex;
-      flex-flow: column nowrap;
-      align-items: center;
-
-      .list_ul_li {
-        width: 100%;
-        line-height: 50px;
-        padding: 0 15px;
-        position: relative;
-
-        color: rgba(117, 109, 109, 1);
-        font-size: 16px;
-
-        .title_box {
-          display: flex;
-          align-items: center;
+        .search_bgcolor {
+            background: rgba(152, 26, 0, 1);
         }
-
-        img {
-          width: 25px;
-          height: 25px;
-        }
-
-        .title {
-          margin-left: 15px;
-          display: flex;
-          align-items: center;
-
-          .title_bg {
-            color: rgb(152, 26, 0);
-            font-weight: bold;
-          }
-
-          span:hover {
-            cursor: pointer;
-          }
-
-          img {
-            width: 24px;
-            height: 24px;
-            margin-left: 3px;
-
-            &:hover {
-              cursor: pointer;
-            }
-          }
-        }
-
-        .down {
-          position: absolute;
-          right: 20px;
-          cursor: pointer;
-        }
-
-        // ------系统------
-        .list_system_ul {
-          width: 90%;
-          max-height: 350px;
-          margin-left: 10px;
-          margin-bottom: 10px;
-          overflow-y: auto;
-
-          li {
-            width: 95%;
-            height: auto;
-            font-size: 14px;
+        // input输入框加左右图标
+        .search_input {
+            flex: 1; // 防止挤压左侧
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            flex-flow: column;
-
-            .task_list {
-              width: 95%;
-              height: 30px;
-              font-size: 14px;
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-
-              .task_name {
-                cursor: pointer;
-                margin-left: 10px;
+            margin-left: 10px;
+            .input_left {
+                width: 35px;
+                height: 100%;
                 display: flex;
-                justify-content: space-between;
+                justify-content: flex-end;
                 align-items: center;
-
-                .task_dot {
-                  width: 10px;
-                  height: 10px;
-                  border: 2px solid #ccc;
-                  border-radius: 50%;
-                  margin-right: 10px;
+                background: rgba(26, 26, 24, 0.7);
+                border-top-left-radius: 18px;
+                border-bottom-left-radius: 18px;
+                img {
+                    width: 25px;
+                    height: 25px;
                 }
-
-                .active {
-                  background: red;
-                }
-              }
-
-              .task_operation {
-                // width: 90px;
-                font-size: 16px;
-                margin-left: 50px;
-
-                .blue {
-                  color: rgb(50, 204, 255);
-                }
-
-                .green {
-                  color: rgb(110, 207, 67);
-                }
-
-                .red {
-                  color: rgb(247, 53, 11);
-                }
-
-                .purple {
-                  color: rgb(145, 174, 255);
-                }
-
-                // 图标大小 和 左外边距
-                .el-button {
-                  font-size: 16px;
-                  margin-left: 0;
-                }
-              }
             }
-
-            .task_content_wrapper {
-              width: 100%;
-              margin-left: 15px;
-
-              .task_content {
-                width: 95%;
-                height: auto;
-                text-align: center;
-                background: #ccc;
+            .input_content {
+                .search_content /deep/ .el-input__inner {
+                    height: 35px;
+                    line-height: 35px;
+                    color: rgb(192, 192, 192);
+                    border: none;
+                    border-radius: 0;
+                    padding-left: 0;
+                    background: rgba(26, 26, 24, 0.7);
+                }
+                .search_content /deep/ .el-input__icon {
+                    line-height: 28px!important;
+                }
+                .search_content /deep/ .el-input__suffix {
+                    line-height: 35px;
+                }
+            }
+            .input_right {
+                width: 35px;
+                height: 100%;
                 display: flex;
-                white-space: nowrap;
-                flex-flow: column;
-                color: #ffffff;
-
-                .task_content_desc {
-
-                  width: 100%;
-                  height: auto;
-                  text-align: center;
-                  background: #ccc;
-                  padding: 5px;
-                  display: flex;
-                  white-space: nowrap;
-                  justify-content: space-between;
-
-                  .task_content_name {
-                    width: 75%;
-                    text-align: left;
-                  }
-
-                  img {
-                    width: 20px;
-                    height: 20px;
-
-                    &:hover {
-                      cursor: pointer;
-                    }
-                  }
+                justify-content: flex-start;
+                align-items: center;
+                background-color: rgba(26, 26, 24, 0.7);
+                // background: url('~@/assets/images/menu/heart.png');
+                border-top-right-radius: 18px;
+                border-bottom-right-radius: 18px;
+                &:hover {
+                    cursor: pointer;
                 }
-
-                .task_content_route {
-                  background: #000000;
-                  text-align: left;
-                  padding: 5px;
-                  color: #ffffff;
+                img {
+                    width: 25px;
+                    height: 25px;
                 }
-
-              }
             }
-
-          }
         }
-
-        // ------任务------
-        .list_task_ul {
-          width: 100%;
-          max-height: 500px;
-          margin-left: 0px;
-          margin-bottom: 10px;
-          overflow-y: auto;
-
-          li {
+    }
+    // 常用地点
+    .mark_area {
+        width: 240px;
+        height: 300px;
+        position: fixed;
+        top: 26px;
+        left: 335px;
+        color: #fff;
+        background: #fff;
+        display: flex;
+        flex-flow: column nowrap;
+        align-items: center;
+        border-radius: 4px;
+        box-shadow: 2px 2px 6px 0px rgba(0, 0, 0, 0.5);
+        .area_top {
             width: 100%;
-            height: auto;
-            font-size: 14px;
+            height: 35px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-flow: column;
-
-            .task_list {
-              width: 95%;
-              height: 30px;
-              font-size: 14px;
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-
-              .task_name {
-                height: 30px;
-                cursor: pointer;
-                margin-left: 2px;
+            color: rgba(255, 255, 255, 0.9);
+            background: #991A01;
+            border-radius: 4px 4px 0px 0px;
+            .area_top_left {
+                margin-left: 8px;
                 display: flex;
-                justify-content: space-between;
+                justify-content: center;
                 align-items: center;
-                line-height: 30px;
-
-                .task_dot {
-                  height: 20px;
-
-                  img {
-                    width: 18px;
-                    height: 18px;
-                  }
+                span {
+                    margin-left: 8px;
                 }
-
-                .task_desc {
-                  margin-left: 5px;
-                }
-
-                .active {
-                  color: red;
-                  font-weight: bold;
-                }
-              }
-
-              .task_operation {
-                // width: 90px;
-                font-size: 16px;
-                margin-left: 50px;
-
-                .blue {
-                  color: rgb(50, 204, 255);
-                }
-
-                .green {
-                  color: rgb(110, 207, 67);
-                }
-
-                .red {
-                  color: rgb(247, 53, 11);
-                }
-
-                .purple {
-                  color: rgb(145, 174, 255);
-                }
-
-                // 图标大小 和 左外边距
-                .el-button {
-                  font-size: 16px;
-                  margin-left: 0;
-                }
-              }
             }
-
-            .task_content_wrapper {
-              width: 100%;
-              max-height: 200px;
-              overflow-y: auto;
-
-              .task_content {
-                width: 100%;
-                height: auto;
-                line-height: 30px;
-                text-align: center;
+            .area_top_right {
+                margin-right: 8px;
                 display: flex;
-                white-space: nowrap;
-                flex-flow: column;
-                color: #000000;
-
-
-
-                .task_content_desc {
-                  cursor: pointer;
-                  width: 100%;
-                  height: 28px;
-                  line-height: 28px;
-                  text-align: center;
-                  background: #96938d;
-                  display: flex;
-                  padding-left: 5px;
-                  white-space: nowrap;
-                  justify-content: space-between;
-
-                  .task_content_img {
-                    line-height: 37px;
-                    width: 10%;
-
-                    img {
-                      width: 16px;
-                      height: 16px;
-                    }
-                  }
-
-                  .task_content_name {
-                    color: #ffffff;
-                    width: 45%;
-                    text-align: left;
-                  }
-
-                  .control_wrapper {
-                    width: 40%;
-                    padding-top: 5px;
-                    margin-right: 5px;
-
-                    img {
-                      width: 14px;
-                      height: 14px;
-                      margin-bottom: 3px;
-
-                      &:hover {
+                justify-content: center;
+                align-items: center;
+                .area_add {
+                    &:hover {
                         cursor: pointer;
-                      }
                     }
-
-                    .activeAssess {
-                      transform: rotate(180deg);
-                      -ms-transform: rotate(180deg);
-                      /* IE 9 */
-                      -moz-transform: rotate(180deg);
-                      /* Firefox */
-                      -webkit-transform: rotate(180deg);
-                      /* Safari 和 Chrome */
-                      -o-transform: rotate(180deg);
-                      /* Opera */
-                    }
-                  }
-
                 }
-
-                .task_content_desc_active {
-                  background: #830d02;
-                }
-
-                .assess_wrapper {
-                  width: 100%;
-                  overflow-y: auto;
-                  height: auto;
-                  background:#756c5d;
-                  overflow-x: hidden;
-                  
-                  .assess_items {
-                    height: 30px;
-                    line-height: 36px;  
-                    display: flex;
-                    justify-content: space-between;
-                    .assess_img {
-                      margin-left: 5px;
-                      img {
-                        width: 16px;
-                        height: 16px;
-                      }
-                    }
-                    .assess_desc {
-                      height: 30px;
-                      line-height: 30px;  
-                      width: 40%;
-                      text-align: left;
-                      font-size: 12px;
-                      color: #ffffff;
-                      padding-left: 4px;
-                    }
-
-                    .assess_control {
-                      width: 48%;
-                      text-align: right;
-                      line-height: 24px;
-                      padding-right: 15px;
-                      background: #463d38;
-                      margin-top: 3px;
-                      height: 20px;
-                      border-radius: 12px 0 0 12px;
-                      margin-right: 10px;
-                      .control_items {
-                        width: 14px;
-                        height: 14px;
+                .area_close {
+                    width: 16px;
+                    height: 16px;
+                    margin-left: 8px;
+                    &:hover {
                         cursor: pointer;
-                      }
                     }
-                    .assess_control_deactive {
-                      width: 48%;
-                      text-align: right;
-                      line-height: 24px;
-                      padding-right: 15px;
-                      margin-top: 3px;
-                      height: 20px;
-                      border-radius: 12px 0 0 12px;
-                      margin-right: 10px;
-                      .control_items {
-                        width: 14px;
-                        height: 14px;
-                        cursor: pointer;
-                      }
-                    }
-                    .setting_wrapper {
-                      position: absolute;
-                      padding-right: 5px;
-                      height: 30px;
-                      line-height: 40px;  
-                      right: 15px;
-                      .control_items {
-                        width: 22px;
-                        height: 22px;
-                        background: #fdb2b3;
-                        border-radius: 50%;
-                        cursor: pointer;
-                      }
-                    }
-                  }
                 }
-
-                .assess_wrapper::-webkit-scrollbar {
-                  width: 4px;
-                  height: 4px;
-                }
-
-                .assess_wrapper::-webkit-scrollbar-thumb {
-                  border-radius: 10px;
-                  -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 1);
-                  background: rgba(0, 0, 0, 0.2);
-                }
-
-                .assess_wrapper::-webkit-scrollbar-track {
-                  -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 1);
-                  border-radius: 0;
-                  background: rgba(0, 0, 218, 0.1);
-                }
-
-
-              }
             }
-
-            .task_content_wrapper::-webkit-scrollbar {
-              width: 4px;
-              height: 4px;
+            img {
+                width: 21px;
+                height: 21px;
             }
-
-            .task_content_wrapper::-webkit-scrollbar-thumb {
-              border-radius: 10px;
-              -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 1);
-              background: rgba(0, 0, 0, 0.2);
-            }
-
-            .task_content_wrapper::-webkit-scrollbar-track {
-              -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 1);
-              border-radius: 0;
-              background: rgba(0, 0, 218, 0.1);
-            }
-          }
         }
-      }
-
-      .list_system_ul::-webkit-scrollbar {
-        width: 4px;
-        height: 4px;
-      }
-
-      .list_system_ul::-webkit-scrollbar-thumb {
-        border-radius: 10px;
-        -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 1);
-        background: rgba(0, 0, 0, 0.2);
-      }
-
-      .list_system_ul::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 1);
-        border-radius: 0;
-        background: rgba(0, 0, 218, 0.1);
-      }
-
-      .list_task_ul::-webkit-scrollbar {
-        width: 4px;
-        height: 4px;
-      }
-
-      .list_task_ul::-webkit-scrollbar-thumb {
-        border-radius: 10px;
-        -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 1);
-        background: rgba(0, 0, 0, 0.2);
-      }
-
-      .list_task_ul::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 1);
-        border-radius: 0;
-        background: rgba(0, 0, 218, 0.1);
-      }
-
-
+        .area_content {
+            width: 100%;
+            max-height: 255px;
+            color: rgb(107, 101, 101);
+            font-size: 14px;
+            font-family: MicrosoftYaHei;
+            border-radius: 0px 0px 4px 4px;
+            overflow-y: auto;
+            /* 设置滚动条的样式 */
+            &::-webkit-scrollbar {
+                width: 3px;
+                background-color: #fff;
+            }
+            /* 滚动槽 */
+            &::-webkit-scrollbar-track {
+                border-radius: 10px;
+            }
+            /* 滚动条滑块 */
+            &::-webkit-scrollbar-thumb {
+                border-radius: 10px;
+                background: rgba(194, 194, 194, 0.8);
+            }
+            ul {
+                padding: 5px 10px;
+                li {
+                    height: 30px;
+                    line-height: 30px;
+                    display: flex;
+                    align-items: center;
+                    margin-top: 2px;
+                    padding-top: 1px;
+                    border-top: 1px solid #E7E7E7;
+                    &:first-child {
+                        border-top: none;
+                    }
+                    .area_index {
+                        flex: 1;
+                        margin-left: 8px;
+                    }
+                    .area_name {
+                        flex: 5;
+                    }
+                    .tolatlon {
+                        flex: 3;
+                        width: 70px;
+                        height: 25px;
+                        line-height: 25px;
+                        margin-right: 5px;
+                        border-radius: 20px;
+                        border: 1px solid rgba(148, 151, 154, 0.6);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        font-size: 12px;
+                        &:hover {
+                            cursor: pointer;
+                        }
+                        img {
+                            width: 18px;
+                            height: 18px;
+                            margin-right: 5px;
+                        }
+                    }
+                }
+            }
+        }
     }
-  }
+    // 菜单栏
+    .menu_list {
+        width: 95%;
+        color: rgba(80, 80, 80, 1);
+        margin-top: 15px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.5);
+        .list_ul {
+            width: 100%;
+            display: flex;
+            flex-flow: column nowrap;
+            align-items: center;
+            .list_ul_li {
+                width: 100%;
+                line-height: 50px;
+                padding: 0 18px;
+                position: relative;
+                color: rgba(117, 109, 109, 1);
+                font-size: 16px;
+                .title_box {
+                    display: flex;
+                    align-items: center;
+                    img {
+                        width: 24px;
+                    }
+                }
+                .title {
+                    margin-left: 10px;
+                    display: flex;
+                    align-items: center;
+                    .title_bg {
+                        color: rgb(152, 26, 0);
+                        font-weight: bold;
+                    }
+                    span:hover {
+                        cursor: pointer;
+                    }
+                    img {
+                        width: 20px;
+                        margin-left: 3px;
+                        &:hover {
+                            cursor: pointer;
+                        }
+                    }
+                }
+                .down {
+                    position: absolute;
+                    right: 20px;
+                    cursor: pointer;
+                }
+                // ------系统------
+                .list_system_ul {
+                    width: 90%;
+                    max-height: 350px;
+                    margin-left: 10px;
+                    margin-bottom: 10px;
+                    overflow-y: auto;
+                    li {
+                        width: 95%;
+                        height: auto;
+                        font-size: 14px;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        flex-flow: column;
+                        .task_list {
+                            width: 95%;
+                            height: 30px;
+                            font-size: 14px;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            .task_name {
+                                cursor: pointer;
+                                margin-left: 10px;
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                .task_dot {
+                                    width: 10px;
+                                    height: 10px;
+                                    border: 2px solid #ccc;
+                                    border-radius: 50%;
+                                    margin-right: 10px;
+                                }
+                                .active {
+                                    background: #981A00;
+                                }
+                            }
+                            .task_operation {
+                                // width: 90px;
+                                font-size: 16px;
+                                margin-left: 50px;
+                                img {
+                                    width: 14px;
+                                }
+                                .blue {
+                                    color: rgb(50, 204, 255);
+                                }
+                                .green {
+                                    color: rgb(110, 207, 67);
+                                }
+                                .red {
+                                    color: rgb(247, 53, 11);
+                                }
+                                .purple {
+                                    color: rgb(145, 174, 255);
+                                }
+                                // 图标大小 和 左外边距
+                                .el-button {
+                                    font-size: 16px;
+                                    margin-left: 0;
+                                }
+                            }
+                        }
+                        .task_content_wrapper {
+                            width: 100%;
+                            margin-left: 15px;
+                            .task_content {
+                                width: 95%;
+                                height: auto;
+                                text-align: center;
+                                background: #ccc;
+                                display: flex;
+                                white-space: nowrap;
+                                flex-flow: column;
+                                color: #ffffff;
+                                .task_content_desc {
+                                    width: 100%;
+                                    height: auto;
+                                    text-align: center;
+                                    background: #ccc;
+                                    padding: 5px;
+                                    display: flex;
+                                    white-space: nowrap;
+                                    justify-content: space-between;
+                                    .task_content_name {
+                                        width: 75%;
+                                        text-align: left;
+                                    }
+                                    img {
+                                        width: 20px;
+                                        height: 20px;
+                                        &:hover {
+                                            cursor: pointer;
+                                        }
+                                    }
+                                }
+                                .task_content_route {
+                                    background: #000000;
+                                    text-align: left;
+                                    padding: 5px;
+                                    color: #ffffff;
+                                }
+                            }
+                        }
+                    }
+                }
+                // ------任务------
+                .list_task_ul {
+                    width: 100%;
+                    max-height: 500px;
+                    margin-top: -6px;
+                    margin-left: 0px;
+                    overflow-y: auto;
+                    li {
+                        width: 100%;
+                        height: auto;
+                        font-size: 14px;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        flex-flow: column;
+                        .task_list {
+                            width: 95%;
+                            height: 30px;
+                            font-size: 14px;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            .task_name {
+                                height: 30px;
+                                cursor: pointer;
+                                margin-left: 3px;
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                line-height: 30px;
+                                .task_dot {
+                                    width: 16px;
+                                    margin-top: 5px;
+                                    img {
+                                        width: 14px;
+                                    }
+                                }
+                                .task_desc {
+                                    margin-left: 9px;
+                                }
+                                .active {
+                                    color: #981A00;
+                                    font-weight: bold;
+                                }
+                            }
+                            .task_operation {
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                font-size: 16px;
+                                img {
+                                    width: 18px;
+                                    margin-left: 2px;
+                                }
+                                .blue {
+                                    color: rgb(50, 204, 255);
+                                }
+                                .green {
+                                    color: rgb(110, 207, 67);
+                                }
+                                .red {
+                                    color: rgb(247, 53, 11);
+                                }
+                                .purple {
+                                    color: rgb(145, 174, 255);
+                                }
+                                // 图标大小 和 左外边距
+                                .el-button {
+                                    font-size: 16px;
+                                    margin-left: 0;
+                                }
+                            }
+                        }
+                        .task_content_wrapper {
+                            width: 94%;
+                            max-height: 200px;
+                            overflow-y: auto;
+                            padding: 4px 0 6px 0;
+                            border-radius: 6px;
+                            background: rgba(0, 0, 0, 0.5);
+                            .task_content {
+                                width: 100%;
+                                height: auto;
+                                line-height: 30px;
+                                text-align: center;
+                                display: flex;
+                                white-space: nowrap;
+                                flex-flow: column;
+                                color: #000000;
+                                margin-top: 2px;
+                                .task_content_desc {
+                                    cursor: pointer;
+                                    width: 100%;
+                                    height: 28px;
+                                    line-height: 28px;
+                                    text-align: center;
+                                    display: flex;
+                                    padding-left: 5px;
+                                    white-space: nowrap;
+                                    justify-content: space-between;
+                                    .task_content_img {
+                                        line-height: 37px;
+                                        width: 10%;
+                                        img {
+                                            width: 16px;
+                                            height: 16px;
+                                        }
+                                    }
+                                    .task_content_name {
+                                        color: #ffffff;
+                                        width: 45%;
+                                        text-align: left;
+                                    }
+                                    .control_wrapper {
+                                        width: 40%;
+                                        padding-top: 5px;
+                                        margin-right: 5px;
+                                        img {
+                                            width: 14px;
+                                            height: 14px;
+                                            margin-bottom: 3px;
+                                            &:hover {
+                                                cursor: pointer;
+                                            }
+                                        }
+                                        .activeAssess {
+                                            transform: rotate(180deg);
+                                            -ms-transform: rotate(180deg);
+                                            /* IE 9 */
+                                            -moz-transform: rotate(180deg);
+                                            /* Firefox */
+                                            -webkit-transform: rotate(180deg);
+                                            /* Safari 和 Chrome */
+                                            -o-transform: rotate(180deg);
+                                            /* Opera */
+                                        }
+                                    }
+                                }
+                                .task_content_desc_active {
+                                    background: #830d02;
+                                }
+                                .assess_wrapper {
+                                    width: 100%;
+                                    overflow-y: auto;
+                                    height: auto;
+                                    background: #756c5d;
+                                    overflow-x: hidden;
+                                    .assess_items {
+                                        height: 30px;
+                                        line-height: 36px;
+                                        display: flex;
+                                        justify-content: space-between;
+                                        .assess_img {
+                                            margin-left: 5px;
+                                            img {
+                                                width: 16px;
+                                                height: 16px;
+                                            }
+                                        }
+                                        .assess_desc {
+                                            height: 30px;
+                                            line-height: 30px;
+                                            width: 40%;
+                                            text-align: left;
+                                            font-size: 12px;
+                                            color: #ffffff;
+                                            padding-left: 4px;
+                                        }
+                                        .assess_control {
+                                            width: 48%;
+                                            text-align: right;
+                                            line-height: 24px;
+                                            padding-right: 15px;
+                                            background: #463d38;
+                                            margin-top: 3px;
+                                            height: 20px;
+                                            border-radius: 12px 0 0 12px;
+                                            margin-right: 10px;
+                                            .control_items {
+                                                width: 14px;
+                                                height: 14px;
+                                                cursor: pointer;
+                                            }
+                                        }
+                                        .assess_control_deactive {
+                                            width: 48%;
+                                            text-align: right;
+                                            line-height: 24px;
+                                            padding-right: 15px;
+                                            margin-top: 3px;
+                                            height: 20px;
+                                            border-radius: 12px 0 0 12px;
+                                            margin-right: 10px;
+                                            .control_items {
+                                                width: 14px;
+                                                height: 14px;
+                                                cursor: pointer;
+                                            }
+                                        }
+                                        .setting_wrapper {
+                                            position: absolute;
+                                            padding-right: 5px;
+                                            height: 30px;
+                                            line-height: 40px;
+                                            right: 15px;
+                                            .control_items {
+                                                width: 22px;
+                                                height: 22px;
+                                                background: #fdb2b3;
+                                                border-radius: 50%;
+                                                cursor: pointer;
+                                            }
+                                        }
+                                    }
+                                }
+                                .assess_wrapper::-webkit-scrollbar {
+                                    width: 4px;
+                                    height: 4px;
+                                }
+                                .assess_wrapper::-webkit-scrollbar-thumb {
+                                    border-radius: 10px;
+                                    -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 1);
+                                    background: rgba(0, 0, 0, 0.2);
+                                }
+                                .assess_wrapper::-webkit-scrollbar-track {
+                                    -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 1);
+                                    border-radius: 0;
+                                    background: rgba(0, 0, 218, 0.1);
+                                }
+                            }
+                        }
+                        .task_content_wrapper::-webkit-scrollbar {
+                            width: 4px;
+                            height: 4px;
+                        }
+                        .task_content_wrapper::-webkit-scrollbar-thumb {
+                            border-radius: 10px;
+                            -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 1);
+                            background: rgba(0, 0, 0, 0.2);
+                        }
+                        .task_content_wrapper::-webkit-scrollbar-track {
+                            -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 1);
+                            border-radius: 0;
+                            background: rgba(0, 0, 218, 0.1);
+                        }
+                    }
+                }
+            }
+            .list_system_ul::-webkit-scrollbar {
+                width: 4px;
+                height: 4px;
+            }
+            .list_system_ul::-webkit-scrollbar-thumb {
+                border-radius: 10px;
+                -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 1);
+                background: rgba(0, 0, 0, 0.2);
+            }
+            .list_system_ul::-webkit-scrollbar-track {
+                -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 1);
+                border-radius: 0;
+                background: rgba(0, 0, 218, 0.1);
+            }
+            .list_task_ul::-webkit-scrollbar {
+                width: 4px;
+                height: 4px;
+            }
+            .list_task_ul::-webkit-scrollbar-thumb {
+                border-radius: 10px;
+                -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 1);
+                background: rgba(0, 0, 0, 0.2);
+            }
+            .list_task_ul::-webkit-scrollbar-track {
+                -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 1);
+                border-radius: 0;
+                background: rgba(0, 0, 218, 0.1);
+            }
+        }
+    }
 }

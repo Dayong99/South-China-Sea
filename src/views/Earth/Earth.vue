@@ -11,6 +11,7 @@ import Tool from "@/utils/tool";
 import eventBus from "@/utils/eventBus.js";
 import { mapState, mapMutations } from "vuex";
 import "@/utils/leaflet.ChineseTmsProviders.js";
+import '@/utils/Leaflet.Editable.js'
 
 var tileLayer1 = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 var tileLayer2 =
@@ -76,6 +77,8 @@ export default {
         maxZoom: 13,
         worldCopyJump: true,
         zoomControl: false,
+        // 开启编辑线插件
+        editable: true
         // closePopupOnClick:false
       });
       this.tile1 = L.tileLayer
@@ -375,6 +378,11 @@ body,
   margin: 0;
   padding: 0;
   overflow: hidden;
+}
+
+.leaflet-marker-pane .leaflet-div-icon {
+  background: #fff!important;
+  border: 1px solid #666!important;
 }
 </style>
 <style>
