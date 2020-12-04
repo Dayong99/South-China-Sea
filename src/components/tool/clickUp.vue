@@ -223,7 +223,7 @@ export default {
     },
     infoClose(){
         this.setInfoShow(false)
-        map.off("click",window.mapClick_p)
+        // map.off("click",window.mapClick_p)
     },
     changeTimeIndex(i) {
       this.setChangeDateIndex(i)

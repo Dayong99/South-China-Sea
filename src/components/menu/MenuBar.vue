@@ -155,7 +155,7 @@
                     <div class="control_wrapper" v-if="itemRoute.checked">
                       <img
                         src="@/assets/images/menu/route_info.png"
-                        @click.stop="algorithm(itemRoute, indexRoute)"
+                        @click.stop="showRoute(itemRoute, indexRoute)"
                       />
                       <img
                         src="@/assets/images/menu/route_assess.png"
@@ -1010,19 +1010,34 @@ export default {
         let color = "";
         riskArr.forEach((item) => {
           item.forEach((item1) => {
-            if (parseInt(Number(item1.value) * 10) != 10) {
-              color = this.colorArr[parseInt((Number(item1.value) * 10) / 2)];
+            if (item1.value == -1) {
+              reArr.push({
+                corner1: [Number(item1.lat), Number(item1.lon)],
+                corner2: [
+                  Number(item1.lat) - Number(item1.grid),
+                  Number(item1.lon) + Number(item1.grid),
+                ],
+                color: "",
+                borderColor: "",
+                fillOpacity: 0,
+              });
             } else {
-              color = this.colorArr[this.colorArr.length - 1];
+              if (parseInt(Number(item1.value) * 10) != 10) {
+                color = this.colorArr[parseInt((Number(item1.value) * 10) / 2)];
+              } else {
+                color = this.colorArr[this.colorArr.length - 1];
+              }
+              reArr.push({
+                corner1: [Number(item1.lat), Number(item1.lon)],
+                corner2: [
+                  Number(item1.lat) - Number(item1.grid),
+                  Number(item1.lon) + Number(item1.grid),
+                ],
+                color: color,
+                borderColor: "#000000",
+                fillOpacity: 0.5,
+              });
             }
-            reArr.push({
-              corner1: [Number(item1.lat), Number(item1.lon)],
-              corner2: [
-                Number(item1.lat) - Number(item1.grid),
-                Number(item1.lon) + Number(item1.grid),
-              ],
-              color: color,
-            });
           });
         });
         console.log(reArr, "画风险评估区域---------");
@@ -1030,9 +1045,9 @@ export default {
           let bounds = [item.corner1, item.corner2];
           let rectangle = L.rectangle(bounds, {
             fillColor: item.color,
-            color: "#000000",
+            color: item.borderColor,
             weight: 1,
-            fillOpacity: 0.5,
+            fillOpacity: item.fillOpacity,
           }).addTo(map);
           rectangle.assessmentId = assessmentId;
           rectangle.courseId = courseId;
@@ -1127,12 +1142,23 @@ export default {
           });
           console.log(pointArr);
           pointArr.forEach((item, index) => {
-            let circle = L.circleMarker(item.position, {
-              radius: 6,
-              fillOpacity: 1,
-              fillColor: item.color,
-              weight: 0,
-            }).addTo(map);
+            let circle;
+            if (index == timeIndex) {
+              circle = L.circleMarker(item.position, {
+                radius: 7,
+                fillOpacity: 1,
+                fillColor: item.color,
+                weight: 4,
+                color: "#00F1FF",
+              }).addTo(map);
+            } else {
+              circle = L.circleMarker(item.position, {
+                radius: 6,
+                fillOpacity: 1,
+                fillColor: item.color,
+                weight: 0,
+              }).addTo(map);
+            }
             circle.index = index;
             circle.assessmentId = assessmentId;
             circle.courseId = courseId;
@@ -1144,6 +1170,7 @@ export default {
               this.$get("api/assessment/point-conclusion", {
                 assessmentId: assessmentId,
                 index: e.target.index,
+                point: timeIndex,
               }).then((res) => {
                 console.log(res, "单个点的数据信息");
                 let arr = res.data.data;
@@ -1563,6 +1590,28 @@ export default {
       </div>
     </div>`
       );
+    },
+
+    //查看航线
+    showRoute(itemRoute, indexRoute) {
+      console.log(itemRoute, indexRoute);
+      this.$get("api/course/one", {
+        id: itemRoute.id,
+      }).then((res) => {
+        console.log(res.data.data.courseItemList);
+        let pointArr = res.data.data.courseItemList.map((item) => {
+          return [item.latitude, item.longitude];
+        });
+        console.log(pointArr);
+        L.polyline(pointArr).addTo(map);
+        pointArr.forEach((item) => {
+          L.circleMarker(item, {
+            radius: 6,
+            fillOpacity: 1,
+            weight: 0,
+          }).addTo(map);
+        });
+      });
     },
   },
 };

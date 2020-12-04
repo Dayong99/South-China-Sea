@@ -12,7 +12,7 @@
     </div>
     <div
       class="tool_item tool_right"
-      :class="{ bg: measureflag }"
+      :class="{ bg: flagObj.measureflag }"
       @click.stop="measure"
     >
       <el-tooltip
@@ -26,7 +26,7 @@
     </div>
     <div
       class="tool_item tool_right"
-      :class="{ bg: measureareaflag }"
+      :class="{ bg: flagObj.measureareaflag }"
       @click.stop="measurearea"
     >
       <el-tooltip
@@ -40,8 +40,8 @@
     </div>
     <div
       class="tool_item tool_right"
-      :class="{ bg: locationflag }"
-      @click.stop="locationDialog(true)"
+      :class="{ bg: flagObj.locationflag }"
+      @click.stop="locationDialog"
     >
       <el-tooltip
         class="item"
@@ -54,7 +54,7 @@
     </div>
     <div
       class="tool_item tool_right"
-      :class="{ bg: tileflag }"
+      :class="{ bg: flagObj.tileflag }"
       @click.stop="changeTileLayer"
     >
       <el-tooltip
@@ -68,7 +68,7 @@
     </div>
     <div
       class="tool_item tool_right"
-      :class="{ bg: graticuleflag }"
+      :class="{ bg: flagObj.graticuleflag }"
       @click.stop="graticule"
     >
       <el-tooltip
@@ -82,7 +82,7 @@
     </div>
     <div
       class="tool_item tool_right"
-      :class="{ bg: getValueflag }"
+      :class="{ bg: flagObj.getValueflag }"
       @click.stop="getValue"
     >
       <el-tooltip
@@ -96,7 +96,7 @@
     </div>
     <div
       class="tool_item tool_right"
-      :class="{ bg: getPointValueflag }"
+      :class="{ bg: flagObj.getPointValueflag }"
       @click.stop="getPointValue"
     >
       <el-tooltip
@@ -120,7 +120,7 @@
     </div>
     <div
       class="tool_item tool_right"
-      :class="{ bg: drawflag }"
+      :class="{ bg: flagObj.drawflag }"
       @click.stop="draw"
     >
       <el-tooltip
@@ -140,7 +140,7 @@
           <img src="@/assets/images/toolbar/location.png" />
           <span>坐标定位</span>
         </div>
-        <div class="top_right" @click.stop="locationDialog(false)">
+        <div class="top_right" @click.stop="closeLocation">
           <img src="@/assets/images/legendbar/close.png" />
         </div>
       </div>
@@ -208,7 +208,7 @@
           <div
             class="content_cancle"
             :class="{ btn_active: false }"
-            @click.stop="locationDialog(false)"
+            @click.stop="closeLocation"
           >
             取消
           </div>
@@ -293,17 +293,18 @@ export default {
       lon1: null,
       lon2: null,
       latflag: true,
-      // lonflag: true,
-      measureflag: false,
-      measureareaflag: false,
-      locationflag: false,
-      tileflag: false,
-      graticuleflag: false,
-      getValueflag: false,
-      getPointValueflag: false,
-      drawflag: false,
       lonflag: false,
       locationPoint: null,
+      flagObj: {
+        measureflag: false,
+        measureareaflag: false,
+        locationflag: false,
+        tileflag: false,
+        graticuleflag: false,
+        getValueflag: false,
+        getPointValueflag: false,
+        drawflag: false,
+      },
     };
   },
   computed: {
@@ -345,13 +346,16 @@ export default {
       window.map.zoomOut(1);
     },
     getValue() {
-      this.getValueflag = !this.getValueflag;
+      this.flagObj.getValueflag = !this.flagObj.getValueflag;
       console.log("动态绘制矩形区域");
       // let rectangle;
       let tmprec;
       let latlngs = [];
       let that = this;
-      if (this.getValueflag) {
+      if (this.flagObj.getValueflag) {
+        this.resetflag("getValueflag");
+        this.clearEvent();
+        // this.clear()
         //点击地图
         map.on("click", onClick);
         // map.on(
@@ -505,16 +509,30 @@ export default {
             .then((res) => {
               console.log(res.data.data);
               let obj = res.data.data;
-              const content = `<p>名称: ${menuItem.name}</p>
-          <p>层级: ${menuItem.currentLevel}</p>
-          <p>时间: ${that.nowtime}</p>
-          <p>minX: ${minX.toFixed(3)}</p>
-          <p>minY: ${minY.toFixed(3)}</p>
-          <p>maxX: ${maxX.toFixed(3)}</p>
-          <p>maxY: ${maxY.toFixed(3)}</p>
-          <p>最小值: ${obj.min.toFixed(3)}</p>
-          <p>最大值: ${obj.max.toFixed(3)}</p>
-          <p>平均值: ${obj.average.toFixed(3)}</p>`;
+              let content
+              if (menuItem.name == "温度"||menuItem.name == "2米温度") {
+                content = `<p>名称: ${menuItem.name}</p>
+                  <p>层级: ${menuItem.currentLevel}</p>
+                  <p>时间: ${that.nowtime}</p>
+                  <p>西: ${minX.toFixed(3)}</p>
+                  <p>南: ${minY.toFixed(3)}</p>
+                  <p>东: ${maxX.toFixed(3)}</p>
+                  <p>北: ${maxY.toFixed(3)}</p>
+                  <p>最小值: ${(obj.min - 273.15).toFixed(3)}</p>
+                  <p>最大值: ${(obj.max - 273.15).toFixed(3)}</p>
+                  <p>平均值: ${(obj.average - 273.15).toFixed(3)}</p>`;
+              }else{
+                content = `<p>名称: ${menuItem.name}</p>
+                  <p>层级: ${menuItem.currentLevel}</p>
+                  <p>时间: ${that.nowtime}</p>
+                  <p>西: ${minX.toFixed(3)}</p>
+                  <p>南: ${minY.toFixed(3)}</p>
+                  <p>东: ${maxX.toFixed(3)}</p>
+                  <p>北: ${maxY.toFixed(3)}</p>
+                  <p>最小值: ${obj.min.toFixed(3)}</p>
+                  <p>最大值: ${obj.max.toFixed(3)}</p>
+                  <p>平均值: ${obj.average.toFixed(3)}</p>`;
+              }
 
               that.rectangle = L.rectangle(latlngs, {
                 color: "#1E90FF",
@@ -537,96 +555,180 @@ export default {
     },
     getPointValue() {
       let that = this;
-      map.on(
-        "click",
-        (window.mapClick_p = function(e) {
-          console.log(e, "点击地图---------------");
-          console.log(that.menuItemList, "侧边栏选择");
-          let level = "";
-          let type = "";
-          that.menuItemList.forEach((item) => {
-            level += item.currentLevel + ",";
-            type += item.id + ",";
-          });
-          console.log(
-            level.substring(0, level.length - 1),
-            type.substring(0, type.length - 1)
-          );
-          that
-            .$get("api/numerical-forecast/summary-info", {
-              day: that.nowtime.substring(0, 10), //日期
-              time: that.nowtime.substring(11, 13), //时间
-              type: type.substring(0, type.length - 1), //要素id
-              level: level.substring(0, level.length - 1), //当前选中的层级
-              lon: e.latlng.lng,
-              lat: e.latlng.lat,
-            })
-            .then((res) => {
-              let dataArr = res.data.data;
-              let infoData = [
-                {
-                  name: "时间",
-                  value: that.nowtime,
-                },
-                {
-                  name: "经度",
-                  value: Number(e.latlng.lng).toFixed(3),
-                },
-                {
-                  name: "纬度",
-                  value: Number(e.latlng.lat).toFixed(3),
-                },
-              ];
-              dataArr.forEach((item) => {
-                infoData.push({
-                  name: item.name,
-                  value: item.value1,
+      this.flagObj.getPointValueflag = !this.flagObj.getPointValueflag;
+      if (this.flagObj.getPointValueflag) {
+        this.resetflag("getPointValueflag");
+        // this.clear()
+        this.clearEvent();
+        map.on(
+          "click",
+          (window.mapClick_p = function(e) {
+            console.log(e, "点击地图---------------");
+            console.log(that.menuItemList, "侧边栏选择");
+            let level = "";
+            let type = "";
+            that.menuItemList.forEach((item) => {
+              level += item.currentLevel + ",";
+              type += item.id + ",";
+            });
+            console.log(
+              level.substring(0, level.length - 1),
+              type.substring(0, type.length - 1)
+            );
+            that
+              .$get("api/numerical-forecast/summary-info", {
+                day: that.nowtime.substring(0, 10), //日期
+                time: that.nowtime.substring(11, 13), //时间
+                type: type.substring(0, type.length - 1), //要素id
+                level: level.substring(0, level.length - 1), //当前选中的层级
+                lon: e.latlng.lng,
+                lat: e.latlng.lat,
+              })
+              .then((res) => {
+                let dataArr = res.data.data;
+                let infoData = [
+                  {
+                    name: "时间",
+                    value: that.nowtime,
+                  },
+                  {
+                    name: "经度",
+                    value: Number(e.latlng.lng).toFixed(3),
+                  },
+                  {
+                    name: "纬度",
+                    value: Number(e.latlng.lat).toFixed(3),
+                  },
+                ];
+                dataArr.forEach((item) => {
+                  if (item.name == "温度"||item.name == "2米温度") {
+                    infoData.push({
+                      name: item.name,
+                      value: (item.value1 - 273.15).toFixed(3),
+                    });
+                  } else {
+                    infoData.push({
+                      name: item.name,
+                      value: item.value1,
+                    });
+                  }
+                });
+                console.log(infoData, "单点数据信息--------");
+                that.setInfoData(infoData);
+                that.setInfoLocation(e.containerPoint);
+                that.setInfoShow(true);
+                let marker = e;
+                map.on("move", (e) => {
+                  let p = map.latLngToContainerPoint(
+                    L.latLng(marker.latlng.lat, marker.latlng.lng)
+                  );
+                  console.log(p);
+                  that.setInfoLocation(p);
                 });
               });
-              console.log(infoData, "单点数据信息--------");
-              that.setInfoData(infoData);
-              that.setInfoLocation(e.containerPoint);
-              that.setInfoShow(true);
-              let marker = e;
-              map.on("move", (e) => {
-                let p = map.latLngToContainerPoint(
-                  L.latLng(marker.latlng.lat, marker.latlng.lng)
-                );
-                console.log(p);
-                that.setInfoLocation(p);
-              });
-            });
-        })
-      );
+          })
+        );
+      } else {
+        //关闭事件，关闭弹框
+        map.off("click", window.mapClick_p);
+        this.setInfoShow(false);
+      }
     },
     // 距离量算
     measure() {
-      this.getViewer();
-      window.tool.measure();
+      this.flagObj.measureflag = !this.flagObj.measureflag;
+      if (this.flagObj.measureflag) {
+        this.getViewer();
+        this.resetflag("measureflag");
+        window.tool.clearAreaMeasure();
+        // this.clear()
+        window.tool.measure();
+      } else {
+        window.tool.clearTool();
+      }
     },
 
     // 面积量算
     measurearea() {
-      this.getViewer();
-      window.tool.measurearea();
+      this.flagObj.measureareaflag = !this.flagObj.measureareaflag;
+      if (this.flagObj.measureareaflag) {
+        this.getViewer();
+        this.resetflag("measureareaflag");
+        window.tool.clearMeasure();
+        // this.clear()
+        window.tool.measurearea();
+      } else {
+        window.tool.clearTool();
+      }
     },
     graticule() {
-      this.getViewer();
-      if (this.latlngGraticuleLayer) {
+      this.flagObj.graticuleflag = !this.flagObj.graticuleflag;
+      if (this.flagObj.graticuleflag) {
+        this.getViewer();
+        this.loadGraticule();
+        // if (this.latlngGraticuleLayer) {
+        //   this.latlngGraticuleLayer.remove();
+        //   this.latlngGraticuleLayer = null;
+        // } else {
+        //   this.loadGraticule();
+        // }
+      } else {
         this.latlngGraticuleLayer.remove();
         this.latlngGraticuleLayer = null;
-      } else {
-        this.loadGraticule();
       }
     },
     // 清除要素
     clear() {
+      // //清除区域取值的矩形区域和点击事件
+      // if (this.rectangle) {
+      //   map.removeLayer(this.rectangle);
+      //   map.off("click", onclick);
+      // }
+      // //清除单点取值的点击事件
+      // map.off("click", window.mapClick_p);
+      // this.setInfoShow(false);
+
+      // // window.tool.clearTool();
+      // this.getViewer()
+      // //清除测量距离
+      // window.tool.clearMeasure()
+      // //清除测量面积
+      // window.tool.clearAreaMeasure()
+      this.clearEvent();
+      this.resetflag("");
+      //关闭经纬度
+      this.flagObj.graticuleflag = false;
+      this.latlngGraticuleLayer.remove();
+      this.latlngGraticuleLayer = null;
+      //关闭定位
+      this.closeLocation();
+      //清除图层切换
+      this.setTileLayer(false);
+    },
+    clearEvent() {
       //清除区域取值的矩形区域和点击事件
-      map.removeLayer(this.rectangle);
-      map.off("click",onclick);
+      if (this.rectangle) {
+        map.removeLayer(this.rectangle);
+        map.off("click", onclick);
+      }
       //清除单点取值的点击事件
       map.off("click", window.mapClick_p);
-      window.tool.clearTool();
+      this.setInfoShow(false);
+
+      // window.tool.clearTool();
+      this.getViewer();
+      //清除测量距离
+      window.tool.clearMeasure();
+      //清除测量面积
+      window.tool.clearAreaMeasure();
+    },
+    //将选中的其余状态置为false
+    resetflag(flagName) {
+      for (let key in this.flagObj) {
+        if (key != flagName && key != "graticuleflag") {
+          this.flagObj[key] = false;
+        }
+      }
     },
     // 经纬线
     loadGraticule() {
@@ -638,43 +740,79 @@ export default {
       }).addTo(window.map);
     },
     // 定位窗口
-    locationDialog(flag) {
+    locationDialog() {
       // flag==false 清除数据
-      if (!flag) {
-        this.lat1 = null;
-        this.lat2 = null;
-        this.lon1 = null;
-        this.lon2 = null;
-        this.latflag = true;
-        this.lonflag = true;
-        window.map.removeLayer(this.locationPoint)
+      this.flagObj.locationflag = !this.flagObj.locationflag;
+      if (this.flagObj.locationflag) {
+        this.locationShow = true;
+      } else {
+        this.closeLocation();
       }
-      this.locationShow = flag;
+    },
+    closeLocation() {
+      this.lat1 = null;
+      this.lat2 = null;
+      this.lon1 = null;
+      this.lon2 = null;
+      this.latflag = true;
+      this.lonflag = false;
+      if (this.locationPoint) {
+        window.map.removeLayer(this.locationPoint);
+      }
+      this.locationShow = false;
     },
     // 定位方法
     checkLocation() {
-      if(this.locationPoint) {
-        window.map.removeLayer(this.locationPoint)
+      if (this.locationPoint) {
+        window.map.removeLayer(this.locationPoint);
       }
       // latflag --- N(true) S(false)   lonflag --- W(false) E(true)
       let lat = this.changeToDu(this.lat1, this.lat2);
       let lon = this.changeToDu(this.lon1, this.lon2);
       if (!this.latflag && !this.lonflag) {
         // S W
-        this.locationPoint = L.circleMarker([0 - lat, 0 - lon], {weight: 5, opacity: 0.7, color: '#981a00', radius: 7, fillColor: '#fff', fillOpacity: 0.9}).addTo(map);
+        this.locationPoint = L.circleMarker([0 - lat, 0 - lon], {
+          weight: 5,
+          opacity: 0.7,
+          color: "#981a00",
+          radius: 7,
+          fillColor: "#fff",
+          fillOpacity: 0.9,
+        }).addTo(map);
         window.map.flyTo(L.latLng(0 - lat, 0 - lon));
       } else if (!this.latflag) {
         // S E
-        this.locationPoint = L.circleMarker([0 - lat, lon], {weight: 5, opacity: 0.7, color: '#981a00', radius: 7, fillColor: '#fff', fillOpacity: 0.9}).addTo(map);
+        this.locationPoint = L.circleMarker([0 - lat, lon], {
+          weight: 5,
+          opacity: 0.7,
+          color: "#981a00",
+          radius: 7,
+          fillColor: "#fff",
+          fillOpacity: 0.9,
+        }).addTo(map);
         window.map.flyTo(L.latLng(0 - lat, lon));
       } else if (!this.lonflag) {
         // N W
         window.map.flyTo(L.latLng(lat, 0 - lon));
-        this.locationPoint = L.circleMarker([lat, 0 - lon], {weight: 5, opacity: 0.7, color: '#981a00', radius: 7, fillColor: '#fff', fillOpacity: 0.9}).addTo(map);
+        this.locationPoint = L.circleMarker([lat, 0 - lon], {
+          weight: 5,
+          opacity: 0.7,
+          color: "#981a00",
+          radius: 7,
+          fillColor: "#fff",
+          fillOpacity: 0.9,
+        }).addTo(map);
       } else {
         // N E
         window.map.flyTo(L.latLng(lat, lon));
-        this.locationPoint = L.circleMarker([lat, lon], {weight: 5, opacity: 0.7, color: '#981a00', radius: 7, fillColor: '#fff', fillOpacity: 0.9}).addTo(map);
+        this.locationPoint = L.circleMarker([lat, lon], {
+          weight: 5,
+          opacity: 0.7,
+          color: "#981a00",
+          radius: 7,
+          fillColor: "#fff",
+          fillOpacity: 0.9,
+        }).addTo(map);
       }
     },
     changeToDu(latLng1, latLng2) {
@@ -693,7 +831,13 @@ export default {
     },
     // 切换底图
     changeTileLayer() {
-      this.setTileLayer(!this.tileLayer);
+      this.flagObj.tileflag = !this.flagObj.tileflag;
+      if (this.flagObj.tileflag) {
+        this.setTileLayer(true);
+      } else {
+        this.setTileLayer(false);
+      }
+      // this.setTileLayer(!this.tileLayer);
     },
 
     // 绘图
