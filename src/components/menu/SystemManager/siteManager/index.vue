@@ -125,7 +125,7 @@ export default {
       },
 
       markerGroup: [],
-      placeImg: require("../../../../assets/images/buoy.png"),
+      placeImg: require("../../../../assets/images/place.png"),
     };
   },
   mounted() {},
