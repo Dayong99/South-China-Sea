@@ -336,7 +336,7 @@
                   <div class="task_dot">
                     <img src="@/assets/images/menu/taskSettle.svg" />
                   </div>
-                  <div class="task_name" @click="openSystem(index)">{{
+                  <div class="task_name" @click="openData(index)">{{
                     item.name
                   }}</div>
                 </div>
@@ -534,6 +534,7 @@ export default {
   watch: {
     menuList: {
       handler(newval, oldval) {
+        console.log(newval)
         let i = newval.findIndex((item) => {
           return item.flag == true;
         });
