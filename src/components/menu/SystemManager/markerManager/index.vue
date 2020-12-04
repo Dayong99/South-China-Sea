@@ -9,7 +9,7 @@
       style="width: auto; height: auto"
     >
       <div class="manager_title">
-        <span>常用标志区</span>
+        <span>常用警戒线和任务区</span>
         <img
           src="@/assets/images/legendbar/close.png"
           @click.stop="closeManager"
@@ -33,7 +33,7 @@
           </template>
         </el-table-column> -->
           <el-table-column
-            label="标志区名称"
+            label="名称"
             align="center"
             min-width="100px"
             :show-overflow-tooltip="true"
@@ -163,7 +163,9 @@ export default {
       }
     },
   },
-  mounted() {},
+  mounted() {
+    this.fetch();
+  },
   computed: {
     ...mapState({
       menuList: (state) => state.menuBar.menuList,
@@ -203,16 +205,28 @@ export default {
         this.$refs.markerBox.style.top = "42%";
         this.$refs.markerBox.style.transform = "translate(-50%, -50%)";
       } else {
-        this.clearGeojson();
+        this.markShow = false;
       }
     },
-    tableData(val) {
+    tableData: {
+      handler(val) {
+        this.getShapes(val);
+      },
+      deep: true,
+    },
+  },
+  methods: {
+    ...mapMutations({
+      setMenuList: "menuBar/setMenuList",
+    }),
+    getShapes(val) {
       this.clearGeojson();
       this.geojsonGroup = [];
       val.forEach((item, index) => {
         if (Number(item.isShow) == 1) {
           let geojson = JSON.parse(item.coordinates);
-          console.log(geojson);
+          let style = JSON.parse(item.other1);
+          // console.log(geojson);
 
           // let data = {};
           // geojson.forEach((item) => {
@@ -222,24 +236,39 @@ export default {
           //   }
           //   data.push(obj);
           // });
-        
-          let layer = L.geoJSON(geojson).addTo(map);
+          let layer;
+          if (geojson.type == "Point") {
+            // console.log(geojson.coordinates);
+            // layer =new L.circle(
+            //   { lat: geojson.coordinates[0], lng: geojson.coordinates[1] },
+            //   {
+            //     radius: Number(item.other2),
+            //     weight: style.weight,
+            //     color: style.color,
+            //     fillColor: style.fillColor,
+            //     fillOpacity: style.fillOpacity,
+            //   }
+            // ).addTo(map);
+            layer = new L.Circle([geojson.coordinates[1],geojson.coordinates[0]], Number(item.other2), style).addTo(map);
+            console.log(layer);
+          } else {
+            layer = L.geoJSON(geojson, {
+              style: style,
+            }).addTo(map);
+          }
+
           layer
             .bindPopup(item.placeName, {
               autoPan: false,
               autoClose: false,
               className: "leaflet-marker-markerTip",
               keepInView: false,
-            });
+            })
+            .openPopup();
           this.geojsonGroup.push(layer);
         }
       });
     },
-  },
-  methods: {
-    ...mapMutations({
-      setMenuList: "menuBar/setMenuList",
-    }),
     clearGeojson() {
       this.geojsonGroup.forEach((item) => {
         if (map.hasLayer(item)) {

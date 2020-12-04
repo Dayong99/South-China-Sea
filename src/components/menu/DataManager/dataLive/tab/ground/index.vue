@@ -42,7 +42,7 @@
           min-width="100px"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.areaNum }}</span>
+            <span>{{ scope.row.areaNumber }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -87,7 +87,7 @@
         <el-table-column
           label="露点温度(℃)"
           align="center"
-          min-width="100px"
+          min-width="120px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.dewTemperature }}</span>
@@ -105,7 +105,7 @@
         <el-table-column
           label="海平面气压(hPa)"
           align="center"
-          min-width="100px"
+         width="140px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.seaLevelPressure }}</span>

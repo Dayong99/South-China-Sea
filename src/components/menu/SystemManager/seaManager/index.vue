@@ -156,7 +156,9 @@ export default {
       },
     };
   },
-  mounted() {},
+  mounted() {
+    this.fetch()
+  },
   computed: {
     ...mapState({
       menuList: (state) => state.menuBar.menuList,
@@ -192,11 +194,27 @@ export default {
         this.$refs.seaBox.style.left = "50%";
         this.$refs.seaBox.style.top = "42%";
         this.$refs.seaBox.style.transform = "translate(-50%, -50%)";
-      } else {
-        this.clearGeojson();
       }
     },
-    tableData(val) {
+    tableData: {
+      handler(val){
+        this.getSeaArea(val)
+      },
+      deep:true
+    },
+  },
+  methods: {
+    ...mapMutations({
+      setMenuList: "menuBar/setMenuList",
+    }),
+    clearGeojson() {
+      this.geojsonGroup.forEach((item) => {
+        if (map.hasLayer(item)) {
+          item.removeFrom(map);
+        }
+      });
+    },
+    getSeaArea(val){
       this.clearGeojson();
       this.geojsonGroup = [];
       val.forEach((item, index) => {
@@ -216,18 +234,6 @@ export default {
           }).addTo(map);
 
           this.geojsonGroup.push(layer);
-        }
-      });
-    },
-  },
-  methods: {
-    ...mapMutations({
-      setMenuList: "menuBar/setMenuList",
-    }),
-    clearGeojson() {
-      this.geojsonGroup.forEach((item) => {
-        if (map.hasLayer(item)) {
-          item.removeFrom(map);
         }
       });
     },

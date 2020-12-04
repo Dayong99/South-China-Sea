@@ -1200,19 +1200,19 @@ export default {
           L.latLng(extent.yMax, extent.xMax - 360)
         );
         if (img) {
-          let imageLayer = L.imageOverlay(img, bounds, {opacity: 0.7});
+          let imageLayer = L.imageOverlay(img, bounds, {opacity: 0.8});
           imageLayer.id = currentItem.id;
           imageLayer.layerId = this.layerNum;
           this.layerGroup.addLayer(imageLayer);
           // imageLayer.addTo(window.map);
           // this.layerList.push(imageLayer);
-          let imageLayer1 = L.imageOverlay(img, bounds1, {opacity: 0.7});
+          let imageLayer1 = L.imageOverlay(img, bounds1, {opacity: 0.8});
           imageLayer1.id = currentItem.id;
           imageLayer1.layerId = this.layerNum;
           this.layerGroup.addLayer(imageLayer1);
           // imageLayer1.addTo(window.map);
           // this.layerList.push(imageLayer1);
-          let imageLayer2 = L.imageOverlay(img, bounds2, {opacity: 0.7});
+          let imageLayer2 = L.imageOverlay(img, bounds2, {opacity: 0.8});
           imageLayer2.id = currentItem.id;
           imageLayer2.layerId = this.layerNum;
           this.layerGroup.addLayer(imageLayer2);
