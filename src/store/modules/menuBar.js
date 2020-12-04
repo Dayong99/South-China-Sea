@@ -38,7 +38,7 @@ const state = {
       flag: false
     },
     {
-      name: '常用标志区',
+      name: '常用警戒线和任务区',
       flag: false
     },
     {

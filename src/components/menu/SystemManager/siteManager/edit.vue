@@ -100,14 +100,7 @@ export default {
     return {
       data: {},
       rules: {},
-      formData: {
-         placeName: "",
-        isShow: "0",
-        longitude: "",
-        latitude: "",
-        coordinates: null,
-        drawType: 0,
-      },
+      formData: this.initForm(),
       rules: {
         placeName: {
           required: true,
@@ -130,6 +123,18 @@ export default {
     },
   },
   methods: {
+    initForm(){
+      return {
+         placeName: "",
+        isShow: "0",
+        longitude: "",
+        latitude: "",
+        coordinates: null,
+        drawType: 0,
+        other1:null,
+        other2:null
+      }
+    },
     setData(data) {
       this.formData = {
         ...data,
@@ -144,14 +149,7 @@ export default {
     reset() {
       this.$refs.form.clearValidate();
       this.$refs.form.resetFields();
-      this.formData = {
-        placeName: "",
-        isShow: "0",
-        longitude: "",
-        latitude: "",
-        coordinates: null,
-        drawType: 0,
-      };
+      this.formData = this.initForm();
     },
     // 添加或修改
     submit() {

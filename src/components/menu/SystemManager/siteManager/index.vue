@@ -128,7 +128,9 @@ export default {
       placeImg: require("../../../../assets/images/place.png"),
     };
   },
-  mounted() {},
+  mounted() {
+    this.fetch()
+  },
   computed: {
     ...mapState({
       menuList: (state) => state.menuBar.menuList,
@@ -167,13 +169,11 @@ export default {
         this.$refs.siteBox.style.left = "50%";
         this.$refs.siteBox.style.top = "42%";
         this.$refs.siteBox.style.transform = "translate(-50%, -50%)";
-      } else {
-        this.clearAllPlace();
       }
     },
     tableData: {
       handler(val) {
-        this.getAllPlace();
+        this.getAllPlace(val);
       },
       deep: true,
     },
@@ -182,9 +182,10 @@ export default {
     ...mapMutations({
       setMenuList: "menuBar/setMenuList",
     }),
-    getAllPlace() {
+    getAllPlace(val) {
+      this.clearAllPlace()
       let markerArr = [];
-      this.tableData.forEach((item, index) => {
+      val.forEach((item, index) => {
         if (Number(item.isShow) == 1) {
           let icon = new L.Icon({
             iconUrl: this.placeImg,

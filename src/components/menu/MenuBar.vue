@@ -310,7 +310,7 @@
                 <div class="task_name" @click="openSystem(index)">
                   <span>{{ item.name }}</span>
                 </div>
-                <div class="task_operation">
+                <div class="task_operation" style="margin-left:0;">
                   <el-button
                     icon="el-icon-s-operation"
                     class="table_column_icon purple"
