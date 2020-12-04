@@ -177,12 +177,15 @@
                       v-for="(itemAssess, indexAssess) in itemRoute.assessList"
                       :key="`assess${indexAssess}`"
                     >
-                      <div class="assess_img">
-                        <img src="@/assets/images/menu/timeTitle.png" />
+                      <div class="assess_item">
+                        <div class="assess_img">
+                          <img src="@/assets/images/menu/timeTitle.png" />
+                        </div>
+                        <div class="assess_desc">
+                          {{ itemAssess.assesstime | filterTime }}
+                        </div>
                       </div>
-                      <div class="assess_desc">
-                        {{ itemAssess.assesstime | filterTime }}
-                      </div>
+                      
                       <transition
                         enter-active-class="animated slideInRight"
                         leave-active-class="animated slideOutRight"
