@@ -47,7 +47,7 @@
         icon="el-icon-download"
         class="operation_add"
         @click="exportFile"
-        >导入资料</el-button
+        >导入海浪</el-button
       >
       <el-button
         icon="el-icon-download"
@@ -65,7 +65,7 @@
         icon="el-icon-download"
         class="operation_add"
         @click="exportNecp"
-        >导入necp</el-button
+        >导入gfs</el-button
       >
     </div>
     <div class="manager_table">
