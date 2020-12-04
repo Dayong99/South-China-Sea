@@ -61,7 +61,7 @@ const state = {
       flag: false
     },
     {
-      name: '欧格海浪数值预报',
+      name: 'hycom海流数值预报数据',
       flag: false
     },
     {

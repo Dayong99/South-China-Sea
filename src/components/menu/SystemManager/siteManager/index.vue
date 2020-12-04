@@ -198,21 +198,8 @@ export default {
             icon: icon,
           });
           markerArr.push(marker);
-
-          // buoy.id = this.shipId;
-          //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
-          // buoy.bindCustomPopup(this.getInfoContent(item.callSign));
-          // marker.on("click", (ev) => {
-          //   marker.bindPopup(item.placeName).openPopup();
-          // });
-
           marker
-            .bindPopup(item.placeName, {
-              autoPan: false,
-              autoClose: false,
-              className: "leaflet-marker-markerTip",
-              keepInView: false,
-            })
+            .bindPopup(item.placeName)
             .openPopup();
         }
       });

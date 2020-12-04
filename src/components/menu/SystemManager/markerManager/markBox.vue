@@ -4,6 +4,7 @@
     <div id="markBox" v-show="markShow" ref="markBox">
       <div class="shapes">
         <button
+          class="btn"
           v-for="(item, index) in markToolsList"
           :key="index + 'tools'"
           :disabled="disabled"
@@ -14,6 +15,7 @@
         </button>
 
         <button
+          class="btn"
           v-for="(item, index) in controlList"
           :key="index + 'control'"
           @click="control()"
@@ -84,8 +86,8 @@
         <!-- 经纬度 -->
 
         <el-form-item label="是否显示" prop="isShow">
-          <el-radio v-model="formData.isShow" label="0">不显示</el-radio>
           <el-radio v-model="formData.isShow" label="1">显示</el-radio>
+          <el-radio v-model="formData.isShow" label="0">不显示</el-radio>
         </el-form-item>
       </el-form>
       <div class="btn-box">
@@ -215,6 +217,7 @@ export default {
     markShow(val) {
       if (val) {
         this.resetMarker();
+        this.resetToolBar();
         this.cancleMarkerListener();
 
         this.options = {
@@ -222,19 +225,15 @@ export default {
           color: "rgb(25,186,0,1)",
           width: 1.5,
         };
-        this.toolClicked = -1;
-        this.sizeClicked = 0;
-        this.colorClicked = 0;
-        this.controlClicked = -1;
-        this.bindColor = "rgb(20, 41, 62)";
+
         this.nowObj = null;
-        this.disabled = false;
       }
     },
-    tipPanel(val){
-      this.formData.placeName = ''
-      this.formData.isShow = '1'
-    }
+    tipPanel(val) {
+      this.formData.placeName = "";
+      this.formData.isShow = "1";
+      this.$refs["form"].clearValidate();
+    },
   },
   created() {},
   mounted() {},
@@ -250,6 +249,24 @@ export default {
         other1: null,
         other2: null,
       };
+    },
+    resetToolBar() {
+      this.toolClicked = -1;
+      this.sizeClicked = 0;
+      this.colorClicked = 0;
+      this.controlClicked = -1;
+      this.disabled = false;
+      this.bindColor = "rgb(20, 41, 62)";
+    },
+    resetTipPanel() {
+      if (map.hasLayer(this.nowObj)) {
+        map.removeLayer(this.nowObj);
+      }
+      if (Number(this.formData.isShow) == 0) {
+        map.removeLayer(this.nowObj);
+      }
+      this.tipPanel = false;
+      this.initForm();
     },
     resetMarker() {
       this.cancleMarkerListener();
@@ -276,7 +293,13 @@ export default {
       });
     },
     control(item, index) {
-      this.$emit("closeDraw");
+      this.cancleMarkerListener();
+      if (this.disabled) {
+        this.$message("已退出当前绘画");
+      }
+      this.resetToolBar();
+      this.resetTipPanel()
+      // this.$emit("closeDraw");
     },
     tool(item, index) {
       console.log(item);
@@ -472,6 +495,7 @@ export default {
     // 确定圆心
     addCircleCenter(e) {
       this.circleCenter = e.latlng;
+      console.log(this.circleCenter);
     },
     // 拖动改变圆半径
     getRadius(e) {
@@ -491,17 +515,21 @@ export default {
     // 确定圆
     confirmCircle(e) {
       this.cancleMarkerListener();
-      console.log(this.circleCenter);
       map.removeLayer(this.poly_nowCircle);
       this.formData.other1 = {
-        radius: this.radius,
         weight: this.options.width,
         color: this.options.color,
         fillColor: this.options.color,
         fillOpacity: 0.2,
       };
-      this.poly_circle = L.circle(this.circleCenter, this.formData.other1).addTo(map);
-      console.log(this.poly_circle)
+      this.poly_circle = L.circle(
+        this.circleCenter,
+        this.radius,
+        this.formData.other1
+      ).addTo(map);
+      console.log(this.poly_circle);
+      console.log(this.circleCenter);
+
       map.dragging.enable();
       this.toolClicked = -1;
       this.options.type = null;
@@ -737,14 +765,8 @@ export default {
               //   this.formData.placeName,
               //   this.tipLocation
               // );
-              if (map.hasLayer(this.nowObj)) {
-                map.removeLayer(this.nowObj);
-              }
-              if (Number(this.formData.isShow) == 0) {
-                map.removeLayer(this.nowObj);
-              }
-              this.initForm();
-              this.tipPanel = false;
+              this.resetTipPanel();
+
               this.$emit("updateTab");
             })
             .catch(() => {
