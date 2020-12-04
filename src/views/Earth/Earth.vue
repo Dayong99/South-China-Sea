@@ -26,6 +26,18 @@ export default {
     return {
       // 定时器，1秒只响应一次
       timer: null,
+      tile1: null,
+      tile2: null,
+      tile3: null,
+      tile4: null,
+
+      // geojson
+      divisionGroup: L.layerGroup(),
+      geoStyle: {
+        color: "#ff7800",
+        weight: 3,
+        opacity: 0.65,
+      },
     };
   },
   computed: {
@@ -41,7 +53,10 @@ export default {
       this.changeTileLayer(newval)
     }
   },
-  created() {},
+  created() {
+    // 根据需要显示的geojson数据进行绘制
+    this.getAndDrawSeaDivision()
+  },
   destroyed() {
     window.map = null;
   },
@@ -63,7 +78,7 @@ export default {
         zoomControl: false,
         // closePopupOnClick:false
       });
-      L.tileLayer
+      this.tile1 = L.tileLayer
         .chinaProvider("Geoq.Normal.PurplishBlue", { maxZoom: 13, minZoom: 2 })
         .addTo(window.map);
       // this.createTileLayer(tileLayer4, {
@@ -302,18 +317,52 @@ export default {
     // 切换底图
     changeTileLayer(flag) {
       if(flag) {
-        L.tileLayer
+        this.tile2 = L.tileLayer
         .chinaProvider("Google.Normal.Map", { maxZoom: 13, minZoom: 2 })
         .addTo(window.map);
 
-        L.tileLayer(tileLayer4, { maxZoom: 13, minZoom: 2 }).addTo(window.map)
-        L.tileLayer(tileLayer5, { maxZoom: 13, minZoom: 2 }).addTo(window.map)
+        this.tile3 = L.tileLayer(tileLayer4, { maxZoom: 13, minZoom: 2 }).addTo(window.map)
+        this.tile4 = L.tileLayer(tileLayer5, { maxZoom: 13, minZoom: 2 }).addTo(window.map)
+        map.removeLayer(this.tile1)
       } else {
-        L.tileLayer
+        this.tile1 = L.tileLayer
         .chinaProvider("Geoq.Normal.PurplishBlue", { maxZoom: 13, minZoom: 2 })
         .addTo(window.map);
+        map.removeLayer(this.tile2)
+        map.removeLayer(this.tile3)
+        map.removeLayer(this.tile4)
       }
-    }
+    },
+    // 绘制海区geojson
+    getAndDrawSeaDivision() {
+      this.$get('/api/sea-division/all').then(res => {
+        if(res.status == 200) {
+          let data = res.data.data
+          let divisionList = data.filter(item => {
+            return item.isShow
+          })
+          divisionList.forEach(item => {
+            let geojson = JSON.parse(item.dataGeo);
+            let data = [];
+            geojson.forEach((item1) => {
+              let obj = {};
+              for (let i in item1) {
+                obj[i] = item1[i];
+              }
+              data.push(obj);
+            });
+
+            let layer = L.geoJSON(data, {
+              style: this.geoStyle,
+            })
+            this.divisionGroup.addLayer(layer)
+          })
+          this.divisionGroup.addTo(map)
+        }
+      }).catch(error => {
+        this.$message.error('获取海区划分数据失败')
+      })
+    },
   },
 };
 </script>

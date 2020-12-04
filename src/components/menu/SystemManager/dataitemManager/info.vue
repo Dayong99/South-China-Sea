@@ -131,6 +131,17 @@
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
+            <el-form-item label="值范围：" prop="valueRange">
+              <div>
+                {{ formData.valueRange }}
+              </div>
+            </el-form-item>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="18">
+          <div class="grid-content bg-purple-dark">
             <el-form-item label="标识：" prop="parameterMark">
               <div>
                 {{ formData.parameterMark }}
@@ -177,7 +188,7 @@
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
             <el-form-item label="图例：" prop="legendId">
-              <span>{{legendName(formData.legendId)}}</span>
+              <span>{{ legendName(formData.legendId) }}</span>
             </el-form-item>
           </div>
         </el-col>
@@ -299,15 +310,16 @@ export default {
         units: "",
         drawType: "",
         isEvaluate: "",
+        valueRange:""
       };
     },
     legendName(val) {
-      let name
+      let name;
       for (let i = 0; i < this.legendList.length; i++) {
-          if (val == this.legendList[i].id) {
-            name =  this.legendList[i].legendName;
-          }
+        if (val == this.legendList[i].id) {
+          name = this.legendList[i].legendName;
         }
+      }
       return name;
     },
     drawType(type) {
@@ -322,13 +334,13 @@ export default {
     },
     // 是否是色斑图分组
     isDataGroup(val) {
-        if (val == null) {
-          return "";
-        } else if (val == 0) {
-          return "否";
-        } else if (val == 1) {
-          return "是";
-        }
+      if (val == null) {
+        return "";
+      } else if (val == 0) {
+        return "否";
+      } else if (val == 1) {
+        return "是";
+      }
     },
     getLegend() {
       this.$get("/api/legend-config/all").then((res) => {
