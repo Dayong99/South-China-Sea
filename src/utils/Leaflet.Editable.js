@@ -18,7 +18,6 @@
     }
 
 }(function (L) {
-    console.log('--------------------------------');
     // 🍂miniclass CancelableEvent (Event objects)
     // 🍂method cancel()
     // Cancel any subsequent action.

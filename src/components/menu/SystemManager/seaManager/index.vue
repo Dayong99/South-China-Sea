@@ -150,9 +150,9 @@ export default {
       infoVisible: false,
       geojsonGroup: [],
       geoStyle: {
-        color: "#ff7800",
-        weight: 3,
-        opacity: 0.65,
+        color: "#685ac6",
+        weight: 1,
+        opacity: 0.9,
       },
     };
   },
@@ -202,16 +202,16 @@ export default {
       val.forEach((item, index) => {
         if (item.isShow) {
           let geojson = JSON.parse(item.dataGeo);
-          let data = [];
-          geojson.forEach((item) => {
-            let obj = {};
-            for (let i in item) {
-              obj[i] = item[i];
-            }
-            data.push(obj);
-          });
+          // let data = [];
+          // geojson.forEach((item) => {
+          //   let obj = {};
+          //   for (let i in item) {
+          //     obj[i] = item[i];
+          //   }
+          //   data.push(obj);
+          // });
 
-          let layer = L.geoJSON(data, {
+          let layer = L.geoJSON(geojson, {
             style: this.geoStyle,
           }).addTo(map);
 

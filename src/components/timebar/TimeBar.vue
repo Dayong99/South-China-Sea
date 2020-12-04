@@ -30,6 +30,20 @@
         >
         </el-option>
       </el-select>
+
+      <el-select
+        v-model="timeForcast"
+        placeholder="起报时间"
+        size="small"
+      >
+        <el-option
+          v-for="item in timeForcastList"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        >
+        </el-option>
+      </el-select>
     </div>
 
     <!-- 时间进度条 -->
@@ -170,6 +184,23 @@ export default {
         label: '24小时',
       }],
       timeInterval: 3,
+
+      // 起报时间
+      timeForcast: '02',
+      timeForcastList: [{
+        value: '02',
+        label: '02:00',
+      }, {
+        value: '08',
+        label: '08:00',
+      }, {
+        value: '14',
+        label: '14:00',
+      },
+      {
+        value: '20',
+        label: '20:00',
+      }]
     };
   },
   created() {
@@ -177,7 +208,11 @@ export default {
   },
   computed: {
     ...mapState({
-      sourceType: state => state.sideBar.sourceType
+      sourceType: state => state.sideBar.sourceType,
+      // 所有要素类型
+      menuItemList: state => state.sideBar.menuItemList,
+      // 刷新时间
+      reloadTime: state => state.sideBar.reloadTime,
     }),
     // 单个日期宽度
     dayWidth: function () {
@@ -242,12 +277,20 @@ export default {
       // console.log(this.bItem)
       this.sItem = this.totalwidth / this.count;
 
-      this.$store.commit("changeTime", this.showday);
-      console.log("------------");
-      console.log(this.showday);
+      this.changeTime(this.showday)
+      // this.$store.commit("changeTime", this.showday);
 
       this.resetPlay();
-      console.log('时间间隔', newval);
+    },
+    // 起报时间
+    timeForcast(newval) {
+      this.setTimeForcast(newval)
+    },
+    // 刷新时间
+    reloadTime(newval) {
+      this.currentId = this.menuItemList[this.menuItemList.length - 1].id
+      this.timeFlag = false;
+      this.getTypeTime()
     }
   },
   mounted() {
@@ -312,6 +355,10 @@ export default {
     });
   },
   methods: {
+    ...mapMutations({
+      setTimeForcast: 'time/setTimeForcast',
+      changeTime: 'time/changeTime'
+    }),
     // 获取选择的时间
     getDay() {
       if (this.dateVal === null) {
@@ -320,7 +367,8 @@ export default {
       } else {
         this.timeFlag = false;
       }
-      this.$store.commit("changeTime", this.dateVal + " 00:00");
+      this.changeTime(this.dateVal + " 00:00")
+      // this.$store.commit("changeTime", this.dateVal + " 00:00");
       this.getLatestTime();
     },
 
@@ -361,9 +409,7 @@ export default {
         // console.log(this.bItem)
         this.sItem = this.totalwidth / this.count;
 
-        this.$store.commit("changeTime", this.showday);
-        console.log("------------");
-        console.log(this.showday);
+        this.changeTime(this.showday)
 
         this.resetPlay();
       });
@@ -495,7 +541,8 @@ export default {
       this.timeIndex = this.itemtimeIndex;
       this.item = this.itemdayIndex * this.num + (this.itemtimeIndex + 1);
       // 传递时间
-      this.$store.commit("changeTime", this.showday);
+      this.changeTime(this.showday)
+      // this.$store.commit("changeTime", this.showday);
     },
     // 当前点的位置
     getPosition(x) {
@@ -580,7 +627,8 @@ export default {
         this.item++;
 
         this.getLineData();
-        this.$store.commit("changeTime", this.showday);
+        this.changeTime(this.showday)
+        // this.$store.commit("changeTime", this.showday);
       } else {
         this.resetPlay();
       }

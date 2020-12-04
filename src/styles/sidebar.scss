@@ -146,6 +146,24 @@
             border: none;
             background: rgba(152, 26, 0, 1);
         }
+
+        .re_time {
+            width: 90px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+
+            img {
+                width: 25px;
+                height: 25px;
+            }
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
     }
 
     // 卫星云图选择
