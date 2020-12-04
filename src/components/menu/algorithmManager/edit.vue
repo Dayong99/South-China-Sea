@@ -44,7 +44,7 @@
       <div class="tree_wrapper">
         <div id="tree" class="tree" ref="tree"></div>
       </div>
-      <div class="factor_wrapper" v-if="title">
+      <div class="factor_wrapper" v-if="title && mockData.children[activeNodeIndex[0]]">
         <div class="factor_title">{{ this.title }}</div>
         <div class="factor_content_wrapper">
           <ul class="factor_content_title">
