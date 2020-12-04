@@ -38,6 +38,8 @@
     <dataitem-manager></dataitem-manager>
     <!-- 常用地点 -->
     <site-manager></site-manager>
+    <!-- 常用地点 -->
+    <marker-manager></marker-manager>
 
     <!-- 数据管理 -->
     <!-- 数据源配置 -->
@@ -88,6 +90,7 @@ import AreaManager from "@/components/menu/SystemManager/areaManager/index.vue";
 import SeaManager from "@/components/menu/SystemManager/seaManager/index.vue";
 import ParamManager from "@/components/menu/SystemManager/paramManager/index.vue";
 import SiteManager from "@/components/menu/SystemManager/siteManager/index.vue";
+import MarkerManager from "@/components/menu/SystemManager/markerManager/index.vue";
 
 // 数据管理
 import DataitemManager from "@/components/menu/SystemManager/dataItemManager/index.vue";
@@ -123,21 +126,24 @@ export default {
     TaskManager: TaskManager,
     routeManager: routeManager,
     algorithmManager: algorithmManager,
+
+    // 系统配置
     LegendManager: LegendManager,
     LineManager: LineManager,
     AreaManager: AreaManager,
     SeaManager: SeaManager,
     ParamManager: ParamManager,
-    SiteManager:SiteManager,
+    SiteManager: SiteManager,
     DataitemManager: DataitemManager,
-    routeManager: routeManager,
+    MarkerManager: MarkerManager,
+
+    // 数据管理
     DatasourceManager: DatasourceManager,
     DatasourceManager1: DatasourceManager1,
     DatasourceManager2: DatasourceManager2,
     TyphoonManager: TyphoonManager,
-    InfoBox: InfoBox,
-    assessmentManager: assessmentManager,
-    InfoBox: InfoBox,
+    DataLive: DataLive,
+
     assessmentManager: assessmentManager,
     routeInfo: routeInfo,
     DataLive:DataLive,
