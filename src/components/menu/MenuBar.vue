@@ -60,6 +60,7 @@
       </div>
     </div>
 
+    <!-- 菜单列表 -->
     <div class="menu_list" v-show="searchFlag">
       <ul class="list_ul">
         <li v-for="(item, index) in menuList" :key="index" class="list_ul_li">
@@ -72,7 +73,7 @@
                 >{{ item.name }}</span
               >
               <img
-                src="@/assets/images/menu/add.png"
+                src="@/assets/images/menu/add.svg"
                 v-if="index == 2"
                 @click.stop="addTask(index)"
               />
@@ -102,34 +103,19 @@
               <div class="task_list">
                 <div class="task_name" @click="switchTask(item, index)">
                   <div class="task_dot" v-if="!item.checked">
-                    <img src="@/assets/images/menu/taskTitle.png" />
+                    <img src="@/assets/images/menu/taskTitle.svg" />
                   </div>
                   <div class="task_dot" v-else>
-                    <img src="@/assets/images/menu/taskTitleActive.png" />
+                    <img src="@/assets/images/menu/taskTitleActive.svg" />
                   </div>
                   <span class="task_desc" :class="{ active: item.checked }">{{
                     item.name
                   }}</span>
                 </div>
                 <div class="task_operation" style="margin-left: 0">
-                  <el-button
-                    icon="el-icon-edit-outline"
-                    class="table_column_icon green"
-                    type="text"
-                    @click="editTaskItem(item)"
-                  ></el-button>
-                  <el-button
-                    icon="el-icon-delete"
-                    class="table_column_icon red"
-                    type="text"
-                    @click="deleteTaskItem(item)"
-                  ></el-button>
-                  <el-button
-                    icon="el-icon-plus"
-                    class="table_column_icon blueDeep"
-                    type="text"
-                    @click="addTaskItem(item, index)"
-                  ></el-button>
+                  <img src="@/assets/images/menu/add_task.svg" alt="" @click="addTaskItem(item, index)">
+                  <img src="@/assets/images/menu/edit_task.svg" alt="" @click="editTaskItem(item)">
+                  <img src="@/assets/images/menu/delete_task.svg" alt="" @click="deleteTaskItem(item)">
                 </div>
               </div>
 
@@ -153,7 +139,7 @@
                     <div class="task_content_name">
                       {{ itemRoute.lineName }}
                     </div>
-                    <div class="control_wrapper" v-if="itemRoute.checked">
+                    <div class="control_wrapper" >
                       <img
                         src="@/assets/images/menu/route_info.png"
                         @click.stop="algorithm(itemRoute, indexRoute)"
@@ -178,7 +164,6 @@
                         "
                       />
                     </div>
-                    <div class="control_wrapper" v-else></div>
                   </div>
 
                   <!-- 评估列表 -->
@@ -395,14 +380,14 @@ export default {
       // 任务
       taskList: [],
       searchFlag: false,
-      searchIcon: require("@/assets/images/menu/unselect.png"),
+      searchIcon: require("@/assets/images/menu/unselect.svg"),
       searchValue: "",
-      downIcon: require("@/assets/images/menu/down.png"),
-      upIcon: require("@/assets/images/menu/up.png"),
+      downIcon: require("@/assets/images/menu/down.svg"),
+      upIcon: require("@/assets/images/menu/up.svg"),
       iconList: [
-        require("@/assets/images/menu/down.png"),
-        require("@/assets/images/menu/down.png"),
-        require("@/assets/images/menu/down.png"),
+        require("@/assets/images/menu/down.svg"),
+        require("@/assets/images/menu/down.svg"),
+        require("@/assets/images/menu/down.svg"),
       ],
       flagList: [false, false, false],
       nowMenuList: [],
@@ -745,9 +730,9 @@ export default {
     changeSearch() {
       this.searchFlag = !this.searchFlag;
       if (this.searchFlag) {
-        this.searchIcon = require("@/assets/images/menu/select.png");
+        this.searchIcon = require("@/assets/images/menu/select.svg");
       } else {
-        this.searchIcon = require("@/assets/images/menu/unselect.png");
+        this.searchIcon = require("@/assets/images/menu/unselect.svg");
         this.menuList.forEach((item) => {
           item.flag = false;
         });
