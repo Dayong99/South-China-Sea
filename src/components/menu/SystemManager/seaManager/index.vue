@@ -156,7 +156,9 @@ export default {
       },
     };
   },
-  mounted() {},
+  mounted() {
+    this.fetch()
+  },
   computed: {
     ...mapState({
       menuList: (state) => state.menuBar.menuList,
@@ -192,32 +194,13 @@ export default {
         this.$refs.seaBox.style.left = "50%";
         this.$refs.seaBox.style.top = "42%";
         this.$refs.seaBox.style.transform = "translate(-50%, -50%)";
-      } else {
-        this.clearGeojson();
       }
     },
-    tableData(val) {
-      this.clearGeojson();
-      this.geojsonGroup = [];
-      val.forEach((item, index) => {
-        if (item.isShow) {
-          let geojson = JSON.parse(item.dataGeo);
-          let data = [];
-          geojson.forEach((item) => {
-            let obj = {};
-            for (let i in item) {
-              obj[i] = item[i];
-            }
-            data.push(obj);
-          });
-
-          let layer = L.geoJSON(data, {
-            style: this.geoStyle,
-          }).addTo(map);
-
-          this.geojsonGroup.push(layer);
-        }
-      });
+    tableData: {
+      handler(val){
+        this.getSeaArea(val)
+      },
+      deep:true
     },
   },
   methods: {
@@ -228,6 +211,29 @@ export default {
       this.geojsonGroup.forEach((item) => {
         if (map.hasLayer(item)) {
           item.removeFrom(map);
+        }
+      });
+    },
+    getSeaArea(val){
+      this.clearGeojson();
+      this.geojsonGroup = [];
+      val.forEach((item, index) => {
+        if (item.isShow) {
+          let geojson = JSON.parse(item.dataGeo);
+          // let data = [];
+          // geojson.forEach((item) => {
+          //   let obj = {};
+          //   for (let i in item) {
+          //     obj[i] = item[i];
+          //   }
+          //   data.push(obj);
+          // });
+
+          let layer = L.geoJSON(geojson, {
+            style: this.geoStyle,
+          }).addTo(map);
+
+          this.geojsonGroup.push(layer);
         }
       });
     },

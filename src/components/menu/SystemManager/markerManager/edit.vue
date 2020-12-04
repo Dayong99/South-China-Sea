@@ -75,14 +75,7 @@ export default {
     return {
       data: {},
       rules: {},
-      formData: {
-        placeName: "",
-        isShow: "",
-        longitude: "",
-        latitude: "",
-        coordinates: null,
-        drawType: null,
-      },
+      formData: this.initForm(),
       rules: {
         placeName: {
           required: true,
@@ -114,18 +107,23 @@ export default {
     close() {
       this.$emit("close");
     },
-    // 重置
-    reset() {
-      this.$refs.form.clearValidate();
-      this.$refs.form.resetFields();
-      this.formData = {
-        placeName: "",
+    initForm(){
+      return {
+         placeName: "",
         isShow: "",
         longitude: "",
         latitude: "",
         coordinates: null,
         drawType: null,
-      };
+        other1:null,
+        other2:null
+      }
+    },
+    // 重置
+    reset() {
+      this.$refs.form.clearValidate();
+      this.$refs.form.resetFields();
+      this.formData = this.initForm();
     },
     // 添加或修改
     submit() {

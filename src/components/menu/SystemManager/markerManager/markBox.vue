@@ -9,6 +9,7 @@
           :disabled="disabled"
           @click="tool(item, index)"
         >
+          <!-- <img :class="{ active: toolClicked === index }" :src="item.src" /> -->
           <img :class="{ active: toolClicked === index }" :src="item.src" />
         </button>
 
@@ -55,7 +56,9 @@
 
     <!-- 备注信息 -->
     <div class="add-tip" ref="tipModal" v-show="tipPanel">
-      <div class="title">标志区</div>
+      <div class="title">
+        {{ formData.drawType == 1 ? "警戒线" : "任务区" }}
+      </div>
       <!-- <el-input
         placeholder="请输入标志区名称"
         clearable
@@ -66,14 +69,14 @@
         :model="formData"
         :rules="rules"
         label-position="right"
-        label-width="100px"
+        label-width="70px"
         style="line-height: 100%"
       >
         <!-- 名称 -->
 
-        <el-form-item label="地点名称" prop="placeName">
+        <el-form-item label="名称" prop="placeName">
           <el-input
-            placeholder="请输入地点名称"
+            placeholder="请输入名称"
             v-model="formData.placeName"
           ></el-input>
         </el-form-item>
@@ -155,19 +158,12 @@ export default {
 
       nowObj: null,
 
-      formData: {
-        placeName: "",
-        isShow: "1",
-        longitude: "",
-        latitude: "",
-        coordinates: null,
-        drawType: null,
-      },
+      formData: this.initForm(),
 
       rules: {
         placeName: {
           required: true,
-          message: "标志区名称不能为空",
+          message: "名称不能为空",
           trigger: "blur",
         },
       },
@@ -235,18 +231,24 @@ export default {
         this.disabled = false;
       }
     },
+    tipPanel(val){
+      this.formData.placeName = ''
+      this.formData.isShow = '1'
+    }
   },
   created() {},
   mounted() {},
   methods: {
     initForm() {
-      this.formData = {
+      return {
         placeName: "",
         isShow: "1",
         longitude: "",
         latitude: "",
-        coordinates: {},
+        coordinates: null,
         drawType: null,
+        other1: null,
+        other2: null,
       };
     },
     resetMarker() {
@@ -277,6 +279,7 @@ export default {
       this.$emit("closeDraw");
     },
     tool(item, index) {
+      console.log(item);
       this.toolClicked = index;
       this.options.type = item.type;
     },
@@ -376,16 +379,20 @@ export default {
       this.cancleMarkerListener();
       map.removeLayer(this.dashLine);
       if (this.poly_points.length > 2) {
-        this.poly_line = L.polyline(this.poly_points, {
+        this.formData.other1 = {
           color: this.options.color,
           // opacity:0.6,
           weight: this.options.width,
-        }).addTo(map);
+        };
+        this.poly_line = L.polyline(
+          this.poly_points,
+          this.formData.other1
+        ).addTo(map);
         // this.poly_line.setLatLngs(this.poly_points).addTo(this.markersLayer);
         this.toolClicked = -1;
         this.options.type = null;
         this.nowObj = this.poly_line;
-        this.formData.drawType = 2;
+        this.formData.drawType = 1;
 
         return this.addTip(
           this.poly_line,
@@ -484,18 +491,23 @@ export default {
     // 确定圆
     confirmCircle(e) {
       this.cancleMarkerListener();
+      console.log(this.circleCenter);
       map.removeLayer(this.poly_nowCircle);
-      this.poly_circle = L.circle(this.circleCenter, {
+      this.formData.other1 = {
         radius: this.radius,
+        weight: this.options.width,
         color: this.options.color,
         fillColor: this.options.color,
         fillOpacity: 0.2,
-      }).addTo(map);
+      };
+      this.poly_circle = L.circle(this.circleCenter, this.formData.other1).addTo(map);
+      console.log(this.poly_circle)
       map.dragging.enable();
       this.toolClicked = -1;
       this.options.type = null;
       this.nowObj = this.poly_circle;
       this.formData.drawType = 2;
+      this.formData.other2 = this.radius;
 
       return this.addTip(this.poly_circle, this.circleCenter);
     },
@@ -538,22 +550,30 @@ export default {
     },
     // 添加区域绘制点
     addPolyLatlng(e) {
+      console.log(this.poly_points);
       this.poly_points.push([e.latlng.lat, e.latlng.lng]);
     },
     // 添加区域绘制结束点
     addPloygonMarker(e) {
       this.cancleMarkerListener();
       map.removeLayer(this.poly_now);
-
+      // if(this.poly_points.length==4&&(this.poly_points[1]==this.poly_points[2])&&(this.poly_points[2]==this.poly_points[3])){
+      //   flag = false
+      // }
+      console.log(this.poly_points);
       if (this.poly_points.length > 2) {
         // this.poly_area.setLatLngs(this.poly_points).addTo(this.markersLayer);
-        this.poly_area = L.polygon([this.poly_points], {
+        this.formData.other1 = {
           color: this.options.color,
           // opacity:0.6,
           weight: this.options.width,
           fillColor: this.options.color,
           fillOpacity: 0.2,
-        }).addTo(map);
+        };
+        this.poly_area = L.polygon(
+          [this.poly_points],
+          this.formData.other1
+        ).addTo(map);
         var tipLocation = this.poly_points[this.poly_points.length - 1];
         this.toolClicked = -1;
         this.options.type = null;
@@ -561,6 +581,8 @@ export default {
         this.formData.drawType = 2;
 
         return this.addTip(this.poly_area, tipLocation);
+      } else {
+        this.$message.warning("绘制多边形需至少创建三点");
       }
     },
     // 在绘制区域鼠标移动时显示虚线效果
@@ -642,13 +664,14 @@ export default {
       this.cancleMarkerListener();
       map.removeLayer(this.poly_nowRect);
       map.dragging.enable();
-      this.poly_rect = L.rectangle(this.rectPoints, {
+      this.formData.other1 = {
         color: this.options.color,
         // opacity:0.6,
         weight: this.options.width,
         fillColor: this.options.color,
         fillOpacity: 0.2,
-      });
+      };
+      this.poly_rect = L.rectangle(this.rectPoints, this.formData.other1);
       map.addLayer(this.poly_rect);
       this.toolClicked = -1;
       this.options.type = null;
@@ -700,10 +723,13 @@ export default {
           this.formData.coordinates = JSON.stringify(
             this.markerAdd.toGeoJSON().geometry
           );
+          this.formData.other1 = JSON.stringify(this.formData.other1);
           this.$post("/api/common-place", this.formData)
             .then(() => {
               this.$message({
-                message: "标志区添加成功",
+                message:
+                  (this.formData.drawType == 1 ? "警戒线" : "任务区") +
+                  "添加成功",
                 type: "success",
               });
               // this.bindPopupToMarker(
@@ -717,14 +743,15 @@ export default {
               if (Number(this.formData.isShow) == 0) {
                 map.removeLayer(this.nowObj);
               }
-
               this.initForm();
               this.tipPanel = false;
               this.$emit("updateTab");
             })
             .catch(() => {
               this.$message({
-                message: "标志区添加失败",
+                message:
+                  (this.formData.drawType == 1 ? "警戒线" : "任务区") +
+                  "添加失败",
                 type: "error",
               });
             });
