@@ -1096,6 +1096,15 @@ export default {
       if(waveIndex == -1 && waveList.length) {
         this.waveGroup.clearLayers()
       }
+
+      // 清除多余的色斑图
+      let layerIndex = this.currentItemList.findIndex(item => {
+        return item.drawType === 'layer'
+      })
+      let layerList = this.layerGroup.getLayers()
+      if(layerIndex == -1 && layerList.length) {
+        this.layerGroup.clearLayers()
+      }
     },
     // 获取线的数据并绘制
     getAndDrawLine(currentItem, extent) {
