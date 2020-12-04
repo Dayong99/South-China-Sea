@@ -5,9 +5,10 @@
     v-show="systemManagerShow"
     style="width: 960px; height: auto"
     v-drag
+    ref="legendBox"
   >
     <div class="manager_title">
-      <span>图例配置</span>
+      <span>色斑图配置</span>
       <img
         src="@/assets/images/legendbar/close.png"
         @click.stop="closeManager"
@@ -31,7 +32,7 @@
     </div>
     <div class="manager_table">
       <el-table :data="tableData" border style="width: 100%">
-         <el-table-column label="序号" width="70px" align="center">
+        <el-table-column label="序号" width="70px" align="center">
           <template slot-scope="scope">
             {{ (pagination.num - 1) * pagination.size + scope.$index + 1 }}
           </template>
@@ -121,7 +122,7 @@
                     {{ scope.row.legendValues.split(",")[index] }}
                   </div>
                   <li>
-                    <div class="color_item" :style="{ background: item }" ></div>
+                    <div class="color_item" :style="{ background: item }"></div>
                     <div class="color_text">
                       {{ scope.row.legendValues.split(",")[index] }}
                     </div>
@@ -242,6 +243,9 @@ export default {
           legendName: null,
         };
         this.fetch();
+        this.$refs.legendBox.style.left = "50%";
+        this.$refs.legendBox.style.top = "42%";
+        this.$refs.legendBox.style.transform = "translate(-50%, -50%)";
       }
     },
   },

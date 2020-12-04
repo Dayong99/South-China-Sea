@@ -5,6 +5,7 @@
     v-show="systemManagerShow"
     style="width: 960px;height:auto;"
     v-drag
+    ref="source2Box"
   >
     <div class="manager_title">
       <span>数据源配置—数值预报数据</span>
@@ -46,7 +47,7 @@
         icon="el-icon-download"
         class="operation_add"
         @click="exportFile"
-        >导入资料</el-button
+        >导入海浪</el-button
       >
       <el-button
         icon="el-icon-download"
@@ -64,7 +65,7 @@
         icon="el-icon-download"
         class="operation_add"
         @click="exportNecp"
-        >导入necp</el-button
+        >导入gfs</el-button
       >
     </div>
     <div class="manager_table">
@@ -234,6 +235,9 @@ export default {
         this.queryParams = {};
         this.time = [];
         this.fetch();
+        this.$refs.source2Box.style.left = "50%";
+        this.$refs.source2Box.style.top = "42%";
+        this.$refs.source2Box.style.transform = "translate(-50%, -50%)";
       }
     },
   },

@@ -19,8 +19,8 @@
           <div class="time_points">
             <div
               class="slider-items"
-              v-for="(item, index) in routeCollect.length"
-              :key="`routeCollect${index}`"
+              v-for="(item, index) in routeInfo.length"
+              :key="`routeInfo${index}`"
               @click="activeRoutePoint = index"
             >
               <span
@@ -118,6 +118,7 @@ export default {
       routeCollect: [], // 航线点集合
       routeInfo: [], // 航线信息集合
       geometry: [], // 航线全部信息
+      lastLine: null, // 可编辑线
     };
   },
   mounted() {},
@@ -150,13 +151,18 @@ export default {
     routeCustomClick() {
       this.routeCustomActive = !this.routeCustomActive;
       if (this.routeCustomActive) {
-        if (this.geometry.length) {
-          this.geometry.forEach((e, i) => {
-            e.remove();
-          }); // 清楚之前画的
-        }
-
         this.reset();
+        // 关闭编辑，并清除
+        // console.log(this.lastLine);
+        if(this.lastLine) {
+          this.lastLine.off('editable:vertex:new')
+          this.lastLine.off('editable:vertex:drag')
+          this.lastLine.off('editable:vertex:deleted')
+          this.lastLine.disableEdit()
+          this.lastLine.remove()
+          this.lastLine = null
+        }
+        console.log(this.lastLine);
         this.draw();
       }
       console.log(this.routeCustomActive, `this.routeCustomActive draw`);
@@ -165,56 +171,71 @@ export default {
       this.routeManagerShow = false;
       this.setRouteDialogOptions([0, {}]);
       this.reset();
+      if(this.lastLine) {
+        this.lastLine.disableEdit()
+        this.lastLine.remove()
+        this.lastLine = null
+      }
       window.routeMap.remove();
     },
     draw() {
-      this.routePointCollect = [];
-      const nodeStyleOptions = {
-        color: "#ff0000",
-        fillColor: "ff0000",
-        fillOpacity: 1,
-        radius: 300,
-      };
-      var lines = new L.polyline(this.routePointCollect); // 画线
-      var tempLines = new L.polyline([]); // 暂存线
-      window.routeMap.on("click", (e) => {
-        this.routePointCollect.push([e.latlng.lat, e.latlng.lng]); // 储存点信息
-        window.routeMap.addLayer(lines.addLatLng(e.latlng)); // 暂存线绘制
-        const node = L.circle(e.latlng, nodeStyleOptions);
-        window.routeMap.addLayer(node); // 点
-        this.geometry.push(node);
-        this.routeCollect.push(node);
-        this.routeInfo.push({
+      // 开启航线绘制
+      this.lastLine = window.routeMap.editTools.startPolyline()
+
+      // startPolyline: function (latlng, options) {
+      //       var line = this.createPolyline([], options);
+      //       line.enableEdit(this.map).newShape(latlng);
+      //       return line;
+      //   },
+      
+      // 添加航线点
+      this.lastLine.on('editable:vertex:new', e => {
+        let i = e.vertex.getIndex()
+        let obj = {
           lat: e.latlng.lat.toFixed(2),
           lng: e.latlng.lng.toFixed(2),
           port: null,
           time: null,
-        });
-        console.log(this.routeInfo, `routeInforouteInforouteInfo`);
-        this.activeRoutePoint = this.routeCollect.length - 1;
-        window.routeMap.on("mousemove", (e) => {
-          if (this.routePointCollect.length > 0) {
-            var ls = [
-              this.routePointCollect[this.routePointCollect.length - 1],
-              [e.latlng.lat, e.latlng.lng],
-            ];
-            tempLines.setLatLngs(ls);
-            window.routeMap.addLayer(tempLines);
-          }
-        }); //双击地图
-      }); //点击地图
+          vertexId: e.vertex._leaflet_id
+        }
+        this.routeInfo.splice(i, 0, obj)
+        this.activeRoutePoint = i
+      })
+      // 拖动航线点
+      this.lastLine.on('editable:vertex:drag', e => {
+        console.log('edit------------',e);
+        let i = e.vertex.getIndex()
+        this.activeRoutePoint = i
+        let obj = {
+          lat: e.latlng.lat.toFixed(2),
+          lng: e.latlng.lng.toFixed(2),
+          port: this.routeInfo[i].port,
+          time: this.routeInfo[i].time,
+          vertexId: e.vertex._leaflet_id
+        }
+        this.routeInfo.splice(i, 1, obj)
+      })
+      // 删除航线点
+      this.lastLine.on('editable:vertex:deleted', e => {
+        console.log('-----------', e);
+        console.log('-----------', this.lastLine);
+        let i = this.routeInfo.findIndex(item => {
+          return item.vertexId == e.vertex._leaflet_id
+        })
+        // 删除尾部点时
+        if(i == this.routeInfo.length - 1) {
+          this.activeRoutePoint = this.routeInfo.length - 2
+        }
+        this.routeInfo.splice(i, 1)
+      })
+      // 暂停编辑
+      this.lastLine.on('dblclick', L.DomEvent.stop).on('dblclick', this.lastLine.toggleEdit);
 
+      // 右键停止编辑
       window.routeMap.on("contextmenu", (e) => {
-        this.geometry.push(
-          L.polyline(this.routePointCollect).addTo(window.routeMap)
-        );
-        this.routePointCollect = [];
-        lines.remove();
-        window.routeMap.off("mousemove");
-        window.routeMap.off("click");
-        window.routeMap.off("contextmenu");
+        window.routeMap.editTools.stopDrawing()
+
         this.routeCustomActive = false;
-        tempLines.remove();
       });
     },
 
@@ -240,7 +261,7 @@ export default {
 
     // 编辑 新增 航线
     editRoute() {
-      if (this.routeCollect.length) {
+      if (this.routeInfo.length) {
         let dataArr = [];
         this.routeInfo.forEach((e, i) => {
           let obj = {
@@ -285,7 +306,7 @@ export default {
             });
           });
       }
-      this.routeCollect = [];
+      this.routeInfo = [];
     },
 
     // 航线初始化
@@ -297,6 +318,8 @@ export default {
         maxZoom: 13,
         worldCopyJump: true,
         zoomControl: false,
+        // 开启编辑线插件
+        editable: true
       });
       L.tileLayer
         .chinaProvider("Geoq.Normal.PurplishBlue", { maxZoom: 13, minZoom: 2 })

@@ -5,8 +5,9 @@ import 'leaflet-measure-path/leaflet-measure-path.css'
 
 
 var deleteIcon = L.icon({
-  iconUrl: "../assets/images/toolbar/shanchu.png",
+  iconUrl: require("@/assets/images/toolbar/shanchu.png"),
   iconSize: [16, 16],
+  iconAnchor: [10, 20]
 });
 
 // 测量距离
@@ -185,6 +186,16 @@ class ToolBar {
   clearTool() {
     distanceMeasure.destory();
     areaMeasure.destory();
+  }
+
+  clearMeasure(){
+    distanceMeasure.destory();
+    map.off('click', distanceMeasure.click).off('mousemove', distanceMeasure.mousemove).off('dblclick', distanceMeasure.dblclick);
+  }
+
+  clearAreaMeasure(){
+    areaMeasure.destory();
+    map.off('click', areaMeasure.click).off('mousemove', areaMeasure.mousemove).off('dblclick', areaMeasure.dblclick);
   }
 }
 

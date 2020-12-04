@@ -1,6 +1,8 @@
 const state = {
   time: null,
-  timeLevel: []
+  timeLevel: [],
+  // 起报时间
+  timeForcast: null,
 }
 
 const actions = {
@@ -16,10 +18,14 @@ const mutations = {
   },
   getTimeLevel(state, arr) {
     state.timeLevel = arr
+  },
+  setTimeForcast(state, val) {
+    state.timeForcast = val
   }
 }
 
 export default {
+  namespaced: true,
   state,
   mutations,
   actions

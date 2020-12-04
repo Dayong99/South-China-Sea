@@ -1,5 +1,11 @@
 <template>
-  <div id="ship_manager" class="ship_manager" v-show="systemManagerShow" v-drag>
+  <div
+    id="ship_manager"
+    class="ship_manager"
+    v-show="systemManagerShow"
+    v-drag
+    ref="seaBox"
+  >
     <div class="manager_title">
       <span>海区划分</span>
       <img
@@ -144,13 +150,15 @@ export default {
       infoVisible: false,
       geojsonGroup: [],
       geoStyle: {
-        color: "#ff7800",
-        weight: 3,
-        opacity: 0.65,
+        color: "#685ac6",
+        weight: 1,
+        opacity: 0.9,
       },
     };
   },
-  mounted() {},
+  mounted() {
+    this.fetch();
+  },
   computed: {
     ...mapState({
       menuList: (state) => state.menuBar.menuList,
@@ -172,7 +180,7 @@ export default {
     },
     systemList: {
       handler(newval, oldval) {
-        if (newval[3].flag) {
+        if (newval[5].flag) {
           this.systemManagerShow = true;
         } else {
           this.systemManagerShow = false;
@@ -183,33 +191,16 @@ export default {
     systemManagerShow(val) {
       if (val) {
         this.fetch();
-      }else{
-              this.clearGeojson();
-
+        this.$refs.seaBox.style.left = "50%";
+        this.$refs.seaBox.style.top = "42%";
+        this.$refs.seaBox.style.transform = "translate(-50%, -50%)";
       }
     },
-    tableData(val) {
-      this.clearGeojson();
-      this.geojsonGroup = [];
-      val.forEach((item, index) => {
-        if (item.isShow) {
-          let geojson = JSON.parse(item.dataGeo);
-          let data = [];
-          geojson.forEach((item) => {
-            let obj = {};
-            for (let i in item) {
-              obj[i] = item[i];
-            }
-            data.push(obj);
-          });
-
-          let layer = L.geoJSON(data, {
-            style: this.geoStyle,
-          }).addTo(map);
-
-          this.geojsonGroup.push(layer);
-        }
-      });
+    tableData: {
+      handler(val) {
+        this.getSeaArea(val);
+      },
+      deep: true,
     },
   },
   methods: {
@@ -220,6 +211,30 @@ export default {
       this.geojsonGroup.forEach((item) => {
         if (map.hasLayer(item)) {
           item.removeFrom(map);
+        }
+      });
+    },
+    getSeaArea(val) {
+      this.clearGeojson();
+      this.geojsonGroup = [];
+      val.forEach((item, index) => {
+        if (item.isShow) {
+          if (Number(item.isShow) == 1) {
+            let geojson = JSON.parse(item.dataGeo);
+            // let data = [];
+            // geojson.forEach((item) => {
+            //   let obj = {};
+            //   for (let i in item) {
+            //     obj[i] = item[i];
+            //   }
+            //   data.push(obj);
+            // });
+
+            let layer = L.geoJSON(geojson, {
+              style: this.geoStyle,
+            }).addTo(map);
+            this.geojsonGroup.push(layer);
+          }
         }
       });
     },

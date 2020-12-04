@@ -5,6 +5,7 @@
     v-show="systemManagerShow"
     style="width: auto; height: auto"
     v-drag
+    ref="paramBox"
   >
     <div class="manager_title">
       <span>参数配置</span>
@@ -168,7 +169,7 @@ export default {
     },
     systemList: {
       handler(newval, oldval) {
-        if (newval[4].flag) {
+        if (newval[6].flag) {
           this.systemManagerShow = true;
         } else {
           this.systemManagerShow = false;
@@ -183,6 +184,9 @@ export default {
         };
         this.fetch();
         this.getAllType();
+        this.$refs.paramBox.style.left = "50%";
+        this.$refs.paramBox.style.top = "42%";
+        this.$refs.paramBox.style.transform = "translate(-50%, -50%)";
       }
     },
   },

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63 (92445) - https://sketch.com -->
+    <title>添加标</title>
+    <desc>Created with Sketch.</desc>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round">
+        <g id="XX船舰切图" transform="translate(-391.000000, -233.000000)" stroke="#007CFF" stroke-width="1.8">
+            <g id="添加标_export" transform="translate(391.000000, 233.000000)">
+                <g id="添加标" transform="translate(5.000000, 4.000000)">
+                    <line x1="7.5" y1="0.81340021" x2="7.5" y2="16.5064103" id="路径-3"></line>
+                    <line x1="0" y1="8.4375" x2="15" y2="8.4375" id="路径-2"></line>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

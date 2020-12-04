@@ -2,7 +2,9 @@
   <div id="timebar">
     <!-- 日期 -->
     <div id="calendar" style="left:300px;width:calc(100% - 410px)">
-      <div v-for="(item,index) in calendarList" :key="index" :style="dayWidth">{{ item.day }}</div>
+      <div v-for="(item, index) in calendarList" :key="index" :style="dayWidth">
+        {{ item.day }}
+      </div>
     </div>
 
     <el-date-picker
@@ -17,13 +19,23 @@
 
     <!-- 切换时间间隔 -->
     <div class="timeInterval">
+      <el-select v-model="timeInterval" placeholder="时间间隔" size="small">
+        <el-option
+          v-for="item in timeIntervalList"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        >
+        </el-option>
+      </el-select>
+
       <el-select
-        v-model="timeInterval"
-        placeholder="时间间隔"
+        v-model="timeForcast"
+        placeholder="起报时间"
         size="small"
       >
         <el-option
-          v-for="item in timeIntervalList"
+          v-for="item in timeForcastList"
           :key="item.value"
           :label="item.label"
           :value="item.value"
@@ -47,7 +59,7 @@
       <div
         ref="line"
         class="playLen"
-        :style="{'width':playPosition}"
+        :style="{ width: playPosition }"
         @click="loadTo"
         @mouseover="showTip"
         @mousemove="showTip"
@@ -56,13 +68,21 @@
     </div>
 
     <!-- 划过提示框 -->
-    <div v-show="tipshow" class="timecode ghost-timecode" :style="{'left':tipleft,'top':tiptop}">
+    <div
+      v-show="tipshow"
+      class="timecode ghost-timecode"
+      :style="{ left: tipleft, top: tiptop }"
+    >
       <div class="box">{{ tip }}</div>
     </div>
 
     <!-- 当前时间 -->
-    <div class="circle" :style="{'left':circlePosition}" />
-    <div ref="nowtime" class="timecode main-timecode" :style="{'left':nowTime}">
+    <div class="circle" :style="{ left: circlePosition }" />
+    <div
+      ref="nowtime"
+      class="timecode main-timecode"
+      :style="{ left: nowTime }"
+    >
       <div class="box">{{ showday }}</div>
     </div>
 
@@ -74,7 +94,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations } from "vuex";
 import { parseTime } from "@/utils";
 
 // 监听时间轴尺寸变化
@@ -148,54 +168,69 @@ export default {
       currentId: null,
 
       // 时间间隔列表
-      timeIntervalList: [{
-        value: 1,
-        label: '1小时',
-      }, {
-        value: 3,
-        label: '3小时',
-      }, {
-        value: 6,
-        label: '6小时',
-      },
-      // {
-      //   value: 9,
-      //   label: '9小时',
-      // },
-      {
-        value: 12,
-        label: '12小时',
-      }, {
-        value: 24,
-        label: '24小时',
-      }],
+      timeIntervalList: [
+        {
+          value: 1,
+          label: "1小时",
+        },
+        {
+          value: 3,
+          label: "3小时",
+        },
+        {
+          value: 6,
+          label: "6小时",
+        },
+        // {
+        //   value: 9,
+        //   label: '9小时',
+        // },
+        {
+          value: 12,
+          label: "12小时",
+        },
+        {
+          value: 24,
+          label: "24小时",
+        },
+      ],
       timeInterval: 3,
+
+      // 起报时间
+      timeForcast: '02',
+      timeForcastList: [{
+        value: '02',
+        label: '02:00',
+      }, {
+        value: '08',
+        label: '08:00',
+      }, {
+        value: '14',
+        label: '14:00',
+      },
+      {
+        value: '20',
+        label: '20:00',
+      }]
     };
   },
-  created() {
-    // 根据数据源获取第一个要素的id  getTypeTime()根据这个id去获取最近时间
-    this.$get('/api/parameters/get_type', {
-      type: this.sourceType
-    }).then(res => {
-      if(res.status == 200) {
-        this.currentId = res.data.data[0].id
-      }
-    }).catch(error => {
-      this.$message.error('获取要素失败')
-    })
-  },
+  created() {},
   computed: {
     ...mapState({
-      sourceType: state => state.sideBar.sourceType
+      sourceType: state => state.sideBar.sourceType,
+      // 所有要素类型
+      menuItemList: state => state.sideBar.menuItemList,
+      // 刷新时间
+      reloadTime: state => state.sideBar.reloadTime,
     }),
     // 单个日期宽度
-    dayWidth: function () {
+    dayWidth: function() {
       return {
         width: "calc(100% / " + this.dayListLength + ")",
       };
     },
     // 获取时次
-    timeLevel: function () {
+    timeLevel: function() {
       return this.$store.state.time.timeLevel;
     },
   },
@@ -224,19 +259,19 @@ export default {
     },
     // 时间间隔变化
     timeInterval(newval) {
-      if(newval === 1) {
-        this.num = 24
-      } else if(newval === 3) {
-        this.num = 8
-      } else if(newval === 6) {
-        this.num = 4
-      } else if(newval === 12) {
-        this.num = 2
-      } else if(newval === 24) {
-        this.num = 1
+      if (newval === 1) {
+        this.num = 24;
+      } else if (newval === 3) {
+        this.num = 8;
+      } else if (newval === 6) {
+        this.num = 4;
+      } else if (newval === 12) {
+        this.num = 2;
+      } else if (newval === 24) {
+        this.num = 1;
       }
 
-      this.timeFlag = false
+      this.timeFlag = false;
       this.getLatestTime();
       // 初始化当前时间
       this.showday =
@@ -251,12 +286,20 @@ export default {
       // console.log(this.bItem)
       this.sItem = this.totalwidth / this.count;
 
-      this.$store.commit("changeTime", this.showday);
-      console.log("------------");
-      console.log(this.showday);
+      this.changeTime(this.showday)
+      // this.$store.commit("changeTime", this.showday);
 
       this.resetPlay();
-      console.log('时间间隔', newval);
+    },
+    // 起报时间
+    timeForcast(newval) {
+      this.setTimeForcast(newval)
+    },
+    // 刷新时间
+    reloadTime(newval) {
+      this.currentId = this.menuItemList[this.menuItemList.length - 1].id
+      this.timeFlag = false;
+      this.getTypeTime()
     }
   },
   mounted() {
@@ -281,7 +324,20 @@ export default {
       // this.getLatestTime()
       this.timeFlag = false;
       // this.dateVal = "2020-08-01"
-      this.getTypeTime();
+      // 根据数据源获取第一个要素的id  getTypeTime()根据这个id去获取最近时间
+      this.$get("/api/parameters/get_type", {
+        type: this.sourceType,
+      })
+        .then((res) => {
+          if (res.status == 200) {
+            this.currentId = res.data.data[0].id;
+            this.getTypeTime();
+          }
+        })
+        .catch((error) => {
+          this.$message.error("获取要素失败");
+        });
+
       // this.getLatestTime()
       // this.getTypeTime().then(res=>{
       //   console.log(res);
@@ -310,6 +366,10 @@ export default {
     });
   },
   methods: {
+    ...mapMutations({
+      setTimeForcast: 'time/setTimeForcast',
+      changeTime: 'time/changeTime'
+    }),
     // 获取选择的时间
     getDay() {
       if (this.dateVal === null) {
@@ -318,7 +378,8 @@ export default {
       } else {
         this.timeFlag = false;
       }
-      this.$store.commit("changeTime", this.dateVal + " 00:00");
+      this.changeTime(this.dateVal + " 00:00")
+      // this.$store.commit("changeTime", this.dateVal + " 00:00");
       this.getLatestTime();
     },
 
@@ -359,9 +420,7 @@ export default {
         // console.log(this.bItem)
         this.sItem = this.totalwidth / this.count;
 
-        this.$store.commit("changeTime", this.showday);
-        console.log("------------");
-        console.log(this.showday);
+        this.changeTime(this.showday)
 
         this.resetPlay();
       });
@@ -390,16 +449,16 @@ export default {
           let obj = {
             day: parseTime(nowDate, "{y}-{m}-{d}"),
             timeArr: null,
+          };
+          let timeArr = [];
+          let time = 0;
+          while (time < 24) {
+            let str = time < 10 ? "0" + time : time;
+            timeArr.push(str + ":00");
+            time += this.timeInterval;
           }
-          let timeArr = []
-          let time = 0
-          while(time < 24) {
-            let str = time < 10 ? '0' + time : time
-            timeArr.push(str + ':00')
-            time += this.timeInterval
-          }
-          obj.timeArr = timeArr
-          this.dateList.push(obj)
+          obj.timeArr = timeArr;
+          this.dateList.push(obj);
         }
       } else {
         this.end = this.date.setFullYear(
@@ -430,16 +489,16 @@ export default {
           let obj = {
             day: parseTime(nowDate, "{y}-{m}-{d}"),
             timeArr: null,
+          };
+          let timeArr = [];
+          let time = 0;
+          while (time < 24) {
+            let str = time < 10 ? "0" + time : time;
+            timeArr.push(str + ":00");
+            time += this.timeInterval;
           }
-          let timeArr = []
-          let time = 0
-          while(time < 24) {
-            let str = time < 10 ? '0' + time : time
-            timeArr.push(str + ':00')
-            time += this.timeInterval
-          }
-          obj.timeArr = timeArr
-          this.dateList.push(obj)
+          obj.timeArr = timeArr;
+          this.dateList.push(obj);
         }
       }
 
@@ -493,7 +552,8 @@ export default {
       this.timeIndex = this.itemtimeIndex;
       this.item = this.itemdayIndex * this.num + (this.itemtimeIndex + 1);
       // 传递时间
-      this.$store.commit("changeTime", this.showday);
+      this.changeTime(this.showday)
+      // this.$store.commit("changeTime", this.showday);
     },
     // 当前点的位置
     getPosition(x) {
@@ -578,7 +638,8 @@ export default {
         this.item++;
 
         this.getLineData();
-        this.$store.commit("changeTime", this.showday);
+        this.changeTime(this.showday)
+        // this.$store.commit("changeTime", this.showday);
       } else {
         this.resetPlay();
       }
@@ -597,5 +658,4 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>
+<style scoped></style>

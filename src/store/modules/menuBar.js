@@ -34,6 +34,14 @@ const state = {
       flag: false
     },
     {
+      name: '常用地点',
+      flag: false
+    },
+    {
+      name: '常用警戒线和任务区',
+      flag: false
+    },
+    {
       name: '海区划分',
       flag: false
     },
@@ -57,7 +65,7 @@ const state = {
       flag: false
     },
     {
-      name: '欧格海浪数值预报',
+      name: 'hycom海流数值预报',
       flag: false
     },
     {
@@ -77,6 +85,7 @@ const state = {
   routeDialogOptions: 0, // 0不显示 1添加航线 2 修改航线
   algorithmOptions: 0, // 0不显示 1新增算法参数 2 修改算法参数
   routeAlgorithmInfo: 0, // 0不显示 1查看评估结果
+  assessLegendShow:false // 评估结果图例
 }
 
 const actions = {
@@ -113,6 +122,9 @@ const mutations = {
   setRouteAlgorithmInfo(state, val) {
     state.routeAlgorithmInfo = val
     console.log('查看评估结果', val)
+  },
+  setAssessLegendShow(state,val){
+    state.assessLegendShow = val
   }
 }
 

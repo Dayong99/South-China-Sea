@@ -1,7 +1,7 @@
 <template>
   <!-- eslint-disable-->
   <el-dialog
-    title="导入资料"
+    title="导入海浪"
     width="500px"
     top="50px"
     :close-on-click-modal="false"

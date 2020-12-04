@@ -8,25 +8,22 @@
     font-family: '微软雅黑';
 
     .info_title {
+        height: 36px;
         line-height: 36px;
         // background: #F08E00;
         text-align: center;
-        color:white;
+        color:rgba(255, 255, 255, 0.8);
         font-size: 16px;
         border-radius: 4px 4px 0 0;
         background:#981a00;
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-        i {
-        
-            font-size: 1.2rem;
-            vertical-align: middle;
-            &:last-child{
-                font-size: 1.2rem;
-                position: absolute;
-                right:0;
-                top:8px;
-                color:rgba(255,255,255,0.6)
-            }
+        img {
+            width: 18px;
+            height: 18px;
+            margin-right: 5px;
         }
 
         .el-icon-close {

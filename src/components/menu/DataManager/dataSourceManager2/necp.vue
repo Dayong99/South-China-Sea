@@ -1,7 +1,7 @@
 <template>
   <!-- eslint-disable-->
   <el-dialog
-    title="导入necp"
+    title="导入gfs"
     width="500px"
     top="50px"
     :close-on-click-modal="false"

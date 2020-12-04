@@ -1,5 +1,6 @@
 <template>
   <div id="menuBar" class="menuBar">
+    <!-- 搜索框 -->
     <div class="search">
       <div
         :class="{ search_bgcolor: searchFlag, search_icon: true }"
@@ -59,6 +60,7 @@
       </div>
     </div>
 
+    <!-- 菜单列表 -->
     <div class="menu_list" v-show="searchFlag">
       <ul class="list_ul">
         <li v-for="(item, index) in menuList" :key="index" class="list_ul_li">
@@ -71,7 +73,7 @@
                 >{{ item.name }}</span
               >
               <img
-                src="@/assets/images/menu/add.png"
+                src="@/assets/images/menu/add.svg"
                 v-if="index == 2"
                 @click.stop="addTask(index)"
               />
@@ -101,34 +103,31 @@
               <div class="task_list">
                 <div class="task_name" @click="switchTask(item, index)">
                   <div class="task_dot" v-if="!item.checked">
-                    <img src="@/assets/images/menu/taskTitle.png" />
+                    <img src="@/assets/images/menu/taskTitle.svg" />
                   </div>
                   <div class="task_dot" v-else>
-                    <img src="@/assets/images/menu/taskTitleActive.png" />
+                    <img src="@/assets/images/menu/taskTitleActive.svg" />
                   </div>
                   <span class="task_desc" :class="{ active: item.checked }">{{
                     item.name
                   }}</span>
                 </div>
                 <div class="task_operation" style="margin-left: 0">
-                  <el-button
-                    icon="el-icon-edit-outline"
-                    class="table_column_icon green"
-                    type="text"
-                    @click="editTaskItem(item)"
-                  ></el-button>
-                  <el-button
-                    icon="el-icon-delete"
-                    class="table_column_icon red"
-                    type="text"
-                    @click="deleteTaskItem(item)"
-                  ></el-button>
-                  <el-button
-                    icon="el-icon-plus"
-                    class="table_column_icon blueDeep"
-                    type="text"
+                  <img
+                    src="@/assets/images/menu/add_task.svg"
+                    alt=""
                     @click="addTaskItem(item, index)"
-                  ></el-button>
+                  />
+                  <img
+                    src="@/assets/images/menu/edit_task.svg"
+                    alt=""
+                    @click="editTaskItem(item)"
+                  />
+                  <img
+                    src="@/assets/images/menu/delete_task.svg"
+                    alt=""
+                    @click="deleteTaskItem(item)"
+                  />
                 </div>
               </div>
 
@@ -143,56 +142,62 @@
                 >
                   <div
                     @click="switchRoute(item, index, itemRoute, indexRoute)"
+                    @click.stop="loadAssessInfo(itemRoute, indexRoute, item, index)"
                     class="task_content_desc"
                     :class="{ task_content_desc_active: itemRoute.checked }"
                   >
                     <div class="task_content_img">
-                      <img src="@/assets/images/menu/lineTitle.png" alt="" />
+                      <img src="@/assets/images/menu/lineTitle.svg" alt="" />
                     </div>
                     <div class="task_content_name">
                       {{ itemRoute.lineName }}
                     </div>
-                    <div class="control_wrapper" v-if="itemRoute.checked">
+                    <div class="control_wrapper">
                       <img
-                        src="@/assets/images/menu/route_info.png"
+                        src="@/assets/images/menu/route_info.svg"
+                        @click.stop="showRoute(itemRoute, indexRoute)"
+                      />
+                      <img
+                        src="@/assets/images/menu/route_assess.svg"
                         @click.stop="algorithm(itemRoute, indexRoute)"
                       />
                       <img
-                        src="@/assets/images/menu/route_assess.png"
+                        src="@/assets/images/menu/edit_route.svg"
                         @click.stop="algorithm(itemRoute, indexRoute)"
                       />
                       <img
-                        src="@/assets/images/menu/edit_route.png"
-                        @click.stop="algorithm(itemRoute, indexRoute)"
-                      />
-                      <img
-                        src="@/assets/images/menu/route_delete.png"
-                        @click.stop="deleteRoute(itemRoute, indexRoute)"
+                        src="@/assets/images/menu/route_delete.svg"
+                        @click.stop="
+                          deleteRoute(itemRoute, indexRoute, item, index)
+                        "
                       />
                       <img
                         :class="{ activeAssess: itemRoute.assessChecked }"
                         src="@/assets/images/menu/down_content.png"
+                        id="down_img"
                         @click.stop="
                           loadAssessInfo(itemRoute, indexRoute, item, index)
                         "
                       />
                     </div>
-                    <div class="control_wrapper" v-else></div>
                   </div>
 
                   <!-- 评估列表 -->
-                  <div class="assess_wrapper">
+                  <div class="assess_wrapper" >
                     <div
                       class="assess_items"
                       v-for="(itemAssess, indexAssess) in itemRoute.assessList"
                       :key="`assess${indexAssess}`"
                     >
-                      <div class="assess_img">
-                        <img src="@/assets/images/menu/timeTitle.png" />
+                      <div class="assess_item">
+                        <div class="assess_img">
+                          <img src="@/assets/images/menu/timeTitle.png" />
+                        </div>
+                        <div class="assess_desc">
+                          {{ itemAssess.assesstime | filterTime }}
+                        </div>
                       </div>
-                      <div class="assess_desc">
-                        {{ itemAssess.assesstime | filterTime }}
-                      </div>
+                      
                       <transition
                         enter-active-class="animated slideInRight"
                         leave-active-class="animated slideOutRight"
@@ -203,9 +208,8 @@
                             src="@/assets/images/menu/bin_assess_deactive.png"
                             class="control_items"
                             @click="
-                              changeAssessTime(
+                              deleteAssessItem(
                                 itemAssess,
-                                indexAssess,
                                 itemRoute,
                                 indexRoute,
                                 item,
@@ -259,14 +263,7 @@
                             src="@/assets/images/menu/time_assess_deactive.png"
                             class="control_items"
                             @click="
-                              changeAssessTime(
-                                itemAssess,
-                                indexAssess,
-                                itemRoute,
-                                indexRoute,
-                                item,
-                                index
-                              )
+                              changeNext(itemAssess, indexAssess, itemRoute)
                             "
                           />
                         </div>
@@ -306,10 +303,15 @@
           >
             <li v-for="(item, index) in systemList" :key="index">
               <div class="task_list">
-                <div class="task_name" @click="openSystem(index)">
-                  <span>{{ item.name }}</span>
+                <div class="task_label">
+                  <div class="task_dot">
+                    <img src="@/assets/images/menu/taskSettle.svg" />
+                  </div>
+                  <div class="task_name" @click="openSystem(index)">{{
+                    item.name
+                  }}</div>
                 </div>
-                <div class="task_operation">
+                <div class="task_operation" style="margin-left:0;">
                   <el-button
                     icon="el-icon-s-operation"
                     class="table_column_icon purple"
@@ -323,16 +325,26 @@
 
           <!-- 数据管理 -->
           <ul
-            class="list_system_ul"
+            class="list_data_ul list_system_ul"
             v-show="item.flag && flagList[2]"
             style="height: auto; overflow-y: hidden"
           >
             <li v-for="(item, index) in dataList" :key="index">
               <div class="task_list">
-                <div class="task_name" @click="openData(index)">
-                  <span>{{ item.name }}</span>
+
+                <div class="task_label">
+                  <div class="task_dot">
+                    <img src="@/assets/images/menu/taskSettle.svg" />
+                  </div>
+                  <div class="task_name" @click="openData(index)">{{
+                    item.name
+                  }}</div>
                 </div>
-                <div class="task_operation">
+                
+                <!-- <div class="task_name" @click="openData(index)">
+                  <span>{{ item.name }}</span>
+                </div> -->
+                <div class="task_operation"  style="margin-left:0;">
                   <el-button
                     icon="el-icon-s-operation"
                     class="table_column_icon purple"
@@ -394,14 +406,14 @@ export default {
       // 任务
       taskList: [],
       searchFlag: false,
-      searchIcon: require("@/assets/images/menu/unselect.png"),
+      searchIcon: require("@/assets/images/menu/unselect.svg"),
       searchValue: "",
-      downIcon: require("@/assets/images/menu/down.png"),
-      upIcon: require("@/assets/images/menu/up.png"),
+      downIcon: require("@/assets/images/menu/down.svg"),
+      upIcon: require("@/assets/images/menu/up.svg"),
       iconList: [
-        require("@/assets/images/menu/down.png"),
-        require("@/assets/images/menu/down.png"),
-        require("@/assets/images/menu/down.png"),
+        require("@/assets/images/menu/down.svg"),
+        require("@/assets/images/menu/down.svg"),
+        require("@/assets/images/menu/down.svg"),
       ],
       flagList: [false, false, false],
       nowMenuList: [],
@@ -420,6 +432,8 @@ export default {
         isVisible: false,
         title: "",
       },
+      //查看航线集合，用于删除
+      showLine: [],
     };
   },
   computed: {
@@ -427,10 +441,31 @@ export default {
       menuList: (state) => state.menuBar.menuList,
       systemList: (state) => state.menuBar.systemList,
       dataList: (state) => state.menuBar.dataList,
+      pointInfo: (state) => state.clickup.pointInfo,
       TaskManagerOptions: (state) => state.menuBar.TaskManagerOptions,
       routeDialogOptions: (s) => s.menuBar.routeDialogOptions,
       algorithmOptions: (s) => s.menuBar.algorithmOptions,
     }),
+
+    assessflag() {
+      let arr = [];
+      this.taskList.forEach((item) => {
+        if (item.routeList.length != 0) {
+          item.routeList.forEach((item1) => {
+            if (item1.assessList.length != 0) {
+              item1.assessList.forEach((item2) => {
+                arr.push(item2);
+              });
+            }
+          });
+        }
+      });
+
+      let index = arr.findIndex((item) => {
+        return item.area || item.line;
+      });
+      return index;
+    },
   },
   mounted() {
     L.CustomPopup = L.Popup.extend({
@@ -485,10 +520,21 @@ export default {
         return this;
       },
     });
+
+    // map.on("popupopen", (e) => {
+    //   console.log(e, "22222222222222");
+    //   console.log(document.getElementById("des_btn"));
+    //   let btn = document.getElementById("des_btn");
+    //   btn.onclick = function() {
+    //     let str = document.getElementById("des_text").value;
+    //     console.log(str, "文本域内容----------");
+    //   };
+    // });
   },
   watch: {
     menuList: {
       handler(newval, oldval) {
+        console.log(newval)
         let i = newval.findIndex((item) => {
           return item.flag == true;
         });
@@ -510,6 +556,16 @@ export default {
     routeDialogOptions() {
       console.log("更新航线信息");
     },
+    assessflag(val) {
+      console.log(val, "有无选中评估------");
+      if (val != -1) {
+        //有选中评估区域或航线，显示图例
+        this.setAssessLegendShow(true);
+      } else {
+        //没有选中评估区域或航线，隐藏图例
+        this.setAssessLegendShow(false);
+      }
+    },
   },
   filters: {
     filterTime(val) {
@@ -528,6 +584,12 @@ export default {
       setTitleList: "routeInfo/setTitleList",
       setDataList: "routeInfo/setDataList",
       setRouteInfoShow: "routeInfo/setRouteInfoShow",
+      // setMarker: "clickup/setMarker",
+      setLocation: "clickup/setLocation",
+      setPointInfo: "clickup/setPointInfo",
+      setPointInfoShow: "clickup/setPointInfoShow",
+      setInfoShow: "clickup/setInfoShow",
+      setAssessLegendShow: "menuBar/setAssessLegendShow",
     }),
     // 任务树setting
     AssessSetting(itemAssess, indexAssess, itemRoute, indexRoute, item, index) {
@@ -559,15 +621,27 @@ export default {
         this.taskList
       );
     },
-    deleteRoute(item, index) {
+    deleteRoute(item, index, taskItem, taskIndex) {
       console.log(item, index, `delete`);
-      this.$delete(`/api/course`, {
-        id: item.id,
-      })
+      this.$confirm("确认删除该航线吗")
         .then(() => {
+          this.$delete(`/api/course`, {
+            id: item.id,
+          })
+            .then(() => {
+              this.$message({
+                message: "航线删除成功",
+                type: "success",
+              });
+            })
+            .then(() => {
+              this.loadRouteList(taskItem, taskIndex);
+            });
+        })
+        .catch(() => {
           this.$message({
-            message: "航线删除成功",
-            type: "success",
+            message: "取消删除",
+            type: "information",
           });
         })
         .then(() => {
@@ -631,6 +705,28 @@ export default {
           });
         });
     },
+    //删除评估
+    deleteAssessItem(itemAssess, itemRoute, indexRoute, item, index) {
+      console.log(itemAssess, itemRoute, indexRoute, item, index);
+      this.$confirm("确认删除该评估吗")
+        .then(() => {
+          this.$delete("api/assessment", {
+            id: itemAssess.id,
+          }).then((res) => {
+            this.$message({
+              message: "评估删除成功",
+              type: "success",
+            });
+            this.loadAssessInfo(itemRoute, indexRoute, item, index);
+          });
+        })
+        .catch(() => {
+          this.$message({
+            message: "取消删除",
+            type: "information",
+          });
+        });
+    },
     // 请求任务列表
     loadTaskList() {
       let params = {
@@ -665,6 +761,7 @@ export default {
                 ...e,
                 checked: false,
                 assessChecked: false,
+                showRoute: false,
                 assessList: [],
               };
             });
@@ -684,25 +781,31 @@ export default {
       ].routeList[indexRoute].assessChecked;
       const status = this.taskList[index].routeList[indexRoute].assessChecked;
       if (status) {
-        // 请求该航线评估列表
-        this.$get(`/api/assessment`, {
-          courseId: itemRoute.id,
+        this.$get("api/course/one", {
+          id: itemRoute.id,
         }).then((res) => {
-          if (res.status === 200) {
-            this.taskList[index].routeList[
-              indexRoute
-            ].assessList = res.data.data.map((e, i) => {
-              return {
-                ...e,
-                line: false,
-                area: false,
-                table: false,
-                timeIndex: 0,
-                alorithm: false,
-                setting: false,
-              };
-            });
-          }
+          let length = res.data.data.courseItemList.length;
+          // 请求该航线评估列表
+          this.$get(`/api/assessment`, {
+            courseId: itemRoute.id,
+          }).then((res) => {
+            if (res.status === 200) {
+              this.taskList[index].routeList[
+                indexRoute
+              ].assessList = res.data.data.map((e, i) => {
+                return {
+                  ...e,
+                  line: false,
+                  area: false,
+                  table: false,
+                  pointNum: length,
+                  timeIndex: 0,
+                  alorithm: false,
+                  setting: false,
+                };
+              });
+            }
+          });
         });
       } else {
         this.taskList[index].routeList[indexRoute].assessList = [];
@@ -730,9 +833,9 @@ export default {
     changeSearch() {
       this.searchFlag = !this.searchFlag;
       if (this.searchFlag) {
-        this.searchIcon = require("@/assets/images/menu/select.png");
+        this.searchIcon = require("@/assets/images/menu/select.svg");
       } else {
-        this.searchIcon = require("@/assets/images/menu/unselect.png");
+        this.searchIcon = require("@/assets/images/menu/unselect.svg");
         this.menuList.forEach((item) => {
           item.flag = false;
         });
@@ -788,17 +891,25 @@ export default {
     //显示评估区域
     showAssessArea(itemAssess, indexAssess, itemRoute) {
       console.log(itemAssess, itemRoute, "点击风险评估区域");
+      itemAssess.timeIndex = 0;
       //单个评估区域和航线互斥
       itemAssess.line = false;
       //清除风险等级航线
       this.clearRouteById(itemAssess.id);
+      // if (itemAssess.id == this.pointInfo.assessmentId) {
+      //   this.setPointInfoShow(false);
+      // }
       //单条航线多个评估互斥
       itemRoute.assessList.forEach((item) => {
         if (item.id != itemAssess.id) {
           item.area = false;
           item.line = false;
           this.clearRectangleById(item.id);
+          this.clearOriginalLine(item.courseId, "rectangle");
           this.clearRouteById(item.id);
+          if (item.id == this.pointInfo.assessmentId) {
+            this.setPointInfoShow(false);
+          }
         }
       });
 
@@ -806,6 +917,7 @@ export default {
       //绘制风险等级区域
       if (itemAssess.area) {
         this.clearRectangleById(itemAssess.id);
+        this.clearOriginalLine(itemAssess.courseId, "rectangle");
         this.drawRectangle(
           itemAssess.id,
           itemAssess.timeIndex,
@@ -814,23 +926,30 @@ export default {
       } else {
         //清除该评估的风险区域
         this.clearRectangleById(itemAssess.id);
+        this.clearOriginalLine(itemAssess.courseId, "rectangle");
       }
     },
 
     //显示评估航线
     showAssessLine(itemAssess, indexAssess, itemRoute) {
       console.log(itemAssess, itemRoute, "点击风险评估航线");
+      itemAssess.timeIndex = 0;
       //单个评估区域和航线互斥
       itemAssess.area = false;
       //清除风险等级区域
       this.clearRectangleById(itemAssess.id);
+      this.clearOriginalLine(itemAssess.courseId, "rectangle");
       //单条航线多个评估互斥
       itemRoute.assessList.forEach((item) => {
         if (item.id != itemAssess.id) {
           item.area = false;
           item.line = false;
           this.clearRectangleById(item.id);
+          this.clearOriginalLine(item.courseId, "rectangle");
           this.clearRouteById(item.id);
+          // if (item.id == this.pointInfo.assessmentId) {
+          //   this.setPointInfoShow(false);
+          // }
         }
       });
 
@@ -838,6 +957,9 @@ export default {
       //绘制风险等级航线
       if (itemAssess.line) {
         this.clearRouteById(itemAssess.id);
+        // if (itemAssess.id == this.pointInfo.assessmentId) {
+        //   this.setPointInfoShow(false);
+        // }
         this.drawRouteLine(
           itemAssess.id,
           itemAssess.timeIndex,
@@ -846,7 +968,53 @@ export default {
       } else {
         //清除该评估的风险航线
         this.clearRouteById(itemAssess.id);
+        // if (itemAssess.id == this.pointInfo.assessmentId) {
+        //   this.setPointInfoShow(false);
+        // }
       }
+    },
+
+    //切换显示下一个时间点的评估信息
+    changeNext(itemAssess, indexAssess, itemRoute) {
+      console.log(itemAssess);
+      //当前选中了风险区域评估或者风险航线评估或者风险评估数据列表时
+      if (itemAssess.area || itemAssess.line || itemAssess.table) {
+        itemAssess.timeIndex++;
+        if (itemAssess.timeIndex >= itemAssess.pointNum) {
+          itemAssess.timeIndex = 0;
+        }
+        console.log(itemAssess.timeIndex);
+        //选中区域风险评估
+        if (itemAssess.area) {
+          this.changeShowAssessArea(itemAssess);
+          //选中风险评估航线
+        } else if (itemAssess.line) {
+          this.changeShowAssessLine(itemAssess)
+          //选中风险评估信息列表
+        } else if (itemAssess.table) {
+        }
+      }
+    },
+
+    //切换下一个时间点时，重新绘制风险等级区域
+    changeShowAssessArea(itemAssess) {
+      this.clearRectangleById(itemAssess.id);
+      this.clearOriginalLine(itemAssess.courseId, "rectangle");
+      this.drawRectangle(
+        itemAssess.id,
+        itemAssess.timeIndex,
+        itemAssess.courseId
+      );
+    },
+
+    //切换下一个时间点时，重新绘制风险等级航线
+    changeShowAssessLine(itemAssess) {
+      this.clearRouteById(itemAssess.id);
+      this.drawRouteLine(
+          itemAssess.id,
+          itemAssess.timeIndex,
+          itemAssess.courseId
+        );
     },
 
     //获取风险等级航线详细信息列表
@@ -917,19 +1085,34 @@ export default {
         let color = "";
         riskArr.forEach((item) => {
           item.forEach((item1) => {
-            if (parseInt(Number(item1.value) * 10) != 10) {
-              color = this.colorArr[parseInt((Number(item1.value) * 10) / 2)];
+            if (item1.value == -1) {
+              reArr.push({
+                corner1: [Number(item1.lat), Number(item1.lon)],
+                corner2: [
+                  Number(item1.lat) - Number(item1.grid),
+                  Number(item1.lon) + Number(item1.grid),
+                ],
+                color: "",
+                borderColor: "",
+                fillOpacity: 0,
+              });
             } else {
-              color = this.colorArr[this.colorArr.length - 1];
+              if (parseInt(Number(item1.value) * 10) != 10) {
+                color = this.colorArr[parseInt((Number(item1.value) * 10) / 2)];
+              } else {
+                color = this.colorArr[this.colorArr.length - 1];
+              }
+              reArr.push({
+                corner1: [Number(item1.lat), Number(item1.lon)],
+                corner2: [
+                  Number(item1.lat) - Number(item1.grid),
+                  Number(item1.lon) + Number(item1.grid),
+                ],
+                color: color,
+                borderColor: "#000000",
+                fillOpacity: 0.5,
+              });
             }
-            reArr.push({
-              corner1: [Number(item1.lat), Number(item1.lon)],
-              corner2: [
-                Number(item1.lat) - Number(item1.grid),
-                Number(item1.lon) + Number(item1.grid),
-              ],
-              color: color,
-            });
           });
         });
         console.log(reArr, "画风险评估区域---------");
@@ -937,14 +1120,15 @@ export default {
           let bounds = [item.corner1, item.corner2];
           let rectangle = L.rectangle(bounds, {
             fillColor: item.color,
-            color: "#000000",
+            color: item.borderColor,
             weight: 1,
-            fillOpacity: 0.5,
+            fillOpacity: item.fillOpacity,
           }).addTo(map);
           rectangle.assessmentId = assessmentId;
           rectangle.courseId = courseId;
           this.rectangle.push(rectangle);
         });
+        this.drawOriginalLine(courseId, "rectangle", timeIndex);
       });
     },
 
@@ -990,7 +1174,7 @@ export default {
             latlngs.push([Number(item.latitude), Number(item.longitude)]);
           });
           // L.polyline(latlngs, { color: "blue" }).addTo(map);
-          console.log(latlngs, "航线点-------------");
+          console.log(latlngs, "航线点-------------", lineData);
 
           let allPoint = [];
           for (let i = 0; i < latlngs.length - 1; i++) {
@@ -1034,37 +1218,91 @@ export default {
           });
           console.log(pointArr);
           pointArr.forEach((item, index) => {
-            let circle = L.circleMarker(item.position, {
-              radius: 6,
-              fillOpacity: 1,
-              fillColor: item.color,
-              weight: 0,
-            }).addTo(map);
+            let circle;
+            if (index == timeIndex) {
+              circle = L.circleMarker(item.position, {
+                radius: 7,
+                fillOpacity: 1,
+                fillColor: item.color,
+                weight: 4,
+                color: "#00F1FF",
+              }).addTo(map);
+            } else {
+              circle = L.circleMarker(item.position, {
+                radius: 6,
+                fillOpacity: 1,
+                fillColor: item.color,
+                weight: 0,
+              }).addTo(map);
+            }
             circle.index = index;
             circle.assessmentId = assessmentId;
             circle.courseId = courseId;
             circle.on("click", (e) => {
+              map.off("click", window.mapClick_p);
+              this.setInfoShow(false);
               console.log(e, "航线点的信息--------");
               //请求单个航线点的信息
-              // this.$get("api/assessment/point-conclusion",{
+              this.$get("api/assessment/point-conclusion", {
+                assessmentId: assessmentId,
+                index: e.target.index,
+                point: timeIndex,
+              }).then((res) => {
+                console.log(res, "单个点的数据信息");
+                let arr = res.data.data;
+                let singleInfo = {
+                  assessmentId: assessmentId, //评估id
+                  index: e.target.index, //点在航线中的index值
+                  message: arr[0].other,
+                  arr: [
+                    {
+                      name: "时间",
+                      value: arr[0].dateTime,
+                    },
+                  ],
+                };
+                arr.forEach((item) => {
+                  if (item.name == "conclusion") {
+                    singleInfo.arr.push({
+                      name: "风险等级",
+                      value: item.value,
+                    });
+                  } else {
+                    singleInfo.arr.push({
+                      name: item.name,
+                      value: item.value,
+                    });
+                  }
+                });
+                this.setPointInfo(singleInfo);
+                this.setLocation(e.containerPoint);
+                // this.setInfoShow(false)
+                this.setPointInfoShow(true);
 
-              // })
-              // let info = [
-              //   {
-              //     name: "时间",
-              //     value: "2020-01-01 10:00",
-              //   },
-              //   {
-              //     name: "温度",
-              //     value: "23",
-              //   },
-              //   {
-              //     name: "高度",
-              //     value: "1234",
-              //   },
-              // ];
+                let marker = e.target;
+                map.on("move", (e) => {
+                  let p = map.latLngToContainerPoint(
+                    L.latLng(marker._latlng.lat, marker._latlng.lng)
+                  );
+                  console.log(p);
+                  this.setLocation(p);
+                });
+              });
+
               // let content = this.getPointContent(info);
               // circle.bindCustomPopup(content).openPopup();
+              // console.log(document.getElementById("des_btn"));
+              // document.getElementById("des_btn").onclick = () => {
+              //   let str = document.getElementById("des_text").value;
+              //   console.log(str, "文本域内容----------");
+              // };
+              // map.on("popupopen", (e) => {
+              //   console.log(e, "22222222222222");
+              //   document.getElementById("des_btn").onclick = () => {
+              //     let str = document.getElementById("des_text").value;
+              //     console.log(str, "文本域内容----------");
+              //   };
+              // });
             });
             this.routeLine.push(circle);
           });
@@ -1086,6 +1324,9 @@ export default {
     //根据航线id清除图上的风险评估区
     //根据评估id清除图上的风险评估航线
     clearRouteById(id) {
+      if (id == this.pointInfo.assessmentId) {
+        this.setPointInfoShow(false);
+      }
       console.log(this.routeLine, "保存的风险区域----------");
       for (let i = 0; i < this.routeLine.length; i++) {
         if (this.routeLine[i].assessmentId == id) {
@@ -1359,7 +1600,7 @@ export default {
       }
     },
     compare(property, m) {
-      return function (a, b) {
+      return function(a, b) {
         var value1 = a[property];
         var value2 = b[property];
         if (m == "+") {
@@ -1419,10 +1660,80 @@ export default {
       <div class="info_content">
          ` +
         str +
-        `</div>
+        `<div class="descriptionBox">描述信息:<button id="des_btn">保存</button><textarea name="description" id="des_text" cols="25" rows="3" style="resize:none;"></textarea></div>
+        
+        </div>
       </div>
     </div>`
       );
+    },
+
+    //查看航线
+    showRoute(itemRoute, indexRoute) {
+      console.log(itemRoute, indexRoute);
+      itemRoute.showRoute = !itemRoute.showRoute;
+      if (itemRoute.showRoute) {
+        this.drawOriginalLine(itemRoute.id, "show");
+      } else {
+        //清除航线
+        this.clearOriginalLine(itemRoute.id, "show");
+      }
+    },
+
+    //画原始航线(区别于风险评估变色航线)
+    drawOriginalLine(id, type, timeIndex) {
+      this.$get("api/course/one", {
+        id: id,
+      }).then((res) => {
+        console.log(res.data.data.courseItemList);
+        let pointArr = res.data.data.courseItemList.map((item) => {
+          return [item.latitude, item.longitude];
+        });
+        console.log(pointArr);
+        let polyline = L.polyline(pointArr).addTo(map);
+        polyline.id = type + id;
+        this.showLine.push(polyline);
+        pointArr.forEach((item, index) => {
+          let circle;
+          if (typeof index == "undefined") {
+            circle = L.circleMarker(item, {
+              radius: 6,
+              fillOpacity: 1,
+              weight: 0,
+            }).addTo(map);
+          } else {
+            if (timeIndex == index) {
+              circle = L.circleMarker(item, {
+                radius: 7,
+                fillOpacity: 1,
+                fillColor: "#3388ff",
+                weight: 4,
+                color: "#00F1FF",
+              }).addTo(map);
+            } else {
+              circle = L.circleMarker(item, {
+                radius: 6,
+                fillOpacity: 1,
+                fillColor: "#3388ff",
+                weight: 0,
+              }).addTo(map);
+            }
+          }
+          circle.id = type + id;
+          this.showLine.push(circle);
+        });
+      });
+    },
+
+    //清除原始航线
+    clearOriginalLine(id, type) {
+      for (let i = 0; i < this.showLine.length; i++) {
+        if (this.showLine[i].id == type + id) {
+          map.removeLayer(this.showLine[i]);
+          this.showLine.splice(i, 1);
+          i--;
+        }
+      }
     },
   },
 };

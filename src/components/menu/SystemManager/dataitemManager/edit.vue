@@ -167,6 +167,18 @@
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
+            <el-form-item label="值范围" prop="valueRange">
+              <el-input
+                placeholder="例：0,180"
+                v-model="formData.valueRange"
+              ></el-input>
+            </el-form-item>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="18">
+          <div class="grid-content bg-purple-dark">
             <el-form-item label="标识" prop="parameterMark">
               <el-input v-model="formData.parameterMark"></el-input>
             </el-form-item>
@@ -437,6 +449,7 @@ export default {
         sourceType: "",
         type: null,
         units: "",
+        valueRange:""
       };
     },
     getLegend() {
