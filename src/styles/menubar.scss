@@ -271,13 +271,13 @@
                 }
                 // ------系统------
                 .list_system_ul {
-                    width: 90%;
+                    width: 100%;
                     max-height: 350px;
                     margin-left: 10px;
-                    margin-bottom: 10px;
+                    margin-top: -6px;
                     overflow-y: auto;
                     li {
-                        width: 95%;
+                        width: 100%;
                         height: auto;
                         font-size: 14px;
                         display: flex;
@@ -285,28 +285,36 @@
                         align-items: center;
                         flex-flow: column;
                         .task_list {
-                            width: 95%;
+                            width: 100%;
                             height: 30px;
                             font-size: 14px;
                             display: flex;
                             justify-content: space-between;
                             align-items: center;
+                            .task_label {
+                                display: flex;
+                            }
+                            .task_dot {
+                                img {
+                                    width: 8px;
+                                }
+                            }
                             .task_name {
                                 cursor: pointer;
-                                margin-left: 10px;
-                                display: flex;
-                                justify-content: space-between;
-                                align-items: center;
-                                .task_dot {
-                                    width: 10px;
-                                    height: 10px;
-                                    border: 2px solid #ccc;
-                                    border-radius: 50%;
-                                    margin-right: 10px;
-                                }
-                                .active {
-                                    background: #981A00;
-                                }
+                                margin-left: 14px;
+                                // display: flex;
+                                // justify-content: space-between;
+                                // align-items: center;
+                                // .task_dot {
+                                //     width: 10px;
+                                //     height: 10px;
+                                //     border: 2px solid #ccc;
+                                //     border-radius: 50%;
+                                //     margin-right: 10px;
+                                // }
+                                // .active {
+                                //     background: #981A00;
+                                // }
                             }
                             .task_operation {
                                 // width: 90px;
@@ -330,7 +338,7 @@
                                 // 图标大小 和 左外边距
                                 .el-button {
                                     font-size: 16px;
-                                    margin-left: 0;
+                                    margin-right: 16px;
                                 }
                             }
                         }
@@ -376,6 +384,9 @@
                             }
                         }
                     }
+                }
+                .list_data_ul {
+                    margin-bottom: 10px;
                 }
                 // ------任务------
                 .list_task_ul {
@@ -466,7 +477,6 @@
                                 white-space: nowrap;
                                 flex-flow: column;
                                 color: #000000;
-                                margin-top: 2px;
                                 .task_content_desc {
                                     cursor: pointer;
                                     width: 100%;
@@ -491,16 +501,19 @@
                                         text-align: left;
                                     }
                                     .control_wrapper {
-                                        width: 40%;
+                                        width: 50%;
                                         padding-top: 5px;
                                         margin-right: 5px;
                                         img {
-                                            width: 14px;
-                                            height: 14px;
+                                            width: 17px;
                                             margin-bottom: 3px;
                                             &:hover {
                                                 cursor: pointer;
                                             }
+                                        }
+                                        #down_img {
+                                            width: 13px;
+                                            margin-bottom: 5px;
                                         }
                                         .activeAssess {
                                             transform: rotate(180deg);
@@ -522,7 +535,7 @@
                                     width: 100%;
                                     overflow-y: auto;
                                     height: auto;
-                                    background: #756c5d;
+                                    background: rgba(0, 0, 0, 0.3);
                                     overflow-x: hidden;
                                     .assess_items {
                                         height: 30px;
@@ -530,7 +543,7 @@
                                         display: flex;
                                         justify-content: space-between;
                                         .assess_img {
-                                            margin-left: 5px;
+                                            margin-left: 7px;
                                             img {
                                                 width: 16px;
                                                 height: 16px;
@@ -577,11 +590,10 @@
                                             }
                                         }
                                         .setting_wrapper {
-                                            position: absolute;
-                                            padding-right: 5px;
                                             height: 30px;
                                             line-height: 40px;
-                                            right: 15px;
+                                            padding-top: 2px;
+                                            padding-right: 5px;
                                             .control_items {
                                                 width: 22px;
                                                 height: 22px;
