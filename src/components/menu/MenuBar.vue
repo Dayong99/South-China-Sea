@@ -141,18 +141,53 @@
                       {{ itemRoute.lineName }}
                     </div>
                     <div class="control_wrapper" >
-                      <img
+                      <!-- <img
                         src="@/assets/images/menu/route_info.svg"
                         @click.stop="algorithm(itemRoute, indexRoute)"
-                      />
-                      <img
+                      /> -->
+  
+                      
+
+                      <img v-for="(item,index) in taskSeeds" :key="1111"
+                            :src="
+                              item.info
+                                ? AssessControlSrc.information.active
+                                : AssessControlSrc.information.deactive
+                            "
+                            class="control_items"
+                        
+                            @click.stop="algorithm_Task(item.index,itemRoute, indexRoute)"
+                          />
+
+                      <img v-for="(item,index) in taskSeeds" :key="1112"
+                            :src="
+                              item.assess
+                                ? AssessControlSrc.assess.active
+                                : AssessControlSrc.assess.deactive
+                            "
+                            class="control_items"
+                        
+                            @click.stop="algorithm_Task(item.index,itemRoute, indexRoute)"
+                          />
+                        <img v-for="(item,index) in taskSeeds" :key="1113"
+                            :src="
+                              item.edit
+                                ? AssessControlSrc.edit.active
+                                : AssessControlSrc.edit.deactive
+                            "
+                            class="control_items"
+                        
+                            @click.stop="algorithm_Task(item.index,itemRoute, indexRoute)"
+                          />
+
+                      <!-- <img
                         src="@/assets/images/menu/route_assess.svg"
                         @click.stop="algorithm(itemRoute, indexRoute)"
                       />
                       <img
                         src="@/assets/images/menu/edit_route.svg"
                         @click.stop="algorithm(itemRoute, indexRoute)"
-                      />
+                      /> -->
                       <img
                         src="@/assets/images/menu/route_delete.svg"
                         @click.stop="
@@ -397,8 +432,21 @@ export default {
           active: require("@/assets/images/menu/time_assess_deactive.png"),
           deactive: require("@/assets/images/menu/time_assess_deactive.png"),
         },
+        information:{
+          active: require("@/assets/images/menu/info_assess_active.svg"),
+          deactive: require("@/assets/images/menu/info_assess_deactive.svg"),
+        },
+        edit:{
+          active: require("@/assets/images/menu/edit_assess_active.svg"),
+          deactive: require("@/assets/images/menu/edit_assess_deactive.svg"),
+        },
+        assess:{
+          active: require("@/assets/images/menu/assess_assess_active.svg"),
+          deactive: require("@/assets/images/menu/assess_assess_deactive.svg"),
+        }
       },
       // 任务
+      taskSeeds:[{'info':false,'assess':false,'edit':false}],
       taskList: [],
       searchFlag: false,
       searchIcon: require("@/assets/images/menu/unselect.svg"),
@@ -640,6 +688,10 @@ export default {
     algorithm(item, index) {
       this.setAlgorithm([1, item]);
     },
+    algorithm_Task(seedIndex,item, index){
+      this.taskSeeds[seedIndex]=true;
+      this.setAlgorithm([1, item]);
+    },
     addTaskItem(item, index) {
       console.log(item, index, `item`);
       this.setRouteDialogOptions([1, item]);
@@ -869,6 +921,9 @@ export default {
       this.setData({ index: index, val: true });
     },
 
+    showInfo(item){
+      item = true
+    },
     //显示评估区域
     showAssessArea(itemAssess, indexAssess, itemRoute) {
       console.log(itemAssess, itemRoute, "点击风险评估区域");
