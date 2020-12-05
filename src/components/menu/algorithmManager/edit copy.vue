@@ -4,7 +4,7 @@
     class="algorithm_manager"
     v-show="algorithmShow"
     v-loading="loading"
-    element-loading-text="评估中。。。。"
+    element-loading-text="拼命加载中"
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)"
   >
@@ -134,6 +134,7 @@
                       v-model="
                         item.condition[item.activeConditionIndex].parameter1
                       "
+                      :disabled="showInfo"
                     />
                   </div>
 
@@ -143,6 +144,7 @@
                       v-model="
                         item.condition[item.activeConditionIndex].expression
                       "
+                      :disabled="showInfo"
                     >
                       <option
                         v-for="(item, index) in ['>', '<', '<=', '>=']"
@@ -158,6 +160,7 @@
                       v-model="
                         item.condition[item.activeConditionIndex].parameter2
                       "
+                      :disabled="showInfo"
                     />
                   </div>
 
@@ -167,6 +170,7 @@
                       v-model="
                         item.condition[item.activeConditionIndex].expression
                       "
+                      :disabled="showInfo"
                     >
                       <option
                         v-for="(item, index) in ['>', '<', '<=', '>=']"
@@ -183,6 +187,7 @@
                       v-model="
                         item.condition[item.activeConditionIndex].parameter3
                       "
+                      :disabled="showInfo"
                     />
                   </div>
                   <div class="item">差</div>
@@ -191,6 +196,7 @@
                       v-model="
                         item.condition[item.activeConditionIndex].expression
                       "
+                      :disabled="showInfo"
                     >
                       <option
                         v-for="(item, index) in ['>', '<', '<=', '>=']"
@@ -206,6 +212,7 @@
                       v-model="
                         item.condition[item.activeConditionIndex].parameter4
                       "
+                      :disabled="showInfo"
                     />
                   </div>
                   <div class="item">很差</div>
@@ -221,6 +228,7 @@
                       v-model="
                         item.condition[item.activeConditionIndex].coefficient1
                       "
+                      :disabled="showInfo"
                     />
                   </div>
                   <div class="item"></div>
@@ -231,6 +239,7 @@
                       v-model="
                         item.condition[item.activeConditionIndex].coefficient2
                       "
+                      :disabled="showInfo"
                     />
                   </div>
                   <div class="item"></div>
@@ -241,6 +250,7 @@
                       v-model="
                         item.condition[item.activeConditionIndex].coefficient3
                       "
+                      :disabled="showInfo"
                     />
                   </div>
                   <div class="item"></div>
@@ -251,6 +261,7 @@
                       v-model="
                         item.condition[item.activeConditionIndex].coefficient4
                       "
+                      :disabled="showInfo"
                     />
                   </div>
                   <div class="item"></div>
@@ -334,6 +345,7 @@ export default {
       mockData: {},
       treeChart: null,
       activeNodeIndex: [],
+      showInfo: false,
     };
   },
   computed: {
@@ -359,6 +371,7 @@ export default {
         // 查看评估参数
         if (val[0] === 2) {
           console.log(`查看配置参数`, val);
+          this.showInfo = true;
           this.getAlorithInfo(val[1]);
         }
       },
@@ -411,6 +424,7 @@ export default {
         assesstime: null,
       };
       this.editNodeName = false;
+      this.showInfo = false;
     },
     // 获取评估配置参数
     getAlorithInfo(item) {
@@ -828,6 +842,9 @@ export default {
           this.treeChart.setItemState(item, "collapse", nodeModel.collapsed);
         };
         const addNode = (e) => {
+          if (this.showInfo) {
+            return;
+          }
           console.log(
             `this.weatherFactoreOptionsList`,
             this.weatherFactoreOptionsList
@@ -842,7 +859,7 @@ export default {
             level: 2,
             parentId: null,
             WeightRatio: 0.2,
-            variableUp: (new Date()).valueOf(),
+            variableUp: false,
             weatherFactor: JSON.parse(
               JSON.stringify(this.weatherFactoreOptionsList)
             ),
@@ -860,6 +877,9 @@ export default {
           console.log(this.mockData, `this.mockData添加节点`);
         };
         const deleteNode = (e) => {
+          if (this.showInfo) {
+            return;
+          }
           this.$confirm(`确认删除${e.label}节点么`, {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
@@ -869,7 +889,7 @@ export default {
               this.mockData.children.forEach((a, b) => {
                 if (a.id === e.parentId) {
                   a.children.forEach((c, d) => {
-                    if (c.variableUp === e.variableUp) {
+                    if (c.label === e.label) {
                       this.mockData.children[b].children.splice(d, 1);
                     }
                   });
@@ -889,6 +909,9 @@ export default {
             });
         };
         const editNodeName = (e) => {
+          if (this.showInfo) {
+            return;
+          }
           if (e.level === 0) {
             return;
           }
@@ -900,7 +923,7 @@ export default {
             this.mockData.children.forEach((a, b) => {
               if (a.id === e.parentId) {
                 a.children.forEach((c, d) => {
-                  if (c.variableUp === e.variableUp) {
+                  if (c.label === e.label) {
                     console.log([b, d], `编辑三级节点信息`);
                     this.activeNodeIndex = [b, d];
                     console.log(
@@ -934,7 +957,7 @@ export default {
               if (a.id === e.parentId) {
                 parentName = a.label;
                 a.children.forEach((c, d) => {
-                  if (c.variableUp === e.variableUp) {
+                  if (c.label === e.label) {
                     name = c.label;
                     this.activeNodeIndex = [b, d];
                   }
@@ -1173,7 +1196,6 @@ export default {
         `algorithm_Typealgorithm_Typealgorithm_Typealgorithm_Typealgorithm_Type`,
         this.mockData
       );
-      
       console.log(this.mockData, `deploy`);
       let treeArr = [
         {
@@ -1289,20 +1311,9 @@ export default {
         hydrometeor,
         treeDeploy
       );
-      console.log(this.routeInfo,`this.routeInfothis.routeInfo`,this.algorithmOptions[0])
-      let courseId = Number
-      let planId = Number
-      if(this.algorithmOptions[0] === 1) {
-        courseId = this.routeInfo.id
-        planId = this.routeInfo.plan_Id
-      }
-      if(this.algorithmOptions[0] === 2) {
-        courseId = this.routeInfo.courseId
-        planId = this.routeInfo.planId
-      }
       let params = {
-        courseId: courseId,
-        planId: planId,
+        courseId: this.routeInfo.id,
+        planId: this.routeInfo.plan_Id,
         hydrometeor: JSON.stringify(hydrometeor),
         treeName: treeName.join(","),
         treeStructure: treeStructure.join(","),
