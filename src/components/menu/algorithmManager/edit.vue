@@ -1046,6 +1046,7 @@ export default {
     },
     submit() {
       console.log(this.formData, this.mockData);
+      console.log(this.mockData,`deploy`)
       let treeArr = [
         {
           structure: 0,
@@ -1054,8 +1055,10 @@ export default {
           parameter: "-",
           coefficient: "-",
           expression: "-",
+          deploy: `${this.mockData.name}_${this.mockData.label}`
         },
       ];
+      console.log(treeArr,`treeArr`)
       this.mockData.children.forEach((e, i) => {
         console.log(e, `二级`);
         let objTwo = {
@@ -1065,6 +1068,7 @@ export default {
           parameter: "-",
           coefficient: "-",
           expression: "-",
+          deploy: `${e.name}_${e.label}`
         };
         treeArr.push(objTwo);
         if (e.children) {
@@ -1077,9 +1081,11 @@ export default {
               parameter: "-",
               coefficient: "-",
               expression: "-",
+              deploy: `${a.name}_${a.label}`
             };
             treeArr.push(objTwo);
             a.weatherFactor.forEach((c, d) => {
+              console.log(c,`气象因子`)
               if (c.checked) {
                 let objThree = {
                   structure: 3,
@@ -1096,6 +1102,7 @@ export default {
                     c.condition[c.activeConditionIndex].coefficient2
                   }_${c.condition[c.activeConditionIndex].coefficient3}`,
                   expression: c.condition[c.activeConditionIndex].expression,
+                  deploy: `weather`
                 };
                 treeArr.push(objThree);
               }
@@ -1111,6 +1118,7 @@ export default {
       let treeCoefficient = [];
       let treeExpression = [];
       let hydrometeor = [];
+      let treeDeploy = []
       treeArr.forEach((e, i) => {
         treeName.push(e.name);
         treeStructure.push(e.structure);
@@ -1118,6 +1126,7 @@ export default {
         treeParameter.push(e.parameter);
         treeCoefficient.push(e.coefficient);
         treeExpression.push(e.expression);
+        treeDeploy.push(e.deploy)
         if (e.structure === 3) {
           let objHy = {
             typeId: e.name.split("_")[0],
@@ -1133,7 +1142,8 @@ export default {
         treeParameter,
         treeCoefficient,
         treeExpression,
-        hydrometeor
+        hydrometeor,
+        treeDeploy
       );
       let params = {
         courseId: this.routeInfo.id,
@@ -1147,13 +1157,14 @@ export default {
         treeCoefficient: treeCoefficient.join(","),
         treeExpression: treeExpression.join(","),
         treeParameter: treeParameter.join(","),
+        treeDeploy: treeDeploy.join(',')
       };
       this.$jsonPost(`/api/assessment/evaluate`, {
         ...params,
       })
         .then((res) => {
           console.log(res, `res`);
-          if (res.data.data === "评估失败") {
+          if (res.data.message === "评估失败") {
             this.$messag({
               title: "error",
               message: "评估失败",
