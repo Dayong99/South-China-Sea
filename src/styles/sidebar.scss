@@ -111,6 +111,10 @@
         right: 84px;
         display: flex;
         align-items: center;
+        background: url("../assets/images/sidebar/bcground.png") no-repeat;
+        background-size: 100%;
+        padding-left: 10px;
+        margin-right: 10px;
         .latlng {
             width: 190px;
             display: flex;
@@ -125,7 +129,6 @@
             .other_lat,
             .other_lon {
                 color: #fff;
-                text-shadow: 0.1em 0.1em 0.2em rgb(95, 95, 95);
                 font-weight: 500;
             }
         }
