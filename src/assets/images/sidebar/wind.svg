@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63 (92445) - https://sketch.com -->
+    <title>风场标</title>
+    <desc>Created with Sketch.</desc>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="XX船舰切图" transform="translate(-201.000000, -458.000000)">
+            <g id="风速标_export" transform="translate(201.000000, 458.000000)">
+                <g id="风速标" transform="translate(3.600000, 4.800000)">
+                    <line x1="0.564923077" y1="6.912" x2="14.1230769" y2="6.912" id="直线-2" stroke="#FFFFFF" stroke-width="1.44" stroke-linecap="round"></line>
+                    <circle id="椭圆形" fill="#FFFFFF" cx="14.256" cy="3.888" r="3.888"></circle>
+                    <circle id="椭圆形备份" fill="#FFFFFF" cx="24.624" cy="13.392" r="3.888"></circle>
+                    <circle id="椭圆形备份-2" fill="#FFFFFF" cx="15.984" cy="22.032" r="3.888"></circle>
+                    <line x1="0.549818182" y1="12.96" x2="23.6421818" y2="12.96" id="直线-2备份" stroke="#FFFFFF" stroke-width="1.44" stroke-linecap="round"></line>
+                    <line x1="0.5472" y1="18.576" x2="15.8688" y2="18.576" id="直线-2备份-2" stroke="#FFFFFF" stroke-width="1.44" stroke-linecap="round"></line>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

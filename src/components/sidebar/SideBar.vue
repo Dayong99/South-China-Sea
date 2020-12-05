@@ -28,21 +28,32 @@
       </ul>
     </div>
 
-    <!-- 是否重绘按钮 -->
+    <!-- 重绘/刷新 -->
+    <div  @click="changeDrawFlag" >
+      <el-tooltip class="draw" :class="{ draw_active: drawFlag }" effect="light" content="重绘底图" placement="bottom">
+        <img src="@/assets/images/sidebar/draw.svg" />
+      </el-tooltip>
+    </div>
+    <div @click.stop="reloadTime">
+      <el-tooltip class="reload"  effect="light" content="刷新时间" placement="bottom">
+        <img src="@/assets/images/sidebar/reload.svg" />
+      </el-tooltip>
+    </div>
+
+    <!--  定位按钮 -->
     <div class="other_btn">
       <div class="latlng">
-        <img src="@/assets/images/sidebar/position.png" />
+        <img src="@/assets/images/sidebar/position.svg" />
         <div class="other_lat">{{ latNum }}</div>
         <div class="other_lon">,{{ lonNum }}</div>
       </div>
-      <div class="isDraw" @click="changeDrawFlag">
+      <!-- 是否重绘按钮 -->
+      <!-- <div class="isDraw" @click="changeDrawFlag">
         <div :class="{ draw_active: drawFlag }"></div>
-        <span>是否重绘</span>
       </div>
       <div class="re_time" @click.stop="reloadTime">
-        <img src="@/assets/images/sidebar/reload.png">
-        <span>刷新时间</span>
-      </div>
+        <img src="@/assets/images/sidebar/reload.svg">
+      </div> -->
     </div>
 
     <!-- 卫星云图 和 实况资料样式一样-->
@@ -194,7 +205,7 @@ export default {
       menuList: [
         {
           id: 0,
-          img: require("@/assets/images/sidebar/temperature.png"),
+          img: require("@/assets/images/sidebar/temperature.svg"),
           name: "温度",
           type: "temperature",
           flag: 0,
@@ -204,7 +215,7 @@ export default {
         },
         {
           id: 1,
-          img: require("@/assets/images/sidebar/pressure.png"),
+          img: require("@/assets/images/sidebar/pressure.svg"),
           name: "气压",
           type: "pressure",
           flag: 0,
@@ -214,7 +225,7 @@ export default {
         },
         {
           id: 2,
-          img: require("@/assets/images/sidebar/humidity.png"),
+          img: require("@/assets/images/sidebar/humidity.svg"),
           name: "湿度",
           type: "humidity",
           flag: 0,
@@ -224,7 +235,7 @@ export default {
         },
         {
           id: 3,
-          img: require("@/assets/images/sidebar/wind.png"),
+          img: require("@/assets/images/sidebar/wind.svg"),
           name: "风场",
           type: "wind",
           flag: 0,
@@ -244,7 +255,7 @@ export default {
         },
         {
           id: 5,
-          img: require("@/assets/images/sidebar/geopotential.png"),
+          img: require("@/assets/images/sidebar/geopotential.svg"),
           name: "位势高度",
           type: "rain",
           flag: 0,
@@ -254,7 +265,7 @@ export default {
         },
         {
           id: 6,
-          img: require("@/assets/images/sidebar/humidity.png"),
+          img: require("@/assets/images/sidebar/humidity.svg"),
           name: "相对湿度",
           type: "thunder",
           flag: 0,
@@ -264,7 +275,7 @@ export default {
         },
         {
           id: 7,
-          img: require("@/assets/images/sidebar/pressure.png"),
+          img: require("@/assets/images/sidebar/pressure.svg"),
           name: "海平面气压",
           type: "radar",
           flag: 0,
@@ -336,7 +347,7 @@ export default {
       tidalMouseFlag: false,
 
       // 重绘
-      drawFlag: true,
+      drawFlag: false,
 
       // 卫星云图
       fyTypeOptions: [{
@@ -359,26 +370,26 @@ export default {
         {
           label: "地面常规观测",
           value: "ground",
-          icon: require('@/assets/images/sidebar/ground.png'),
-          selectIcon: require('@/assets/images/sidebar/redground.png'),
+          icon: require('@/assets/images/sidebar/ground.svg'),
+          selectIcon: require('@/assets/images/sidebar/redground.svg'),
         },
         {
           label: "船舶站",
           value: "ship",
-          icon: require('@/assets/images/sidebar/ship.png'),
-          selectIcon: require('@/assets/images/sidebar/redship.png'),
+          icon: require('@/assets/images/sidebar/ship.svg'),
+          selectIcon: require('@/assets/images/sidebar/redship.svg'),
         },
         {
           label: "浮标站",
           value: "buoy",
-          icon: require('@/assets/images/sidebar/buoy.png'),
-          selectIcon: require('@/assets/images/sidebar/redbuoy.png'),
+          icon: require('@/assets/images/sidebar/buoy.svg'),
+          selectIcon: require('@/assets/images/sidebar/redbuoy.svg'),
         },
         {
           label: "海洋站",
           value: "ocean",
-          icon: require('@/assets/images/sidebar/ocean.png'),
-          selectIcon: require('@/assets/images/sidebar/redocean.png'),
+          icon: require('@/assets/images/sidebar/ocean.svg'),
+          selectIcon: require('@/assets/images/sidebar/redocean.svg'),
         },
       ],
       tyList: [],
@@ -422,7 +433,8 @@ export default {
       //风险评估图例色值
       assessColor:{
         color:["#00ff00", "#ffff00", "#ff8000", "#9919e5", "#ff0000"],
-        value:["0","0.2","0.4","0.6","0.8"]
+        // value:["0","0.2","0.4","0.6","0.8"]
+        value:["很好","好","中","差","很差"]
       }
 
     };
@@ -977,11 +989,30 @@ export default {
             }
           });
         } else if (this.currentItem.drawType == "line") {
+          // 等值线 0-180 180-360
+          // extentList.forEach((item, index) => {
+          //   if (extentList[index].xMax == 359) {
+          //     extentList[index].xMax = 360;
+          //   }
+          // });
+
+          // 下面是改为等值线 0-360
+          let obj = {
+            xMin: null,
+            xMax: null,
+            yMin: extentList[0].yMin,
+            yMax: extentList[0].yMax,
+          }
+          let xMin = 666
+          let xMax = -1
           extentList.forEach((item, index) => {
-            if (extentList[index].xMax == 359) {
-              extentList[index].xMax = 360;
-            }
-          });
+            xMin = xMin > item.xMin ? item.xMin : xMin
+            xMax = xMax < item.xMax ? item.xMax : xMax
+          })
+          obj.xMin = xMin
+          obj.xMax = xMax
+          extentList = []
+          extentList.push(obj)
         }
         extentList.forEach((item) => {
           this.clearLayer(this.currentItem);
@@ -1062,19 +1093,34 @@ export default {
               }
             }
           });
-        } else if (this.currentItem.drawType == "line") {
+        } else if (currentItem.drawType == "line") {
+          // extentList.forEach((item, index) => {
+          //   if (extentList[index].xMax == 359) {
+          //     extentList[index].xMax = 360;
+          //   }
+          // });
+          let obj = {
+            xMin: null,
+            xMax: null,
+            yMin: extentList[0].yMin,
+            yMax: extentList[0].yMax,
+          }
+          let xMin = 666
+          let xMax = -1
           extentList.forEach((item, index) => {
-            if (extentList[index].xMax == 359) {
-              extentList[index].xMax = 360;
-            }
-          });
+            xMin = xMin > item.xMin ? item.xMin : xMin
+            xMax = xMax < item.xMax ? item.xMax : xMax
+          })
+          obj.xMin = xMin
+          obj.xMax = xMax
+          extentList = []
+          extentList.push(obj)
         }
         extentList.forEach((item) => {
           this.clearLayer(currentItem);
           if (currentItem.drawType == "line") {
             this.getAndDrawLine(currentItem, item);
           } else if (currentItem.drawType == "layer") {
-            // this.clearLayer(item)
             this.getAndDrawLayer(currentItem, item);
           }
         });
