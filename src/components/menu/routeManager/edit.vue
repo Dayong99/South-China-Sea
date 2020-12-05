@@ -37,7 +37,7 @@
             航线名称：<el-input
               class="input_wrapper"
               size="mini"
-              v-model="routeInfoList.name"
+              v-model="routeInfoName"
               placeholder="请输入名称"
             ></el-input>
           </div>
@@ -90,6 +90,7 @@
         class="hand_wrapper"
         :class="{ active: routeCustomActive }"
         @click="routeCustomClick"
+        v-show="isDrawFlag"
       >
         手动绘制
       </div>
@@ -105,10 +106,7 @@ export default {
   data() {
     return {
       routePointCollect: [],
-      routeInfoList: {
-        name: null,
-        routePoint: [],
-      },
+      routeInfoName: null, // 航线名
       routeCustomActive: false,
       title: "添加任务",
       routeManagerShow: false,
@@ -118,7 +116,10 @@ export default {
       routeCollect: [], // 航线点集合
       routeInfo: [], // 航线信息集合
       geometry: [], // 航线全部信息
-      lastLine: null, // 可编辑线
+      lastLine: null, // 添加航线时可编辑线
+      // 手动绘制显隐,修改航线false不显示
+      isDrawFlag: false,
+      editLine: null, // 修改航线时编辑
     };
   },
   mounted() {},
@@ -130,17 +131,36 @@ export default {
   watch: {
     routeDialogOptions: {
       handler: function (val) {
-        console.log(val, `航线新增`);
-        if (val[0] === 1) {
-          this.title = "添加航线";
-        }
-        if (val[0] === 2) {
-          this.title = "修改航线";
-        }
         this.routeManagerShow = val[0] ? true : false;
         this.$nextTick(() => {
           this.initMap();
         });
+        console.log(val, `航线新增`);
+        if (val[0] === 1) {
+          this.title = "添加航线";
+          this.isDrawFlag = true
+        }
+        if (val[0] === 2) {
+          this.title = "修改航线";
+          this.isDrawFlag = false
+          this.routeInfoName = val[1].lineName
+          let courseList = val[1].courseItemList
+          this.routeInfo = []
+          courseList.forEach(item => {
+            let obj = {
+              lat: item.latitude,
+              lng: item.longitude,
+              port: item.itemName,
+              time: item.arrivalTime,
+              vertexId: null,
+            }
+            this.routeInfo.push(obj)
+          })
+          this.$nextTick(() => {
+            this.editRouteInfo()
+          });
+          console.log('routeInfo', this.routeInfo);
+        }
       },
     },
   },
@@ -169,7 +189,7 @@ export default {
     },
     closeManager() {
       this.routeManagerShow = false;
-      this.setRouteDialogOptions([0, {}]);
+      this.setRouteDialogOptions([0, this.routeDialogOptions[1], this.routeDialogOptions[2], false]);
       this.reset();
       if(this.lastLine) {
         this.lastLine.disableEdit()
@@ -192,8 +212,8 @@ export default {
       this.lastLine.on('editable:vertex:new', e => {
         let i = e.vertex.getIndex()
         let obj = {
-          lat: e.latlng.lat.toFixed(2),
-          lng: e.latlng.lng.toFixed(2),
+          lat: e.latlng.lat.toFixed(6),
+          lng: e.latlng.lng.toFixed(6),
           port: null,
           time: null,
           vertexId: e.vertex._leaflet_id
@@ -207,8 +227,8 @@ export default {
         let i = e.vertex.getIndex()
         this.activeRoutePoint = i
         let obj = {
-          lat: e.latlng.lat.toFixed(2),
-          lng: e.latlng.lng.toFixed(2),
+          lat: e.latlng.lat.toFixed(6),
+          lng: e.latlng.lng.toFixed(6),
           port: this.routeInfo[i].port,
           time: this.routeInfo[i].time,
           vertexId: e.vertex._leaflet_id
@@ -253,10 +273,7 @@ export default {
       this.routeCollect = [];
       this.routeInfo = [];
       this.activeRoutePoint = 0;
-      this.routeInfoList = {
-        name: null,
-        routePoint: [],
-      };
+      this.routeInfoName = null
     },
 
     // 编辑 新增 航线
@@ -272,7 +289,7 @@ export default {
             itemName: null,
             lineName: null,
           };
-          obj["lineName"] = this.routeInfoList.name;
+          obj["lineName"] = this.routeInfoName;
           obj["itemIndex"] = i;
           obj["itemName"] = e.port;
           obj["longitude"] = e.lng;
@@ -280,33 +297,122 @@ export default {
           obj["arrivalTime"] = e.time;
           dataArr.push(obj);
         });
-        let params = {
-          courseItemList: dataArr,
-          ctype: 0,
-          plan_Id: this.routeDialogOptions[1].id,
-          lineName: this.routeInfoList.name,
-        };
-        this.$jsonPost(`/api/course`, {
-          ...params,
-        })
-          .then(() => {
+        if(this.routeDialogOptions[0] == 1) {
+          let params = {
+            courseItemList: dataArr,
+            ctype: 0,
+            plan_Id: this.routeDialogOptions[1].id,
+            lineName: this.routeInfoName,
+          };
+          this.$jsonPost(`/api/course`, {
+            ...params,
+          })
+            .then(() => {
+              this.$message({
+                message: "航线添加成功",
+                type: "success",
+              });
+            })
+            .then(() => {
+              this.setRouteDialogOptions([0, this.routeDialogOptions[1], this.routeDialogOptions[2], true]);
+              this.reset();
+            })
+            .catch(() => {
+              this.$message({
+                message: "航线添加失败",
+                type: "error",
+              });
+            });
+        } else if(this.routeDialogOptions[0] == 2) {
+          let params = {
+            courseItemList: dataArr,
+            ctype: 0,
+            id: this.routeDialogOptions[1].id,
+            plan_Id: this.routeDialogOptions[1].plan_Id,
+            lineName: this.routeInfoName,
+          };
+          this.$jsonPut('/api/course', {
+            ...params
+          }).then(res => {
             this.$message({
-              message: "航线添加成功",
+              message: "航线修改成功",
               type: "success",
             });
-          })
-          .then(() => {
-            this.setRouteDialogOptions([0, {}]);
+
+            this.setRouteDialogOptions([0, this.routeDialogOptions[1], this.routeDialogOptions[2], true]);
             this.reset();
-          })
-          .catch(() => {
+          }).catch(() => {
             this.$message({
-              message: "航线添加失败",
+              message: "航线修改失败",
               type: "error",
             });
           });
+        }
       }
       this.routeInfo = [];
+    },
+
+    // 修改航线
+    editRouteInfo() {
+      let routeArr = []
+      this.routeInfo.forEach(item => {
+        let arr = []
+        arr.push(Number(item.lat))
+        arr.push(Number(item.lng))
+        routeArr.push(arr)
+      })
+      this.editLine = L.polyline(routeArr).addTo(window.routeMap);
+      this.editLine.enableEdit();
+      console.log(this.editLine);
+      this.editLine._latlngs.forEach((item, index) => {
+        this.routeInfo[index].vertexId = item.__vertex._leaflet_id
+      })
+      console.log(this.routeInfo);
+      // 添加航线点
+      this.editLine.on('editable:vertex:new', e => {
+        let i = e.vertex.getIndex()
+        let obj = {
+          lat: e.latlng.lat.toFixed(6),
+          lng: e.latlng.lng.toFixed(6),
+          port: null,
+          time: null,
+          vertexId: e.vertex._leaflet_id
+        }
+        this.routeInfo.splice(i, 0, obj)
+        this.activeRoutePoint = i
+      })
+      // 拖动航线点
+      this.editLine.on('editable:vertex:drag', e => {
+        console.log('edit------------',e);
+        let i = e.vertex.getIndex()
+        this.activeRoutePoint = i
+        let obj = {
+          lat: e.latlng.lat.toFixed(6),
+          lng: e.latlng.lng.toFixed(6),
+          port: this.routeInfo[i].port,
+          time: this.routeInfo[i].time,
+          vertexId: e.vertex._leaflet_id
+        }
+        this.routeInfo.splice(i, 1, obj)
+      })
+      // 删除航线点
+      this.editLine.on('editable:vertex:deleted', e => {
+        let i = this.routeInfo.findIndex(item => {
+          return item.vertexId == e.vertex._leaflet_id
+        })
+        // 删除尾部点时
+        if(i == this.routeInfo.length - 1) {
+          this.activeRoutePoint = this.routeInfo.length - 2
+        }
+        this.routeInfo.splice(i, 1)
+      })
+      // 暂停编辑
+      this.editLine.on('dblclick', L.DomEvent.stop).on('dblclick', this.editLine.toggleEdit);
+
+      // 右键停止编辑
+      window.routeMap.on("contextmenu", (e) => {
+        window.routeMap.editTools.stopDrawing()
+      });
     },
 
     // 航线初始化

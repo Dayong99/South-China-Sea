@@ -101,7 +101,7 @@
           <ul class="list_task_ul" v-show="item.flag && flagList[0]">
             <li v-for="(item, index) in taskList" :key="index">
               <div class="task_list">
-                <div class="task_name" @click="switchTask(item, index)">
+                <div class="task_name" @click.stop="switchTask(item, index)">
                   <div class="task_dot" v-if="!item.checked">
                     <img src="@/assets/images/menu/taskTitle.svg" />
                   </div>
@@ -163,7 +163,7 @@
                       />
                       <img
                         src="@/assets/images/menu/edit_route.svg"
-                        @click.stop="algorithm(itemRoute, indexRoute)"
+                        @click.stop="editRoute(itemRoute, indexRoute, index)"
                       />
                       <img
                         src="@/assets/images/menu/route_delete.svg"
@@ -552,8 +552,15 @@ export default {
       this.loadTaskList();
     },
     // 航线变化
-    routeDialogOptions() {
-      console.log("更新航线信息");
+    routeDialogOptions(val) {
+      console.log("更新航线信息", val);
+      if(val[3]) {
+        if(val[1].hasOwnProperty('plan_Id')) {
+          this.reLoadRouteList(val[1], val[2])
+        } else {
+          this.loadRouteList(val[1], val[2])
+        }
+      }
     },
     assessflag(val) {
       console.log(val, "有无选中评估------");
@@ -649,7 +656,7 @@ export default {
     },
     addTaskItem(item, index) {
       console.log(item, index, `item`);
-      this.setRouteDialogOptions([1, item]);
+      this.setRouteDialogOptions([1, item, index, false]);
     },
     switchTask(item, index) {
       if (item.checked) {
@@ -746,12 +753,37 @@ export default {
     // 请求航线列表
     loadRouteList(item, index) {
       this.taskList[index].routeList = [];
-      this.$get(`/api/course`, {
+      this.$get(`/api/course/list`, {
         plan_Id: item.id,
       })
         .then((res) => {
           if (res.status === 200) {
-            this.taskList[index].routeList = res.data.data.rows.map((e, i) => {
+            this.taskList[index].routeList = res.data.data.map((e, i) => {
+              return {
+                ...e,
+                checked: false,
+                assessChecked: false,
+                showRoute: false,
+                assessList: [],
+              };
+            });
+          }
+        })
+        .catch(() => {
+          this.$message({
+            message: "航线列表加载失败",
+            type: "error",
+          });
+        });
+    },
+    reLoadRouteList(item, index) {
+      this.taskList[index].routeList = [];
+      this.$get(`/api/course/list`, {
+        plan_Id: item.plan_Id,
+      })
+        .then((res) => {
+          if (res.status === 200) {
+            this.taskList[index].routeList = res.data.data.map((e, i) => {
               return {
                 ...e,
                 checked: false,
@@ -1729,6 +1761,12 @@ export default {
           i--;
         }
       }
+    },
+
+    // 航线编辑
+    editRoute(itemRoute, indexRoute, index) {
+      // false 不刷新    true 刷新
+      this.setRouteDialogOptions([2, itemRoute, index, false]);
     },
   },
 };
