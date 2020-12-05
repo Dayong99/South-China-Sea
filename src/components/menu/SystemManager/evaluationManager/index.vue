@@ -215,7 +215,7 @@ export default {
     // 删除
     deleteItem(row) {
       console.log(row, `delete`);
-      this.$confirm("确认删除该航线吗")
+      this.$confirm("确认删除该评估条件因子吗")
         .then(() => {
           this.$delete(`/api/condition`, {
             id: row.id,

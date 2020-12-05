@@ -105,7 +105,9 @@ export default {
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          this.$get("/api/numerical-forecast/analysisGFS", this.formData)
+          this.$get("/api/numerical-forecast/analysisGFS", {
+            path:encodeURIComponent(this.formData.path)
+          })
             .then(() => {
               this.$message({
                 message: "necp导入成功",

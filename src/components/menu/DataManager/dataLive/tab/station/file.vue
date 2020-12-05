@@ -89,7 +89,9 @@ export default {
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-            this.$get("/api/ocean-station-live/analysisOceanStation", this.formData)
+            this.$get("/api/ocean-station-live/analysisOceanStation", {
+              filePath:encodeURIComponent(this.formData.filePath)
+            })
               .then(() => {
                 this.$message({
                   message: "目标路径导入成功",

@@ -87,9 +87,12 @@ export default {
     },
     // 添加或修改
     submit() {
+      
       this.$refs.form.validate((valid) => {
         if (valid) {
-            this.$get("/api/numerical-forecast/analysisOceanCurrent", this.formData)
+            this.$get("/api/numerical-forecast/analysisOceanCurrent", {
+              filePath:encodeURIComponent(this.formData.filePath)
+            })
               .then(() => {
                 this.$message({
                   message: "海流导入成功",

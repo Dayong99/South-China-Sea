@@ -89,7 +89,10 @@ export default {
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-            this.$get("/api/numerical-forecast/analysisOceanTemperature", this.formData)
+          // this.formData.filePath = encodeURIComponent(this.formData.filePath)
+            this.$get("/api/numerical-forecast/analysisOceanTemperature", {
+              filePath:encodeURIComponent(this.formData.filePath)
+            })
               .then(() => {
                 this.$message({
                   message: "海温导入成功",
