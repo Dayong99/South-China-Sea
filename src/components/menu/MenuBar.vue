@@ -156,7 +156,7 @@
                     </div>
                     <div class="control_wrapper" >
                       <!-- 航线详情按钮 -->
-                      <img v-for="(item,index) in itemRoute.taskSeeds" :key="1111"
+                      <img v-for="(item,index) in itemRoute.taskSeeds" :key="`taskSeeds${index}`"
                             :src="
                               item.info
                                 ? AssessControlSrc.information.active
@@ -786,7 +786,8 @@ export default {
                 assessChecked: false,
                 showRoute: false,
                 assessList: [],
-                taskSeeds:[{"info":false,"edit":false,"assess":false}]
+                taskSeeds:[{"info":false,"edit":false,"assess":false}],
+                
               };
             });
           }

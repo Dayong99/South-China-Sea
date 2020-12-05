@@ -319,7 +319,7 @@ export default {
       ],
       weatherFactoreOptionsList: [],
       mockData: {},
-      treeChart: [],
+      treeChart: null,
       activeNodeIndex: [],
     };
   },
@@ -391,6 +391,10 @@ export default {
     // 初始化树结构
     initG6() {
       console.log("初始化g6");
+      console.log(this.treeChart,`treeChart`)
+      if(this.treeChart) {
+        this.treeChart.destroy()
+      }
       // 自定义节点、边
       const registerFn = () => {
         /**
