@@ -1,7 +1,7 @@
 <template>
   <div id="algorith_manager" class="algorithm_manager" v-show="algorithmShow">
     <div class="manager_title">
-      <span>算法参数配置</span>
+      <span>评估参数配置</span>
       <img
         src="@/assets/images/legendbar/close.png"
         @click.stop="closeManager"
