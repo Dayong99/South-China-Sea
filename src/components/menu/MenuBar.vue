@@ -154,36 +154,36 @@
                     <div class="control_wrapper">
                       <!-- 航线详情按钮 -->
                       <img
-                            :src="
-                              itemRoute.showRoute
-                                ? AssessControlSrc.information.active
-                                : AssessControlSrc.information.deactive
-                            "
-                            class="control_items"
-                            @click.stop="showRoute(itemRoute, indexRoute)"
-                          />
+                        :src="
+                          itemRoute.showRoute
+                            ? AssessControlSrc.information.active
+                            : AssessControlSrc.information.deactive
+                        "
+                        class="control_items"
+                        @click.stop="showRoute(itemRoute, indexRoute)"
+                      />
 
                       <!-- 航线评估按钮 -->
                       <img
-                            :src="
-                              itemRoute.showAlorithm
-                                ? AssessControlSrc.assess.active
-                                : AssessControlSrc.assess.deactive
-                            "
-                            class="control_items"
-                            @click.stop="algorithm_Task(itemRoute, indexRoute)"
-                          />
+                        :src="
+                          itemRoute.showAlorithm
+                            ? AssessControlSrc.assess.active
+                            : AssessControlSrc.assess.deactive
+                        "
+                        class="control_items"
+                        @click.stop="algorithm_Task(itemRoute, indexRoute)"
+                      />
 
-                        <!-- 航线编辑按钮 -->
-                        <img
-                            :src="
-                              itemRoute.edit
-                                ? AssessControlSrc.edit.active
-                                : AssessControlSrc.edit.deactive
-                            "
-                            class="control_items"
-                            @click.stop="editRoute(itemRoute, indexRoute, index)"
-                          />
+                      <!-- 航线编辑按钮 -->
+                      <img
+                        :src="
+                          itemRoute.edit
+                            ? AssessControlSrc.edit.active
+                            : AssessControlSrc.edit.deactive
+                        "
+                        class="control_items"
+                        @click.stop="editRoute(itemRoute, indexRoute, index)"
+                      />
 
                       <!-- 航线删除按钮 -->
                       <img
@@ -589,11 +589,11 @@ export default {
     // 航线变化
     routeDialogOptions(val) {
       console.log("更新航线信息", val);
-      if(val[3]) {
-        if(val[1].hasOwnProperty('plan_Id')) {
-          this.reLoadRouteList(val[1], val[2])
+      if (val[3]) {
+        if (val[1].hasOwnProperty("plan_Id")) {
+          this.reLoadRouteList(val[1], val[2]);
         } else {
-          this.loadRouteList(val[1], val[2])
+          this.loadRouteList(val[1], val[2]);
         }
       }
     },
@@ -669,8 +669,8 @@ export default {
     algorithm(item, index) {
       this.setAlgorithm([1, item]);
     },
-    algorithm_Task(itemRoute, indexRoute){
-      itemRoute.showAlorithm = !itemRoute.showAlorithm
+    algorithm_Task(itemRoute, indexRoute) {
+      itemRoute.showAlorithm = !itemRoute.showAlorithm;
       this.setAlgorithm([1, itemRoute]);
     },
     addTaskItem(item, index) {
@@ -1079,7 +1079,7 @@ export default {
       }).then((res) => {
         console.log(res.data.data, "航线评估数据-----------");
         let obj = res.data.data;
-        let titleList = ["风险等级"];
+        let titleList = ["评估结果"];
         let dataList = [];
         for (let key in obj) {
           if (key != "conclusion") {
@@ -1128,7 +1128,7 @@ export default {
         }).then((res) => {
           console.log(res.data.data, "航线评估数据-----------");
           let obj = res.data.data;
-          let titleList = ["风险等级"];
+          let titleList = ["评估结果"];
           let dataList = [];
           for (let key in obj) {
             if (key != "conclusion") {
@@ -1169,33 +1169,73 @@ export default {
         let color = "";
         riskArr.forEach((item) => {
           item.forEach((item1) => {
-            if (item1.value == -1) {
+            console.log(item1.value, "打印格式化的value值-------");
+            let arr = item1.value.split(",");
+            //返回五个值
+            if (arr.length > 1) {
+              let valueArr = [];
+              arr.forEach((item) => {
+                if (item != "") {
+                  valueArr.push(Number(item));
+                }
+              });
+              console.log(valueArr);
+              let max = Math.max.apply(null, valueArr);
+              console.log(Math.max.apply(null, valueArr));
+              let i = valueArr.findIndex((item) => {
+                return item == max;
+              });
+              console.log(i);
               reArr.push({
                 corner1: [Number(item1.lat), Number(item1.lon)],
                 corner2: [
                   Number(item1.lat) - Number(item1.grid),
                   Number(item1.lon) + Number(item1.grid),
                 ],
-                color: "",
-                borderColor: "",
-                fillOpacity: 0,
+                color: this.colorArr[i],
+                borderColor: "#000000",
+                fillOpacity: 1,
               });
             } else {
-              if (parseInt(Number(item1.value) * 10) != 10) {
-                color = this.colorArr[parseInt((Number(item1.value) * 10) / 2)];
-              } else {
-                color = this.colorArr[this.colorArr.length - 1];
+              if (item1.value >= 0 && item1.value < 0.2) {
+                color = "#ff0000";
+              } else if (item1.value >= 0.2 && item1.value < 0.4) {
+                color = "#9919e5";
+              } else if (item1.value >= 0.4 && item1.value < 0.6) {
+                color = "#ff8000";
+              } else if (item1.value >= 0.6 && item1.value < 0.8) {
+                color = "#ffff00";
+              } else if (item1.value >= 0.8 && item1.value <= 1) {
+                color = "#00ff00";
               }
-              reArr.push({
-                corner1: [Number(item1.lat), Number(item1.lon)],
-                corner2: [
-                  Number(item1.lat) - Number(item1.grid),
-                  Number(item1.lon) + Number(item1.grid),
-                ],
-                color: color,
-                borderColor: "#000000",
-                fillOpacity: 0.5,
-              });
+              if (item1.value == -1) {
+                reArr.push({
+                  corner1: [Number(item1.lat), Number(item1.lon)],
+                  corner2: [
+                    Number(item1.lat) - Number(item1.grid),
+                    Number(item1.lon) + Number(item1.grid),
+                  ],
+                  color: "",
+                  borderColor: "",
+                  fillOpacity: 0,
+                });
+              } else {
+                // if (parseInt(Number(item1.value) * 10) != 10) {
+                //   color = this.colorArr[parseInt((Number(item1.value) * 10) / 2)];
+                // } else {
+                //   color = this.colorArr[this.colorArr.length - 1];
+                // }
+                reArr.push({
+                  corner1: [Number(item1.lat), Number(item1.lon)],
+                  corner2: [
+                    Number(item1.lat) - Number(item1.grid),
+                    Number(item1.lon) + Number(item1.grid),
+                  ],
+                  color: color,
+                  borderColor: "#000000",
+                  fillOpacity: 1,
+                });
+              }
             }
           });
         });
@@ -1232,19 +1272,59 @@ export default {
         let color = "";
         riskArr.forEach((item) => {
           item.forEach((item1) => {
-            if (parseInt(Number(item1.value) * 10) != 10) {
-              color = this.colorArr[parseInt((Number(item1.value) * 10) / 2)];
-            } else {
-              color = this.colorArr[this.colorArr.length - 1];
+            // if (parseInt(Number(item1.value) * 10) != 10) {
+            //   color = this.colorArr[parseInt((Number(item1.value) * 10) / 2)];
+            // } else {
+            //   color = this.colorArr[this.colorArr.length - 1];
+            // }
+            let arr = item1.value.split(",");
+            //返回五个值
+            if (arr.length > 1) {
+              let valueArr = [];
+              arr.forEach((item) => {
+                if (item != "") {
+                  valueArr.push(Number(item));
+                }
+              });
+              console.log(valueArr);
+              let max = Math.max.apply(null, valueArr);
+              console.log(Math.max.apply(null, valueArr));
+              let i = valueArr.findIndex((item) => {
+                return item == max;
+              });
+              console.log(i);
+              reArr.push({
+                corner1: [Number(item1.lat), Number(item1.lon)],
+                corner2: [
+                  Number(item1.lat) - Number(item1.grid),
+                  Number(item1.lon) + Number(item1.grid),
+                ],
+                color: this.colorArr[i],
+                borderColor: "#000000",
+                fillOpacity: 1,
+              });
+            }else{
+              if (item1.value >= 0 && item1.value < 0.2) {
+                color = "#ff0000";
+              } else if (item1.value >= 0.2 && item1.value < 0.4) {
+                color = "#9919e5";
+              } else if (item1.value >= 0.4 && item1.value < 0.6) {
+                color = "#ff8000";
+              } else if (item1.value >= 0.6 && item1.value < 0.8) {
+                color = "#ffff00";
+              } else if (item1.value >= 0.8 && item1.value <= 1) {
+                color = "#00ff00";
+              }
+              reArr.push({
+                corner1: [Number(item1.lat), Number(item1.lon)],
+                corner2: [
+                  Number(item1.lat) - Number(item1.grid),
+                  Number(item1.lon) + Number(item1.grid),
+                ],
+                color: color,
+              });
             }
-            reArr.push({
-              corner1: [Number(item1.lat), Number(item1.lon)],
-              corner2: [
-                Number(item1.lat) - Number(item1.grid),
-                Number(item1.lon) + Number(item1.grid),
-              ],
-              color: color,
-            });
+            
           });
         });
         console.log(reArr, "画风险评估区域---------");
@@ -1348,7 +1428,7 @@ export default {
                 arr.forEach((item) => {
                   if (item.name == "conclusion") {
                     singleInfo.arr.push({
-                      name: "风险等级",
+                      name: "评估结果",
                       value: item.value,
                     });
                   } else {
@@ -1832,7 +1912,7 @@ export default {
                 arr.forEach((item) => {
                   if (item.name == "conclusion") {
                     singleInfo.arr.push({
-                      name: "风险等级",
+                      name: "评估结果",
                       value: item.value,
                     });
                   } else {
