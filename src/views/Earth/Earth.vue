@@ -138,8 +138,8 @@ export default {
       let xMax = max.lng;
       let yMin = min.lat;
       let yMax = max.lat;
-      yMin = yMin <= -85 ? -85 : yMin;
-      yMax = yMax >= 85 ? 85 : yMax;
+      // yMin = yMin <= -85 ? -85 : yMin;
+      // yMax = yMax >= 85 ? 85 : yMax;
 
       let extent = {
         xMin: null,

@@ -1075,7 +1075,6 @@ export default {
           if (currentItem.drawType == "line") {
             this.getAndDrawLine(currentItem, item);
           } else if (currentItem.drawType == "layer") {
-            // this.clearLayer(item)
             this.getAndDrawLayer(currentItem, item);
           }
         });
@@ -1117,7 +1116,7 @@ export default {
         grade: currentItem.grade,
         level: currentItem.level[levelIndex],
         minX: extent.xMin,
-        maxX: extent.xMax,
+        maxX: extent.xMax == 180 ? 181 : extent.xMax,
         minY: extent.yMin,
         maxY: extent.yMax,
         // minX: 0,
