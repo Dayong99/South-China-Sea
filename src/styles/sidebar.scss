@@ -21,7 +21,7 @@
         .menu_list {
             border-radius: 15px;
             background: rgba(0, 0, 0, 0.6);
-            padding-bottom: 10px;
+            padding: 8px 1px 10px 1px;
         }
         .menu_name {
             margin-right: 15px;
@@ -37,12 +37,13 @@
             border-radius: 15px;
         }
         .menuSelect {
-            margin-left: 40px;
+            margin-left: 28px;
             margin-top: 5px;
         }
         // 菜单栏要素
         li {
             height: 32px;
+            margin: 2px 0;
             .menu_left {
                 height: 25px;
                 line-height: 25px;
@@ -51,6 +52,7 @@
                 // padding-left: 10px;
                 // border-radius: 15px;
                 text-align: right;
+                padding-top: 6px;
                 // background: rgba(26, 26, 24, 0.6);
                 font-size: 14px;
                 font-family: FZLTHJW--GB1-0, FZLTHJW--GB1;
@@ -59,12 +61,12 @@
                 text-shadow: 0.1em 0.1em 0.2em rgb(95, 95, 95);
             }
             .menu_right {
-                width: 26px;
-                height: 45px;
-                line-height: 45px;
+                width: 28px;
+                height: 36px;
+                line-height: 36px;
                 text-align: center;
                 img {
-                    width: 22px;
+                    width: 28px;
                     vertical-align: middle;
                 }
             }
@@ -86,16 +88,17 @@
             display: flex;
             align-items: center;
             img {
-                width: 28px;
-                height: 28px;
+                width: 22px;
             }
             div {
                 // width: 65px;
                 margin-left: 5px;
             }
-            // .other_lon {
-            //     // width: 85px;
-            // }
+            .other_lat,
+            .other_lon {
+                color: #12482C;
+                font-weight: 500;
+            }
         }
         // 重绘按钮
         .isDraw {
@@ -152,13 +155,16 @@
             width: 100px;
             color: #fff3e1;
             .el-input__icon {
+                font-size: 10px;
+                margin-top: 2px;
+                margin-right: -4px;
                 line-height: 28px !important;
             }
         }
         .el-input__inner {
-            height: 28px;
-            line-height: 28px;
-            font-size: 14px;
+            height: 24px;
+            line-height: 24px;
+            font-size: 13px;
             font-family: FZLTHJW--GB1-0, FZLTHJW--GB1;
             font-weight: normal;
             border-radius: 15px;
@@ -169,19 +175,22 @@
     }
     // 实况资料
     .real_time_data {
-        margin-top: 15px;
+        margin-top: 8px;
         margin-right: -15px;
         .el-input {
             width: 100px;
             color: #fff3e1;
             .el-input__icon {
+                font-size: 10px;
+                margin-top: 2px;
+                margin-right: -4px;
                 line-height: 28px !important;
             }
         }
         .el-input__inner {
-            height: 28px;
-            line-height: 28px;
-            font-size: 14px;
+            height: 24px;
+            line-height: 24px;
+            font-size: 13px;
             font-family: FZLTHJW--GB1-0, FZLTHJW--GB1;
             font-weight: normal;
             border-radius: 15px;

@@ -31,7 +31,7 @@
     <!-- 是否重绘按钮 -->
     <div class="other_btn">
       <div class="latlng">
-        <img src="@/assets/images/sidebar/position.png" />
+        <img src="@/assets/images/sidebar/position.svg" />
         <div class="other_lat">{{ latNum }}</div>
         <div class="other_lon">,{{ lonNum }}</div>
       </div>
@@ -40,7 +40,7 @@
         <span>是否重绘</span>
       </div>
       <div class="re_time" @click.stop="reloadTime">
-        <img src="@/assets/images/sidebar/reload.png">
+        <img src="@/assets/images/sidebar/reload.svg">
         <span>刷新时间</span>
       </div>
     </div>
