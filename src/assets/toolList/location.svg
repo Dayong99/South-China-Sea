@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="25px" height="25px" viewBox="0 0 25 25" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63 (92445) - https://sketch.com -->
+    <title>坐标定位标</title>
+    <desc>Created with Sketch.</desc>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="坐标定位标_export" transform="translate(0.500000, 0.750000)" fill-rule="nonzero" stroke="#FFFFFF" stroke-width="1.6">
+            <g id="坐标定位标" transform="translate(1.500000, 1.500000)">
+                <path d="M12,2.47050001 C15.3150427,3.09168257 17.9083174,5.68495733 18.5295,9 L21,9 L21,12 L18.5295,12 C17.9083174,15.3150427 15.3150427,17.9083174 12,18.5295 L12,21 L9,21 L9,18.5295 C5.68495733,17.9083174 3.09168257,15.3150427 2.47050001,12 L0,12 L0,9 L2.47050001,9 C3.09168257,5.68495733 5.68495733,3.09168257 9,2.47050001 L9,0 L12,0 L12,2.47050001 Z" id="路径" stroke-linejoin="round"></path>
+                <path d="M10.5,14.4375 C8.3253788,14.4375 6.5625,12.6746212 6.5625,10.5 C6.5625,8.3253788 8.3253788,6.5625 10.5,6.5625 C12.6746212,6.5625 14.4375,8.3253788 14.4375,10.5 C14.4375,12.6746212 12.6746212,14.4375 10.5,14.4375 Z" id="路径"></path>
+            </g>
+        </g>
+    </g>
+</svg>
