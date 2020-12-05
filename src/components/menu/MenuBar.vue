@@ -578,6 +578,12 @@ export default {
       },
       deep: true,
     },
+    // algorithmOptions:{
+    //   handler:function(xx){
+    //     console.log(xx,"xxxxxx")
+    //   },
+    //   deep:true
+    // },
     flagList(newval, oldval) {
       this.iconList = new Array(3).fill(this.downIcon);
       let index = this.flagList.indexOf(true);

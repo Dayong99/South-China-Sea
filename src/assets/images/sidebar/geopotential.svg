@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63 (92445) - https://sketch.com -->
+    <title>位势高度标</title>
+    <desc>Created with Sketch.</desc>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="XX船舰切图" transform="translate(-201.000000, -338.000000)">
+            <g id="位势高度标_export" transform="translate(201.000000, 338.000000)">
+                <g id="位势高度标" transform="translate(4.800000, 3.600000)">
+                    <rect id="矩形" stroke="#FFFFFF" stroke-width="1.44" x="0.72" y="0.72" width="24.48" height="27.072" rx="2.16"></rect>
+                    <polygon id="三角形" fill="#FFFFFF" points="12.528 3.888 16.416 11.664 8.64 11.664"></polygon>
+                    <polygon id="三角形备份" fill="#FFFFFF" transform="translate(12.528000, 21.168000) rotate(-180.000000) translate(-12.528000, -21.168000) " points="12.528 18.144 16.416 24.192 8.64 24.192"></polygon>
+                    <line x1="12.528" y1="9.072" x2="12.528" y2="21.168" id="直线-4" stroke="#FFFFFF" stroke-width="1.44" stroke-linecap="square"></line>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

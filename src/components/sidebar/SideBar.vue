@@ -194,7 +194,7 @@ export default {
       menuList: [
         {
           id: 0,
-          img: require("@/assets/images/sidebar/temperature.png"),
+          img: require("@/assets/images/sidebar/temperature.svg"),
           name: "温度",
           type: "temperature",
           flag: 0,
@@ -204,7 +204,7 @@ export default {
         },
         {
           id: 1,
-          img: require("@/assets/images/sidebar/pressure.png"),
+          img: require("@/assets/images/sidebar/pressure.svg"),
           name: "气压",
           type: "pressure",
           flag: 0,
@@ -214,7 +214,7 @@ export default {
         },
         {
           id: 2,
-          img: require("@/assets/images/sidebar/humidity.png"),
+          img: require("@/assets/images/sidebar/humidity.svg"),
           name: "湿度",
           type: "humidity",
           flag: 0,
@@ -224,7 +224,7 @@ export default {
         },
         {
           id: 3,
-          img: require("@/assets/images/sidebar/wind.png"),
+          img: require("@/assets/images/sidebar/wind.svg"),
           name: "风场",
           type: "wind",
           flag: 0,
@@ -244,7 +244,7 @@ export default {
         },
         {
           id: 5,
-          img: require("@/assets/images/sidebar/geopotential.png"),
+          img: require("@/assets/images/sidebar/geopotential.svg"),
           name: "位势高度",
           type: "rain",
           flag: 0,
@@ -254,7 +254,7 @@ export default {
         },
         {
           id: 6,
-          img: require("@/assets/images/sidebar/humidity.png"),
+          img: require("@/assets/images/sidebar/humidity.svg"),
           name: "相对湿度",
           type: "thunder",
           flag: 0,
@@ -264,7 +264,7 @@ export default {
         },
         {
           id: 7,
-          img: require("@/assets/images/sidebar/pressure.png"),
+          img: require("@/assets/images/sidebar/pressure.svg"),
           name: "海平面气压",
           type: "radar",
           flag: 0,
@@ -359,26 +359,26 @@ export default {
         {
           label: "地面常规观测",
           value: "ground",
-          icon: require('@/assets/images/sidebar/ground.png'),
-          selectIcon: require('@/assets/images/sidebar/redground.png'),
+          icon: require('@/assets/images/sidebar/ground.svg'),
+          selectIcon: require('@/assets/images/sidebar/redground.svg'),
         },
         {
           label: "船舶站",
           value: "ship",
-          icon: require('@/assets/images/sidebar/ship.png'),
-          selectIcon: require('@/assets/images/sidebar/redship.png'),
+          icon: require('@/assets/images/sidebar/ship.svg'),
+          selectIcon: require('@/assets/images/sidebar/redship.svg'),
         },
         {
           label: "浮标站",
           value: "buoy",
-          icon: require('@/assets/images/sidebar/buoy.png'),
-          selectIcon: require('@/assets/images/sidebar/redbuoy.png'),
+          icon: require('@/assets/images/sidebar/buoy.svg'),
+          selectIcon: require('@/assets/images/sidebar/redbuoy.svg'),
         },
         {
           label: "海洋站",
           value: "ocean",
-          icon: require('@/assets/images/sidebar/ocean.png'),
-          selectIcon: require('@/assets/images/sidebar/redocean.png'),
+          icon: require('@/assets/images/sidebar/ocean.svg'),
+          selectIcon: require('@/assets/images/sidebar/redocean.svg'),
         },
       ],
       tyList: [],
