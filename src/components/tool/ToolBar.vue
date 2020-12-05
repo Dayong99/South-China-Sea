@@ -870,6 +870,7 @@ export default {
   .tool_item {
     width: 25px;
     height: 25px;
+    line-height: 25px;
     border-radius: 50%;
     text-align: center;
     cursor: pointer;
@@ -886,11 +887,11 @@ export default {
     // height: 29px;
     // line-height: 29px;
     margin-left: 3px;
-
     img {
       width: 80%;
       height: 80%;
       vertical-align: middle;
+      
     }
   }
 
