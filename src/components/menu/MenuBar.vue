@@ -756,7 +756,6 @@ export default {
     },
     // 查看评估配置参数
     AssessInfo(itemAssess, itemRoute, indexRoute, item, index) {
-<<<<<<< HEAD
       console.log(itemAssess,`itemAssess`)
       itemAssess.alorithm = !itemAssess.alorithm
       if(itemAssess.alorithm) {
@@ -764,9 +763,6 @@ export default {
       } else {
         this.setAlgorithm([0, {}]);
       }
-=======
-      itemAssess.alorithm = !itemAssess.alorithm;
->>>>>>> 8f19e55189637b20328917c42e71fa5e97dea7a9
     },
     // 请求任务列表
     loadTaskList() {
