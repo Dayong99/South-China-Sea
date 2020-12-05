@@ -101,7 +101,7 @@
           <ul class="list_task_ul" v-show="item.flag && flagList[0]">
             <li v-for="(item, index) in taskList" :key="index">
               <div class="task_list">
-                <div class="task_name" @click="switchTask(item, index)">
+                <div class="task_name" @click.stop="switchTask(item, index)">
                   <div class="task_dot" v-if="!item.checked">
                     <img src="@/assets/images/menu/taskTitle.svg" />
                   </div>
@@ -154,45 +154,36 @@
                     <div class="control_wrapper">
                       <!-- 航线详情按钮 -->
                       <img
-                        :src="
-                          itemRoute.showRoute
-                            ? AssessControlSrc.information.active
-                            : AssessControlSrc.information.deactive
-                        "
-                        class="control_items"
-                        @click.stop="showRoute(itemRoute, indexRoute, 'info')
-                        "
-                      />
+                            :src="
+                              itemRoute.showRoute
+                                ? AssessControlSrc.information.active
+                                : AssessControlSrc.information.deactive
+                            "
+                            class="control_items"
+                            @click.stop="showRoute(itemRoute, indexRoute)"
+                          />
 
                       <!-- 航线评估按钮 -->
                       <img
-                        v-for="(item, index) in itemRoute.taskSeeds"
-                        :key="1112"
-                        :src="
-                          item.assess
-                            ? AssessControlSrc.assess.active
-                            : AssessControlSrc.assess.deactive
-                        "
-                        class="control_items"
-                        @click.stop="
-                          algorithm_Task(itemRoute, indexRoute, 'assess')
-                        "
-                      />
+                            :src="
+                              itemRoute.showAlorithm
+                                ? AssessControlSrc.assess.active
+                                : AssessControlSrc.assess.deactive
+                            "
+                            class="control_items"
+                            @click.stop="algorithm_Task(itemRoute, indexRoute)"
+                          />
 
-                      <!-- 航线编辑按钮 -->
-                      <img
-                        v-for="(item, index) in itemRoute.taskSeeds"
-                        :key="1113"
-                        :src="
-                          item.edit
-                            ? AssessControlSrc.edit.active
-                            : AssessControlSrc.edit.deactive
-                        "
-                        class="control_items"
-                        @click.stop="
-                          algorithm_Task(itemRoute, indexRoute, 'edit')
-                        "
-                      />
+                        <!-- 航线编辑按钮 -->
+                        <img
+                            :src="
+                              itemRoute.edit
+                                ? AssessControlSrc.edit.active
+                                : AssessControlSrc.edit.deactive
+                            "
+                            class="control_items"
+                            @click.stop="editRoute(itemRoute, indexRoute, index)"
+                          />
 
                       <!-- 航线删除按钮 -->
                       <img
@@ -596,8 +587,15 @@ export default {
       this.loadTaskList();
     },
     // 航线变化
-    routeDialogOptions() {
-      console.log("更新航线信息");
+    routeDialogOptions(val) {
+      console.log("更新航线信息", val);
+      if(val[3]) {
+        if(val[1].hasOwnProperty('plan_Id')) {
+          this.reLoadRouteList(val[1], val[2])
+        } else {
+          this.loadRouteList(val[1], val[2])
+        }
+      }
     },
     assessflag(val) {
       console.log(val, "有无选中评估------");
@@ -671,12 +669,13 @@ export default {
     algorithm(item, index) {
       this.setAlgorithm([1, item]);
     },
-    algorithm_Task(item, index, seed) {
-      item.taskSeeds[0][seed] = true;
-      this.setAlgorithm([1, item]);
+    algorithm_Task(itemRoute, indexRoute){
+      itemRoute.showAlorithm = !itemRoute.showAlorithm
+      this.setAlgorithm([1, itemRoute]);
     },
     addTaskItem(item, index) {
-      this.setRouteDialogOptions([1, item]);
+      console.log(item, index, `item`);
+      this.setRouteDialogOptions([1, item, index, false]);
     },
     switchTask(item, index) {
       if (item.checked) {
@@ -775,24 +774,45 @@ export default {
     },
     // 请求航线列表
     loadRouteList(item, index) {
-      item.routeList = [];
-      this.$get(`/api/course`, {
+      this.taskList[index].routeList = [];
+      this.$get(`/api/course/list`, {
         plan_Id: item.id,
       })
         .then((res) => {
           if (res.status === 200) {
-            console.log(
-              this.taskList[index].routeList,
-              `this.taskList[index].routeList`
-            );
-            this.taskList[index].routeList = res.data.data.rows.map((e, i) => {
+            this.taskList[index].routeList = res.data.data.map((e, i) => {
               return {
                 ...e,
                 checked: false,
                 assessChecked: false,
                 showRoute: false,
                 assessList: [],
-                taskSeeds: [{ info: false, edit: false, assess: false }],
+              };
+            });
+          }
+        })
+        .catch(() => {
+          this.$message({
+            message: "航线列表加载失败",
+            type: "error",
+          });
+        });
+    },
+    reLoadRouteList(item, index) {
+      this.taskList[index].routeList = [];
+      this.$get(`/api/course/list`, {
+        plan_Id: item.plan_Id,
+      })
+        .then((res) => {
+          if (res.status === 200) {
+            this.taskList[index].routeList = res.data.data.map((e, i) => {
+              return {
+                ...e,
+                checked: false,
+                assessChecked: false,
+                showRoute: false,
+                showAlorithm: false,
+                assessList: [],
               };
             });
           }
@@ -1852,6 +1872,12 @@ export default {
           i--;
         }
       }
+    },
+
+    // 航线编辑
+    editRoute(itemRoute, indexRoute, index) {
+      // false 不刷新    true 刷新
+      this.setRouteDialogOptions([2, itemRoute, index, false]);
     },
   },
 };
