@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63 (92445) - https://sketch.com -->
+    <title>卫星类型标</title>
+    <desc>Created with Sketch.</desc>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="卫星类型标_export" stroke="#FFFFFF" stroke-width="1.6">
+            <g id="卫星类型标" transform="translate(0.571429, 3.000000)">
+                <polygon id="路径-8" points="11.25 0.666666667 0.833333333 4.58493967 11.25 8.16666667 21.6666667 4.58493967"></polygon>
+                <polyline id="路径" points="0.833333333 9 11.25 13.1666667 21.6666667 9"></polyline>
+                <polyline id="路径备份-7" points="0.833333333 13.1666667 11.25 17.3333333 21.6666667 13.1666667"></polyline>
+            </g>
+        </g>
+    </g>
+</svg>

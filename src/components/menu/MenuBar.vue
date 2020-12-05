@@ -10,7 +10,7 @@
       </div>
       <div class="search_input">
         <div class="input_left">
-          <img src="@/assets/images/menu/search.png" />
+          <img src="@/assets/images/menu/search.svg" />
         </div>
         <div class="input_content">
           <el-input
@@ -22,7 +22,7 @@
           ></el-input>
         </div>
         <div class="input_right" @click.stop="showMarkArea">
-          <img src="@/assets/images/menu/heart.png" />
+          <img src="@/assets/images/menu/heart.svg" />
         </div>
       </div>
     </div>
@@ -152,69 +152,49 @@
                     <div class="task_content_name">
                       {{ itemRoute.lineName }}
                     </div>
-<<<<<<< HEAD
                     <div class="control_wrapper" >
-                      <!-- <img
-                        src="@/assets/images/menu/route_info.svg"
-                        @click.stop="algorithm(itemRoute, indexRoute)"
-                      /> -->
-  
-                      
-
-                      <img v-for="(item,index) in taskSeeds" :key="1111"
+                      <!-- 航线详情按钮 -->
+                      <img v-for="(item,index) in itemRoute.taskSeeds" :key="1111"
                             :src="
                               item.info
                                 ? AssessControlSrc.information.active
                                 : AssessControlSrc.information.deactive
                             "
                             class="control_items"
-                        
-                            @click.stop="algorithm_Task(item.index,itemRoute, indexRoute)"
+                            @click.stop="algorithm_Task(itemRoute, indexRoute,'info')"
                           />
 
-                      <img v-for="(item,index) in taskSeeds" :key="1112"
+                      <!-- 航线评估按钮 -->
+                      <img v-for="(item,index) in itemRoute.taskSeeds" :key="1112"
                             :src="
                               item.assess
                                 ? AssessControlSrc.assess.active
                                 : AssessControlSrc.assess.deactive
                             "
                             class="control_items"
-                        
-                            @click.stop="algorithm_Task(item.index,itemRoute, indexRoute)"
+                            @click.stop="algorithm_Task(itemRoute, indexRoute,'assess')"
                           />
-                        <img v-for="(item,index) in taskSeeds" :key="1113"
+
+                        <!-- 航线编辑按钮 -->
+                        <img v-for="(item,index) in itemRoute.taskSeeds" :key="1113"
                             :src="
                               item.edit
                                 ? AssessControlSrc.edit.active
                                 : AssessControlSrc.edit.deactive
                             "
                             class="control_items"
-                        
-                            @click.stop="algorithm_Task(item.index,itemRoute, indexRoute)"
+                            @click.stop="algorithm_Task(itemRoute, indexRoute,'edit')"
                           />
 
-                      <!-- <img
-=======
-                    <div class="control_wrapper">
-                      <img
-                        src="@/assets/images/menu/route_info.svg"
-                        @click.stop="showRoute(itemRoute, indexRoute)"
-                      />
-                      <img
->>>>>>> refs/remotes/origin/master
-                        src="@/assets/images/menu/route_assess.svg"
-                        @click.stop="algorithm(itemRoute, indexRoute)"
-                      />
-                      <img
-                        src="@/assets/images/menu/edit_route.svg"
-                        @click.stop="algorithm(itemRoute, indexRoute)"
-                      /> -->
+                      <!-- 航线删除按钮 -->
                       <img
                         src="@/assets/images/menu/route_delete.svg"
                         @click.stop="
                           deleteRoute(itemRoute, indexRoute, item, index)
                         "
                       />
+
+                      <!-- 航线展开按钮 -->
                       <img
                         :class="{ activeAssess: itemRoute.assessChecked }"
                         src="@/assets/images/menu/down_content.png"
@@ -460,7 +440,6 @@ export default {
         }
       },
       // 任务
-      taskSeeds:[{'info':false,'assess':false,'edit':false}],
       taskList: [],
       searchFlag: false,
       searchIcon: require("@/assets/images/menu/unselect.svg"),
@@ -708,8 +687,8 @@ export default {
     algorithm(item, index) {
       this.setAlgorithm([1, item]);
     },
-    algorithm_Task(seedIndex,item, index){
-      this.taskSeeds[seedIndex]=true;
+    algorithm_Task(item, index , seed){
+      item.taskSeeds[0][seed]=true;
       this.setAlgorithm([1, item]);
     },
     addTaskItem(item, index) {
@@ -824,6 +803,7 @@ export default {
                 assessChecked: false,
                 showRoute: false,
                 assessList: [],
+                taskSeeds:[{"info":false,"edit":false,"assess":false}]
               };
             });
           }
