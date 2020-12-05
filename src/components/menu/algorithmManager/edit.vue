@@ -1280,11 +1280,25 @@ export default {
         treeName.push(e.name);
         treeStructure.push(e.structure);
         treeValue.push(e.value);
-        treeParameter.push(e.parameter);
         treeCoefficient.push(e.coefficient);
         treeExpression.push(e.expression);
         treeDeploy.push(e.deploy);
+        console.log(e.name.split("_")[0],`e.name.split("_")[0]e.name.split("_")[0]e.name.split("_")[0]e.name.split("_")[0]`)
         if (e.structure === 3) {
+          let parameter = ''
+          console.log(e.name.split("_")[0],`e.name.split("_")[0]`)
+          if(Number(e.name.split("_")[0]) === 4) {
+            console.log(e.parameter,`e.parametere.parameter`)
+            let parameterArr = e.parameter.split('_')
+            parameterArr = parameterArr.map((e,i) => {
+              return Number(e) + 273.15
+            })
+            parameter = parameterArr.join('_')
+          } else {
+            parameter = e.parameter
+          }
+          treeParameter.push(parameter)
+          console.log(treeParameter,`treeParameter`)
           let objHy = {
             typeId: e.name.split("_")[0],
             level: e.name.split("_")[1],
