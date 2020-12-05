@@ -3,12 +3,10 @@
     <!-- Generator: Sketch 63 (92445) - https://sketch.com -->
     <title>缩小标</title>
     <desc>Created with Sketch.</desc>
-    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" font-family="SFCompactDisplay-Light, SF Compact Display" font-size="24" font-weight="300" line-spacing="24">
-        <g id="缩小标_export" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="0.8">
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="缩小标_export" fill="#FFFFFF" fill-rule="nonzero" stroke="#FFFFFF" stroke-width="0.8">
             <g id="缩小标">
-                <text id="􀅽">
-                    <tspan x="0" y="23">􀅽</tspan>
-                </text>
+                <path d="M20.1914062,13.8632812 C20.6484375,13.8632812 21.0351562,13.4882812 21.0351562,13.0195312 C21.0351562,12.5625 20.6484375,12.1757812 20.1914062,12.1757812 L3.80859375,12.1757812 C3.3515625,12.1757812 2.96484375,12.5625 2.96484375,13.0195312 C2.96484375,13.4882812 3.3515625,13.8632812 3.80859375,13.8632812 L20.1914062,13.8632812 Z" id="Zz"></path>
             </g>
         </g>
     </g>

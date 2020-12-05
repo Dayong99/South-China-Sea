@@ -899,7 +899,6 @@ export default {
     img {
       width: 70%;
       vertical-align: middle;
-      margin-bottom: 5px;
     }
   }
 
