@@ -109,7 +109,6 @@
         position: fixed;
         bottom: 75px;
         right: 84px;
-        color: #fff;
         display: flex;
         align-items: center;
         .latlng {
@@ -125,7 +124,8 @@
             }
             .other_lat,
             .other_lon {
-                color: #12482C;
+                color: #fff;
+                text-shadow: 0.1em 0.1em 0.2em rgb(95, 95, 95);
                 font-weight: 500;
             }
         }
