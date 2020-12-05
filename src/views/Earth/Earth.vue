@@ -94,7 +94,8 @@ export default {
       window.map.on("load", (ev) => {
         this.getExtent();
       });
-      window.map.setView([35.09, 102.21], 4);
+      // window.map.setView([35.09, 102.21], 5);
+      window.map.setView([21.27, 110.35], 5);
       // this.changeZoom();
       this.changeMove();
     },
