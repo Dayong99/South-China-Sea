@@ -39,6 +39,10 @@
         <div :class="{ draw_active: drawFlag }"></div>
         <span>是否重绘</span>
       </div>
+      <div class="re_time" @click.stop="reloadTime">
+        <img src="@/assets/images/sidebar/reload.png">
+        <span>刷新时间</span>
+      </div>
     </div>
 
     <!-- 卫星云图 和 实况资料样式一样-->
@@ -337,13 +341,13 @@ export default {
       // 卫星云图
       fyTypeOptions: [{
         value: 'channel3',
-        label: '通道3'
+        label: '可见光'
       }, {
         value: 'channel12',
-        label: '通道12'
+        label: '红外'
       }, {
         value: 'true_colors',
-        label: '真彩色'
+        label: '红外增强'
       }],
       fyType: null,
       fyTypeGroup: L.layerGroup(),
@@ -437,10 +441,15 @@ export default {
       // 潮汐面板切换日期
       changeDateIndex: state => state.clickup.changeDateIndex,
       // 潮汐面板隐藏
-      tidalShow: state => state.clickup.tidalShow
+      tidalShow: state => state.clickup.tidalShow,
+      // 起报时间
+      timeForcast: state => state.time.timeForcast,
     }),
   },
   watch: {
+    timeForcast(newval) {
+      console.log(newval);
+    },
     // 当前要素列表的变化
     currentItemList: {
       handler(val, oldval) {
@@ -501,7 +510,11 @@ export default {
         this.currentItemList.length - 1
       ].currentLevel = newval;
       this.currentItem.currentLevel = newval;
-      this.clearLayer(this.currentItem);
+      if(this.currentItem.drawType == 'point_flow' || this.currentItem.drawType == 'point_wind') {
+        this.clearWindWave(this.currentItem)
+      } else if(this.currentItem.drawType == 'layer') {
+        this.clearLayer(this.currentItem);
+      }
       this.drawItem();
     },
     // 监听时间
@@ -666,7 +679,8 @@ export default {
       setTidalData: "clickup/setTidalData",
       setTidalCharts: "clickup/setTidalCharts",
       setTidalMsgFlag: "clickup/setTidalMsgFlag",
-      setChangeDateIndex: "clickup/setChangeDateIndex"
+      setChangeDateIndex: "clickup/setChangeDateIndex",
+      setReloadTime: "sideBar/setReloadTime"
     }),
     changeDrawFlag() {
       this.drawFlag = !this.drawFlag;
@@ -1068,16 +1082,28 @@ export default {
       });
 
       // 清除一下风羽、洋流，避免没有清楚的问题
-      let i = this.currentItemList.filter((item) => {
-        return item.drawType === "point_wind" || item.drawType === "point_flow";
+      let windIndex = this.currentItemList.findIndex((item) => {
+        return item.drawType === "point_wind"
+      });
+      let waveIndex = this.currentItemList.findIndex((item) => {
+        return item.drawType === "point_flow"
       });
       let windList = this.windGroup.getLayers();
       let waveList = this.waveGroup.getLayers();
-      if (i != -1) {
-        windList.length > 0 ? this.windGroup.clearLayers() : "";
-        waveList.length > 0 ? this.waveGroup.clearLayers() : "";
-        // this.windGroup.clearLayers()
-        // this.waveGroup.clearLayers()
+      if (windIndex == -1 && windList.length) {
+        this.windGroup.clearLayers()
+      }
+      if(waveIndex == -1 && waveList.length) {
+        this.waveGroup.clearLayers()
+      }
+
+      // 清除多余的色斑图
+      let layerIndex = this.currentItemList.findIndex(item => {
+        return item.drawType === 'layer'
+      })
+      let layerList = this.layerGroup.getLayers()
+      if(layerIndex == -1 && layerList.length) {
+        this.layerGroup.clearLayers()
       }
     },
     // 获取线的数据并绘制
@@ -1183,19 +1209,19 @@ export default {
           L.latLng(extent.yMax, extent.xMax - 360)
         );
         if (img) {
-          let imageLayer = L.imageOverlay(img, bounds);
+          let imageLayer = L.imageOverlay(img, bounds, {opacity: 0.8});
           imageLayer.id = currentItem.id;
           imageLayer.layerId = this.layerNum;
           this.layerGroup.addLayer(imageLayer);
           // imageLayer.addTo(window.map);
           // this.layerList.push(imageLayer);
-          let imageLayer1 = L.imageOverlay(img, bounds1);
+          let imageLayer1 = L.imageOverlay(img, bounds1, {opacity: 0.8});
           imageLayer1.id = currentItem.id;
           imageLayer1.layerId = this.layerNum;
           this.layerGroup.addLayer(imageLayer1);
           // imageLayer1.addTo(window.map);
           // this.layerList.push(imageLayer1);
-          let imageLayer2 = L.imageOverlay(img, bounds2).addTo(window.map);
+          let imageLayer2 = L.imageOverlay(img, bounds2, {opacity: 0.8});
           imageLayer2.id = currentItem.id;
           imageLayer2.layerId = this.layerNum;
           this.layerGroup.addLayer(imageLayer2);
@@ -1224,6 +1250,7 @@ export default {
         }
         console.log("layer  test ---", this.layerGroup);
       } catch (error) {
+        window.map.removeLayer(this.layerGroup)
         this.$message.error("获取" + currentItem.name + "数据失败");
       }
 
@@ -1930,6 +1957,11 @@ export default {
       } catch (error) {
         this.$message.error("获取" + type + "数据失败");
       }
+    },
+
+    // 刷新时间
+    reloadTime() {
+      this.setReloadTime()
     },
   },
 };

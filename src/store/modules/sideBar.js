@@ -15,6 +15,8 @@ const state = {
   realTimeValue: null,
   // 数据源
   sourceType: 1,
+  // 刷新时间标识
+  reloadTime: false,
 }
 
 const actions = {
@@ -39,6 +41,9 @@ const mutations = {
   },
   setSourceType(state, val) {
     state.sourceType = val
+  },
+  setReloadTime(state) {
+    state.reloadTime = !state.reloadTime
   }
 }
 

@@ -125,7 +125,7 @@ export default {
       },
 
       markerGroup: [],
-      placeImg: require("../../../../assets/images/place.png"),
+      placeImg: require("../../../../assets/images/place.svg"),
     };
   },
   mounted() {
@@ -189,7 +189,7 @@ export default {
         if (Number(item.isShow) == 1) {
           let icon = new L.Icon({
             iconUrl: this.placeImg,
-            iconSize: [30, 30],
+            iconSize: [26, 26],
             iconAnchor: [12, 41],
             popupAnchor: [1, -34],
             shadowSize: [41, 41],
@@ -198,21 +198,8 @@ export default {
             icon: icon,
           });
           markerArr.push(marker);
-
-          // buoy.id = this.shipId;
-          //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
-          // buoy.bindCustomPopup(this.getInfoContent(item.callSign));
-          // marker.on("click", (ev) => {
-          //   marker.bindPopup(item.placeName).openPopup();
-          // });
-
           marker
-            .bindPopup(item.placeName, {
-              autoPan: false,
-              autoClose: false,
-              className: "leaflet-marker-markerTip",
-              keepInView: false,
-            })
+            .bindPopup(item.placeName)
             .openPopup();
         }
       });

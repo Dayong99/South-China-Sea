@@ -8,7 +8,7 @@
     ref="source1Box"
   >
     <div class="manager_title">
-      <span>数据源配置—欧格海浪数值预报</span>
+      <span>数据源配置—hycom海流数值预报</span>
       <img
         src="@/assets/images/legendbar/close.png"
         @click.stop="closeManager"

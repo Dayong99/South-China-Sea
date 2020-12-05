@@ -53,7 +53,11 @@ const state = {
       name: '数据项配置',
       flag: false
     },
-    
+    {
+      name: '评估条件因子配置',
+      flag: false
+    },
+
   ],
   dataList: [
     {
@@ -61,7 +65,7 @@ const state = {
       flag: false
     },
     {
-      name: '欧格海浪数值预报',
+      name: 'hycom海流数值预报',
       flag: false
     },
     {

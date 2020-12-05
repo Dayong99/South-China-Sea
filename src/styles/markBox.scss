@@ -9,10 +9,23 @@
   padding: 2px 2px 0 2px;
   z-index: 10000;
 
-  button {
+  .btn {
     border:none;
     background:none;
     width:20%;
+
+ 
+  }
+
+  .btn:focus,
+  .btn:active:focus,
+  .btn.active:focus,
+  .btn.focus,
+  .btn:active.focus,
+  .btn.active.focus {
+    outline: none;
+    border-color: transparent; // 若是本身具有 border 请删除此属性
+    box-shadow:none;
   }
 
   .shapes {

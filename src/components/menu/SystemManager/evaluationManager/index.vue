@@ -1,14 +1,7 @@
 <template>
-  <div
-    id="ship_manager"
-    class="ship_manager"
-    v-show="systemManagerShow"
-    style="width: 960px; height: auto"
-    v-drag
-    ref="legendBox"
-  >
+  <div id="ship_manager" class="ship_manager" v-show="systemManagerShow" v-drag>
     <div class="manager_title">
-      <span>色斑图配置</span>
+      <span>评估条件因子</span>
       <img
         src="@/assets/images/legendbar/close.png"
         @click.stop="closeManager"
@@ -18,7 +11,7 @@
       <el-input
         placeholder="请输入关键词"
         prefix-icon="el-icon-search"
-        v-model="queryParams.legendName"
+        v-model="queryParams.remark"
         class="operation_input"
         clearable
         @clear="search"
@@ -31,113 +24,47 @@
       >
     </div>
     <div class="manager_table">
-      <el-table :data="tableData" border style="width: 100%">
+      <el-table :data="tableData" border style="width: 100%" max-height="400px">
         <el-table-column label="序号" width="70px" align="center">
           <template slot-scope="scope">
             {{ (pagination.num - 1) * pagination.size + scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column
-          label="类型名称"
-          align="center"
-          width="200px"
-          :show-overflow-tooltip="true"
-        >
+        <el-table-column label="名称" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.legendName }}</span>
+            <span>{{ scope.row.remark }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="起始值" align="center" width="100px">
+        <el-table-column label="气象要素" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.svalue }}</span>
+            <span>{{ scope.row.parameterName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="终止值" align="center" width="100px">
+        <el-table-column label="气象要素单位" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.evalue }}</span>
+            <span>{{ scope.row.units }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="步长" align="center" width="100px">
+        <el-table-column label="分级表达式" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.step }}</span>
+            <span>{{ scope.row.expression }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="起始颜色"
-          prop="role-name"
-          align="center"
-          width="120px"
-        >
+        <el-table-column label="分级参数" align="center" min-width="100px">
           <template slot-scope="scope">
-            <el-row :gutter="10" class="colorRange">
-              <el-col :span="8">
-                <div
-                  class="colorItem"
-                  :style="{ background: scope.row.scolor }"
-                ></div>
-              </el-col>
-              <el-col :span="16">
-                <div>{{ scope.row.scolor }}</div>
-              </el-col>
-            </el-row>
+            <span>{{ scope.row.parameter }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="终止颜色"
-          prop="role-name"
-          align="center"
-          width="120px"
-        >
+        <el-table-column label="分级系数" align="center" min-width="100px">
           <template slot-scope="scope">
-            <el-row :gutter="10" class="colorRange">
-              <el-col :span="8">
-                <div
-                  class="colorItem"
-                  :style="{ background: scope.row.ecolor }"
-                ></div>
-              </el-col>
-              <el-col :span="16">
-                <div>{{ scope.row.ecolor }}</div>
-              </el-col>
-            </el-row>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="图例预览"
-          align="center"
-          class-name="small-padding fixed-width"
-          width="300px"
-        >
-          <template slot-scope="scope">
-            <div class="color_main">
-              <ul class="colorBox">
-                <el-tooltip
-                  effect="dark"
-                  placement="top-start"
-                  v-for="(item, index) in scope.row.colorValues.split(',')"
-                  :key="index"
-                  style="outline-width: 0"
-                >
-                  <div slot="content">
-                    {{ scope.row.legendValues.split(",")[index] }}
-                  </div>
-                  <li>
-                    <div class="color_item" :style="{ background: item }"></div>
-                    <div class="color_text">
-                      {{ scope.row.legendValues.split(",")[index] }}
-                    </div>
-                  </li>
-                </el-tooltip>
-              </ul>
-            </div>
+            <span>{{ scope.row.coefficient }}</span>
           </template>
         </el-table-column>
         <el-table-column
           label="操作"
-          width="120px"
+          width="140px"
           header-align="center"
           align="center"
-          fixed="right"
         >
           <template slot-scope="{ row }">
             <el-button
@@ -166,7 +93,6 @@
         style="padding-bottom: 0"
       />
     </div>
-
     <edit
       ref="edit"
       :dialog-visible="dialog.isVisible"
@@ -175,11 +101,11 @@
     />
   </div>
 </template>
-
 <script>
 import Pagination from "@/components/Pagination";
 import { mapState, mapMutations } from "vuex";
 import edit from "./edit.vue";
+
 export default {
   components: {
     edit,
@@ -187,6 +113,7 @@ export default {
   },
   data() {
     return {
+      weatherOptionsList: [],
       total: 0,
       // 新增 修改 对话框
       dialog: {
@@ -203,7 +130,14 @@ export default {
         num: 1,
       },
       queryParams: {
-        legendName: null,
+        remark: null,
+      },
+
+      infoVisible: false,
+      geoStyle: {
+        color: "#ff7800",
+        weight: 3,
+        opacity: 0.65,
       },
     };
   },
@@ -229,8 +163,9 @@ export default {
     },
     systemList: {
       handler(newval, oldval) {
-        if (newval[0].flag) {
+        if (newval[6].flag) {
           this.systemManagerShow = true;
+          this.loadWeatherFactor();
         } else {
           this.systemManagerShow = false;
         }
@@ -239,13 +174,7 @@ export default {
     },
     systemManagerShow(val) {
       if (val) {
-        this.queryParams = {
-          legendName: null,
-        };
-        this.fetch();
-        this.$refs.legendBox.style.left = "50%";
-        this.$refs.legendBox.style.top = "42%";
-        this.$refs.legendBox.style.transform = "translate(-50%, -50%)";
+        this.loadWeatherFactor();
       }
     },
   },
@@ -253,27 +182,45 @@ export default {
     ...mapMutations({
       setMenuList: "menuBar/setMenuList",
     }),
+    loadWeatherFactor() {
+      this.$get(`api/parameters`, {
+        isEvaluate: 1,
+      })
+        .then((res) => {
+          if (res.status === 200) {
+            this.weatherOptionsList = res.data.data;
+            this.fetch();
+          }
+        })
+        .catch(() => {
+          this.$message({
+            message: "气象要素列表载入失败",
+            type: "error",
+          });
+        });
+    },
     editItem(row) {
       this.$refs.edit.setData(row);
       this.dialog.isVisible = true;
-      this.dialog.title = "修改图例";
+      this.dialog.title = "修改评估条件因子";
     },
+
     // 搜索重置
     resetSearch() {
       this.queryParams = {
-        legendName: null,
+        name: null,
       };
       this.search();
     },
     // 删除
     deleteItem(row) {
-      console.log(row, `row`);
-      this.$delete(`/api/legend-config`, {
+      console.log(row, `delete`);
+      this.$delete(`/api/condition`, {
         id: row.id,
       })
         .then(() => {
           this.$message({
-            message: "图例删除成功",
+            message: "删除成功",
             type: "success",
           });
         })
@@ -282,9 +229,8 @@ export default {
         });
     },
     add() {
-      console.log("添加");
       this.dialog.isVisible = true;
-      this.dialog.title = "添加图例";
+      this.dialog.title = "添加评估条件因子";
     },
     // 搜索
     search() {
@@ -296,15 +242,25 @@ export default {
     fetch(params = {}) {
       params.pageSize = this.pagination.size;
       params.pageNum = this.pagination.num;
-      console.log("获取表格数据");
-      this.$get("/api/legend-config", {
+      this.$get("/api/condition", {
         ...params,
       }).then((res) => {
+        console.log(res, "/api/condition");
         if (res.data.data) {
-          console.log(res.data.data, `res.data.data`);
           this.total = res.data.data.total;
-          this.tableData = res.data.data.rows;
-          console.log(this.tableData);
+          this.tableData = res.data.data.rows.map((e, i) => {
+            let obj = {};
+            this.weatherOptionsList.forEach((a, b) => {
+              if (a.id === e.parametersId) {
+                obj = {
+                  ...e,
+                  ...a,
+                };
+                obj.id = e.id
+              }
+            });
+            return obj;
+          });
         }
       });
     },
@@ -313,10 +269,19 @@ export default {
       this.dialog.isVisible = false;
       this.fetch();
     },
+
     closeManager() {
       this.systemManagerShow = false;
-      // this.menuList[3].flag = false;
+      this.menuList[1].flag = false;
       this.setMenuList(this.menuList);
+    },
+    // 海区详情
+    closeInfo() {
+      this.infoVisible = false;
+    },
+    information(row) {
+      this.infoVisible = true;
+      this.$refs.info.setData(row);
     },
   },
 };

@@ -226,27 +226,10 @@ export default {
         if (Number(item.isShow) == 1) {
           let geojson = JSON.parse(item.coordinates);
           let style = JSON.parse(item.other1);
-          console.log(geojson);
-
-          // let data = {};
-          // geojson.forEach((item) => {
-          //   let obj = {};
-          //   for (let i in item) {
-          //     obj[i] = item[i];
-          //   }
-          //   data.push(obj);
-          // });
           let layer;
           if (geojson.type == "Point") {
-            console.log(geojson.coordinates)
-            layer = L.circle(geojson.coordinates, {
-              radius: Number(item.other2),
-              weight: style.weight,
-              color: style.color,
-              fillColor: style.fillColor,
-              fillOpacity: style.fillOpacity,
-            }).addTo(map);
-            console.log(layer)
+            layer = new L.Circle([geojson.coordinates[1],geojson.coordinates[0]], Number(item.other2), style).addTo(map);
+            console.log(layer);
           } else {
             layer = L.geoJSON(geojson, {
               style: style,

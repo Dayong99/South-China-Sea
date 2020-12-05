@@ -171,8 +171,8 @@ export default {
                       content: r.data.data,
                       day: day,
                       time: time,
-                      lon: item.lon,
-                      lat: item.lat,
+                      lon: Number(item.lon).toFixed(3),
+                      lat: Number(item.lat).toFixed(3),
                     });
                     buoy.bindCustomPopup(str).openPopup();
                   }
@@ -420,8 +420,8 @@ export default {
                     callSign: station.callSign,
                     name: '船舶站',
                     buoyName: station.buoyName,
-                    lat: station.lat,
-                    lon: station.lon,
+                    lat: station.lat.toFixed(3),
+                    lon: station.lon.toFixed(3),
                     dataUnit: station.dataUnit,
                     temperature: station.temperature,
                     windSpeed: station.windSpeed,
@@ -455,18 +455,18 @@ export default {
           let data = res.data.data
           let markerArr = []
           data.forEach(item => {
-            if(item.lat === null && item.lon === null) {
+            if(item.latitude === null && item.longitude === null) {
               return;
             }
-            let lat = item.lat
-            let lon = item.lon
+            let lat = item.latitude
+            let lon = item.longitude
             let groundMarker = L.marker(L.latLng(lat, lon), { icon: this.groundIcon }).addTo(map);
             //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
             groundMarker.type = 'ground'
             groundMarker.id = item.id
             markerArr.push(groundMarker)
             groundMarker.on('click', ev => {
-              this.$get('/api/ocean-station-live/one-byId', {
+              this.$get('/api/ground-live/one-byId', {
                 id: ev.target.id
               }).then(res => {
                 if(res.status == 200) {
@@ -481,8 +481,8 @@ export default {
                   let time = this.$m(station.startTime).format('HH')+'时'+this.$m(station.startTime).format('mm')+'分'
                   let str = this.getGroundContent({
                     name: '地面站',
-                    lat: station.lat,
-                    lon: station.lon,
+                    lat: station.latitude.toFixed(3),
+                    lon: station.longitude.toFixed(3),
                     dewTemperature: station.dewTemperature,
                     temperature: station.temperature,
                     pressure: station.pressure,
@@ -543,8 +543,8 @@ export default {
                   let time = this.$m(station.dayTime).format('HH')+'时'+this.$m(station.dayTime).format('mm')+'分'
                   let str = this.getOceanContent({
                     name: '海洋站',
-                    lat: station.lat,
-                    lon: station.lon,
+                    lat: station.lat.toFixed(3),
+                    lon: station.lon.toFixed(3),
                     lowCloudHeight: station.lowCloudHeight,
                     temperature: station.temperature,
                     windSpeed: station.windSpeed,

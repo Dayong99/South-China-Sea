@@ -33,12 +33,12 @@ export default {
       tile4: null,
 
       // geojson
-      divisionGroup: L.layerGroup(),
-      geoStyle: {
-        color: "#ff7800",
-        weight: 3,
-        opacity: 0.65,
-      },
+      // divisionGroup: L.layerGroup(),
+      // geoStyle: {
+      //   color: "#685ac6",
+      //   weight: 1,
+      //   opacity: 0.9,
+      // },
     };
   },
   computed: {
@@ -56,7 +56,7 @@ export default {
   },
   created() {
     // 根据需要显示的geojson数据进行绘制
-    this.getAndDrawSeaDivision()
+    // this.getAndDrawSeaDivision()
   },
   destroyed() {
     window.map = null;
@@ -346,16 +346,16 @@ export default {
           })
           divisionList.forEach(item => {
             let geojson = JSON.parse(item.dataGeo);
-            let data = [];
-            geojson.forEach((item1) => {
-              let obj = {};
-              for (let i in item1) {
-                obj[i] = item1[i];
-              }
-              data.push(obj);
-            });
+            // let data = [];
+            // geojson.forEach((item1) => {
+            //   let obj = {};
+            //   for (let i in item1) {
+            //     obj[i] = item1[i];
+            //   }
+            //   data.push(obj);
+            // });
 
-            let layer = L.geoJSON(data, {
+            let layer = L.geoJSON(geojson, {
               style: this.geoStyle,
             })
             this.divisionGroup.addLayer(layer)

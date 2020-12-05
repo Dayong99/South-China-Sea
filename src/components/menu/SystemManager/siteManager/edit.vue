@@ -35,8 +35,8 @@
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
             <el-form-item label="是否显示" prop="isShow">
-              <el-radio v-model="formData.isShow" label="0">不显示</el-radio>
               <el-radio v-model="formData.isShow" label="1">显示</el-radio>
+              <el-radio v-model="formData.isShow" label="0">不显示</el-radio>
             </el-form-item>
           </div>
         </el-col>
@@ -123,17 +123,17 @@ export default {
     },
   },
   methods: {
-    initForm(){
+    initForm() {
       return {
-         placeName: "",
-        isShow: "0",
+        placeName: "",
+        isShow: "1",
         longitude: "",
         latitude: "",
         coordinates: null,
         drawType: 0,
-        other1:null,
-        other2:null
-      }
+        other1: null,
+        other2: null,
+      };
     },
     setData(data) {
       this.formData = {
