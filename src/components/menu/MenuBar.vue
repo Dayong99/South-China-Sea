@@ -337,15 +337,21 @@
                   <div class="task_dot">
                     <img src="@/assets/images/menu/taskSettle.svg" />
                   </div>
+                  <<<<<<< HEAD
                   <div class="task_name" @click="openSystem(index)">
                     {{ item.name }}
                   </div>
+                  =======
+                  <div class="task_name" @click="openData(index)">
+                    {{ item.name }}
+                  </div>
+                  >>>>>>> 42f150305e0c54aafb799731e7974b09f6d893cc
                 </div>
 
                 <!-- <div class="task_name" @click="openData(index)">
                   <span>{{ item.name }}</span>
                 </div> -->
-                <div class="task_operation"  style="margin-left:0;">
+                <div class="task_operation" style="margin-left:0;">
                   <el-button
                     icon="el-icon-s-operation"
                     class="table_column_icon purple"
@@ -535,6 +541,7 @@ export default {
   watch: {
     menuList: {
       handler(newval, oldval) {
+        console.log(newval);
         let i = newval.findIndex((item) => {
           return item.flag == true;
         });
@@ -987,7 +994,7 @@ export default {
         } else if (itemAssess.line) {
           this.changeShowAssessLine(itemAssess);
           //选中风险评估信息列表
-        } 
+        }
         // else if (itemAssess.table) {
         //   this.changeShowAssessInfo(itemAssess);
         // }
@@ -1155,7 +1162,7 @@ export default {
           rectangle.courseId = courseId;
           this.rectangle.push(rectangle);
         });
-        this.drawOriginalLine(courseId, "rectangle", timeIndex);
+        this.drawOriginalLine(courseId, "rectangle", timeIndex, assessmentId);
       });
     },
 
@@ -1708,7 +1715,7 @@ export default {
     },
 
     //画原始航线(区别于风险评估变色航线)
-    drawOriginalLine(id, type, timeIndex) {
+    drawOriginalLine(id, type, timeIndex, assessmentId) {
       this.$get("api/course/one", {
         id: id,
       }).then((res) => {
@@ -1722,7 +1729,7 @@ export default {
         this.showLine.push(polyline);
         pointArr.forEach((item, index) => {
           let circle;
-          if (typeof index == "undefined") {
+          if (typeof timeIndex == "undefined") {
             circle = L.circleMarker(item, {
               radius: 6,
               fillOpacity: 1,
@@ -1747,6 +1754,60 @@ export default {
             }
           }
           circle.id = type + id;
+          circle.index = index;
+          if (typeof timeIndex != "undefined") {
+            circle.on("click", (e) => {
+              map.off("click", window.mapClick_p);
+              this.setInfoShow(false);
+              console.log(e, "航线点的信息--------");
+              //请求单个航线点的信息
+              this.$get("api/assessment/point-conclusion", {
+                assessmentId: assessmentId,
+                index: e.target.index,
+                point: timeIndex,
+              }).then((res) => {
+                console.log(res, "单个点的数据信息");
+                let arr = res.data.data;
+                let singleInfo = {
+                  assessmentId: assessmentId, //评估id
+                  index: e.target.index, //点在航线中的index值
+                  message: arr[0].other,
+                  arr: [
+                    {
+                      name: "时间",
+                      value: arr[0].dateTime,
+                    },
+                  ],
+                };
+                arr.forEach((item) => {
+                  if (item.name == "conclusion") {
+                    singleInfo.arr.push({
+                      name: "风险等级",
+                      value: item.value,
+                    });
+                  } else {
+                    singleInfo.arr.push({
+                      name: item.name,
+                      value: item.value,
+                    });
+                  }
+                });
+                this.setPointInfo(singleInfo);
+                this.setLocation(e.containerPoint);
+                // this.setInfoShow(false)
+                this.setPointInfoShow(true);
+
+                let marker = e.target;
+                map.on("move", (e) => {
+                  let p = map.latLngToContainerPoint(
+                    L.latLng(marker._latlng.lat, marker._latlng.lng)
+                  );
+                  console.log(p);
+                  this.setLocation(p);
+                });
+              });
+            });
+          }
           this.showLine.push(circle);
         });
       });

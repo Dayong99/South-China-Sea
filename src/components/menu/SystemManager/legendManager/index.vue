@@ -8,7 +8,7 @@
     ref="legendBox"
   >
     <div class="manager_title">
-      <span>图例配置</span>
+      <span>色斑图配置</span>
       <img
         src="@/assets/images/legendbar/close.png"
         @click.stop="closeManager"
