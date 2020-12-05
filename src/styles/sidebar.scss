@@ -109,9 +109,12 @@
         position: fixed;
         bottom: 75px;
         right: 84px;
-        color: #fff;
         display: flex;
         align-items: center;
+        background: url("../assets/images/sidebar/bcground.png") no-repeat;
+        background-size: 100%;
+        padding-left: 10px;
+        margin-right: 10px;
         .latlng {
             width: 190px;
             display: flex;
@@ -125,7 +128,7 @@
             }
             .other_lat,
             .other_lon {
-                color: #12482C;
+                color: #fff;
                 font-weight: 500;
             }
         }

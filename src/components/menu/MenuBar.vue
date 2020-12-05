@@ -165,14 +165,14 @@
 
                       <!-- 航线评估按钮 -->
                       <img
-                        :src="
-                          itemRoute.showAlorithm
-                            ? AssessControlSrc.assess.active
-                            : AssessControlSrc.assess.deactive
-                        "
-                        class="control_items"
-                        @click.stop="algorithm_Task(itemRoute, indexRoute)"
-                      />
+                            :src="
+                              itemRoute.showAlorithm
+                                ? AssessControlSrc.assess.active
+                                : AssessControlSrc.assess.deactive
+                            "
+                            class="control_items"
+                            @click.stop="algorithm(itemRoute, indexRoute)"
+                          />
 
                       <!-- 航线编辑按钮 -->
                       <img
@@ -669,13 +669,13 @@ export default {
           });
         })
     },
-    algorithm(item, index) {
-      this.setAlgorithm([1, item]);
-    },
-    algorithm_Task(itemRoute, indexRoute) {
-      itemRoute.showAlorithm = !itemRoute.showAlorithm;
+    // 新建评估
+    algorithm(itemRoute, indexRoute) {
+      itemRoute.showAlorithm = !itemRoute.showAlorithm
+      console.log(itemRoute.showAlorithm,`当前是否打开`)
       this.setAlgorithm([1, itemRoute]);
     },
+    // 新增航线
     addTaskItem(item, index) {
       console.log(item, index, `item`);
       this.setRouteDialogOptions([1, item, index, false]);
@@ -753,7 +753,13 @@ export default {
     },
     // 查看评估配置参数
     AssessInfo(itemAssess, itemRoute, indexRoute, item, index) {
-      itemAssess.alorithm = !itemAssess.alorithm;
+      console.log(itemAssess,`itemAssess`)
+      itemAssess.alorithm = !itemAssess.alorithm
+      if(itemAssess.alorithm) {
+        this.setAlgorithm([2, itemAssess]);
+      } else {
+        this.setAlgorithm([0, {}]);
+      }
     },
     // 请求任务列表
     loadTaskList() {
