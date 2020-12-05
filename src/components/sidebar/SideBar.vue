@@ -978,11 +978,30 @@ export default {
             }
           });
         } else if (this.currentItem.drawType == "line") {
+          // 等值线 0-180 180-360
+          // extentList.forEach((item, index) => {
+          //   if (extentList[index].xMax == 359) {
+          //     extentList[index].xMax = 360;
+          //   }
+          // });
+
+          // 下面是改为等值线 0-360
+          let obj = {
+            xMin: null,
+            xMax: null,
+            yMin: extentList[0].yMin,
+            yMax: extentList[0].yMax,
+          }
+          let xMin = 666
+          let xMax = -1
           extentList.forEach((item, index) => {
-            if (extentList[index].xMax == 359) {
-              extentList[index].xMax = 360;
-            }
-          });
+            xMin = xMin > item.xMin ? item.xMin : xMin
+            xMax = xMax < item.xMax ? item.xMax : xMax
+          })
+          obj.xMin = xMin
+          obj.xMax = xMax
+          extentList = []
+          extentList.push(obj)
         }
         extentList.forEach((item) => {
           this.clearLayer(this.currentItem);
@@ -1063,19 +1082,34 @@ export default {
               }
             }
           });
-        } else if (this.currentItem.drawType == "line") {
+        } else if (currentItem.drawType == "line") {
+          // extentList.forEach((item, index) => {
+          //   if (extentList[index].xMax == 359) {
+          //     extentList[index].xMax = 360;
+          //   }
+          // });
+          let obj = {
+            xMin: null,
+            xMax: null,
+            yMin: extentList[0].yMin,
+            yMax: extentList[0].yMax,
+          }
+          let xMin = 666
+          let xMax = -1
           extentList.forEach((item, index) => {
-            if (extentList[index].xMax == 359) {
-              extentList[index].xMax = 360;
-            }
-          });
+            xMin = xMin > item.xMin ? item.xMin : xMin
+            xMax = xMax < item.xMax ? item.xMax : xMax
+          })
+          obj.xMin = xMin
+          obj.xMax = xMax
+          extentList = []
+          extentList.push(obj)
         }
         extentList.forEach((item) => {
           this.clearLayer(currentItem);
           if (currentItem.drawType == "line") {
             this.getAndDrawLine(currentItem, item);
           } else if (currentItem.drawType == "layer") {
-            // this.clearLayer(item)
             this.getAndDrawLayer(currentItem, item);
           }
         });
