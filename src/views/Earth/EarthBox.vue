@@ -35,7 +35,9 @@
     <!-- 参数配置 -->
     <param-manager></param-manager>
     <!-- 数据项配置 -->
-    <dataitem-manager></dataitem-manager>
+    <data-item-manager></data-item-manager>
+    <!-- 评估条件因子管理 -->
+    <Evaluation-manager></Evaluation-manager>
     <!-- 常用地点 -->
     <site-manager></site-manager>
     <!-- 常用地点 -->
@@ -63,6 +65,8 @@
     <info-box></info-box>
     <!-- 航线评估结果 -->
     <route-info v-if="routeInfoShow"></route-info>
+    
+
     <!-- 自定义popup -->
     <click-up></click-up>
   </div>
@@ -89,11 +93,14 @@ import LineManager from "@/components/menu/SystemManager/lineManager/index.vue";
 import AreaManager from "@/components/menu/SystemManager/areaManager/index.vue";
 import SeaManager from "@/components/menu/SystemManager/seaManager/index.vue";
 import ParamManager from "@/components/menu/SystemManager/paramManager/index.vue";
+
+
+import EvaluationManager from "@/components/menu/SystemManager/evaluationManager/index.vue";
 import SiteManager from "@/components/menu/SystemManager/siteManager/index.vue";
 import MarkerManager from "@/components/menu/SystemManager/markerManager/index.vue";
 
 // 数据管理
-import DataitemManager from "@/components/menu/SystemManager/dataItemManager/index.vue";
+import DataItemManager from "@/components/menu/SystemManager/dataItemManager/index.vue";
 import DatasourceManager from "@/components/menu/DataManager/dataSourceManager/index.vue";
 import DatasourceManager1 from "@/components/menu/DataManager/dataSourceManager1/index.vue";
 import DatasourceManager2 from "@/components/menu/DataManager/dataSourceManager2/index.vue";
@@ -134,9 +141,10 @@ export default {
     SeaManager: SeaManager,
     ParamManager: ParamManager,
     SiteManager: SiteManager,
-    DataitemManager: DataitemManager,
+    DataItemManager: DataItemManager,
+    EvaluationManager: EvaluationManager,
+    routeManager: routeManager,
     MarkerManager: MarkerManager,
-
     // 数据管理
     DatasourceManager: DatasourceManager,
     DatasourceManager1: DatasourceManager1,

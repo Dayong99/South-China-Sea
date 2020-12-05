@@ -2,12 +2,12 @@
   <div class="right-top-container" id="toolBar">
     <div class="tool_item zoom" @click.stop="zoomIn">
       <el-tooltip class="item" effect="light" content="放大" placement="bottom">
-        <img src="@/assets/toolList/add.png" />
+        <img src="@/assets/toolList/add.svg" />
       </el-tooltip>
     </div>
     <div class="tool_item tool_right zoom" @click.stop="zoomOut">
       <el-tooltip class="item" effect="light" content="缩小" placement="bottom">
-        <img src="@/assets/toolList/minus.png" />
+        <img src="@/assets/toolList/minus.svg" />
       </el-tooltip>
     </div>
     <div
@@ -21,7 +21,7 @@
         content="距离量算"
         placement="bottom"
       >
-        <img src="@/assets/toolList/ruler.png" />
+        <img src="@/assets/toolList/ruler.svg" />
       </el-tooltip>
     </div>
     <div
@@ -35,7 +35,7 @@
         content="面积量算"
         placement="bottom"
       >
-        <img src="@/assets/toolList/area.png" />
+        <img src="@/assets/toolList/area.svg" />
       </el-tooltip>
     </div>
     <div
@@ -49,7 +49,7 @@
         content="坐标定位"
         placement="bottom"
       >
-        <img src="@/assets/toolList/location.png" />
+        <img src="@/assets/toolList/location.svg" />
       </el-tooltip>
     </div>
     <div
@@ -63,7 +63,7 @@
         content="底图切换"
         placement="bottom"
       >
-        <img src="@/assets/images/toolbar/product.png" />
+        <img src="@/assets/toolList/product.svg" />
       </el-tooltip>
     </div>
     <div
@@ -77,7 +77,7 @@
         content="经纬显示"
         placement="bottom"
       >
-        <img src="@/assets/toolList/line.png" />
+        <img src="@/assets/toolList/line.svg" />
       </el-tooltip>
     </div>
     <div
@@ -91,7 +91,7 @@
         content="区域取值"
         placement="bottom"
       >
-        <img src="@/assets/toolList/getValue.png" />
+        <img src="@/assets/toolList/getValue.svg" />
       </el-tooltip>
     </div>
     <div
@@ -105,7 +105,7 @@
         content="单点取值"
         placement="bottom"
       >
-        <img src="@/assets/toolList/point.png" />
+        <img src="@/assets/toolList/point.svg" />
       </el-tooltip>
     </div>
     <div class="tool_item tool_right" @click.stop="clear">
@@ -115,7 +115,7 @@
         content="清除要素"
         placement="bottom"
       >
-        <img src="@/assets/toolList/clear.png" />
+        <img src="@/assets/toolList/clear.svg" />
       </el-tooltip>
     </div>
     <!-- <div
@@ -896,9 +896,9 @@ export default {
   // zoom 样式独立
   .zoom {
     img {
-      width: 90%;
-      height: 90%;
+      width: 70%;
       vertical-align: middle;
+      margin-bottom: 5px;
     }
   }
 
