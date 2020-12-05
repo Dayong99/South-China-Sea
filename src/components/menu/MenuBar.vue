@@ -142,7 +142,9 @@
                 >
                   <div
                     @click="switchRoute(item, index, itemRoute, indexRoute)"
-                    @click.stop="loadAssessInfo(itemRoute, indexRoute, item, index)"
+                    @click.stop="
+                      loadAssessInfo(itemRoute, indexRoute, item, index)
+                    "
                     class="task_content_desc"
                     :class="{ task_content_desc_active: itemRoute.checked }"
                   >
@@ -207,7 +209,7 @@
                   </div>
 
                   <!-- 评估列表 -->
-                  <div class="assess_wrapper" >
+                  <div class="assess_wrapper">
                     <div
                       class="assess_items"
                       v-for="(itemAssess, indexAssess) in itemRoute.assessList"
@@ -221,7 +223,7 @@
                           {{ itemAssess.assesstime | filterTime }}
                         </div>
                       </div>
-                      
+
                       <transition
                         enter-active-class="animated slideInRight"
                         leave-active-class="animated slideOutRight"
@@ -241,6 +243,7 @@
                               )
                             "
                           />
+                          <!-- 查看评估配置参数 -->
                           <img
                             :src="
                               itemAssess.alorithm
@@ -248,7 +251,15 @@
                                 : AssessControlSrc.alorithm.deactive
                             "
                             class="control_items"
-                            @click="itemAssess.alorithm = !itemAssess.alorithm"
+                            @click="
+                              AssessInfo(
+                                itemAssess,
+                                itemRoute,
+                                indexRoute,
+                                item,
+                                index
+                              )
+                            "
                           />
 
                           <!-- area -->
@@ -300,16 +311,7 @@
                         <img
                           src="@/assets/images/menu/setting_assess_deactive.svg"
                           class="control_items"
-                          @click="
-                            AssessSetting(
-                              itemAssess,
-                              indexAssess,
-                              itemRoute,
-                              indexRoute,
-                              item,
-                              index
-                            )
-                          "
+                          @click="AssessSetting(itemAssess)"
                         />
                       </div>
                     </div>
@@ -331,11 +333,11 @@
                   <div class="task_dot">
                     <img src="@/assets/images/menu/taskSettle.svg" />
                   </div>
-                  <div class="task_name" @click="openSystem(index)">{{
-                    item.name
-                  }}</div>
+                  <div class="task_name" @click="openSystem(index)">
+                    {{ item.name }}
+                  </div>
                 </div>
-                <div class="task_operation" style="margin-left:0;">
+                <div class="task_operation" style="margin-left: 0">
                   <el-button
                     icon="el-icon-s-operation"
                     class="table_column_icon purple"
@@ -355,20 +357,19 @@
           >
             <li v-for="(item, index) in dataList" :key="index">
               <div class="task_list">
-
                 <div class="task_label">
                   <div class="task_dot">
                     <img src="@/assets/images/menu/taskSettle.svg" />
                   </div>
-                  <div class="task_name" @click="openData(index)">{{
-                    item.name
-                  }}</div>
+                  <div class="task_name" @click="openData(index)">
+                    {{ item.name }}
+                  </div>
                 </div>
-                
+
                 <!-- <div class="task_name" @click="openData(index)">
                   <span>{{ item.name }}</span>
                 </div> -->
-                <div class="task_operation"  style="margin-left:0;">
+                <div class="task_operation" style="margin-left: 0">
                   <el-button
                     icon="el-icon-s-operation"
                     class="table_column_icon purple"
@@ -505,7 +506,7 @@ export default {
   },
   mounted() {
     L.CustomPopup = L.Popup.extend({
-      _initLayout: function() {
+      _initLayout: function () {
         var prefix = "leaflet-popup",
           container = (this._container = L.DomUtil.create(
             "div",
@@ -530,7 +531,7 @@ export default {
 
     // add bindCustomPopup
     L.Layer.include({
-      bindCustomPopup: function(content, options) {
+      bindCustomPopup: function (content, options) {
         if (content instanceof L.Popup) {
           L.setOptions(content, options);
           this._popup = content;
@@ -570,7 +571,7 @@ export default {
   watch: {
     menuList: {
       handler(newval, oldval) {
-        console.log(newval)
+        console.log(newval);
         let i = newval.findIndex((item) => {
           return item.flag == true;
         });
@@ -628,34 +629,11 @@ export default {
       setAssessLegendShow: "menuBar/setAssessLegendShow",
     }),
     // 任务树setting
-    AssessSetting(itemAssess, indexAssess, itemRoute, indexRoute, item, index) {
-      this.taskList[index].routeList[indexRoute].assessList[
-        indexAssess
-      ].setting = !this.taskList[index].routeList[indexRoute].assessList[
-        indexAssess
-      ].setting;
+    AssessSetting(itemAssess) {
+      itemAssess.setting = !itemAssess.setting;
     },
     routeAlgorithmInfo(item, index) {
       this.setRouteAlgorithmInfo([1, item]);
-    },
-    changeAssessTime(
-      itemAssess,
-      indexAssess,
-      itemRoute,
-      indexRoute,
-      item,
-      index
-    ) {
-      console.log(
-        itemAssess,
-        indexAssess,
-        itemRoute,
-        indexRoute,
-        item,
-        index,
-        `changeAssessTime`,
-        this.taskList
-      );
     },
     deleteRoute(item, index, taskItem, taskIndex) {
       console.log(item, index, `delete`);
@@ -692,7 +670,6 @@ export default {
       this.setAlgorithm([1, item]);
     },
     addTaskItem(item, index) {
-      console.log(item, index, `item`);
       this.setRouteDialogOptions([1, item]);
     },
     switchTask(item, index) {
@@ -747,7 +724,6 @@ export default {
     },
     //删除评估
     deleteAssessItem(itemAssess, itemRoute, indexRoute, item, index) {
-      console.log(itemAssess, itemRoute, indexRoute, item, index);
       this.$confirm("确认删除该评估吗")
         .then(() => {
           this.$delete("api/assessment", {
@@ -766,6 +742,10 @@ export default {
             type: "information",
           });
         });
+    },
+    // 查看评估配置参数
+    AssessInfo(itemAssess, itemRoute, indexRoute, item, index) {
+      itemAssess.alorithm = !itemAssess.alorithm
     },
     // 请求任务列表
     loadTaskList() {
@@ -795,7 +775,10 @@ export default {
       })
         .then((res) => {
           if (res.status === 200) {
-            console.log(this.taskList[index].routeList,`this.taskList[index].routeList`)
+            console.log(
+              this.taskList[index].routeList,
+              `this.taskList[index].routeList`
+            );
             this.taskList[index].routeList = res.data.data.rows.map((e, i) => {
               return {
                 ...e,
@@ -1033,7 +1016,7 @@ export default {
           this.changeShowAssessArea(itemAssess);
           //选中风险评估航线
         } else if (itemAssess.line) {
-          this.changeShowAssessLine(itemAssess)
+          this.changeShowAssessLine(itemAssess);
           //选中风险评估信息列表
         } else if (itemAssess.table) {
         }
@@ -1055,10 +1038,10 @@ export default {
     changeShowAssessLine(itemAssess) {
       this.clearRouteById(itemAssess.id);
       this.drawRouteLine(
-          itemAssess.id,
-          itemAssess.timeIndex,
-          itemAssess.courseId
-        );
+        itemAssess.id,
+        itemAssess.timeIndex,
+        itemAssess.courseId
+      );
     },
 
     //获取风险等级航线详细信息列表
@@ -1644,7 +1627,7 @@ export default {
       }
     },
     compare(property, m) {
-      return function(a, b) {
+      return function (a, b) {
         var value1 = a[property];
         var value2 = b[property];
         if (m == "+") {

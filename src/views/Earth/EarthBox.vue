@@ -35,7 +35,7 @@
     <!-- 参数配置 -->
     <param-manager></param-manager>
     <!-- 数据项配置 -->
-    <dataitem-manager></dataitem-manager>
+    <data-item-manager></data-item-manager>
     <!-- 评估条件因子管理 -->
     <Evaluation-manager></Evaluation-manager>
     <!-- 常用地点 -->
@@ -95,7 +95,7 @@ import SeaManager from "@/components/menu/SystemManager/seaManager/index.vue";
 import ParamManager from "@/components/menu/SystemManager/paramManager/index.vue";
 
 
-import EvaluationManager from "@/components/menu/SystemManager/dataItemManager/index.vue";
+import EvaluationManager from "@/components/menu/SystemManager/evaluationManager/index.vue";
 import SiteManager from "@/components/menu/SystemManager/siteManager/index.vue";
 import MarkerManager from "@/components/menu/SystemManager/markerManager/index.vue";
 
@@ -145,7 +145,6 @@ export default {
     EvaluationManager: EvaluationManager,
     routeManager: routeManager,
     MarkerManager: MarkerManager,
-
     // 数据管理
     DatasourceManager: DatasourceManager,
     DatasourceManager1: DatasourceManager1,

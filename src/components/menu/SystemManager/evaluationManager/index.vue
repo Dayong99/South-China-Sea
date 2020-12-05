@@ -163,7 +163,7 @@ export default {
     },
     systemList: {
       handler(newval, oldval) {
-        if (newval[6].flag) {
+        if (newval[8].flag) {
           this.systemManagerShow = true;
           this.loadWeatherFactor();
         } else {

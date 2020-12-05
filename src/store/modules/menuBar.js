@@ -55,7 +55,7 @@ const state = {
     },
     {
       name: '评估条件因子配置',
-      flag: false
+      flag: false,
     },
 
   ],

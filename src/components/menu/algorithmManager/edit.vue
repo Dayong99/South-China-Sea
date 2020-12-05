@@ -1,7 +1,7 @@
 <template>
   <div id="algorith_manager" class="algorithm_manager" v-show="algorithmShow">
     <div class="manager_title">
-      <span>算法参数配置</span>
+      <span>评估参数配置</span>
       <img
         src="@/assets/images/legendbar/close.png"
         @click.stop="closeManager"
@@ -44,7 +44,11 @@
       <div class="tree_wrapper">
         <div id="tree" class="tree" ref="tree"></div>
       </div>
-      <div class="factor_wrapper" v-if="title && mockData.children[activeNodeIndex[0]]">
+      <div
+        class="factor_wrapper"
+        v-if="activeNodeIndex[1] > -1
+        "
+      >
         <div class="factor_title">{{ this.title }}</div>
         <div class="factor_content_wrapper">
           <ul class="factor_content_title">
@@ -318,93 +322,7 @@ export default {
         },
       ],
       weatherFactoreOptionsList: [],
-      mockData: {
-        id: "1",
-        name: "编队",
-        count: 123456,
-        label: "编队1", // 编队
-        status: "B",
-        WeightRatio: 0.341,
-        level: 0,
-        control: "",
-        variableUp: false,
-        children: [
-          {
-            control: "+",
-            id: "11",
-            name: "船只",
-            count: 123456,
-            label: "船只1",
-            status: "R",
-            level: 1,
-            WeightRatio: 0.179,
-            children: [
-              {
-                control: "-",
-                id: "111",
-                name: "装备",
-                collapsed: true,
-                count: 123456,
-                label: "装备1",
-                level: 2,
-                status: "B",
-                WeightRatio: 0.27,
-                parentId: "11",
-              },
-              {
-                control: "-",
-                id: "112",
-                name: "装备",
-                collapsed: true,
-                count: 123456,
-                label: "装备2",
-                status: "G",
-                level: 2,
-                WeightRatio: 0.259,
-                parentId: "11",
-              },
-            ],
-          },
-          {
-            control: "+",
-            id: "12",
-            name: "船只",
-            count: 123456,
-            label: "船只2",
-            status: "B",
-            level: 1,
-            WeightRatio: 0.221,
-            children: [
-              {
-                control: "-",
-                id: "121",
-                name: "装备3",
-                count: 123456,
-                label: "装备6",
-                status: "R",
-                WeightRatio: 0.12,
-                level: 2,
-                children: [],
-                parentId: "12",
-              },
-              {
-                control: "-",
-                id: "122",
-                name: "装备4",
-                count: 123456,
-                label: "装备7",
-                status: "G",
-                level: 2,
-                WeightRatio: 0.241,
-                variableUp: false,
-                parentId: "12",
-                children: [],
-              },
-            ],
-          },
-        ],
-        taskInfo: {},
-      },
+      mockData: {},
       treeChart: [],
       activeNodeIndex: [],
     };
@@ -1226,20 +1144,22 @@ export default {
         treeValue: treeValue.join(","),
         algorithm_Type: this.formData.algorithm_Type,
         assessName: this.formData.assessName,
-        treeCoefficient: treeCoefficient.join(','),
-        treeExpression: treeExpression.join(','),
-        treeParameter: treeParameter.join(',')
+        treeCoefficient: treeCoefficient.join(","),
+        treeExpression: treeExpression.join(","),
+        treeParameter: treeParameter.join(","),
       };
       this.$jsonPost(`/api/assessment/evaluate`, {
         ...params,
-      }).then(() => {
-        this.$message({
-          message: "评估成功",
-          type: "success",
-        });
-      }).then(() => {
-        this.closeManager();
       })
+        .then(() => {
+          this.$message({
+            message: "评估成功",
+            type: "success",
+          });
+        })
+        .then(() => {
+          this.closeManager();
+        });
     },
   },
 };
