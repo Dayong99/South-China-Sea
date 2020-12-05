@@ -142,9 +142,6 @@
                 >
                   <div
                     @click="switchRoute(item, index, itemRoute, indexRoute)"
-                    @click.stop="
-                      loadAssessInfo(itemRoute, indexRoute, item, index)
-                    "
                     class="task_content_desc"
                     :class="{ task_content_desc_active: itemRoute.checked }"
                   >
@@ -156,36 +153,36 @@
                     </div>
                     <div class="control_wrapper" >
                       <!-- 航线详情按钮 -->
-                      <img v-for="(item,index) in itemRoute.taskSeeds" :key="`taskSeeds${index}`"
+                      <img
                             :src="
-                              item.info
+                              itemRoute.showRoute
                                 ? AssessControlSrc.information.active
                                 : AssessControlSrc.information.deactive
                             "
                             class="control_items"
-                            @click.stop="algorithm_Task(itemRoute, indexRoute,'info')"
+                            @click.stop="showRoute(itemRoute, indexRoute)"
                           />
 
                       <!-- 航线评估按钮 -->
-                      <img v-for="(item,index) in itemRoute.taskSeeds" :key="1112"
+                      <img
                             :src="
-                              item.assess
+                              itemRoute.showAlorithm
                                 ? AssessControlSrc.assess.active
                                 : AssessControlSrc.assess.deactive
                             "
                             class="control_items"
-                            @click.stop="algorithm_Task(itemRoute, indexRoute,'assess')"
+                            @click.stop="algorithm_Task(itemRoute, indexRoute)"
                           />
 
                         <!-- 航线编辑按钮 -->
-                        <img v-for="(item,index) in itemRoute.taskSeeds" :key="1113"
+                        <img
                             :src="
-                              item.edit
+                              itemRoute.edit
                                 ? AssessControlSrc.edit.active
                                 : AssessControlSrc.edit.deactive
                             "
                             class="control_items"
-                            @click.stop="algorithm_Task(itemRoute, indexRoute,'edit')"
+                            @click.stop="algorithm_Task(itemRoute, indexRoute)"
                           />
 
                       <!-- 航线删除按钮 -->
@@ -665,9 +662,9 @@ export default {
     algorithm(item, index) {
       this.setAlgorithm([1, item]);
     },
-    algorithm_Task(item, index , seed){
-      item.taskSeeds[0][seed]=true;
-      this.setAlgorithm([1, item]);
+    algorithm_Task(itemRoute, indexRoute){
+      itemRoute.showAlorithm = !itemRoute.showAlorithm
+      this.setAlgorithm([1, itemRoute]);
     },
     addTaskItem(item, index) {
       this.setRouteDialogOptions([1, item]);
@@ -785,9 +782,8 @@ export default {
                 checked: false,
                 assessChecked: false,
                 showRoute: false,
+                showAlorithm: false,
                 assessList: [],
-                taskSeeds:[{"info":false,"edit":false,"assess":false}],
-                
               };
             });
           }
