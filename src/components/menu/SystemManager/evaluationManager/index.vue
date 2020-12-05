@@ -235,7 +235,7 @@ export default {
             message: "取消删除",
             type: "information",
           });
-        })
+        });
     },
     add() {
       this.dialog.isVisible = true;
@@ -261,15 +261,18 @@ export default {
             let obj = {};
             this.weatherOptionsList.forEach((a, b) => {
               if (a.id === e.parametersId) {
+                console.log("当前选中");
                 obj = {
                   ...e,
                   ...a,
                 };
-                obj.id = e.id
+                obj.id = e.id;
               }
             });
+            console.log(obj, `当前选中当前选中当前选中当前选中`);
             return obj;
           });
+          console.log(this.tableData, `this.tableData`);
         }
       });
     },
