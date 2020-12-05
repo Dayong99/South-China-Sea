@@ -44,11 +44,7 @@
       <div class="tree_wrapper">
         <div id="tree" class="tree" ref="tree"></div>
       </div>
-      <div
-        class="factor_wrapper"
-        v-if="activeNodeIndex[1] > -1
-        "
-      >
+      <div class="factor_wrapper" v-if="activeNodeIndex[1] > -1">
         <div class="factor_title">{{ this.title }}</div>
         <div class="factor_content_wrapper">
           <ul class="factor_content_title">
@@ -1151,10 +1147,21 @@ export default {
       this.$jsonPost(`/api/assessment/evaluate`, {
         ...params,
       })
-        .then(() => {
-          this.$message({
-            message: "评估成功",
+        .then((res) => {
+          console.log(res, `res`);
+          if (res.data.data === "评估失败") {
+            this.$messag({
+              title: "error",
+              message: "评估失败",
+              type: "error",
+            });
+            return;
+          }
+          this.$notify({
+            title: "评估成功",
+            message: `评估用时${res.data.data}s`,
             type: "success",
+            position: 'bottom-right'
           });
         })
         .then(() => {
