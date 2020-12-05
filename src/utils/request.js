@@ -7,7 +7,7 @@ import store from '@/store/index'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 
-// 请求超时时间，10s
+// 请求超时时间，100s
 const requestTimeOut = 100 * 1000
 const success = 200
 // 更换令牌的时间区间

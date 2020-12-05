@@ -1283,28 +1283,30 @@ export default {
         treeCoefficient.push(e.coefficient);
         treeExpression.push(e.expression);
         treeDeploy.push(e.deploy);
-        console.log(e.name.split("_")[0],`e.name.split("_")[0]e.name.split("_")[0]e.name.split("_")[0]e.name.split("_")[0]`)
+        console.log(
+          e.name.split("_")[0],
+          `e.name.split("_")[0]e.name.split("_")[0]e.name.split("_")[0]e.name.split("_")[0]`
+        );
+        let parameter = e.parameter;
         if (e.structure === 3) {
-          let parameter = ''
-          console.log(e.name.split("_")[0],`e.name.split("_")[0]`)
-          if(Number(e.name.split("_")[0]) === 4) {
-            console.log(e.parameter,`e.parametere.parameter`)
-            let parameterArr = e.parameter.split('_')
-            parameterArr = parameterArr.map((e,i) => {
-              return Number(e) + 273.15
-            })
-            parameter = parameterArr.join('_')
+          console.log(e.name.split("_")[0], `e.name.split("_")[0]`);
+          if (Number(e.name.split("_")[0]) === 4) {
+            console.log(e.parameter, `e.parametere.parameter`);
+            let parameterArr = e.parameter.split("_");
+            parameterArr = parameterArr.map((e, i) => {
+              return Number(e) + 273.15;
+            });
+            parameter = parameterArr.join("_");
           } else {
-            parameter = e.parameter
+            parameter = e.parameter;
           }
-          treeParameter.push(parameter)
-          console.log(treeParameter,`treeParameter`)
           let objHy = {
             typeId: e.name.split("_")[0],
             level: e.name.split("_")[1],
           };
           hydrometeor.push(objHy);
         }
+        treeParameter.push(parameter);
       });
       console.log(
         treeName,
@@ -1338,7 +1340,7 @@ export default {
         .then((res) => {
           console.log(res, `res`);
           if (res.data.message === "评估失败") {
-            this.$messag({
+            this.$message({
               title: "error",
               message: "评估失败",
               type: "error",
@@ -1357,7 +1359,7 @@ export default {
           this.loading = false;
         })
         .catch((error) => {
-          this.$messag({
+          this.$message({
             title: "error",
             message: "评估失败",
             type: "error",
