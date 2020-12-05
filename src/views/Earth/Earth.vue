@@ -94,7 +94,8 @@ export default {
       window.map.on("load", (ev) => {
         this.getExtent();
       });
-      window.map.setView([35.09, 102.21], 4);
+      // window.map.setView([35.09, 102.21], 5);
+      window.map.setView([21.27, 110.35], 5);
       // this.changeZoom();
       this.changeMove();
     },
@@ -137,8 +138,8 @@ export default {
       let xMax = max.lng;
       let yMin = min.lat;
       let yMax = max.lat;
-      yMin = yMin <= -85 ? -85 : yMin;
-      yMax = yMax >= 85 ? 85 : yMax;
+      // yMin = yMin <= -85 ? -85 : yMin;
+      // yMax = yMax >= 85 ? 85 : yMax;
 
       let extent = {
         xMin: null,

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63 (92445) - https://sketch.com -->
+    <title>海平面气压标</title>
+    <desc>Created with Sketch.</desc>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="XX船舰切图" transform="translate(-201.000000, -274.000000)">
+            <g id="气压标_export" transform="translate(201.000000, 274.000000)">
+                <g id="气压标" transform="translate(2.400000, 2.400000)">
+                    <ellipse id="椭圆形" stroke="#FFFFFF" stroke-width="1.44" cx="15.12" cy="15.552" rx="14.4" ry="14.832"></ellipse>
+                    <path d="M16.3525721,21.5137543 C18.9331785,21.5401581 21.0052704,19.5779005 20.980719,17.1309292 C20.9561676,14.6839578 17.5792642,7.23296067 16.2091468,7.21892217 C14.8390295,7.20492354 11.6109653,14.588341 11.6355167,17.0353123 C11.6600681,19.4822836 13.7719657,21.4873504 16.3525721,21.5137543 Z" id="椭圆形" fill="#FFFFFF" transform="translate(16.308156, 14.366470) rotate(23.000000) translate(-16.308156, -14.366470) "></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

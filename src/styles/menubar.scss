@@ -1,8 +1,8 @@
 #menuBar {
     width: 300px;
     position: fixed;
-    top: 26px;
-    left: 35px;
+    top: 20px;
+    left: 28px;
     z-index: 999;
     display: flex;
     flex-flow: column nowrap;
@@ -19,20 +19,22 @@
         height: 35px;
         display: flex;
         justify-content: space-between;
+        align-items: center;
         .search_icon {
-            width: 35px;
-            height: 35px;
+            width: 30px;
+            height: 30px;
             display: flex;
             justify-content: center;
             align-items: center;
             border-radius: 50%;
+            padding-top: 2px;
+            margin-top: 2px;
             background: rgba(26, 26, 24, 0.7);
             &:hover {
                 cursor: pointer;
             }
             img {
-                width: 20px;
-                height: 20px;
+                width: 18px;
             }
         }
         .search_bgcolor {
@@ -43,26 +45,25 @@
             flex: 1; // 防止挤压左侧
             display: flex;
             align-items: center;
-            margin-left: 10px;
+            margin-left: 8px;
             .input_left {
-                width: 35px;
-                height: 100%;
+                width: 32px;
+                height: 28px;
                 display: flex;
-                justify-content: flex-end;
+                // justify-content: flex-end;
                 align-items: center;
                 background: rgba(26, 26, 24, 0.7);
                 border-top-left-radius: 18px;
                 border-bottom-left-radius: 18px;
                 img {
-                    width: 22px;
-                    padding-left: -4px;
+                    width: 20px;
+                    margin-left: 12px;
                     padding-right: 4px;
                 }
             }
             .input_content {
                 .search_content /deep/ .el-input__inner {
-                    height: 35px;
-                    line-height: 35px;
+                    height: 28px;
                     color: rgb(192, 192, 192);
                     border: none;
                     border-radius: 0;
@@ -77,10 +78,10 @@
                 }
             }
             .input_right {
-                width: 35px;
-                height: 100%;
+                width: 30px;
+                height: 28px;
                 display: flex;
-                justify-content: flex-start;
+                justify-content: space-between;
                 align-items: center;
                 background-color: rgba(26, 26, 24, 0.7);
                 // background: url('~@/assets/images/menu/heart.png');
@@ -90,7 +91,7 @@
                     cursor: pointer;
                 }
                 img {
-                    width: 22px;
+                    width: 20px;
                 }
             }
         }
