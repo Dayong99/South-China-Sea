@@ -1,15 +1,44 @@
 .sideBar {
     position: fixed;
-    right: 35px;
+    right: 28px;
     top: 70px;
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
+    .reload {
+        // display: flex;
+        position: relative;
+        right: -40px;
+        top: 10px;
+        width: 32px;
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+    .draw {
+        // display: flex;
+        position: relative;
+        right: -40px;
+        top: 10px;
+        width: 32px;
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+    .draw_active {
+        border: none;
+        background-color: rgba(152, 26, 0, 1);
+    }
+    .reload:hover {
+        background: #971A00;
+    }
+    .draw:hover {
+        background: #971A00;
+    }
     .sidebar_ul {
         display: flex;
         justify-content: center;
         align-items: flex-start;
         max-height: 950px;
+        //  重绘
         ul {
             list-style: none;
             display: flex;
@@ -78,8 +107,8 @@
     }
     .other_btn {
         position: fixed;
-        bottom: 80px;
-        right: 145px;
+        bottom: 75px;
+        right: 84px;
         color: #fff;
         display: flex;
         align-items: center;
@@ -127,10 +156,6 @@
                 margin-right: 8px;
             }
         }
-        .draw_active {
-            border: none;
-            background: rgba(152, 26, 0, 1);
-        }
         .re_time {
             width: 90px;
             height: 30px;
@@ -149,7 +174,7 @@
     }
     // 卫星云图选择
     .fyType {
-        margin-top: 15px;
+        margin-top: 20px;
         margin-right: -15px;
         .el-input {
             width: 100px;
