@@ -151,21 +151,6 @@
                     <div class="task_content_name">
                       {{ itemRoute.lineName }}
                     </div>
-<<<<<<< HEAD
-                    <div class="control_wrapper">
-                      <img
-                        src="@/assets/images/menu/route_info.svg"
-                        @click.stop="showRoute(itemRoute, indexRoute)"
-                      />
-                      <img
-                        src="@/assets/images/menu/route_assess.svg"
-                        @click.stop="algorithm(itemRoute, indexRoute)"
-                      />
-                      <img
-                        src="@/assets/images/menu/edit_route.svg"
-                        @click.stop="editRoute(itemRoute, indexRoute, index)"
-                      />
-=======
                     <div class="control_wrapper" >
                       <!-- 航线详情按钮 -->
                       <img
@@ -197,11 +182,10 @@
                                 : AssessControlSrc.edit.deactive
                             "
                             class="control_items"
-                            @click.stop="algorithm_Task(itemRoute, indexRoute)"
+                            @click.stop="editRoute(itemRoute, indexRoute, index)"
                           />
 
                       <!-- 航线删除按钮 -->
->>>>>>> e7d28a1a3f2982e57094063cb733264fd123bf53
                       <img
                         src="@/assets/images/menu/route_delete.svg"
                         @click.stop="
@@ -690,12 +674,8 @@ export default {
       this.setAlgorithm([1, itemRoute]);
     },
     addTaskItem(item, index) {
-<<<<<<< HEAD
       console.log(item, index, `item`);
       this.setRouteDialogOptions([1, item, index, false]);
-=======
-      this.setRouteDialogOptions([1, item]);
->>>>>>> e7d28a1a3f2982e57094063cb733264fd123bf53
     },
     switchTask(item, index) {
       if (item.checked) {
@@ -794,18 +774,12 @@ export default {
     },
     // 请求航线列表
     loadRouteList(item, index) {
-<<<<<<< HEAD
       this.taskList[index].routeList = [];
       this.$get(`/api/course/list`, {
-=======
-      item.routeList = [];
-      this.$get(`/api/course`, {
->>>>>>> e7d28a1a3f2982e57094063cb733264fd123bf53
         plan_Id: item.id,
       })
         .then((res) => {
           if (res.status === 200) {
-<<<<<<< HEAD
             this.taskList[index].routeList = res.data.data.map((e, i) => {
               return {
                 ...e,
@@ -832,13 +806,6 @@ export default {
         .then((res) => {
           if (res.status === 200) {
             this.taskList[index].routeList = res.data.data.map((e, i) => {
-=======
-            console.log(
-              this.taskList[index].routeList,
-              `this.taskList[index].routeList`
-            );
-            this.taskList[index].routeList = res.data.data.rows.map((e, i) => {
->>>>>>> e7d28a1a3f2982e57094063cb733264fd123bf53
               return {
                 ...e,
                 checked: false,
