@@ -1,8 +1,8 @@
 <template>
   <!-- eslint-disable-->
   <el-dialog
-    title="导入海浪"
-    width="500px"
+    :title="title"
+    width="700px"
     top="50px"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -15,46 +15,60 @@
       :rules="rules"
       label-position="right"
       label-width="100px"
-      style="line-height: 100%;"
+      style="line-height: 100%"
     >
       <!-- 名称 -->
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
-            <el-form-item label="目标路径" prop="filePath">
-              <el-input
-                placeholder="请输入目标路径"
-                v-model="formData.filePath"
-              ></el-input>
+            <el-form-item label="海区名称:" prop="name">
+              <div>
+                {{formData.name}}
+              </div>
+            </el-form-item>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="18">
+          <div class="grid-content bg-purple-dark">
+            <el-form-item label="是否显示:" prop="isShow">
+              <div>
+                {{Number(formData.isShow)==1?"显示":"不显示"}}
+              </div>
+            </el-form-item>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="18">
+          <div class="grid-content bg-purple-dark">
+            <el-form-item label="geojson:" prop="dataGeo">
+              <div>
+                {{formData.dataGeo}}
+              </div>
+           
             </el-form-item>
           </div>
         </el-col>
       </el-row>
     </el-form>
-    <div class="save_wrapper">
-      <button class="save" type="button" @click="submit()">保存</button>
-    </div>
   </el-dialog>
 </template>
 <script>
 import { toBase64 } from "@/utils/toBase64.js";
+
 export default {
   data() {
-
-
     return {
       data: {},
       rules: {},
       formData: {
-        filePath:''
+        name: "",
+        isShow:"",
+        dataGeo: "",
       },
-      rules: {
-        filePath: {
-          required: true,
-          message: "目标路径不能为空",
-          trigger: "blur",
-        }
-      },
+  
     };
   },
   props: {
@@ -82,32 +96,10 @@ export default {
       this.$refs.form.clearValidate();
       this.$refs.form.resetFields();
       this.formData = {
-        filePath:''
+        name: "",
+        isShow:"",
+        dataGeo: "",
       };
-    },
-    // 添加或修改
-    submit() {
-      this.$refs.form.validate((valid) => {
-        if (valid) {
-            this.$get("/api/numerical-forecast/analysis", this.formData)
-              .then(() => {
-                this.$message({
-                  message: "目标路径导入成功",
-                  type: "success",
-                });
-                this.reset();
-              })
-              .then(() => {
-                this.$emit("close");
-              })
-              .catch(() => {
-                this.$message({
-                  message: "目标路径导入失败",
-                  type: "error",
-                });
-              });
-          }
-      });
     },
   },
   computed: {

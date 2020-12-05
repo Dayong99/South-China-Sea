@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63 (92445) - https://sketch.com -->
+    <title>详情</title>
+    <desc>Created with Sketch.</desc>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="详情_export备份">
+            <g id="详情" transform="translate(9.000000, 9.000000) rotate(-180.000000) translate(-9.000000, -9.000000) translate(0.000000, -0.000000)">
+                <polygon id="路径" points="0 0 18 0 18 18 0 18"></polygon>
+                <path d="M8.25,11.25 L9.75,11.25 L9.75,12.75 L8.25,12.75 L8.25,11.25 Z M8.25,5.25 L9.75,5.25 L9.75,9.75 L8.25,9.75 L8.25,5.25 Z M8.99625,1.5 C4.8525,1.5 1.5,4.85625 1.5,9 C1.5,13.14375 4.8525,16.5 8.99625,16.5 C13.14,16.5 16.5,13.14375 16.5,9 C16.5,4.85625 13.14,1.5 8.99625,1.5 Z M9,15 C5.685,15 3,12.315 3,9 C3,5.685 5.685,3 9,3 C12.315,3 15,5.685 15,9 C15,12.315 12.315,15 9,15 Z" id="形状" fill="#FFFFFF" fill-rule="nonzero"></path>
+            </g>
+        </g>
+    </g>
+</svg>

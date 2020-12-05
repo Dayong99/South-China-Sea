@@ -10,7 +10,7 @@
       </div>
       <div class="search_input">
         <div class="input_left">
-          <img src="@/assets/images/menu/search.png" />
+          <img src="@/assets/images/menu/search.svg" />
         </div>
         <div class="input_content">
           <el-input
@@ -22,7 +22,7 @@
           ></el-input>
         </div>
         <div class="input_right" @click.stop="showMarkArea">
-          <img src="@/assets/images/menu/heart.png" />
+          <img src="@/assets/images/menu/heart.svg" />
         </div>
       </div>
     </div>
@@ -142,9 +142,6 @@
                 >
                   <div
                     @click="switchRoute(item, index, itemRoute, indexRoute)"
-                    @click.stop="
-                      loadAssessInfo(itemRoute, indexRoute, item, index)
-                    "
                     class="task_content_desc"
                     :class="{ task_content_desc_active: itemRoute.checked }"
                   >
@@ -155,24 +152,57 @@
                       {{ itemRoute.lineName }}
                     </div>
                     <div class="control_wrapper">
+                      <!-- 航线详情按钮 -->
                       <img
-                        src="@/assets/images/menu/route_info.svg"
-                        @click.stop="showRoute(itemRoute, indexRoute)"
+                        :src="
+                          itemRoute.showRoute
+                            ? AssessControlSrc.information.active
+                            : AssessControlSrc.information.deactive
+                        "
+                        class="control_items"
+                        @click.stop="showRoute(itemRoute, indexRoute, 'info')
+                        "
                       />
+
+                      <!-- 航线评估按钮 -->
                       <img
-                        src="@/assets/images/menu/route_assess.svg"
-                        @click.stop="algorithm(itemRoute, indexRoute)"
+                        v-for="(item, index) in itemRoute.taskSeeds"
+                        :key="1112"
+                        :src="
+                          item.assess
+                            ? AssessControlSrc.assess.active
+                            : AssessControlSrc.assess.deactive
+                        "
+                        class="control_items"
+                        @click.stop="
+                          algorithm_Task(itemRoute, indexRoute, 'assess')
+                        "
                       />
+
+                      <!-- 航线编辑按钮 -->
                       <img
-                        src="@/assets/images/menu/edit_route.svg"
-                        @click.stop="algorithm(itemRoute, indexRoute)"
+                        v-for="(item, index) in itemRoute.taskSeeds"
+                        :key="1113"
+                        :src="
+                          item.edit
+                            ? AssessControlSrc.edit.active
+                            : AssessControlSrc.edit.deactive
+                        "
+                        class="control_items"
+                        @click.stop="
+                          algorithm_Task(itemRoute, indexRoute, 'edit')
+                        "
                       />
+
+                      <!-- 航线删除按钮 -->
                       <img
                         src="@/assets/images/menu/route_delete.svg"
                         @click.stop="
                           deleteRoute(itemRoute, indexRoute, item, index)
                         "
                       />
+
+                      <!-- 航线展开按钮 -->
                       <img
                         :class="{ activeAssess: itemRoute.assessChecked }"
                         src="@/assets/images/menu/down_content.png"
@@ -219,6 +249,7 @@
                               )
                             "
                           />
+                          <!-- 查看评估配置参数 -->
                           <img
                             :src="
                               itemAssess.alorithm
@@ -226,7 +257,15 @@
                                 : AssessControlSrc.alorithm.deactive
                             "
                             class="control_items"
-                            @click="itemAssess.alorithm = !itemAssess.alorithm"
+                            @click="
+                              AssessInfo(
+                                itemAssess,
+                                itemRoute,
+                                indexRoute,
+                                item,
+                                index
+                              )
+                            "
                           />
 
                           <!-- area -->
@@ -278,16 +317,7 @@
                         <img
                           src="@/assets/images/menu/setting_assess_deactive.svg"
                           class="control_items"
-                          @click="
-                            AssessSetting(
-                              itemAssess,
-                              indexAssess,
-                              itemRoute,
-                              indexRoute,
-                              item,
-                              index
-                            )
-                          "
+                          @click="AssessSetting(itemAssess)"
                         />
                       </div>
                     </div>
@@ -313,7 +343,7 @@
                     {{ item.name }}
                   </div>
                 </div>
-                <div class="task_operation" style="margin-left:0;">
+                <div class="task_operation" style="margin-left: 0">
                   <el-button
                     icon="el-icon-s-operation"
                     class="table_column_icon purple"
@@ -337,15 +367,9 @@
                   <div class="task_dot">
                     <img src="@/assets/images/menu/taskSettle.svg" />
                   </div>
-                  <<<<<<< HEAD
-                  <div class="task_name" @click="openSystem(index)">
-                    {{ item.name }}
-                  </div>
-                  =======
                   <div class="task_name" @click="openData(index)">
                     {{ item.name }}
                   </div>
-                  >>>>>>> 42f150305e0c54aafb799731e7974b09f6d893cc
                 </div>
 
                 <!-- <div class="task_name" @click="openData(index)">
@@ -408,6 +432,18 @@ export default {
         time: {
           active: require("@/assets/images/menu/time_assess_deactive.png"),
           deactive: require("@/assets/images/menu/time_assess_deactive.png"),
+        },
+        information: {
+          active: require("@/assets/images/menu/info_assess_active.svg"),
+          deactive: require("@/assets/images/menu/info_assess_deactive.svg"),
+        },
+        edit: {
+          active: require("@/assets/images/menu/edit_assess_active.svg"),
+          deactive: require("@/assets/images/menu/edit_assess_deactive.svg"),
+        },
+        assess: {
+          active: require("@/assets/images/menu/assess_assess_active.svg"),
+          deactive: require("@/assets/images/menu/assess_assess_deactive.svg"),
         },
       },
       // 任务
@@ -599,34 +635,11 @@ export default {
       setAssessLegendShow: "menuBar/setAssessLegendShow",
     }),
     // 任务树setting
-    AssessSetting(itemAssess, indexAssess, itemRoute, indexRoute, item, index) {
-      this.taskList[index].routeList[indexRoute].assessList[
-        indexAssess
-      ].setting = !this.taskList[index].routeList[indexRoute].assessList[
-        indexAssess
-      ].setting;
+    AssessSetting(itemAssess) {
+      itemAssess.setting = !itemAssess.setting;
     },
     routeAlgorithmInfo(item, index) {
       this.setRouteAlgorithmInfo([1, item]);
-    },
-    changeAssessTime(
-      itemAssess,
-      indexAssess,
-      itemRoute,
-      indexRoute,
-      item,
-      index
-    ) {
-      console.log(
-        itemAssess,
-        indexAssess,
-        itemRoute,
-        indexRoute,
-        item,
-        index,
-        `changeAssessTime`,
-        this.taskList
-      );
     },
     deleteRoute(item, index, taskItem, taskIndex) {
       console.log(item, index, `delete`);
@@ -650,13 +663,19 @@ export default {
             message: "取消删除",
             type: "information",
           });
+        })
+        .then(() => {
+          this.loadRouteList(item, index);
         });
     },
     algorithm(item, index) {
       this.setAlgorithm([1, item]);
     },
+    algorithm_Task(item, index, seed) {
+      item.taskSeeds[0][seed] = true;
+      this.setAlgorithm([1, item]);
+    },
     addTaskItem(item, index) {
-      console.log(item, index, `item`);
       this.setRouteDialogOptions([1, item]);
     },
     switchTask(item, index) {
@@ -711,7 +730,6 @@ export default {
     },
     //删除评估
     deleteAssessItem(itemAssess, itemRoute, indexRoute, item, index) {
-      console.log(itemAssess, itemRoute, indexRoute, item, index);
       this.$confirm("确认删除该评估吗")
         .then(() => {
           this.$delete("api/assessment", {
@@ -730,6 +748,10 @@ export default {
             type: "information",
           });
         });
+    },
+    // 查看评估配置参数
+    AssessInfo(itemAssess, itemRoute, indexRoute, item, index) {
+      itemAssess.alorithm = !itemAssess.alorithm;
     },
     // 请求任务列表
     loadTaskList() {
@@ -753,12 +775,16 @@ export default {
     },
     // 请求航线列表
     loadRouteList(item, index) {
-      this.taskList[index].routeList = [];
+      item.routeList = [];
       this.$get(`/api/course`, {
         plan_Id: item.id,
       })
         .then((res) => {
           if (res.status === 200) {
+            console.log(
+              this.taskList[index].routeList,
+              `this.taskList[index].routeList`
+            );
             this.taskList[index].routeList = res.data.data.rows.map((e, i) => {
               return {
                 ...e,
@@ -766,6 +792,7 @@ export default {
                 assessChecked: false,
                 showRoute: false,
                 assessList: [],
+                taskSeeds: [{ info: false, edit: false, assess: false }],
               };
             });
           }
@@ -891,6 +918,9 @@ export default {
       this.setData({ index: index, val: true });
     },
 
+    showInfo(item) {
+      item = true;
+    },
     //显示评估区域
     showAssessArea(itemAssess, indexAssess, itemRoute) {
       console.log(itemAssess, itemRoute, "点击风险评估区域");

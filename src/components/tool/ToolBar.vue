@@ -2,12 +2,12 @@
   <div class="right-top-container" id="toolBar">
     <div class="tool_item zoom" @click.stop="zoomIn">
       <el-tooltip class="item" effect="light" content="放大" placement="bottom">
-        <img src="@/assets/toolList/add.png" />
+        <img src="@/assets/toolList/add.svg" />
       </el-tooltip>
     </div>
     <div class="tool_item tool_right zoom" @click.stop="zoomOut">
       <el-tooltip class="item" effect="light" content="缩小" placement="bottom">
-        <img src="@/assets/toolList/minus.png" />
+        <img src="@/assets/toolList/minus.svg" />
       </el-tooltip>
     </div>
     <div
@@ -21,7 +21,7 @@
         content="距离量算"
         placement="bottom"
       >
-        <img src="@/assets/toolList/ruler.png" />
+        <img src="@/assets/toolList/ruler.svg" />
       </el-tooltip>
     </div>
     <div
@@ -35,7 +35,7 @@
         content="面积量算"
         placement="bottom"
       >
-        <img src="@/assets/toolList/area.png" />
+        <img src="@/assets/toolList/area.svg" />
       </el-tooltip>
     </div>
     <div
@@ -49,7 +49,7 @@
         content="坐标定位"
         placement="bottom"
       >
-        <img src="@/assets/toolList/location.png" />
+        <img src="@/assets/toolList/location.svg" />
       </el-tooltip>
     </div>
     <div
@@ -63,7 +63,7 @@
         content="底图切换"
         placement="bottom"
       >
-        <img src="@/assets/images/toolbar/product.png" />
+        <img src="@/assets/toolList/product.svg" />
       </el-tooltip>
     </div>
     <div
@@ -77,7 +77,7 @@
         content="经纬显示"
         placement="bottom"
       >
-        <img src="@/assets/toolList/line.png" />
+        <img src="@/assets/toolList/line.svg" />
       </el-tooltip>
     </div>
     <div
@@ -91,7 +91,7 @@
         content="区域取值"
         placement="bottom"
       >
-        <img src="@/assets/toolList/getValue.png" />
+        <img src="@/assets/toolList/getValue.svg" />
       </el-tooltip>
     </div>
     <div
@@ -105,7 +105,7 @@
         content="单点取值"
         placement="bottom"
       >
-        <img src="@/assets/toolList/point.png" />
+        <img src="@/assets/toolList/point.svg" />
       </el-tooltip>
     </div>
     <div class="tool_item tool_right" @click.stop="clear">
@@ -115,7 +115,7 @@
         content="清除要素"
         placement="bottom"
       >
-        <img src="@/assets/toolList/clear.png" />
+        <img src="@/assets/toolList/clear.svg" />
       </el-tooltip>
     </div>
     <!-- <div
@@ -215,8 +215,6 @@
         </div>
       </div>
     </div>
-
-   
   </div>
 </template>
 <script>
@@ -225,8 +223,7 @@ import toolBar from "@/utils/toolBar.js";
 import "@/utils/leaflet.latlng-graticule.js";
 
 export default {
-  components:{
-  },
+  components: {},
   data() {
     return {
       rectangle: undefined,
@@ -491,13 +488,17 @@ export default {
           let maxY = Math.max(latlngs[0][0], latlngs[1][0]);
           console.log(minX, maxX, minY, maxY);
           let menuItem = that.menuItemList[that.menuItemList.length - 1];
+          let index = menuItem.parseIntLevel.findIndex((item) => {
+            return item == menuItem.currentLevel;
+          });
+          let level = menuItem.level[index];
           //获取区域信息
           that
             .$get("api/numerical-forecast/regionalSummary", {
               day: that.nowtime.substring(0, 10), //日期
               time: that.nowtime.substring(11, 13), //时间
               type: menuItem.id, //要素id
-              level: menuItem.currentLevel, //当前选中的层级
+              level: level, //当前选中的层级
               minX: minX,
               minY: minY,
               maxX: maxX,
@@ -506,8 +507,8 @@ export default {
             .then((res) => {
               console.log(res.data.data);
               let obj = res.data.data;
-              let content
-              if (menuItem.name == "温度"||menuItem.name == "2米温度") {
+              let content;
+              if (menuItem.name == "温度" || menuItem.name == "2米温度") {
                 content = `<p>名称: ${menuItem.name}</p>
                   <p>层级: ${menuItem.currentLevel}</p>
                   <p>时间: ${that.nowtime}</p>
@@ -518,7 +519,7 @@ export default {
                   <p>最小值: ${(obj.min - 273.15).toFixed(3)}</p>
                   <p>最大值: ${(obj.max - 273.15).toFixed(3)}</p>
                   <p>平均值: ${(obj.average - 273.15).toFixed(3)}</p>`;
-              }else{
+              } else {
                 content = `<p>名称: ${menuItem.name}</p>
                   <p>层级: ${menuItem.currentLevel}</p>
                   <p>时间: ${that.nowtime}</p>
@@ -565,7 +566,11 @@ export default {
             let level = "";
             let type = "";
             that.menuItemList.forEach((item) => {
-              level += item.currentLevel + ",";
+              let index = item.parseIntLevel.findIndex((item1) => {
+                return item1 == item.currentLevel;
+              });
+              let clevel = item.level[index];
+              level += clevel + ",";
               type += item.id + ",";
             });
             console.log(
@@ -598,7 +603,7 @@ export default {
                   },
                 ];
                 dataArr.forEach((item) => {
-                  if (item.name == "温度"||item.name == "2米温度") {
+                  if (item.name == "温度" || item.name == "2米温度") {
                     infoData.push({
                       name: item.name,
                       value: (item.value1 - 273.15).toFixed(3),
@@ -836,9 +841,6 @@ export default {
       }
       // this.setTileLayer(!this.tileLayer);
     },
-
-
-    
   },
 };
 </script>
@@ -896,9 +898,9 @@ export default {
   // zoom 样式独立
   .zoom {
     img {
-      width: 90%;
-      height: 90%;
+      width: 70%;
       vertical-align: middle;
+      margin-bottom: 5px;
     }
   }
 

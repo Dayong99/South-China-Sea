@@ -53,7 +53,11 @@ const state = {
       name: '数据项配置',
       flag: false
     },
-    
+    {
+      name: '评估条件因子配置',
+      flag: false,
+    },
+
   ],
   dataList: [
     {

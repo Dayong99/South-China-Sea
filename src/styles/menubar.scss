@@ -54,8 +54,9 @@
                 border-top-left-radius: 18px;
                 border-bottom-left-radius: 18px;
                 img {
-                    width: 25px;
-                    height: 25px;
+                    width: 22px;
+                    padding-left: -4px;
+                    padding-right: 4px;
                 }
             }
             .input_content {
@@ -89,8 +90,7 @@
                     cursor: pointer;
                 }
                 img {
-                    width: 25px;
-                    height: 25px;
+                    width: 22px;
                 }
             }
         }

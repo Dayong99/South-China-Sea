@@ -644,7 +644,7 @@
             display: flex;
             flex-flow: row nowrap;
             align-items: flex-start;
-            background: rgba(41, 40, 38,0.7);
+            background: rgba(41, 40, 38, 0.7);
             border-radius: 10px;
             // opacity: 0.7;
             margin-top: 10px;
@@ -695,32 +695,33 @@
                             border-bottom-left-radius: 10px;
                         }
 
-                        &::before {
-                            content: attr(data-value);
-                            position: absolute;
-                            top: 13px;
-                            left: -4px;
-                            // transform: translateX(50%);
-                            color: #ececec;
-                            font-size: 12px;
-                            font-weight: 100;
-                        }
-
-
                         &:last-child {
                             border-top-right-radius: 10px;
                             border-bottom-right-radius: 10px;
                         }
 
-                        &:last-child:after {
-                            content: '1';
+                        &::after {
+                            content: attr(data-value);
                             position: absolute;
-                            top: 14px;
-                            right: 2px;
+                            //top: 20px;
+                            top: 13px;
+                            left: 50%;
+                            //right: 5px;
+                            transform: translateX(-50%);
                             color: #ececec;
                             font-size: 12px;
                             font-weight: 100;
                         }
+
+                        // &:last-child:after {
+                        //     content: '1';
+                        //     position: absolute;
+                        //     top: 14px;
+                        //     right: 2px;
+                        //     color: #ececec;
+                        //     font-size: 12px;
+                        //     font-weight: 100;
+                        // }
                     }
                 }
             }
@@ -735,6 +736,7 @@
     .el-select-dropdown__item.selected {
         color: rgb(152, 26, 0);
     }
+
     .el-select-dropdown__item.selected {
         .fy_dot {
             background: rgb(152, 26, 0);
@@ -762,6 +764,7 @@
     .el-select-dropdown__item.selected {
         color: rgb(152, 26, 0);
     }
+
     .el-select-dropdown__item {
         padding: 0 10px;
     }

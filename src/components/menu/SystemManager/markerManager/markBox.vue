@@ -140,6 +140,7 @@ export default {
 
       //折线
       poly_line: null,
+      dashLine:null,
 
       // 圆形
       circleCenter: null,
@@ -206,7 +207,6 @@ export default {
     },
     options: {
       handler: function (val) {
-        console.log(val);
         if (val.type) {
           this.markTools(val);
         }
@@ -250,6 +250,7 @@ export default {
         other2: null,
       };
     },
+    // 重置绘图工具栏
     resetToolBar() {
       this.toolClicked = -1;
       this.sizeClicked = 0;
@@ -258,6 +259,7 @@ export default {
       this.disabled = false;
       this.bindColor = "rgb(20, 41, 62)";
     },
+    // 重置标志信息框
     resetTipPanel() {
       if (map.hasLayer(this.nowObj)) {
         map.removeLayer(this.nowObj);
@@ -268,6 +270,7 @@ export default {
       this.tipPanel = false;
       this.initForm();
     },
+    // 重置绘图符号属性
     resetMarker() {
       this.cancleMarkerListener();
       map.dragging.enabled();
@@ -292,31 +295,64 @@ export default {
         zIndexOffset: this.marker_zindex,
       });
     },
+    // 删除所有绘图
+    clearAllLayer(){
+      if(map.hasLayer(this.poly_line)){
+        map.removeLayer(this.poly_line)
+      }
+      if(map.hasLayer(this.dashLine)){
+        map.removeLayer(this.dashLine)
+      }
+      if(map.hasLayer(this.poly_circle)){
+        map.removeLayer(this.poly_circle)
+      }
+      if(map.hasLayer(this.poly_nowCircle)){
+        map.removeLayer(this.poly_nowCircle)
+      }
+      if(map.hasLayer(this.poly_area)){
+        map.removeLayer(this.poly_area)
+      }
+      if(map.hasLayer(this.poly_now)){
+        map.removeLayer(this.poly_now)
+      }
+      if(map.hasLayer(this.poly_rect)){
+        map.removeLayer(this.poly_rect)
+      }
+      if(map.hasLayer(this.poly_nowRect)){
+        map.removeLayer(this.poly_nowRect)
+      }
+    },
+    // 退出绘画
     control(item, index) {
       this.cancleMarkerListener();
       if (this.disabled) {
         this.$message("已退出当前绘画");
       }
       this.resetToolBar();
-      this.resetTipPanel()
+      this.resetTipPanel();
+      this.clearAllLayer()
+      this.options.type = null;
       // this.$emit("closeDraw");
     },
+    // 绘画
     tool(item, index) {
-      console.log(item);
       this.toolClicked = index;
       this.options.type = item.type;
     },
+    // 粗细
     size(item, index) {
       this.sizeClicked = index;
       index = 0 ? (this.options.width = 1) : "";
       index = 1 ? (this.options.width = 2) : "";
       index = 2 ? (this.options.width = 3) : "";
     },
+    // 颜色
     color(item, index) {
       this.colorClicked = index;
       this.options.color = item.color;
     },
 
+    // 画图
     markTools(option) {
       if (option.type == "line") {
         this.lineMarker();
@@ -495,7 +531,6 @@ export default {
     // 确定圆心
     addCircleCenter(e) {
       this.circleCenter = e.latlng;
-      console.log(this.circleCenter);
     },
     // 拖动改变圆半径
     getRadius(e) {
@@ -527,8 +562,6 @@ export default {
         this.radius,
         this.formData.other1
       ).addTo(map);
-      console.log(this.poly_circle);
-      console.log(this.circleCenter);
 
       map.dragging.enable();
       this.toolClicked = -1;
@@ -578,7 +611,6 @@ export default {
     },
     // 添加区域绘制点
     addPolyLatlng(e) {
-      console.log(this.poly_points);
       this.poly_points.push([e.latlng.lat, e.latlng.lng]);
     },
     // 添加区域绘制结束点
@@ -588,7 +620,6 @@ export default {
       // if(this.poly_points.length==4&&(this.poly_points[1]==this.poly_points[2])&&(this.poly_points[2]==this.poly_points[3])){
       //   flag = false
       // }
-      console.log(this.poly_points);
       if (this.poly_points.length > 2) {
         // this.poly_area.setLatLngs(this.poly_points).addTo(this.markersLayer);
         this.formData.other1 = {
@@ -719,7 +750,6 @@ export default {
     },
     // 添加备注信息时备注框确定按钮
     tipOk() {
-      console.log(map.layer);
       // 判读是新建符号，还是修改符号
       //   this.bindPopupToMarker(this.markerAdd, this.tip, this.tipLocation);
       //   this.record.remark = this.tip;
@@ -788,10 +818,8 @@ export default {
         this.markerAdd.removeFrom(this.markersLayer);
       }
       this.tipPanel = false;
-
-      if (map.hasLayer(this.nowObj)) {
-        map.removeLayer(this.nowObj);
-      }
+      this.clearAllLayer()
+      this.reset
     },
     // 绑定弹出标记---弹出框
     bindPopupToMarker(theMarker, theTip, tipLocation) {
