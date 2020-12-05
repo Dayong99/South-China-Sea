@@ -347,8 +347,7 @@ export default {
       tidalMouseFlag: false,
 
       // 重绘
-      drawFlag: true,
-      reloadFlag:true,
+      drawFlag: false,
 
       // 卫星云图
       fyTypeOptions: [{
