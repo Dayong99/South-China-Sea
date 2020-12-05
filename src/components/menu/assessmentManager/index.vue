@@ -248,7 +248,7 @@ export default {
           }).then((res) => {
             console.log(res.data.data, "航线评估数据-----------");
             let obj = res.data.data;
-            let titleList = ["风险等级"];
+            let titleList = ["评估结果"];
             let dataList = [];
             for (let key in obj) {
               if (key != "conclusion") {

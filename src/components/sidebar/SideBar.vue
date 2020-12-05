@@ -164,6 +164,11 @@
               :data-value="assessColor.value[index]"
             />
           </ul>
+          <div class="info">
+            <div class="first">可行</div>
+            <div class="second">临界</div>
+            <div class="third">禁止</div>
+          </div>
         </div>
       </div>
     </div>
