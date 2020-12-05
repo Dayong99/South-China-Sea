@@ -3,12 +3,10 @@
     <!-- Generator: Sketch 63 (92445) - https://sketch.com -->
     <title>放大标</title>
     <desc>Created with Sketch.</desc>
-    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" font-family="SFCompactDisplay-Light, SF Compact Display" font-size="24" font-weight="300" line-spacing="24">
-        <g id="放大标_export" transform="translate(0.000000, -1.000000)" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="0.8">
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="放大标_export" transform="translate(0.000000, -1.000000)" fill="#FFFFFF" fill-rule="nonzero" stroke="#FFFFFF" stroke-width="0.8">
             <g id="放大标">
-                <text id="􀅼">
-                    <tspan x="0" y="23">􀅼</tspan>
-                </text>
+                <path d="M12,22.265625 C12.46875,22.265625 12.84375,21.890625 12.84375,21.4335938 L12.84375,13.8632812 L20.1914062,13.8632812 C20.6484375,13.8632812 21.0351562,13.4882812 21.0351562,13.0195312 C21.0351562,12.5625 20.6484375,12.1757812 20.1914062,12.1757812 L12.84375,12.1757812 L12.84375,4.59375 C12.84375,4.1484375 12.46875,3.7734375 12,3.7734375 C11.5429688,3.7734375 11.15625,4.1484375 11.15625,4.59375 L11.15625,12.1757812 L3.80859375,12.1757812 C3.3515625,12.1757812 2.96484375,12.5625 2.96484375,13.0195312 C2.96484375,13.4882812 3.3515625,13.8632812 3.80859375,13.8632812 L11.15625,13.8632812 L11.15625,21.4335938 C11.15625,21.890625 11.5429688,22.265625 12,22.265625 Z" id="ss"></path>
             </g>
         </g>
     </g>
