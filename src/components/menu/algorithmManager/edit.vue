@@ -307,7 +307,7 @@ export default {
       formData: {
         algorithm_Type: "1",
         assessName: null,
-        time: null,
+        time: '02',
         assesstime: null,
       },
       editNodeInfo: {
@@ -407,7 +407,7 @@ export default {
       this.formData = {
         algorithm_Type: "1",
         assessName: null,
-        time: null,
+        time: '02',
         assesstime: null,
       };
       this.editNodeName = false;
@@ -1261,7 +1261,7 @@ export default {
         let parameter = e.parameter;
         if (e.structure === 3) {
           console.log(e.name.split("_")[0], `e.name.split("_")[0]`);
-          if (Number(e.name.split("_")[0]) === 4) {
+          if (Number(e.name.split("_")[0]) === 4 || Number(e.name.split("_")[0]) === 10) {
             console.log(e.parameter, `e.parametere.parameter`);
             let parameterArr = e.parameter.split("_");
             parameterArr = parameterArr.map((e, i) => {
