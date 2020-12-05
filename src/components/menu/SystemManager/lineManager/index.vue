@@ -290,18 +290,27 @@ export default {
     // 删除
     deleteItem(row) {
       console.log(row, `row`);
-      this.$delete(`/api/contour-config`, {
-        id: row.id,
-      })
+      this.$confirm("确认删除该等值线吗")
         .then(() => {
+          this.$delete(`/api/contour-config`, {
+            id: row.id,
+          })
+            .then(() => {
+              this.$message({
+                message: "等值线删除成功",
+                type: "success",
+              });
+            })
+            .then(() => {
+              this.fetch();
+            });
+        })
+        .catch(() => {
           this.$message({
-            message: "等值线删除成功",
-            type: "success",
+            message: "取消删除",
+            type: "information",
           });
         })
-        .then(() => {
-          this.fetch();
-        });
     },
     add() {
       console.log("添加");

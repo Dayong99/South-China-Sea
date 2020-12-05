@@ -668,9 +668,6 @@ export default {
             type: "information",
           });
         })
-        .then(() => {
-          this.loadRouteList(item, index);
-        });
     },
     algorithm(item, index) {
       this.setAlgorithm([1, item]);

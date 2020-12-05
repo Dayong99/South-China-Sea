@@ -224,18 +224,27 @@ export default {
     },
     // 删除
     deleteItem(row) {
-      this.$delete(`/api/base-info`, {
-        id: row.id,
-      })
+      this.$confirm("确认删除该参数吗")
         .then(() => {
+          this.$delete(`/api/base-info`, {
+            id: row.id,
+          })
+            .then(() => {
+              this.$message({
+                message: "参数删除成功",
+                type: "success",
+              });
+            })
+            .then(() => {
+              this.fetch();
+            });
+        })
+        .catch(() => {
           this.$message({
-            message: "参数删除成功",
-            type: "success",
+            message: "取消删除",
+            type: "information",
           });
         })
-        .then(() => {
-          this.fetch();
-        });
     },
     add() {
       this.dialog.isVisible = true;
