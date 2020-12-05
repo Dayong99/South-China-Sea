@@ -152,7 +152,7 @@ export default {
       options: [
         {
           value: 1,
-          label: "新建组队",
+          label: "新建编队",
         },
         {
           value: 2,

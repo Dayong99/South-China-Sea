@@ -59,7 +59,6 @@
         </ul>
       </div>
     </div>
-
     <!-- 菜单列表 -->
     <div class="menu_list" v-show="searchFlag">
       <ul class="list_ul">
@@ -97,7 +96,6 @@
               @click.stop="openTask(index)"
             />
           </div>
-
           <ul class="list_task_ul" v-show="item.flag && flagList[0]">
             <li v-for="(item, index) in taskList" :key="index">
               <div class="task_list">
@@ -672,7 +670,7 @@ export default {
     // 新建评估
     algorithm(itemRoute, indexRoute) {
       itemRoute.showAlorithm = !itemRoute.showAlorithm
-      console.log(itemRoute.showAlorithm,`当前是否打开`)
+      console.log(itemRoute.showAlorithm,`itemRoute.showAlorithm`)
       this.setAlgorithm([1, itemRoute]);
     },
     // 新增航线
