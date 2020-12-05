@@ -1,17 +1,15 @@
 .sideBar {
     position: fixed;
     right: 35px;
-    top: 30px;
+    top: 70px;
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
-
     .sidebar_ul {
         display: flex;
         justify-content: center;
         align-items: flex-start;
         max-height: 950px;
-
         ul {
             list-style: none;
             display: flex;
@@ -20,72 +18,62 @@
             align-items: flex-end;
             // align-items: center;
         }
-
         .menu_list {
             border-radius: 15px;
-            background: rgba(26, 26, 24, 0.7);
+            background: rgba(0, 0, 0, 0.6);
+            padding-bottom: 10px;
         }
-
         .menu_name {
             margin-right: 15px;
         }
-
         ul,
         li {
             padding: 0;
             margin: 0;
         }
-
         // 蓝色背景
         .bgcolor {
             background: rgba(152, 26, 0, 1) !important;
             border-radius: 15px;
         }
-
         .menuSelect {
             margin-left: 40px;
             margin-top: 5px;
         }
-
         // 菜单栏要素
         li {
-            height: 45px;
-
+            height: 32px;
             .menu_left {
                 height: 25px;
                 line-height: 25px;
                 margin-top: 10px;
-                padding-right: 10px;
-                padding-left: 10px;
-                border-radius: 15px;
+                // padding-right: 10px;
+                // padding-left: 10px;
+                // border-radius: 15px;
                 text-align: right;
-                background: rgba(26, 26, 24, 0.6);
+                // background: rgba(26, 26, 24, 0.6);
                 font-size: 14px;
                 font-family: FZLTHJW--GB1-0, FZLTHJW--GB1;
                 font-weight: normal;
-                color: #fff3e1;
+                color: #fff;
+                text-shadow: 0.1em 0.1em 0.2em rgb(95, 95, 95);
             }
-
             .menu_right {
-                width: 30px;
+                width: 26px;
                 height: 45px;
                 line-height: 45px;
                 text-align: center;
-
                 img {
-                    width: 28px;
-                    height: 28px;
+                    width: 22px;
                     vertical-align: middle;
                 }
             }
-
             .menu_left,
             .menu_right:hover {
                 cursor: pointer;
             }
         }
     }
-
     .other_btn {
         position: fixed;
         bottom: 80px;
@@ -93,33 +81,27 @@
         color: #fff;
         display: flex;
         align-items: center;
-
         .latlng {
             width: 190px;
             display: flex;
             align-items: center;
-
             img {
                 width: 28px;
                 height: 28px;
             }
-
             div {
                 // width: 65px;
                 margin-left: 5px;
             }
-
-            .other_lon {
-                // width: 85px;
-            }
+            // .other_lon {
+            //     // width: 85px;
+            // }
         }
-
         // 重绘按钮
         .isDraw {
             width: 90px;
             height: 30px;
             line-height: 30px;
-
             color: rgba(255, 255, 255, 0.9);
             background: url('~@/assets/images/sidebar/drawbg.png') no-repeat;
             background-position: center;
@@ -131,11 +113,9 @@
             font-size: 14px;
             font-weight: 600;
             // font-family:"Times New Roman",Georgia,Serif;
-
             &:hover {
                 cursor: pointer;
             }
-
             div {
                 width: 12px;
                 height: 12px;
@@ -143,14 +123,11 @@
                 border-radius: 50%;
                 margin-right: 8px;
             }
-
         }
-
         .draw_active {
             border: none;
             background: rgba(152, 26, 0, 1);
         }
-
         .re_time {
             width: 90px;
             height: 30px;
@@ -158,32 +135,26 @@
             justify-content: center;
             align-items: center;
             font-size: 14px;
-
             img {
                 width: 25px;
                 height: 25px;
             }
-
             &:hover {
                 cursor: pointer;
             }
         }
     }
-
     // 卫星云图选择
     .fyType {
         margin-top: 15px;
         margin-right: -15px;
-
         .el-input {
             width: 100px;
             color: #fff3e1;
-
             .el-input__icon {
                 line-height: 28px !important;
             }
         }
-
         .el-input__inner {
             height: 28px;
             line-height: 28px;
@@ -196,21 +167,17 @@
             border: none;
         }
     }
-
     // 实况资料
     .real_time_data {
         margin-top: 15px;
         margin-right: -15px;
-
         .el-input {
             width: 100px;
             color: #fff3e1;
-
             .el-input__icon {
                 line-height: 28px !important;
             }
         }
-
         .el-input__inner {
             height: 28px;
             line-height: 28px;
@@ -223,7 +190,6 @@
             border: none;
         }
     }
-
     // 潮汐面板
     .tidal {
         position: fixed;
@@ -236,7 +202,6 @@
         box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.5);
         color: rgba(80, 80, 80, 1);
         background-color: rgba(255, 255, 255, 1);
-
         .tidal_title {
             width: 100%;
             // flex: 1;
@@ -248,30 +213,25 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-
             .title_detail {
                 font-size: 18px;
                 font-weight: bold;
                 margin-left: 15px;
             }
-
             .title_time {
                 display: flex;
                 align-items: center;
                 font-size: 14px;
                 margin-right: 15px;
-
                 img {
                     width: 20px;
                     height: 20px;
-
                     &:hover {
                         cursor: pointer;
                     }
                 }
             }
         }
-
         .tidal_content {
             position: relative;
             width: 100%;
@@ -280,7 +240,6 @@
             display: flex;
             flex-flow: column nowrap;
             align-items: center;
-
             // 时间切换和图表
             .content_echarts {
                 width: 100%;
@@ -289,14 +248,12 @@
                 flex-flow: column nowrap;
                 justify-content: space-between;
                 align-items: center;
-
                 .echarts_time {
                     width: 100%;
                     flex: 1;
                     display: flex;
                     justify-content: center;
                     align-items: center;
-
                     li {
                         width: 70px;
                         height: 30px;
@@ -304,7 +261,6 @@
                         justify-content: center;
                         align-items: center;
                         border-radius: 8px;
-
                         div {
                             width: 100%;
                             height: 20px;
@@ -312,26 +268,21 @@
                             text-align: center;
                             border-right: 1px solid #ccc;
                         }
-
                         &:last-child div {
                             border-right: none;
                         }
-
                         &:hover {
                             cursor: pointer;
                         }
                     }
-
                     .li_select {
                         color: #fff;
                         background: rgba(152, 26, 0, 1);
-
                         div {
                             border: none;
                         }
                     }
                 }
-
                 // 表格展示
                 .echarts_content {
                     width: 300px;
@@ -339,7 +290,6 @@
                     // flex: 5;
                 }
             }
-
             // 潮汐提示消息
             .tidal_msg {
                 position: absolute;
@@ -349,26 +299,21 @@
                 color: rgb(152, 26, 0);
                 font-weight: 600;
             }
-
             // 高潮低潮列表信息
             .content_list {
                 width: 100%;
                 flex: 1;
-
                 ul {
                     display: flex;
                     flex-flow: row wrap;
                     justify-content: space-around;
                     align-items: center;
-
                     .li_blue {
                         background: rgba(234, 245, 255, 1)
                     }
-
                     .li_red {
                         background: rgba(255, 240, 240, 1);
                     }
-
                     li {
                         width: 47%;
                         height: 90px;
@@ -378,29 +323,24 @@
                         flex-flow: column nowrap;
                         align-items: center;
                         border-radius: 5px;
-
                         .blue {
                             color: rgba(0, 113, 255, 1);
                         }
-
                         .red {
                             color: rgba(208, 36, 0, 1);
                         }
-
                         // 头部标题
                         .list_top {
                             display: flex;
                             justify-content: center;
                             align-items: center;
                             margin: 3px 0;
-
                             img {
                                 width: 20px;
                                 height: 20px;
                                 margin-right: 5px;
                             }
                         }
-
                         // 内容区域
                         .list_bottom {
                             display: flex;
@@ -408,20 +348,16 @@
                             justify-content: space-around;
                             align-items: flex-start;
                             border-top: 1px solid rgba(150, 196, 255, 1);
-
                             div {
                                 display: flex;
                                 justify-content: center;
                                 align-items: center;
                                 margin-top: 8px;
-
                                 img {
                                     width: 20px;
                                     height: 20px;
                                 }
-
                             }
-
                             .list_time {
                                 span {
                                     &:last-child {
@@ -430,7 +366,6 @@
                                     }
                                 }
                             }
-
                             .list_height {
                                 span {
                                     &:last-child {
@@ -445,7 +380,6 @@
             }
         }
     }
-
     .tylist {
         // width: 375px;
         // width: 325px;
@@ -459,33 +393,28 @@
         z-index: 9999;
         color: white;
         // opacity: 0.8;
-
         .tytitle {
             height: 30px;
             display: flex;
             font-size: 16px;
             font-weight: 700;
             background: rgba(26, 26, 24, 0.5);
-
             div {
                 text-align: center;
                 line-height: 30px;
                 // background: #d7edff;
             }
-
             .chooseAll {
                 flex: 1;
                 // border-bottom: 1px solid #dddddd;
                 // border-left: none;
                 // border-top: none;
                 cursor: pointer;
-
                 img {
                     width: 14px;
                     vertical-align: middle;
                 }
             }
-
             .title_num {
                 flex: 2;
                 // border: 1px solid #dddddd;
@@ -493,7 +422,6 @@
                 // border-top: none;
                 // border-bottom: 1px solid #dddddd;
             }
-
             .title_cn {
                 flex: 3;
                 // border: 1px solid #dddddd;
@@ -501,7 +429,6 @@
                 // border-top: none;
                 // border-bottom: 1px solid #dddddd;
             }
-
             // .title_en {
             //     flex: 2;
             //     border: 1px solid #dddddd;
@@ -510,7 +437,6 @@
             //     border-right: none;
             // }
         }
-
         .tycontent {
             // width: 300px;
             // height: 328px;
@@ -520,36 +446,29 @@
             overflow-y: auto;
             overflow-x: hidden;
             display: flex;
-
             &::-webkit-scrollbar {
                 width: 4px;
                 background: rgba(240, 240, 240, 0.6);
             }
-
             /* 滚动槽 */
             &::-webkit-scrollbar-track {
                 border-radius: 10px;
             }
-
             /* 滚动条滑块 */
             &::-webkit-scrollbar-thumb {
                 border-radius: 10px;
                 background-color: rgba(0, 0, 0, 0.5);
             }
-
             .content_box {
                 width: 100%;
-
                 .libox {
                     display: flex;
                     border-bottom: 1px dashed #dddddd;
-
                     div {
                         text-align: center;
                         // line-height: 40px;
                         line-height: 32px;
                     }
-
                     .chooseAll {
                         flex: 1;
                         // border: 1px solid #dddddd;
@@ -557,13 +476,11 @@
                         // border-top: none;
                         // border-bottom: 1px solid #dddddd;
                         cursor: pointer;
-
                         img {
                             width: 14px;
                             vertical-align: middle;
                         }
                     }
-
                     .title_num {
                         flex: 2;
                         // border: 1px solid #dddddd;
@@ -571,7 +488,6 @@
                         // border-top: none;
                         // border-bottom: 1px solid #dddddd;
                     }
-
                     .title_cn {
                         flex: 3;
                         // border: 1px solid #dddddd;
@@ -579,7 +495,6 @@
                         // border-top: none;
                         // border-bottom: 1px solid #dddddd;
                     }
-
                     // .title_en {
                     //     flex: 2;
                     //     border: 1px solid #dddddd;
@@ -591,13 +506,11 @@
             }
         }
     }
-
     .color_box {
         position: fixed;
         bottom: 180px;
         // right: 110px;
         right: 150px;
-
         .ty_color {
             width: 535px;
             height: 30px;
@@ -611,21 +524,17 @@
             display: flex;
             line-height: 30px;
             margin-top: 10px;
-
             p {
                 margin-left: 10px;
             }
-
             ul {
                 display: flex;
                 justify-content: space-around;
                 width: 488px;
-
                 li {
                     // margin-left: 5px;
                     display: flex;
                     line-height: 30px;
-
                     .icon {
                         width: 12px;
                         height: 12px;
@@ -634,10 +543,8 @@
                         margin-top: 8px;
                     }
                 }
-
             }
         }
-
         .assess_color {
             width: 535px;
             height: 35px;
@@ -648,7 +555,6 @@
             border-radius: 10px;
             // opacity: 0.7;
             margin-top: 10px;
-
             .assess_title {
                 color: white;
                 font-size: 12px;
@@ -658,7 +564,6 @@
                 line-height: 34px;
                 margin-left: 10px;
             }
-
             .color {
                 width: 420px;
                 height: 20px;
@@ -667,7 +572,6 @@
                 margin-left: 10px;
                 margin-right: 10px;
                 margin-top: 3px;
-
                 ul {
                     width: 100%;
                     height: 10px;
@@ -684,22 +588,28 @@
                     border-radius: 10px;
                     background: #292826;
                     z-index: 2;
-
                     li {
                         height: 100%;
                         flex: auto;
                         position: relative;
-
                         &:first-child {
                             border-top-left-radius: 10px;
                             border-bottom-left-radius: 10px;
                         }
-
+                        &::before {
+                            content: attr(data-value);
+                            position: absolute;
+                            top: 13px;
+                            left: -4px;
+                            // transform: translateX(50%);
+                            color: #ececec;
+                            font-size: 12px;
+                            font-weight: 100;
+                        }
                         &:last-child {
                             border-top-right-radius: 10px;
                             border-bottom-right-radius: 10px;
                         }
-
                         &::after {
                             content: attr(data-value);
                             position: absolute;
@@ -712,7 +622,6 @@
                             font-size: 12px;
                             font-weight: 100;
                         }
-
                         // &:last-child:after {
                         //     content: '1';
                         //     position: absolute;
@@ -725,10 +634,8 @@
                     }
                 }
             }
-
         }
     }
-
 }
 
 // 卫星云图选择框样式修改
@@ -736,19 +643,16 @@
     .el-select-dropdown__item.selected {
         color: rgb(152, 26, 0);
     }
-
     .el-select-dropdown__item.selected {
         .fy_dot {
             background: rgb(152, 26, 0);
         }
     }
-
     .fy_option {
         width: 100%;
         display: flex;
         justify-content: flex-start;
         align-items: center;
-
         .fy_dot {
             width: 7px;
             height: 7px;
@@ -764,17 +668,14 @@
     .el-select-dropdown__item.selected {
         color: rgb(152, 26, 0);
     }
-
     .el-select-dropdown__item {
         padding: 0 10px;
     }
-
     .real_option {
         width: 100%;
         display: flex;
         justify-content: flex-start;
         align-items: center;
-
         img {
             width: 20px;
             height: 20px;

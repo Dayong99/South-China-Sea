@@ -850,17 +850,17 @@ export default {
 }
 .right-top-container {
   position: absolute;
-  right: 155px;
-  top: 26px;
+  right: 35px;
+  top: 22px;
   display: flex;
   // flex-flow: column nowrap;
   align-items: center;
-  padding: 2px 10px;
+  padding: 1px 6px;
   border-radius: 15px;
-  background: rgba(109, 109, 109, 0.7);
+  background: rgba(0, 0, 0, 0.5);
 
   .tool_item:hover {
-    background: rgba(109, 109, 109, 0.9);
+    background: #971A00;
   }
 
   .bg {
@@ -868,9 +868,8 @@ export default {
   }
 
   .tool_item {
-    width: 28px;
-    height: 28px;
-    line-height: 28px;
+    width: 25px;
+    height: 25px;
     border-radius: 50%;
     text-align: center;
     cursor: pointer;
@@ -886,7 +885,7 @@ export default {
     // width: 30px;
     // height: 29px;
     // line-height: 29px;
-    margin-left: 5px;
+    margin-left: 3px;
 
     img {
       width: 80%;
