@@ -151,7 +151,7 @@
                     <div class="task_content_name">
                       {{ itemRoute.lineName }}
                     </div>
-                    <div class="control_wrapper" >
+                    <div class="control_wrapper">
                       <!-- 航线详情按钮 -->
                       <img
                             :src="
@@ -366,7 +366,7 @@
                 <!-- <div class="task_name" @click="openData(index)">
                   <span>{{ item.name }}</span>
                 </div> -->
-                <div class="task_operation" style="margin-left: 0">
+                <div class="task_operation" style="margin-left:0;">
                   <el-button
                     icon="el-icon-s-operation"
                     class="table_column_icon purple"
@@ -424,18 +424,18 @@ export default {
           active: require("@/assets/images/menu/time_assess_deactive.png"),
           deactive: require("@/assets/images/menu/time_assess_deactive.png"),
         },
-        information:{
+        information: {
           active: require("@/assets/images/menu/info_assess_active.svg"),
           deactive: require("@/assets/images/menu/info_assess_deactive.svg"),
         },
-        edit:{
+        edit: {
           active: require("@/assets/images/menu/edit_assess_active.svg"),
           deactive: require("@/assets/images/menu/edit_assess_deactive.svg"),
         },
-        assess:{
+        assess: {
           active: require("@/assets/images/menu/assess_assess_active.svg"),
           deactive: require("@/assets/images/menu/assess_assess_deactive.svg"),
-        }
+        },
       },
       // 任务
       taskList: [],
@@ -503,7 +503,7 @@ export default {
   },
   mounted() {
     L.CustomPopup = L.Popup.extend({
-      _initLayout: function () {
+      _initLayout: function() {
         var prefix = "leaflet-popup",
           container = (this._container = L.DomUtil.create(
             "div",
@@ -528,7 +528,7 @@ export default {
 
     // add bindCustomPopup
     L.Layer.include({
-      bindCustomPopup: function (content, options) {
+      bindCustomPopup: function(content, options) {
         if (content instanceof L.Popup) {
           L.setOptions(content, options);
           this._popup = content;
@@ -750,7 +750,7 @@ export default {
     },
     // 查看评估配置参数
     AssessInfo(itemAssess, itemRoute, indexRoute, item, index) {
-      itemAssess.alorithm = !itemAssess.alorithm
+      itemAssess.alorithm = !itemAssess.alorithm;
     },
     // 请求任务列表
     loadTaskList() {
@@ -938,8 +938,8 @@ export default {
       this.setData({ index: index, val: true });
     },
 
-    showInfo(item){
-      item = true
+    showInfo(item) {
+      item = true;
     },
     //显示评估区域
     showAssessArea(itemAssess, indexAssess, itemRoute) {
@@ -1031,7 +1031,7 @@ export default {
     changeNext(itemAssess, indexAssess, itemRoute) {
       console.log(itemAssess);
       //当前选中了风险区域评估或者风险航线评估或者风险评估数据列表时
-      if (itemAssess.area || itemAssess.line || itemAssess.table) {
+      if (itemAssess.area || itemAssess.line) {
         itemAssess.timeIndex++;
         if (itemAssess.timeIndex >= itemAssess.pointNum) {
           itemAssess.timeIndex = 0;
@@ -1044,8 +1044,10 @@ export default {
         } else if (itemAssess.line) {
           this.changeShowAssessLine(itemAssess);
           //选中风险评估信息列表
-        } else if (itemAssess.table) {
         }
+        // else if (itemAssess.table) {
+        //   this.changeShowAssessInfo(itemAssess);
+        // }
       }
     },
 
@@ -1068,6 +1070,35 @@ export default {
         itemAssess.timeIndex,
         itemAssess.courseId
       );
+    },
+
+    //切换下一个时间点时，重新请求风险信息表格数据
+    changeShowAssessInfo(itemAssess) {
+      this.$get("api/assessment/line-conclusion", {
+        assessmentId: itemAssess.id,
+      }).then((res) => {
+        console.log(res.data.data, "航线评估数据-----------");
+        let obj = res.data.data;
+        let titleList = ["风险等级"];
+        let dataList = [];
+        for (let key in obj) {
+          if (key != "conclusion") {
+            titleList.push(key);
+          }
+        }
+        for (let i = 0; i < obj.conclusion.length; i++) {
+          let arr = [obj.conclusion[i].dateTime, obj.conclusion[i].value];
+          for (let key in obj) {
+            if (key != "conclusion") {
+              arr.push(obj[key][i].value);
+            }
+          }
+          dataList.push(arr);
+        }
+        this.setTitleList(titleList);
+        this.setDataList(dataList);
+        this.setRouteInfoShow(true);
+      });
     },
 
     //获取风险等级航线详细信息列表
@@ -1181,7 +1212,7 @@ export default {
           rectangle.courseId = courseId;
           this.rectangle.push(rectangle);
         });
-        this.drawOriginalLine(courseId, "rectangle", timeIndex);
+        this.drawOriginalLine(courseId, "rectangle", timeIndex, assessmentId);
       });
     },
 
@@ -1653,7 +1684,7 @@ export default {
       }
     },
     compare(property, m) {
-      return function (a, b) {
+      return function(a, b) {
         var value1 = a[property];
         var value2 = b[property];
         if (m == "+") {
@@ -1714,7 +1745,7 @@ export default {
          ` +
         str +
         `<div class="descriptionBox">描述信息:<button id="des_btn">保存</button><textarea name="description" id="des_text" cols="25" rows="3" style="resize:none;"></textarea></div>
-        
+
         </div>
       </div>
     </div>`
@@ -1734,7 +1765,7 @@ export default {
     },
 
     //画原始航线(区别于风险评估变色航线)
-    drawOriginalLine(id, type, timeIndex) {
+    drawOriginalLine(id, type, timeIndex, assessmentId) {
       this.$get("api/course/one", {
         id: id,
       }).then((res) => {
@@ -1748,7 +1779,7 @@ export default {
         this.showLine.push(polyline);
         pointArr.forEach((item, index) => {
           let circle;
-          if (typeof index == "undefined") {
+          if (typeof timeIndex == "undefined") {
             circle = L.circleMarker(item, {
               radius: 6,
               fillOpacity: 1,
@@ -1773,6 +1804,60 @@ export default {
             }
           }
           circle.id = type + id;
+          circle.index = index;
+          if (typeof timeIndex != "undefined") {
+            circle.on("click", (e) => {
+              map.off("click", window.mapClick_p);
+              this.setInfoShow(false);
+              console.log(e, "航线点的信息--------");
+              //请求单个航线点的信息
+              this.$get("api/assessment/point-conclusion", {
+                assessmentId: assessmentId,
+                index: e.target.index,
+                point: timeIndex,
+              }).then((res) => {
+                console.log(res, "单个点的数据信息");
+                let arr = res.data.data;
+                let singleInfo = {
+                  assessmentId: assessmentId, //评估id
+                  index: e.target.index, //点在航线中的index值
+                  message: arr[0].other,
+                  arr: [
+                    {
+                      name: "时间",
+                      value: arr[0].dateTime,
+                    },
+                  ],
+                };
+                arr.forEach((item) => {
+                  if (item.name == "conclusion") {
+                    singleInfo.arr.push({
+                      name: "风险等级",
+                      value: item.value,
+                    });
+                  } else {
+                    singleInfo.arr.push({
+                      name: item.name,
+                      value: item.value,
+                    });
+                  }
+                });
+                this.setPointInfo(singleInfo);
+                this.setLocation(e.containerPoint);
+                // this.setInfoShow(false)
+                this.setPointInfoShow(true);
+
+                let marker = e.target;
+                map.on("move", (e) => {
+                  let p = map.latLngToContainerPoint(
+                    L.latLng(marker._latlng.lat, marker._latlng.lng)
+                  );
+                  console.log(p);
+                  this.setLocation(p);
+                });
+              });
+            });
+          }
           this.showLine.push(circle);
         });
       });
