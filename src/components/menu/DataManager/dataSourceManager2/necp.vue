@@ -110,7 +110,7 @@ export default {
           })
             .then(() => {
               this.$message({
-                message: "necp导入成功",
+                message: "gfs导入成功",
                 type: "success",
               });
               this.reset();
@@ -120,7 +120,7 @@ export default {
             })
             .catch(() => {
               this.$message({
-                message: "necp导入失败",
+                message: "gfs导入失败",
                 type: "error",
               });
             });
