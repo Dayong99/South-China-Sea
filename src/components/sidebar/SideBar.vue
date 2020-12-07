@@ -49,7 +49,7 @@
       </div>
       <!-- 重绘刷新位置1 -->
       <div class="isDraw" :class="{ draw_active: drawFlag }" @click="changeDrawFlag">
-        <img src="@/assets/images/sidebar/draw.svg">重绘地图
+        <img src="@/assets/images/sidebar/draw.svg">重绘底图
       </div>
       <div class="re_time" @click.stop="reloadTime">
         <img src="@/assets/images/sidebar/reload.svg">刷新时间
