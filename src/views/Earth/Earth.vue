@@ -74,7 +74,7 @@ export default {
         attributionControl: false,
         // crs: L.CRS.EPSG3857,
         minZoom: 2,
-        maxZoom: 13,
+        maxZoom: 10,
         worldCopyJump: true,
         zoomControl: false,
         // 开启编辑线插件
@@ -82,14 +82,14 @@ export default {
         // closePopupOnClick:false
       });
       this.tile1 = L.tileLayer
-        .chinaProvider("Geoq.Normal.PurplishBlue", { maxZoom: 13, minZoom: 2 })
+        .chinaProvider("Geoq.Normal.PurplishBlue", { maxZoom: 10, minZoom: 2 })
         .addTo(window.map);
       // this.createTileLayer(tileLayer4, {
       //   zoomOffset: 1,
       // })
       // google 底图
       // L.tileLayer
-      //   .chinaProvider("Google.Normal.Map", { maxZoom: 13, minZoom: 2 })
+      //   .chinaProvider("Google.Normal.Map", { maxZoom: 10, minZoom: 2 })
       //   .addTo(window.map);
       window.map.on("load", (ev) => {
         this.getExtent();
@@ -322,15 +322,15 @@ export default {
     changeTileLayer(flag) {
       if(flag) {
         this.tile2 = L.tileLayer
-        .chinaProvider("Google.Normal.Map", { maxZoom: 13, minZoom: 2 })
+        .chinaProvider("Google.Normal.Map", { maxZoom: 10, minZoom: 2 })
         .addTo(window.map);
 
-        this.tile3 = L.tileLayer(tileLayer4, { maxZoom: 13, minZoom: 2 }).addTo(window.map)
-        this.tile4 = L.tileLayer(tileLayer5, { maxZoom: 13, minZoom: 2 }).addTo(window.map)
+        this.tile3 = L.tileLayer(tileLayer4, { maxZoom: 10, minZoom: 2 }).addTo(window.map)
+        this.tile4 = L.tileLayer(tileLayer5, { maxZoom: 10, minZoom: 2 }).addTo(window.map)
         map.removeLayer(this.tile1)
       } else {
         this.tile1 = L.tileLayer
-        .chinaProvider("Geoq.Normal.PurplishBlue", { maxZoom: 13, minZoom: 2 })
+        .chinaProvider("Geoq.Normal.PurplishBlue", { maxZoom: 10, minZoom: 2 })
         .addTo(window.map);
         map.removeLayer(this.tile2)
         map.removeLayer(this.tile3)
