@@ -2,7 +2,7 @@
   <div
     id="levelbar"
     v-show="levelShow"
-    :style="{'height':barHeight}"
+    :style="{'height':barHeight,'margin-right':'0px'}"
     @click="getNowTip"
     @mouseover="showTip"
     @mousemove="showTip"
