@@ -28,8 +28,8 @@
       </ul>
     </div>
 
-    <!-- 重绘/刷新 -->
-    <div  @click="changeDrawFlag" >
+    <!-- 重绘/刷新-位置2 -->
+    <!-- <div  @click="changeDrawFlag" >
       <el-tooltip class="draw" :class="{ draw_active: drawFlag }" effect="light" content="重绘底图" placement="bottom">
         <img src="@/assets/images/sidebar/draw.svg" />
       </el-tooltip>
@@ -38,7 +38,7 @@
       <el-tooltip class="reload"  effect="light" content="刷新时间" placement="bottom">
         <img src="@/assets/images/sidebar/reload.svg" />
       </el-tooltip>
-    </div>
+    </div> -->
 
     <!--  定位按钮 -->
     <div class="other_btn">
@@ -47,13 +47,13 @@
         <div class="other_lat">{{ latNum }}</div>
         <div class="other_lon">,{{ lonNum }}</div>
       </div>
-      <!-- 是否重绘按钮 -->
-      <!-- <div class="isDraw" @click="changeDrawFlag">
-        <div :class="{ draw_active: drawFlag }"></div>
+      <!-- 重绘刷新位置1 -->
+      <div class="isDraw" :class="{ draw_active: drawFlag }" @click="changeDrawFlag">
+        <img src="@/assets/images/sidebar/draw.svg">重绘地图
       </div>
       <div class="re_time" @click.stop="reloadTime">
-        <img src="@/assets/images/sidebar/reload.svg">
-      </div> -->
+        <img src="@/assets/images/sidebar/reload.svg">刷新时间
+      </div>
     </div>
 
     <!-- 卫星云图 和 实况资料样式一样-->
