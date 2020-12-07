@@ -55,7 +55,7 @@
             height: 32px;
             margin: 2px 0;
             .menu_left {
-                height: 25px;
+                height: 24px;
                 line-height: 25px;
                 margin-top: 15px;
                 padding-right: 10px;
@@ -68,7 +68,7 @@
                 font-family: FZLTHJW--GB1-0, FZLTHJW--GB1;
                 font-weight: normal;
                 color: #fff;
-                text-shadow: 0.1em 0.1em 0.2em rgb(95, 95, 95);
+                // text-shadow: 0.1em 0.1em 0.2em rgb(95, 95, 95);
             }
             .menu_right {
                 width: 28px;
@@ -88,7 +88,7 @@
     }
     .other_btn {
         position: fixed;
-        bottom: 75px;
+        bottom: 65px;
         right: 84px;
         display: flex;
         align-items: center;
@@ -175,7 +175,7 @@
             font-family: FZLTHJW--GB1-0, FZLTHJW--GB1;
             font-weight: normal;
             border-radius: 15px;
-            background: rgba(26, 26, 24, 0.7);
+            background: rgba(0, 0, 0, 0.6);
             color: #fff;
             border: none;
         }
@@ -201,7 +201,7 @@
             font-family: FZLTHJW--GB1-0, FZLTHJW--GB1;
             font-weight: normal;
             border-radius: 15px;
-            background: rgba(26, 26, 24, 0.7);
+            background: rgba(0, 0, 0, 0.6);
             color: #fff;
             border: none;
         }

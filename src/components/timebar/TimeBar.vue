@@ -13,7 +13,7 @@
       placeholder="选择日期"
       size="mini"
       value-format="yyyy-MM-dd"
-      style="width:125px;position:absolute;left:10px; top:-19px;"
+      style="width:128px;position:absolute;left:10px; top:-19px;"
       @change="getDay"
     />
 
@@ -87,7 +87,7 @@
     </div>
 
     <!-- 播放按钮 -->
-    <div id="playpause" style="left:262px;" @click="changeIcon">
+    <div id="playpause" style="left:256px;" @click="changeIcon">
       <i :class="iconData" />
     </div>
   </div>
