@@ -29,7 +29,7 @@
             border-radius: 50%;
             padding-top: 2px;
             margin-top: 2px;
-            background: rgba(26, 26, 24, 0.7);
+            background: rgba(0, 0, 0, 0.6);
             &:hover {
                 cursor: pointer;
             }
@@ -52,7 +52,7 @@
                 display: flex;
                 // justify-content: flex-end;
                 align-items: center;
-                background: rgba(26, 26, 24, 0.7);
+                background: rgba(0, 0, 0, 0.6);
                 border-top-left-radius: 18px;
                 border-bottom-left-radius: 18px;
                 img {
@@ -68,7 +68,7 @@
                     border: none;
                     border-radius: 0;
                     padding-left: 0;
-                    background: rgba(26, 26, 24, 0.7);
+                    background: rgba(0, 0, 0, 0.6);
                 }
                 .search_content /deep/ .el-input__icon {
                     line-height: 28px!important;
@@ -83,7 +83,7 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                background-color: rgba(26, 26, 24, 0.7);
+                background-color: rgba(0, 0, 0, 0.6);
                 // background: url('~@/assets/images/menu/heart.png');
                 border-top-right-radius: 18px;
                 border-bottom-right-radius: 18px;

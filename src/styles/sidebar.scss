@@ -92,7 +92,6 @@
         right: 84px;
         display: flex;
         align-items: center;
-        padding-left: 10px;
         margin-right: 14px;
         .latlng {
             width: 200px;
@@ -100,7 +99,7 @@
             display: flex;
             align-items: center;
             margin-right: 6px;
-            padding-left: 4px;
+            padding-left: 8px;
             background: url("../assets/images/sidebar/bcground.png") no-repeat;
             background-size: 100%;
             img {
