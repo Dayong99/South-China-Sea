@@ -1,17 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 63 (92445) - https://sketch.com -->
-    <title>右加_export</title>
-    <desc>Created with Sketch.</desc>
-    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round">
-        <g id="右加_export_export" stroke="#FFFFFF" stroke-width="1.7">
-            <g id="右加_export" transform="translate(4.291667, 2.291667)">
-                <g id="右加" transform="translate(8.000000, 8.478070) scale(1, -1) translate(-8.000000, -8.478070) translate(0.000000, 0.478070)">
-                    <path d="M7.57695863,1.41666667 L1,1.41666667 C0.44771525,1.41666667 -6.76353751e-17,1.86438192 0,2.41666667 L0,14.5833333 C6.76353751e-17,15.1356181 0.44771525,15.5833333 1,15.5833333 L13.1666667,15.5833333 C13.7189514,15.5833333 14.1666667,15.1356181 14.1666667,14.5833333 L14.1666667,9.55609576 L14.1666667,9.55609576" id="路径-24"></path>
-                    <line x1="9.20833333" y1="3.1875" x2="15.5833333" y2="3.1875" id="路径-25"></line>
-                    <line x1="12.3958333" y1="0" x2="12.3958333" y2="6.375" id="路径-25备份"></line>
-                </g>
-            </g>
-        </g>
-    </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 23.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 22 22" style="enable-background:new 0 0 22 22;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:none;stroke:#FFFFFF;stroke-width:1.7;stroke-linecap:round;}
+</style>
+<title>右加_export</title>
+<desc>Created with Sketch.</desc>
+<g id="页面-1">
+	<g id="右加_export_export">
+		<g id="右加_export" transform="translate(4.291667, 2.291667)">
+			
+				<g id="右加" transform="translate(8.000000, 8.478070) scale(1, -1) translate(-8.000000, -8.478070) translate(0.000000, 0.478070)">
+				<path id="路径-24" class="st0" d="M6.6,0.4H0c-0.6,0-1,0.4-1,1v12.2c0,0.6,0.4,1,1,1h12.2c0.6,0,1-0.4,1-1v-5l0,0"/>
+				<line id="路径-25" class="st0" x1="8.2" y1="2.2" x2="14.6" y2="2.2"/>
+				<line id="路径-25备份" class="st0" x1="11.4" y1="-1" x2="11.4" y2="5.4"/>
+			</g>
+		</g>
+	</g>
+</g>
 </svg>

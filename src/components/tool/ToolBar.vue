@@ -853,11 +853,11 @@ export default {
   right: 28px;
   top: 22px;
   display: flex;
-  // flex-flow: column nowrap;
+  justify-content: space-between;
   align-items: center;
   padding: 1px 6px;
   border-radius: 15px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
 
   .tool_item:hover {
     background: #971A00;
@@ -868,17 +868,13 @@ export default {
   }
 
   .tool_item {
-    width: 25px;
-    height: 25px;
-    line-height: 25px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     text-align: center;
+    padding-top: 1px;
     cursor: pointer;
-
-    // img {
-    //   width: 90%;
-    //   height: 90%;
-    //   vertical-align: middle;
+   
     // }
   }
 
@@ -886,12 +882,10 @@ export default {
     // width: 30px;
     // height: 29px;
     // line-height: 29px;
-    margin-left: 3px;
+    margin-left: 6px;
     img {
-      width: 80%;
-      height: 80%;
+      width: 22px;
       vertical-align: middle;
-      
     }
   }
 
