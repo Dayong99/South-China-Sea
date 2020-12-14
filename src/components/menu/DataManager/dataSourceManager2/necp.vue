@@ -105,12 +105,14 @@ export default {
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
+          console.log(this.formData,"---------------")
           this.$get("/api/numerical-forecast/analysisGFS", {
-            path:encodeURIComponent(this.formData.path)
+            path:encodeURIComponent(this.formData.path),
+            startTime:this.formData.startTime
           })
             .then(() => {
               this.$message({
-                message: "necp导入成功",
+                message: "gfs导入成功",
                 type: "success",
               });
               this.reset();
@@ -120,7 +122,7 @@ export default {
             })
             .catch(() => {
               this.$message({
-                message: "necp导入失败",
+                message: "gfs导入失败",
                 type: "error",
               });
             });
