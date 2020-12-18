@@ -65,10 +65,10 @@
     <info-box></info-box>
     <!-- 航线评估结果 -->
     <route-info v-if="routeInfoShow"></route-info>
-    
 
     <!-- 自定义popup -->
     <click-up></click-up>
+
   </div>
 </template>
 
@@ -94,7 +94,6 @@ import AreaManager from "@/components/menu/SystemManager/areaManager/index.vue";
 import SeaManager from "@/components/menu/SystemManager/seaManager/index.vue";
 import ParamManager from "@/components/menu/SystemManager/paramManager/index.vue";
 
-
 import EvaluationManager from "@/components/menu/SystemManager/evaluationManager/index.vue";
 import SiteManager from "@/components/menu/SystemManager/siteManager/index.vue";
 import MarkerManager from "@/components/menu/SystemManager/markerManager/index.vue";
@@ -114,7 +113,7 @@ import algorithmManager from "@/components/menu/algorithmManager/edit.vue";
 import assessmentManager from "@/components/menu/assessmentManager/index.vue";
 import eventBus from "@/utils/eventBus.js";
 import routeInfo from "@/components/menu/routeManager/routeInfo.vue";
-import clickUp from "@/components/tool/clickUp.vue"
+import clickUp from "@/components/tool/clickUp.vue";
 import { mapState } from "vuex";
 
 export default {
@@ -154,8 +153,8 @@ export default {
 
     assessmentManager: assessmentManager,
     routeInfo: routeInfo,
-    DataLive:DataLive,
-    clickUp:clickUp,
+    DataLive: DataLive,
+    clickUp: clickUp,
     InfoBox: InfoBox,
   },
   data() {
@@ -168,7 +167,8 @@ export default {
   },
   watch: {},
   mounted() {},
-  methods: {},
+  methods: {
+  },
 };
 </script>
 
@@ -190,5 +190,16 @@ body,
   margin: 0;
   padding: 0;
   overflow: hidden;
+}
+
+.div1 {
+  width: 30px;
+  height: 30px;
+  background: red;
+  position: fixed;
+  bottom: 250px;
+  left: 30px;
+  z-index: 9999;
+  cursor: pointer;
 }
 </style>
