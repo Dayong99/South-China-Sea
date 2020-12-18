@@ -108,6 +108,17 @@
         <img src="@/assets/toolList/point.svg" />
       </el-tooltip>
     </div>
+
+    <div
+      id="screenShot"
+      class="tool_item tool_right"
+      @click.stop="screenShot"
+    >
+      <el-tooltip class="item" effect="light" content="截图" placement="bottom">
+        <img src="@/assets/toolList/jietu.svg" />
+      </el-tooltip>
+    </div>
+
     <div class="tool_item tool_right" @click.stop="clear">
       <el-tooltip
         class="item"
@@ -219,6 +230,7 @@
 </template>
 <script>
 import { mapState, mapMutations } from "vuex";
+// import { drawRect } from "../../../public/js/drawRect.js";
 import toolBar from "@/utils/toolBar.js";
 import "@/utils/leaflet.latlng-graticule.js";
 
@@ -298,6 +310,7 @@ export default {
         getValueflag: false,
         getPointValueflag: false,
         drawflag: false,
+        screenShotflag: false,
       },
     };
   },
@@ -679,6 +692,14 @@ export default {
         this.latlngGraticuleLayer = null;
       }
     },
+
+    screenShot() {
+      // this.flagObj.screenShotflag = !this.flagObj.screenShotflag;
+      document.getElementById("screenShot").style.background = "#981a00";
+      drawRect("backCanvas");
+    },
+
+
     // 清除要素
     clear() {
       // //清除区域取值的矩形区域和点击事件
@@ -860,7 +881,7 @@ export default {
   background: rgba(0, 0, 0, 0.6);
 
   .tool_item:hover {
-    background: #971A00;
+    background: #971a00;
   }
 
   .bg {
@@ -874,7 +895,7 @@ export default {
     text-align: center;
     padding-top: 1px;
     cursor: pointer;
-   
+
     // }
   }
 
@@ -1117,5 +1138,14 @@ export default {
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
   background: rgba(240, 240, 240, 0.6);
+}
+</style>
+<style lang="scss">
+#backCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+  border: 2px solid #ff9c00;
 }
 </style>
