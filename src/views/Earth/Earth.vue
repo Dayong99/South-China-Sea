@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="earthContainer">
     <div id="mapContainer" class="map" />
   </div>
 </template>
@@ -11,7 +11,7 @@ import Tool from "@/utils/tool";
 import eventBus from "@/utils/eventBus.js";
 import { mapState, mapMutations } from "vuex";
 import "@/utils/leaflet.ChineseTmsProviders.js";
-import '@/utils/Leaflet.Editable.js'
+import "@/utils/Leaflet.Editable.js";
 
 var tileLayer1 = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 var tileLayer2 =
@@ -43,7 +43,7 @@ export default {
   },
   computed: {
     ...mapState({
-      tileLayer: state => state.earth.tileLayer
+      tileLayer: (state) => state.earth.tileLayer,
     }),
     nowtime() {
       return this.$store.state.time.time;
@@ -51,8 +51,8 @@ export default {
   },
   watch: {
     tileLayer(newval) {
-      this.changeTileLayer(newval)
-    }
+      this.changeTileLayer(newval);
+    },
   },
   created() {
     // 根据需要显示的geojson数据进行绘制
@@ -78,7 +78,7 @@ export default {
         worldCopyJump: true,
         zoomControl: false,
         // 开启编辑线插件
-        editable: true
+        editable: true,
         // closePopupOnClick:false
       });
       this.tile1 = L.tileLayer
@@ -98,6 +98,7 @@ export default {
       window.map.setView([21.27, 110.35], 5);
       // this.changeZoom();
       this.changeMove();
+
     },
     // async createTileLayer(url, options) {
     //   let tileLayer = await L.tileLayer(url, options);
@@ -320,52 +321,61 @@ export default {
     },
     // 切换底图
     changeTileLayer(flag) {
-      if(flag) {
+      if (flag) {
         this.tile2 = L.tileLayer
-        .chinaProvider("Google.Normal.Map", { maxZoom: 10, minZoom: 2 })
-        .addTo(window.map);
+          .chinaProvider("Google.Normal.Map", { maxZoom: 10, minZoom: 2 })
+          .addTo(window.map);
 
-        this.tile3 = L.tileLayer(tileLayer4, { maxZoom: 10, minZoom: 2 }).addTo(window.map)
-        this.tile4 = L.tileLayer(tileLayer5, { maxZoom: 10, minZoom: 2 }).addTo(window.map)
-        map.removeLayer(this.tile1)
+        this.tile3 = L.tileLayer(tileLayer4, { maxZoom: 10, minZoom: 2 }).addTo(
+          window.map
+        );
+        this.tile4 = L.tileLayer(tileLayer5, { maxZoom: 10, minZoom: 2 }).addTo(
+          window.map
+        );
+        map.removeLayer(this.tile1);
       } else {
         this.tile1 = L.tileLayer
-        .chinaProvider("Geoq.Normal.PurplishBlue", { maxZoom: 10, minZoom: 2 })
-        .addTo(window.map);
-        map.removeLayer(this.tile2)
-        map.removeLayer(this.tile3)
-        map.removeLayer(this.tile4)
+          .chinaProvider("Geoq.Normal.PurplishBlue", {
+            maxZoom: 10,
+            minZoom: 2,
+          })
+          .addTo(window.map);
+        map.removeLayer(this.tile2);
+        map.removeLayer(this.tile3);
+        map.removeLayer(this.tile4);
       }
     },
     // 绘制海区geojson
     getAndDrawSeaDivision() {
-      this.$get('/api/sea-division/all').then(res => {
-        if(res.status == 200) {
-          let data = res.data.data
-          let divisionList = data.filter(item => {
-            return item.isShow
-          })
-          divisionList.forEach(item => {
-            let geojson = JSON.parse(item.dataGeo);
-            // let data = [];
-            // geojson.forEach((item1) => {
-            //   let obj = {};
-            //   for (let i in item1) {
-            //     obj[i] = item1[i];
-            //   }
-            //   data.push(obj);
-            // });
+      this.$get("/api/sea-division/all")
+        .then((res) => {
+          if (res.status == 200) {
+            let data = res.data.data;
+            let divisionList = data.filter((item) => {
+              return item.isShow;
+            });
+            divisionList.forEach((item) => {
+              let geojson = JSON.parse(item.dataGeo);
+              // let data = [];
+              // geojson.forEach((item1) => {
+              //   let obj = {};
+              //   for (let i in item1) {
+              //     obj[i] = item1[i];
+              //   }
+              //   data.push(obj);
+              // });
 
-            let layer = L.geoJSON(geojson, {
-              style: this.geoStyle,
-            })
-            this.divisionGroup.addLayer(layer)
-          })
-          this.divisionGroup.addTo(map)
-        }
-      }).catch(error => {
-        this.$message.error('获取海区划分数据失败')
-      })
+              let layer = L.geoJSON(geojson, {
+                style: this.geoStyle,
+              });
+              this.divisionGroup.addLayer(layer);
+            });
+            this.divisionGroup.addTo(map);
+          }
+        })
+        .catch((error) => {
+          this.$message.error("获取海区划分数据失败");
+        });
     },
   },
 };
@@ -382,9 +392,8 @@ body,
 }
 
 .leaflet-marker-pane .leaflet-div-icon {
-  background: #fff!important;
-  border: 1px solid #666!important;
+  background: #fff !important;
+  border: 1px solid #666 !important;
 }
 </style>
-<style>
-</style>
+<style></style>

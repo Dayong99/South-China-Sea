@@ -105,8 +105,10 @@ export default {
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
+          console.log(this.formData,"---------------")
           this.$get("/api/numerical-forecast/analysisGFS", {
-            path:encodeURIComponent(this.formData.path)
+            path:encodeURIComponent(this.formData.path),
+            startTime:this.formData.startTime
           })
             .then(() => {
               this.$message({
