@@ -18,7 +18,7 @@
     >
       <el-row :gutter="20">
         <el-col :span="24">
-          <el-form-item label="类型名称" prop="legendName">
+          <el-form-item label="图例名称" prop="legendName">
             <el-input v-model="color.legendName" clearable />
           </el-form-item>
         </el-col>
@@ -230,7 +230,7 @@ export default {
       rules: {
         legendName: {
           required: true,
-          message: "类型名称不能为空",
+          message: "图例名称不能为空",
           trigger: "blur",
         },
         svalue: {
