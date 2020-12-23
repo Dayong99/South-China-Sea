@@ -46,8 +46,9 @@
         <el-switch
           v-model="windSwitch"
           active-text="风"
-          active-color="#981a00"
+          active-color="#fa5433"
           class="el_switch"
+          
         >
         </el-switch>
       </div>
