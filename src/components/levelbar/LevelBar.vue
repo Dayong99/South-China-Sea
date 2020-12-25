@@ -116,9 +116,9 @@ export default {
       const nowVal = parseInt(this.$refs.nowtip.style.top.replace('px', ''))
       const tipVal = parseInt(this.tiptop.replace('px', ''))
       if (Math.abs(nowVal - tipVal) <= 22) {
-        this.tipleft = '5em'
+        this.tipleft = '6.5em'
       } else {
-        this.tipleft = '1.5em'
+        this.tipleft = '2.5em'
       }
 
       // 时间戳内容
