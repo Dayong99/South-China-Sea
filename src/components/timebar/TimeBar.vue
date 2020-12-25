@@ -574,7 +574,8 @@ export default {
       this.tipleft = event.offsetX + 262 + "px";
       const nowVal = parseInt(this.$refs.nowtime.style.left.replace("px", ""));
       const tipVal = parseInt(this.tipleft.replace("px", ""));
-      if (Math.abs(nowVal - tipVal) <= 80) {
+      // if (Math.abs(nowVal - tipVal) <= 80) {
+      if ((nowVal - tipVal) <= 50&&(nowVal-tipVal)>-120) {
         this.tiptop = "-6em";
       } else {
         this.tiptop = "-3.5em";

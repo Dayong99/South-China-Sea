@@ -228,7 +228,11 @@ export default {
           let style = JSON.parse(item.other1);
           let layer;
           if (geojson.type == "Point") {
-            layer = new L.Circle([geojson.coordinates[1],geojson.coordinates[0]], Number(item.other2), style).addTo(map);
+            layer = new L.Circle(
+              [geojson.coordinates[1], geojson.coordinates[0]],
+              Number(item.other2),
+              style
+            ).addTo(map);
             console.log(layer);
           } else {
             layer = L.geoJSON(geojson, {
@@ -236,8 +240,16 @@ export default {
             }).addTo(map);
           }
 
+          let str;
+          if (item.other2) {
+            str = '名称:'+item.placeName + " 半径:" + item.other2 + "公里/海里";
+          } else {
+            str = '名称:'+item.placeName;
+          }
+          console.log(str)
+
           layer
-            .bindPopup(item.placeName, {
+            .bindPopup(str, {
               autoPan: false,
               autoClose: false,
               className: "leaflet-marker-markerTip",
@@ -291,7 +303,7 @@ export default {
             message: "取消删除",
             type: "information",
           });
-        })
+        });
     },
     add() {
       this.dialog.isVisible = true;
@@ -345,5 +357,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
