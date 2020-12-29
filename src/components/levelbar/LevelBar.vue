@@ -1,22 +1,28 @@
 <template>
+  <!-- 原mouse事件@mouseover="showTip" @mousemove="showTip" @mouseleave="hideTip" -->
   <div
     id="levelbar"
     v-show="levelShow"
-    :style="{'height':barHeight,'margin-right':'0px'}"
-    @click="getNowTip"
-    @mouseover="showTip"
-    @mousemove="showTip"
-    @mouseleave="hideTip"
+    :style="{'height':barHeight,'margin-right':'3px'}"
   >
-    <div
+    <!-- <div
       v-show="tipshow"
       class="levelcode ghost-levelcode"
       :style="{'top':tiptop,'right':tipleft}"
     >
       <div class="box">{{ tipcontent }}</div>
-    </div>
-    <div ref="nowtip" class="levelcode main-levelcode" :style="{'top':nowtop}">
+    </div> -->
+    <!-- <div ref="nowtip" class="levelcode main-levelcode" :style="{'top':nowtop}">
       <div class="box">{{ nowcontent }}</div>
+    </div> -->
+    <div class="level_list" >
+      <div v-for="(item,index) in levelList" 
+      class="level_num" 
+      :class="activeLevel==item?'active_level':''"
+      @click.stop="getNowTip(item)">
+        <div class="level_text">{{item}}</div>
+        <div class="decoration"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -42,7 +48,8 @@ export default {
       tipshow: false,
       tiptop: 0,
       tipleft: '',
-      itemlevelIndex: 0
+      itemlevelIndex: 0,
+      activeLevel:-1
     }
   },
   computed: {
@@ -76,7 +83,7 @@ export default {
           let i = val[val.length - 1].parseIntLevel.findIndex(item => {
             return item == this.nowcontent
           })
-
+          this.activeLevel = this.nowcontent
           // 渲染之后
           this.$nextTick(() => {
             this.nowtop = (this.levelList.length - i - 1) * 22 + 'px'
@@ -97,33 +104,38 @@ export default {
       this.nowcontent = this.levelList[0]
     },
     // 点击显示当前位置层级
-    getNowTip() {
-      this.levelIndex = this.levelList.length - (parseInt(event.offsetY / this.itemHeight) + 1)
-      this.nowcontent = this.levelList[this.levelIndex]
-      this.nowtop = event.offsetY - 11 + 'px'
-      // 层级变化通知sideBar重绘
-      this.setNowLevel(this.nowcontent)
+    getNowTip(item) {
+      // this.levelIndex = this.levelList.length - (parseInt(event.offsetY / this.itemHeight) + 1)
+      // this.nowcontent = this.levelList[this.levelIndex]
+      // this.nowtop = event.offsetY - 11 + 'px'
+      // // 层级变化通知sideBar重绘
+      // this.setNowLevel(this.nowcontent)
+
+      // // 层级变化通知sideBar重绘
+      this.setNowLevel(item)
+      // 选中样式变化
+      this.activeLevel=item
     },
     // 显示层级戳
-    showTip() {
-      this.tipshow = true
-      // 时间戳偏移量
-      this.tiptop = event.offsetY - 11 + 'px'
+    // showTip() {
+    //   this.tipshow = true
+    //   // 时间戳偏移量
+    //   this.tiptop = event.offsetY - 11 + 'px'
 
-      // 第几个
-      this.itemlevelIndex = this.levelList.length - (parseInt(event.offsetY / this.itemHeight) + 1)
+    //   // 第几个
+    //   this.itemlevelIndex = this.levelList.length - (parseInt(event.offsetY / this.itemHeight) + 1)
 
-      const nowVal = parseInt(this.$refs.nowtip.style.top.replace('px', ''))
-      const tipVal = parseInt(this.tiptop.replace('px', ''))
-      if (Math.abs(nowVal - tipVal) <= 22) {
-        this.tipleft = '5em'
-      } else {
-        this.tipleft = '1.5em'
-      }
+    //   const nowVal = parseInt(this.$refs.nowtip.style.top.replace('px', ''))
+    //   const tipVal = parseInt(this.tiptop.replace('px', ''))
+    //   if (Math.abs(nowVal - tipVal) <= 22) {
+    //     this.tipleft = '5em'
+    //   } else {
+    //     this.tipleft = '1.5em'
+    //   }
 
-      // 时间戳内容
-      this.tipcontent = this.levelList[this.itemlevelIndex]
-    },
+    //   // 时间戳内容
+    //   this.tipcontent = this.levelList[this.itemlevelIndex]
+    // },
     // 隐藏层级戳
     hideTip() {
       this.tipshow = false

@@ -1,20 +1,21 @@
 #app {
     #levelbar {
-        width: 25px;
+        width: 20px;
         position: relative;
         cursor: pointer;
         line-height: 18px;
-        display: block;
+        // display: block;
         align-self: flex-end;
         margin-top: 30px;
         margin-right: 10px;
+        padding: 2px 0px;
         &::before {
             position: absolute;
             top: 0;
             bottom: 0;
             right: 10px;
-            width: 9px;
-            background-color: rgba(68, 65, 65, 0.84);
+            width: 4px;
+            background-color: rgba(0, 0, 0, 0.6);
             border-radius: 9px;
             content: ' ';
         }
@@ -88,6 +89,50 @@
                     border-width: .5em;
                     margin-left: -0.5em;
                 }
+            }
+        }
+        // 层级按钮全部可见后样式代码
+        .level_list {
+            position: absolute;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-end;
+            color: #fff;
+            font-weight: 500;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+            font-size: 14px;
+            line-height: 14px;
+            margin-left: -36px;
+            .level_num {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-right: 2px;
+                .level_text {
+                    padding: 0px 4px;
+                    padding-top: 2px;
+                }
+                .decoration {
+                    width: 4px;
+                    height: 4px;
+                    margin-left: 1px;
+                    background-color: rgba(0, 0, 0, 0.6);
+                    transform: rotate(45deg);
+                }
+            }
+        }
+        .active_level {
+            .level_text {
+                font-weight: 900;
+                text-shadow: none;
+                background-color: #981a00;
+                border-radius: 4px;
+            }
+            .decoration {
+                margin-left: -2px !important;
+                background-color: #981a00 !important
             }
         }
     }
