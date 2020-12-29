@@ -23,7 +23,7 @@
     "leaflet-velocity": "^1.7.0",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
-    "node-sass": "^4.13.1",
+    "node-sass": "^4.14.1",
     "nprogress": "^0.2.0",
     "proj4": "^2.6.3",
     "sass-loader": "^8.0.2",

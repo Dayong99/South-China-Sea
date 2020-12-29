@@ -264,7 +264,7 @@ export default {
       rules: {
         contourName: {
           required: true,
-          message: "类型名称不能为空",
+          message: "线名称不能为空",
           trigger: "blur",
         },
         svalue: {
