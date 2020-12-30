@@ -208,7 +208,7 @@
           <div class="grid-content bg-purple-dark">
             <el-form-item label="数据源：" prop="type">
               <div>
-                {{ formData.type == 0 ? "ECMWF" : "GFS" }}
+                {{ getType(formData.type) }}
               </div>
             </el-form-item>
           </div>
@@ -310,7 +310,7 @@ export default {
         units: "",
         drawType: "",
         isEvaluate: "",
-        valueRange:""
+        valueRange: "",
       };
     },
     legendName(val) {
@@ -331,6 +331,20 @@ export default {
         case "layer":
           return "图层";
       }
+    },
+    getType(type) {
+      console.log(type)
+      let source
+      switch (type) {
+        case 0:
+          source=  "ECMWF";
+        case 1:
+          source=  "GFS";
+        case 2:
+          source=  "总参";
+      }
+      console.log(source)
+      return source
     },
     // 是否是色斑图分组
     isDataGroup(val) {
@@ -378,7 +392,7 @@ export default {
   },
 };
 </script>
-<style lang='scss'>
+<style lang="scss">
 .el-dialog {
   border: 8px;
 }
