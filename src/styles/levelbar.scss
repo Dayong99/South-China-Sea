@@ -94,6 +94,7 @@
         // 层级按钮全部可见后样式代码
         .level_list {
             position: absolute;
+            right: 18px;
             height: 100%;
             display: flex;
             flex-direction: column;
@@ -104,7 +105,6 @@
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
             font-size: 14px;
             line-height: 14px;
-            margin-left: -36px;
             .level_num {
                 display: flex;
                 justify-content: space-between;
