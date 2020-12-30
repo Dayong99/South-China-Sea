@@ -15,15 +15,16 @@
     <!-- <div ref="nowtip" class="levelcode main-levelcode" :style="{'top':nowtop}">
       <div class="box">{{ nowcontent }}</div>
     </div> -->
-    <div class="level_list" >
-      <div v-for="(item,index) in levelList" 
+    <ul class="level_list" >
+      <li v-for="(item,index) in levelList" 
+      :key="`level${index}`"
       class="level_num" 
       :class="activeLevel==item?'active_level':''"
       @click.stop="getNowTip(item)">
         <div class="level_text">{{item}}</div>
         <div class="decoration"></div>
-      </div>
-    </div>
+      </li>
+    </ul>
   </div>
 </template>
 
