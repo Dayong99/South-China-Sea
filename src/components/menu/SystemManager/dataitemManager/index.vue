@@ -22,8 +22,18 @@
         class="operation_input"
         clearable
         @clear="search"
+        style="width:260px;"
       >
       </el-input>
+      <el-select v-model="queryParams.type" placeholder="数据源类型" clearable @change="search">
+        <el-option
+          v-for="(item, index) in sourceOption"
+          :key="index"
+          :label="item.label"
+          :value="item.value"
+        >
+        </el-option>
+      </el-select>
       <el-button class="operation_search" @click="search">搜索</el-button>
       <el-button class="operation_clear" @click="resetSearch">重置</el-button>
       <el-button icon="el-icon-plus" class="operation_add" @click="add"
@@ -109,12 +119,12 @@
               :action="uploadFile()"
               :auto-upload="true"
               :on-success="
-                function (res, file) {
+                function(res, file) {
                   return ModifySuccess(res, file);
                 }
               "
               :on-error="
-                function (res, file) {
+                function(res, file) {
                   return ModifyFail(res, file);
                 }
               "
@@ -219,10 +229,22 @@ export default {
       },
       queryParams: {
         parameterName: null,
+        type:null
       },
       infoVisible: false,
       modifyItem: {},
       fileList: [],
+
+      sourceOption: [
+        {
+          value: 0,
+          label: "ECMWF",
+        },
+        {
+          value: 1,
+          label: "GFS",
+        },
+      ],
     };
   },
   mounted() {},
@@ -259,6 +281,7 @@ export default {
       if (val) {
         this.queryParams = {
           parameterName: null,
+          type:null
         };
         this.fetch();
         this.$refs.dataitemBox.style.left = "50%";
@@ -281,6 +304,7 @@ export default {
     resetSearch() {
       this.queryParams = {
         parameterName: null,
+        type:null
       };
       this.search();
     },
@@ -306,7 +330,7 @@ export default {
             message: "取消删除",
             type: "information",
           });
-        })
+        });
     },
     add() {
       this.dialog.isVisible = true;

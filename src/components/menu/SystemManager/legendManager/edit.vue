@@ -2,7 +2,7 @@
   <!-- eslint-disable-->
   <el-dialog
     :title="title"
-    width="760px"
+    width="900px"
     top="50px"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -14,7 +14,7 @@
       :model="color"
       :rules="rules"
       label-position="right"
-      label-width="100px"
+      label-width="80px"
     >
       <el-row :gutter="20">
         <el-col :span="24">
@@ -47,10 +47,12 @@
             prop="scolor"
             style="position: relative"
           >
-            <el-input v-model="color.scolor" clearable />
+            <el-input v-model="color.scolor" />
             <el-color-picker
               class="color_value"
               v-model="color.scolor"
+              :show-alpha="alpha"
+              @change="resetInsert"
             ></el-color-picker>
           </el-form-item>
           <div
@@ -64,10 +66,12 @@
             prop="ecolor"
             style="position: relative"
           >
-            <el-input v-model="color.ecolor" clearable />
+            <el-input v-model="color.ecolor" />
             <el-color-picker
               class="color_value"
               v-model="color.ecolor"
+              :show-alpha="alpha"
+              @change="resetInsert"
             ></el-color-picker>
           </el-form-item>
           <div
@@ -97,7 +101,7 @@
               <ul class="colorBox">
                 <li
                   @click="getSelected(index)"
-                  v-for="(item, index) in color.colorValues"
+                  v-for="(item, index) in gradientColorArr"
                   :key="index"
                 >
                   <div
@@ -116,9 +120,10 @@
 
                   <el-color-picker
                     class="color_picker"
-                    v-model="colorList[index]"
+                    v-model="gradientColorArr[index]"
                     @change="changeColor"
                     title="更改颜色"
+                    :show-alpha="alpha"
                   ></el-color-picker>
                 </li>
               </ul>
@@ -135,6 +140,7 @@
         label-width="100px"
         :model="insertObj"
         :rules="insertRules"
+        class="insert_form"
       >
         <el-row :gutter="20">
           <el-col :span="8">
@@ -142,16 +148,17 @@
               <el-input v-model="insertObj.value" clearable />
             </el-form-item>
           </el-col>
-          <el-col :span="8" class="color_show">
+          <el-col :span="8" class="color_show insert_color">
             <el-form-item
               label="插入颜色"
               prop="color"
               style="position: relative"
             >
-              <el-input v-model="insertObj.color" clearable />
+              <el-input v-model="insertObj.color" />
               <el-color-picker
                 class="color_value"
                 v-model="insertObj.color"
+                :show-alpha="alpha"
               ></el-color-picker>
             </el-form-item>
             <div
@@ -220,10 +227,10 @@ export default {
       }
     };
     return {
+      alpha: true,
       colorShow: false,
       data: {},
       isActive: [],
-      colorList: [],
       colorIndex: null,
       color: this.initColor(),
       insertObj: this.initInsert(),
@@ -247,17 +254,17 @@ export default {
         },
         scolor: [
           { required: true, message: "起始颜色不能为空", trigger: "blur" },
-          {
-            pattern: /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i,
-            message: "请输入正确的颜色值",
-          },
+          // {
+          //   pattern: /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i,
+          //   message: "请输入正确的颜色值",
+          // },
         ],
         ecolor: [
           { required: true, message: "终止颜色不能为空", trigger: "blur" },
-          {
-            pattern: /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i,
-            message: "请输入正确的颜色值",
-          },
+          // {
+          //   pattern: /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i,
+          //   message: "请输入正确的颜色值",
+          // },
         ],
       },
       insertRules: {
@@ -266,11 +273,14 @@ export default {
           trigger: "blur",
         },
         color: {
-          trigger: "blur",
-          pattern: /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i,
-          message: "请输入正确的颜色值",
+          // trigger: "blur",
+          // pattern: /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i,
+          // message: "请输入正确的颜色值",
         },
       },
+      gradientColorArr: [],
+
+      nowColor: {},
     };
   },
   props: {
@@ -287,8 +297,6 @@ export default {
     dialogVisible(newval, oldval) {
       if (newval) {
         if (this.color.colorValues.length !== 0) {
-          // this.isActive = new Array(this.color.colorValues.length).fill(false)
-          console.log(this.isActive);
           this.isActive = [];
           this.color.colorValues.forEach((item, index) => {
             this.isActive.push(false);
@@ -298,55 +306,110 @@ export default {
     },
   },
   methods: {
+    // 编辑图例
     setData(data) {
-      this.color = {
-        ...this.color,
-        ...data,
-      };
+      this.color = { ...data };
       this.colorShow = true;
       this.color.colorValues = this.color.colorValues.split(",");
+      this.gradientColorArr = [];
+      this.color.colorValues.forEach((item, index) => {
+        this.gradientColorArr.push(this.getRgba(item));
+      });
       this.color.legendValues = this.color.legendValues
         .split(",")
         .map((item) => Number(item));
     },
+
+    // 重置初始颜色和结束颜色
+    resetColor(arr) {
+      this.color.scolor = arr[0];
+      this.color.ecolor = arr[arr.length - 1];
+    },
+
+    // 获取颜色的16进制值
+    getHex(color) {
+      let values = color
+        .replace(/rgba?\(/, "")
+        .replace(/\)/, "")
+        .replace(/[\s+]/g, "")
+        .split(",");
+      let a = Math.floor(values[3] * 256),
+        r = values[0],
+        g = values[1],
+        b = values[2];
+
+      let alpha = a.toString(16);
+      if (alpha == 100) {
+        return this.rgbToHex(r, g, b) + "FF";
+      } else {
+        return this.rgbToHex(r, g, b) + ("0" + alpha).slice(-2);
+      }
+    },
+    // hex转化为rgba
+    getRgba(color) {
+      let rgbaArr = [];
+      for (let i = 1; i < 9; i += 2) {
+        rgbaArr.push(parseInt("0x" + color.slice(i, i + 2)));
+      }
+
+      let str =
+        "rgba(" +
+        parseInt(rgbaArr[0]) +
+        "," +
+        parseInt(rgbaArr[1]) +
+        "," +
+        parseInt(rgbaArr[2]) +
+        "," +
+        (parseInt(rgbaArr[3]) / 255).toFixed(2) +
+        ")";
+      return str;
+    },
+
     // rgb to hex
     rgbToHex(r, g, b) {
       let hex = ((r << 16) | (g << 8) | b).toString(16);
       return "#" + new Array(Math.abs(hex.length - 7)).join("0") + hex;
     },
-
-    // hex to rgb
-    hexToRgb(hex) {
-      let rgb = [];
-      for (let i = 1; i < 7; i += 2) {
-        rgb.push(parseInt("0x" + hex.slice(i, i + 2)));
-      }
-      return rgb;
-    },
     // 计算渐变过渡色
     gradient(startColor, endColor, step) {
-      // 将 hex 转换为rgb
-      let sColor = this.hexToRgb(startColor);
-      let eColor = this.hexToRgb(endColor);
+      let sColor = startColor
+        .replace(/rgba?\(/, "")
+        .replace(/\)/, "")
+        .replace(/[\s+]/g, "")
+        .split(",");
+      let eColor = endColor
+        .replace(/rgba?\(/, "")
+        .replace(/\)/, "")
+        .replace(/[\s+]/g, "")
+        .split(",");
 
       // 计算R\G\B每一步的差值
       let rStep = (eColor[0] - sColor[0]) / step;
       let gStep = (eColor[1] - sColor[1]) / step;
       let bStep = (eColor[2] - sColor[2]) / step;
+      let aStep = (eColor[3] - sColor[3]) / step;
 
-      let gradientColorArr = [];
-      for (let i = 0; i < step; i++) {
+      this.gradientColorArr = [];
+      let rgba;
+      for (let i = 0; i < step - 1; i++) {
         // 计算每一步的hex值
-        gradientColorArr.push(
-          this.rgbToHex(
-            parseInt(rStep * i + sColor[0]),
-            parseInt(gStep * i + sColor[1]),
-            parseInt(bStep * i + sColor[2])
-          )
-        );
+        rgba =
+          "rgba(" +
+          parseInt(rStep * i + Number(sColor[0])) +
+          "," +
+          parseInt(gStep * i + Number(sColor[1])) +
+          "," +
+          parseInt(bStep * i + Number(sColor[2])) +
+          "," +
+          Number(aStep * i + Number(sColor[3])).toFixed(2) +
+          ")";
+        this.gradientColorArr.push(rgba);
+
+        this.color.colorValues.push(this.getHex(rgba));
       }
 
-      return gradientColorArr;
+      this.gradientColorArr.push(endColor);
+      this.color.colorValues.push(this.getHex(endColor));
     },
     // 生成颜色列表
     createColor() {
@@ -361,18 +424,16 @@ export default {
           ) {
             this.color.legendValues.push(i);
           }
-          this.color.colorValues = this.gradient(
+
+          this.gradient(
             this.color.scolor,
             this.color.ecolor,
             this.color.legendValues.length
           );
 
-          this.color.colorValues.forEach((item, index) => {
+          this.gradientColorArr.forEach((item, index) => {
             this.isActive.push(false);
-            this.colorList.push(null);
           });
-
-          this.colorList = this.color.colorValues;
         } else {
           this.$message.warning("请填写正确的相关数据");
         }
@@ -381,7 +442,7 @@ export default {
     // 取消颜色列表
     resetInsert() {
       this.colorShow = false;
-      this.colorList = [];
+      this.gradientColorArr = [];
       this.isActive = [];
       this.color.legendValues = [];
       this.color.colorValues = [];
@@ -396,7 +457,7 @@ export default {
         this.color.ecolor = null;
       }
     },
-    // 选中某个色块
+    // 重置选中色块
     resetSelected() {
       this.isActive.forEach((item, index) => {
         this.$set(this.isActive, index, false);
@@ -407,16 +468,19 @@ export default {
       this.resetSelected();
       this.colorIndex = index;
       this.$set(this.isActive, index, true);
-      this.colorList[this.colorIndex] = this.color.colorValues[this.colorIndex];
+      this.nowColor = {
+        hex: this.color.colorValues[this.colorIndex],
+        rgba: this.gradientColorArr[this.colorIndex],
+      };
     },
     // 删除色块
     reduceColor() {
       if (this.colorIndex !== null) {
         this.$confirm(
           "是否确定删除以下颜色：<span style='background:" +
-            this.color.colorValues[this.colorIndex] +
+            this.gradientColorArr[this.colorIndex] +
             ";width:16px;height:16px;vertical-align:middle;margin-right:5px;display:inline-block;'></span><span>" +
-            this.color.colorValues[this.colorIndex] +
+            this.gradientColorArr[this.colorIndex] +
             "</span>，颜色值:" +
             this.color.legendValues[this.colorIndex],
           "提示",
@@ -431,10 +495,18 @@ export default {
           .then(() => {
             this.color.legendValues.splice(this.colorIndex, 1);
             this.color.colorValues.splice(this.colorIndex, 1);
+            this.gradientColorArr.splice(this.colorIndex, 1);
+
             this.$message({
               type: "success",
               message: "删除成功!",
             });
+
+            this.resetColor(this.gradientColorArr);
+
+            if (this.gradientColorArr.length == 0) {
+              this.resetInsert();
+            }
             this.resetSelected();
           })
           .catch(() => {
@@ -442,6 +514,7 @@ export default {
               type: "info",
               message: "已取消删除",
             });
+            this.resetSelected();
           });
       } else {
         this.$message.warning("未选择颜色");
@@ -449,6 +522,7 @@ export default {
     },
     // 插入色块
     insertColor() {
+      this.resetSelected();
       let insertValue = Number(this.insertObj.value);
       if (insertValue && this.insertObj.color) {
         if (this.color.legendValues.indexOf(insertValue) === -1) {
@@ -466,16 +540,25 @@ export default {
           }
           if (index >= this.color.legendValues.length) {
             this.color.legendValues.push(insertValue);
-            this.color.colorValues.push(this.insertObj.color);
+            this.gradientColorArr.push(this.insertObj.color);
+            this.color.colorValues.push(this.getHex(this.insertObj.color));
           } else {
             for (var j = this.color.legendValues.length; j > index; j--) {
               //进行移动 aar[5]=arr[4]      arr[4]=arr[3]
               this.color.legendValues[j] = this.color.legendValues[j - 1];
+              this.gradientColorArr[j] = this.gradientColorArr[j - 1];
               this.color.colorValues[j] = this.color.colorValues[j - 1];
             }
             this.$set(this.color.legendValues, index, insertValue);
-            this.$set(this.color.colorValues, index, this.insertObj.color);
+            this.$set(this.gradientColorArr, index, this.insertObj.color);
+            this.$set(
+              this.color.colorValues,
+              index,
+              this.getHex(this.insertObj.color)
+            );
+
             this.$message.success("插入颜色值成功");
+            this.resetColor(this.gradientColorArr);
           }
         } else {
           this.$message.warning("该值已存在");
@@ -484,18 +567,19 @@ export default {
       } else {
         this.$message.warning("请填写插入值和插入颜色");
       }
-      // console.log(this.color.legendValues)
     },
     // 改变颜色
     changeColor() {
-      if (this.colorList[this.colorIndex] === null) {
+      if (this.gradientColorArr[this.colorIndex] === null) {
         this.$message.warning("颜色值不能为空");
+        this.gradientColorArr[this.colorIndex] = this.nowColor.rgba;
       } else {
         this.color.colorValues.splice(
           this.colorIndex,
           1,
-          this.colorList[this.colorIndex]
+          this.getHex(this.gradientColorArr[this.colorIndex])
         );
+        this.resetColor(this.gradientColorArr);
       }
       this.resetSelected();
     },
@@ -523,9 +607,10 @@ export default {
 
             // 插入后排序
             let color_index = 0;
-            let color = this.colorList[index];
+            let color = this.gradientColorArr[index];
             let indexFlag = false;
 
+            this.gradientColorArr.splice(index, 1);
             this.color.colorValues.splice(index, 1);
             this.color.legendValues.splice(index, 1);
 
@@ -539,9 +624,11 @@ export default {
             if (!indexFlag) {
               color_index = this.color.legendValues.length;
             }
+
             if (color_index >= this.color.legendValues.length) {
               this.color.legendValues.push(_value);
-              this.color.colorValues.push(color);
+              this.color.gradientColorArr.push(color);
+              this.color.colorValues.push(this.getHex(color));
             } else {
               for (
                 var j = this.color.legendValues.length;
@@ -549,19 +636,28 @@ export default {
                 j--
               ) {
                 this.color.legendValues[j] = this.color.legendValues[j - 1];
+                this.gradientColorArr[j] = this.gradientColorArr[j - 1];
                 this.color.colorValues[j] = this.color.colorValues[j - 1];
               }
               this.$set(this.color.legendValues, color_index, _value);
-              this.$set(this.color.colorValues, color_index, color);
-              this.resetSelected();
+              this.$set(this.gradientColorArr, color_index, color);
+              this.$set(
+                this.color.colorValues,
+                color_index,
+                this.getHex(color)
+              );
             }
+
+            this.resetColor(this.gradientColorArr);
           }
+          this.resetSelected();
         })
         .catch(() => {
           this.$message({
             type: "info",
             message: "取消修改",
           });
+          this.resetSelected();
         });
     },
     initColor() {
@@ -582,12 +678,6 @@ export default {
         value: null,
       };
     },
-    initWidth() {
-      return "946px";
-    },
-    // setColor(val) {
-    //   this.color = { ...val };
-    // },
     close() {
       this.$emit("close");
     },
@@ -638,14 +728,14 @@ export default {
       this.isVisible = false;
       this.reset();
     },
-    setColor(val) {
-      this.color = { ...val };
-      this.colorShow = true;
-      this.color.colorValues = this.color.colorValues.split(",");
-      this.color.legendValues = this.color.legendValues
-        .split(",")
-        .map((item) => Number(item));
-    },
+    // setColor(val) {
+    //   this.color = { ...val };
+    //   this.colorShow = true;
+    //   this.color.colorValues = this.color.colorValues.split(",");
+    //   this.color.legendValues = this.color.legendValues
+    //     .split(",")
+    //     .map((item) => Number(item));
+    // },
   },
   computed: {
     isVisible: {
@@ -660,7 +750,7 @@ export default {
   },
 };
 </script>
-<style lang='scss'>
+<style lang="scss">
 .el-dialog {
   border: 8px;
 }
@@ -684,5 +774,4 @@ export default {
   color: #c0b2c0;
   -webkit-text-fill-color: #c0b2c0;
 }
-
 </style>

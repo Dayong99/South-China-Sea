@@ -66,17 +66,17 @@
           label="起始颜色"
           prop="role-name"
           align="center"
-          width="120px"
+          width="210px"
         >
           <template slot-scope="scope">
             <el-row :gutter="10" class="colorRange">
-              <el-col :span="8">
+              <el-col :span="4">
                 <div
                   class="colorItem"
                   :style="{ background: scope.row.scolor }"
                 ></div>
               </el-col>
-              <el-col :span="16">
+              <el-col :span="20">
                 <div>{{ scope.row.scolor }}</div>
               </el-col>
             </el-row>
@@ -86,17 +86,17 @@
           label="终止颜色"
           prop="role-name"
           align="center"
-          width="120px"
+          width="210px"
         >
           <template slot-scope="scope">
             <el-row :gutter="10" class="colorRange">
-              <el-col :span="8">
+              <el-col :span="4">
                 <div
                   class="colorItem"
                   :style="{ background: scope.row.ecolor }"
                 ></div>
               </el-col>
-              <el-col :span="16">
+              <el-col :span="20">
                 <div>{{ scope.row.ecolor }}</div>
               </el-col>
             </el-row>
@@ -114,7 +114,9 @@
                 <el-tooltip
                   effect="dark"
                   placement="top-start"
-                  v-for="(item, index) in scope.row.colorValues.split(',')"
+                  v-for="(item, index) in getColorList(
+                    scope.row.colorValues.split(',')
+                  )"
                   :key="index"
                   style="outline-width: 0"
                 >
@@ -253,6 +255,32 @@ export default {
     ...mapMutations({
       setMenuList: "menuBar/setMenuList",
     }),
+    // 获取rgba值
+    getRgba(color) {
+      let rgbaArr = [];
+      for (let i = 1; i < 9; i += 2) {
+        rgbaArr.push(parseInt("0x" + color.slice(i, i + 2)));
+      }
+      let str =
+        "rgba(" +
+        parseInt(rgbaArr[0]) +
+        "," +
+        parseInt(rgbaArr[1]) +
+        "," +
+        parseInt(rgbaArr[2]) +
+        "," +
+        (parseInt(rgbaArr[3]) / 255).toFixed(2) +
+        ")";
+      return str;
+    },
+    // 获取rgba颜色列表
+    getColorList(list) {
+      let arr = []
+      list.forEach((item,index)=>{
+        arr.push(this.getRgba(item))
+      })
+      return arr
+    },
     editItem(row) {
       this.$refs.edit.setData(row);
       this.dialog.isVisible = true;
@@ -288,10 +316,9 @@ export default {
             message: "取消删除",
             type: "information",
           });
-        })
+        });
     },
     add() {
-      console.log("添加");
       this.dialog.isVisible = true;
       this.dialog.title = "添加图例";
     },
@@ -305,7 +332,6 @@ export default {
     fetch(params = {}) {
       params.pageSize = this.pagination.size;
       params.pageNum = this.pagination.num;
-      console.log("获取表格数据");
       this.$get("/api/legend-config", {
         ...params,
       }).then((res) => {
@@ -331,5 +357,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

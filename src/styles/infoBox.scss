@@ -60,3 +60,26 @@
     }
 }
 
+.info-form {
+    line-height: 100%; height:600px;overflow-y:auto;
+  }
+  .info-form::-webkit-scrollbar{
+    width:8px;
+    height:10px;
+    /**/
+  }
+  .info-form::-webkit-scrollbar-track{
+    background: rgb(239, 239, 239);
+    border-radius:2px;
+  }
+  .info-form::-webkit-scrollbar-thumb{
+    background: #bfbfbf;
+    border-radius:10px;
+  }
+  .info-form::-webkit-scrollbar-thumb:hover{
+    background: #333;
+  }
+  .info-form::-webkit-scrollbar-corner{
+    background: #179a16;
+  }
+
