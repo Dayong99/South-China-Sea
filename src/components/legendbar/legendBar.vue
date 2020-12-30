@@ -161,16 +161,22 @@ export default {
         this.$message.error('获取图例数据失败')
       })
     },
+    // 图例数据进行修改
     limitLegend(legendColor) {
       // let i = legendColor.type.indexOf('temperature')
       // let j = legendColor.type.indexOf('Temperature')
       // if(i != -1 || j != -1) {
-      if(legendColor.type === 'Temperature') {
+      if(legendColor.type.toLowerCase() === 'temperature') {
         legendColor.legendValues.forEach((item, i) => {
           if(item > 180) {
             legendColor.legendValues[i] = Math.round(legendColor.legendValues[i] - 273.15)
           }
         })
+      } else if(legendColor.type.toLowerCase() === 'visibility') {
+        legendColor.legendValues.forEach((item, i) => {
+          legendColor.legendValues[i] = Number(item) / 1000
+        })
+        legendColor.units = 'KM'
       }
       // 对图例数据进行抽稀
       if (legendColor.legendValues.length > 15 && legendColor.legendValues.length <= 25) {
