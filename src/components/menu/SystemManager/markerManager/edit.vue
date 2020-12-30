@@ -1,7 +1,7 @@
 <template>
   <!-- eslint-disable-->
   <el-dialog
-    :title="title"
+    :title="'修改'+title"
     width="500px"
     top="50px"
     :close-on-click-modal="false"
@@ -21,9 +21,9 @@
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
-            <el-form-item label="标志区名称" prop="placeName">
+            <el-form-item :label="title+'名称'" prop="placeName">
               <el-input
-                placeholder="请输入标志区名称"
+                :placeholder="'请输入'+title+'名称'"
                 v-model="formData.placeName"
               ></el-input>
             </el-form-item>
@@ -129,13 +129,12 @@ export default {
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          if (this.title === "修改标志区") {
-            this.$put("/api/common-place", {
+          this.$put("/api/common-place", {
               ...this.formData,
             })
               .then(() => {
                 this.$message({
-                  message: "标志区修改成功",
+                  message: this.title+"修改成功",
                   type: "success",
                 });
               })
@@ -145,11 +144,10 @@ export default {
               })
               .catch(() => {
                 this.$message({
-                  message: "标志区修改失败",
+                  message:  this.title+"修改失败",
                   type: "error",
                 });
               });
-          }
         }
       });
     },

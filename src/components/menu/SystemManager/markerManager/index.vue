@@ -149,6 +149,7 @@ export default {
         placeName: null,
       },
       geojsonGroup: [],
+      drawType:null
     };
   },
   filters: {
@@ -242,7 +243,7 @@ export default {
 
           let str;
           if (item.other2) {
-            str = '名称:'+item.placeName + " 半径:" + item.other2 + "公里/海里";
+            str = '名称:'+item.placeName + " , 半径:" + item.other2 + "公里/海里";
           } else {
             str = '名称:'+item.placeName;
           }
@@ -268,9 +269,14 @@ export default {
       });
     },
     editItem(row) {
+      if(row.drawType==1){
+        this.drawType='警戒线'
+      }else{
+        this.drawType='任务区'
+      }
       this.$refs.edit.setData(row);
       this.dialog.isVisible = true;
-      this.dialog.title = "修改标志区";
+      this.dialog.title = this.drawType;
       this.markShow = false;
     },
 
@@ -283,14 +289,19 @@ export default {
     },
     // 删除
     deleteItem(row) {
-      this.$confirm("确认删除该标志区吗")
+      if(row.drawType==1){
+        this.drawType='警戒线'
+      }else{
+        this.drawType='任务区'
+      }
+      this.$confirm("确认删除该"+this.drawType+"吗")
         .then(() => {
           this.$delete(`/api/common-place`, {
             id: row.id,
           })
             .then(() => {
               this.$message({
-                message: "标志区删除成功",
+                message: "删除成功",
                 type: "success",
               });
             })
@@ -307,7 +318,7 @@ export default {
     },
     add() {
       this.dialog.isVisible = true;
-      this.dialog.title = "添加标志区";
+      this.dialog.title = "添加警戒线/任务区";
     },
     // 搜索
     search() {

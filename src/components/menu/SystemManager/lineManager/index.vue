@@ -32,7 +32,7 @@
     </div>
     <div class="manager_table">
       <el-table :data="tableData" border style="width: 100%">
-         <el-table-column label="序号" width="70px" align="center">
+        <el-table-column label="序号" width="70px" align="center">
           <template slot-scope="scope">
             {{ (pagination.num - 1) * pagination.size + scope.$index + 1 }}
           </template>
@@ -77,17 +77,17 @@
           label="起始颜色"
           prop="role-name"
           align="center"
-          width="120px"
+          width="210px"
         >
           <template slot-scope="scope">
             <el-row :gutter="10" class="colorRange">
-              <el-col :span="8">
+              <el-col :span="4">
                 <div
                   class="colorItem"
                   :style="{ background: scope.row.scolor }"
                 ></div>
               </el-col>
-              <el-col :span="16">
+              <el-col :span="20">
                 <div>{{ scope.row.scolor }}</div>
               </el-col>
             </el-row>
@@ -97,17 +97,17 @@
           label="终止颜色"
           prop="role-name"
           align="center"
-          width="120px"
+          width="210px"
         >
           <template slot-scope="scope">
             <el-row :gutter="10" class="colorRange">
-              <el-col :span="8">
+              <el-col :span="4">
                 <div
                   class="colorItem"
                   :style="{ background: scope.row.ecolor }"
                 ></div>
               </el-col>
-              <el-col :span="16">
+              <el-col :span="20">
                 <div>{{ scope.row.ecolor }}</div>
               </el-col>
             </el-row>
@@ -125,7 +125,9 @@
                 <el-tooltip
                   effect="dark"
                   placement="top-start"
-                  v-for="(item, index) in scope.row.colorValues.split(',')"
+                  v-for="(item, index) in getColorList(
+                    scope.row.colorValues.split(',')
+                  )"
                   :key="index"
                   style="outline-width: 0"
                 >
@@ -267,6 +269,33 @@ export default {
     ...mapMutations({
       setMenuList: "menuBar/setMenuList",
     }),
+    // 获取rgba值
+    getRgba(color) {
+      let rgbaArr = [];
+      for (let i = 1; i < 9; i += 2) {
+        rgbaArr.push(parseInt("0x" + color.slice(i, i + 2)));
+      }
+      let str =
+        "rgba(" +
+        parseInt(rgbaArr[0]) +
+        "," +
+        parseInt(rgbaArr[1]) +
+        "," +
+        parseInt(rgbaArr[2]) +
+        "," +
+        (parseInt(rgbaArr[3]) / 255).toFixed(2) +
+        ")";
+      return str;
+    },
+    // 获取rgba颜色列表
+    getColorList(list) {
+      let arr = []
+      list.forEach((item,index)=>{
+        arr.push(this.getRgba(item))
+      })
+      return arr
+    },
+
     getTypeImg(type) {
       switch (type) {
         case "实线":
@@ -310,7 +339,7 @@ export default {
             message: "取消删除",
             type: "information",
           });
-        })
+        });
     },
     add() {
       console.log("添加");
@@ -335,7 +364,6 @@ export default {
           console.log(res.data.data, `res.data.data`);
           this.total = res.data.data.total;
           this.tableData = res.data.data.rows;
-          console.log(this.tableData);
         }
       });
     },
@@ -353,5 +381,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

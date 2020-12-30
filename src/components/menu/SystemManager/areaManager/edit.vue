@@ -96,6 +96,12 @@ export default {
         callback(new Error("经度不能为空"));
       } else if (!longreg.test(value)) {
         callback(new Error("经度整数部分为0-180,小数部分为0到6位!"));
+      } else if (
+        this.formData.minLon &&
+        this.formData.maxLon &&
+        this.formData.maxLon <= this.formData.maxLon
+      ) {
+        callback(new Error("最大经度需大于最小经度"));
       } else {
         return callback();
       }
@@ -106,6 +112,15 @@ export default {
         callback(new Error("纬度不能为空"));
       } else if (!latreg.test(value)) {
         callback(new Error("纬度整数部分为0-90,小数部分为0到6位"));
+      } else if (
+        this.formData.minLat &&
+        this.formData.maxLat &&
+        this.formData.maxLat <= this.formData.minLat
+      ) {
+        console.log(this.formData.maxLat);
+        console.log(this.formData.minLat);
+
+        callback(new Error("最大纬度需大于最小纬度"));
       } else {
         return callback();
       }
@@ -113,7 +128,6 @@ export default {
 
     return {
       data: {},
-      rules: {},
       formData: {
         name: "",
         minLon: "",
@@ -170,9 +184,12 @@ export default {
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          if(this.formData.minLon>=this.formData.maxLon||this.formData.minLat>=this.formData.maxLat){
-            this.$message.warning('请输入正确的经纬度值')
-          }else if (this.title === "添加区域") {
+          if (
+            this.formData.minLon >= this.formData.maxLon ||
+            this.formData.minLat >= this.formData.maxLat
+          ) {
+            this.$message.warning("请输入正确的经纬度值");
+          } else if (this.title === "添加区域") {
             this.$post("/api/region-division", this.formData)
               .then(() => {
                 this.$message({
@@ -228,7 +245,7 @@ export default {
   },
 };
 </script>
-<style lang='scss'>
+<style lang="scss">
 .el-dialog {
   border: 8px;
 }
