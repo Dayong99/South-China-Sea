@@ -14,43 +14,42 @@ const state = {
    */
   realTimeValue: null,
   // 数据源
-  sourceType: 1,
+  sourceType: 2,
   // 刷新时间标识
   reloadTime: false,
 }
 
 const actions = {
-  
+
 }
 
 // 改变参数的方法
 const mutations = {
-  setMenuItemList(state, val) {
-    state.menuItemList = val
-    console.log('store menuItemList', state.menuItemList);
-  },
-  setLevelList(state, val) {
-    state.levelList = val
-    console.log('levelList--change', state.levelList);
-  },
-  setNowLevel(state, val) {
-    state.nowLevel = val
-  },
-  setRealTimeValue(state, val) {
-    state.realTimeValue = val
-  },
-  setSourceType(state, val) {
-    state.sourceType = val
-  },
-  setReloadTime(state) {
-    state.reloadTime = !state.reloadTime
-  }
+    setMenuItemList(state, val) {
+        state.menuItemList = val
+        console.log('store menuItemList', state.menuItemList);
+    },
+    setLevelList(state, val) {
+        state.levelList = val
+        console.log('levelList--change', state.levelList);
+    },
+    setNowLevel(state, val) {
+        state.nowLevel = val
+    },
+    setRealTimeValue(state, val) {
+        state.realTimeValue = val
+    },
+    setSourceType(state, val) {
+        state.sourceType = val
+    },
+    setReloadTime(state) {
+        state.reloadTime = !state.reloadTime
+    }
 }
 
 export default {
-  namespaced: true,
-  state,
-  mutations,
-  actions
+    namespaced: true,
+    state,
+    mutations,
+    actions
 }
-
