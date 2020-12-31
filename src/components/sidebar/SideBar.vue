@@ -48,7 +48,6 @@
           active-text="风"
           active-color="#fa5433"
           class="el_switch"
-          
         >
         </el-switch>
       </div>
@@ -946,7 +945,7 @@ export default {
     });
 
     L.CustomPopup = L.Popup.extend({
-      _initLayout: function() {
+      _initLayout: function () {
         var prefix = "leaflet-popup",
           container = (this._container = L.DomUtil.create(
             "div",
@@ -971,7 +970,7 @@ export default {
 
     // add bindCustomPopup
     L.Layer.include({
-      bindCustomPopup: function(content, options) {
+      bindCustomPopup: function (content, options) {
         if (content instanceof L.Popup) {
           L.setOptions(content, options);
           this._popup = content;
@@ -1842,12 +1841,8 @@ export default {
         this.setChangeDateIndex(2); // 重置为第三个日期
         this.tidalData.timeList = [];
         let now = this.$m(this.day).format("MM-DD");
-        let yestoday = this.$m(this.day)
-          .subtract(1, "days")
-          .format("MM-DD");
-        let lastday = this.$m(this.day)
-          .subtract(2, "days")
-          .format("MM-DD");
+        let yestoday = this.$m(this.day).subtract(1, "days").format("MM-DD");
+        let lastday = this.$m(this.day).subtract(2, "days").format("MM-DD");
         this.tidalData.timeList.push(lastday);
         this.tidalData.timeList.push(yestoday);
         this.tidalData.timeList.push(now);
@@ -1874,7 +1869,7 @@ export default {
         .then((res) => {
           if (res.status == 200) {
             let tidalList = res.data.data;
-            console.log("tidalList", tidalList);
+            console.log("tidalList修改", tidalList);
             this.tidalData.tidalList = [];
             let time = null;
             this.clearChart();
@@ -1884,42 +1879,66 @@ export default {
               tidalList != null &&
               tidalList != undefined
             ) {
+              // 高低潮数据列表
+              let tidalLists = [];
               this.setTidalMsgFlag(false);
               // 最大值和最小值
-              let maxObj = tidalList[0];
-              let minObj = tidalList[0];
+              tidalList.forEach((e, i) => {
+                console.log(e, `tidalListItem`);
+                
+                if (e.tidalType === 2) {
+                  console.log("第一低潮", e);
+                  let time = e.tidalTime.split('T')[1]
+                  let tidal = {
+                    tidalTime: `${time.split(':')[0]}时${time.split(':')[1]}分`,
+                    name: `第一低潮`,
+                    height: e.height
+                  };
+                  tidalLists.push(tidal)
+                  return;
+                }
+                if (e.tidalType === 1) {
+                  let time = e.tidalTime.split('T')[1]
+                  let tidal = {
+                    tidalTime: `${time.split(':')[0]}时${time.split(':')[1]}分`,
+                    name: `第二低潮`,
+                    height: e.height
+                  };
+                  tidalLists.push(tidal)
+                  return
+                }
+                if (e.tidalType === 3) {
+                  console.log("第一高潮", e);
+                  let time = e.tidalTime.split('T')[1]
+                  let tidal = {
+                    tidalTime: `${time.split(':')[0]}时${time.split(':')[1]}分`,
+                    name: `第一高潮`,
+                    height: e.height
+                  };
+                  tidalLists.push(tidal)
+                  return;
+                }
+                if (e.tidalType === 4) {
+                  console.log("第二高潮", e);
+                  let time = e.tidalTime.split('T')[1]
+                  let tidal = {
+                    tidalTime: `${time.split(':')[0]}时${time.split(':')[1]}分`,
+                    name: `第二高潮`,
+                    height: e.height
+                  };
+                  tidalLists.push(tidal)
+                  return;
+                }
+              });
+              console.log(tidalLists,`tidalListstidalListstidalLists`)
+              this.tidalData.tidalList = tidalLists
               for (let i = 0; i < tidalList.length; i++) {
-                if (maxObj.height < tidalList[i].height) {
-                  maxObj = tidalList[i];
-                }
-                if (minObj.height > tidalList[i].height) {
-                  minObj = tidalList[i];
-                }
                 let time = this.$m(tidalList[i].tidalTime).format("HH");
                 this.tidalCharts.xdata.push(time);
                 this.tidalCharts.ydata.push(tidalList[i].height);
               }
               // 绘制图表
               this.setTidalCharts(this.tidalCharts);
-
-              this.tidalData.tidalList.push(this._.cloneDeep(maxObj));
-              time = this.$m(this.tidalData.tidalList[0].tidalTime).format(
-                "hh-mm"
-              );
-              this.tidalData.tidalList[0].tidalTime =
-                time.split("-")[0] + "时" + time.split("-")[1] + "分";
-              this.tidalData.tidalList[0].name = "第一高潮";
-              this.tidalData.tidalList[0].type = "max";
-              this.tidalData.tidalList.push(this._.cloneDeep(minObj));
-              time = this.$m(this.tidalData.tidalList[1].tidalTime).format(
-                "hh-mm"
-              );
-              this.tidalData.tidalList[1].tidalTime =
-                time.split("-")[0] + "时" + time.split("-")[1] + "分";
-              this.tidalData.tidalList[1].name = "第一低潮";
-              this.tidalData.tidalList[1].type = "min";
-              console.log("tidalList", this.tidalData.tidalList);
-
               // 传递面板数据
               this.setTidalData(this.tidalData);
             } else {

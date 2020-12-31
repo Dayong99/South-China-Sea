@@ -3,7 +3,7 @@
   <el-dialog
     title="导入海浪"
     width="500px"
-    top="50px"
+    top="200px"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :visible.sync="isVisible"

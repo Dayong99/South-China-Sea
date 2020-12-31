@@ -3,7 +3,7 @@
   <el-dialog
     :title="title"
     width="700px"
-    top="50px"
+    top="100px"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :visible.sync="isVisible"
