@@ -339,7 +339,7 @@ export default {
   computed: {
     ...mapState({
       algorithmOptions: (state) => state.menuBar.algorithmOptions,
-      algorithmList:(state)=>state.menuBar.algorithmList,
+      showList:(state)=>state.menuBar.showList,
       nowIndex:(state) => state.menuBar.nowIndex
     }),
   },
@@ -378,7 +378,7 @@ export default {
   methods: {
     ...mapMutations({
       setAlgorithm: "menuBar/setAlgorithm",
-      setAlgorithmShowAlgorithm:"menuBar/setAlgorithmShowAlgorithm"
+      setShowAlgorithm:"menuBar/setShowAlgorithm"
     }),
     // 修改节点名称
     confirmNodeName() {
@@ -406,7 +406,9 @@ export default {
     // 关闭评估窗口
     closeManager() {
       this.algorithmShow = false;
-      this.setAlgorithmShowAlgorithm(this.nowIndex);
+      if(this.algorithmOptions[0] == 1){
+        this.setShowAlgorithm(this.nowIndex);
+      }
       this.title = null;
       this.activeNodeIndex = [];
       this.editNodeInfo = {

@@ -168,7 +168,7 @@
 
                       <!-- 航线评估按钮 -->
                       <img
-                            :src="algorithmList[indexRoute].showAlgorithm
+                            :src="showList[indexRoute].showAlgorithm
                                 ? AssessControlSrc.assess.active
                                 : AssessControlSrc.assess.deactive
                             "
@@ -179,7 +179,7 @@
                       <!-- 航线编辑按钮 -->
                       <img
                         :src="
-                          algorithmList[indexRoute].showEdit
+                          showList[indexRoute].showEdit
                             ? AssessControlSrc.edit.active
                             : AssessControlSrc.edit.deactive
                         "
@@ -480,7 +480,7 @@ export default {
       pointInfo: (state) => state.clickup.pointInfo,
       TaskManagerOptions: (state) => state.menuBar.TaskManagerOptions,
       routeDialogOptions: (s) => s.menuBar.routeDialogOptions,
-      algorithmList:(s)=>s.menuBar.algorithmList,
+      showList:(s)=>s.menuBar.showList,
       algorithmOptions: (s) => s.menuBar.algorithmOptions,
     }),
 
@@ -640,9 +640,9 @@ export default {
       setPointInfoShow: "clickup/setPointInfoShow",
       setInfoShow: "clickup/setInfoShow",
       setAssessLegendShow: "menuBar/setAssessLegendShow",
-      setAlgorithmList:"menuBar/setAlgorithmList",
-      setAlgorithmShowAlgorithm:"menuBar/setAlgorithmShowAlgorithm",
-      setAlgorithmShowEdit:"menuBar/setAlgorithmShowEdit",
+      setshowList:"menuBar/setshowList",
+      setShowAlgorithm:"menuBar/setShowAlgorithm",
+      setShowEdit:"menuBar/setShowEdit",
     }),
     // 任务树setting
     AssessSetting(itemAssess) {
@@ -677,12 +677,12 @@ export default {
     },
     // 新建评估
     algorithm(itemRoute, indexRoute) {
-      this.setAlgorithmShowAlgorithm(indexRoute)
-      console.log(this.algorithmList[indexRoute].showAlgorithm,`this.algorithmOptions[indexRoute].showAlgorithm`)
-      if(this.algorithmList[indexRoute].showAlgorithm==true){
-        this.setAlgorithm([1,this.algorithmList[indexRoute]]);
+      this.setShowAlgorithm(indexRoute)
+      console.log(this.showList[indexRoute].showAlgorithm,`this.algorithmOptions[indexRoute].showAlgorithm`)
+      if(this.showList[indexRoute].showAlgorithm==true){
+        this.setAlgorithm([1,this.showList[indexRoute]]);
       }else{
-        this.setAlgorithm([0,this.algorithmList[indexRoute]]);
+        this.setAlgorithm([0,this.showList[indexRoute]]);
       }
     },
     // 新增航线
@@ -810,8 +810,8 @@ export default {
                 assessList: [],
               };
             });
-            this.setAlgorithmList(this.taskList[index].routeList)
-            console.log(this.algorithmList,"this.algorithmList, loadRouteList");
+            this.setshowList(this.taskList[index].routeList)
+            console.log(this.showList,"this.showList, loadRouteList");
           }
         })
         .catch(() => {
@@ -838,8 +838,8 @@ export default {
                 assessList: [],
               };
             });
-            this.setAlgorithmList(this.taskList[index].routeList)
-            console.log(this.algorithmList,"this.algorithmList, reLoadRouteList");
+            this.setshowList(this.taskList[index].routeList)
+            console.log(this.showList,"this.showList, reLoadRouteList");
           }
         })
         .catch(() => {
@@ -1982,7 +1982,7 @@ export default {
     // 航线编辑
     editRoute(itemRoute, indexRoute, index) {
       // itemRoute.showEdit = !itemRoute.showEdit
-      this.setAlgorithmShowEdit(indexRoute)
+      this.setShowEdit(indexRoute)
       // false 不刷新    true 刷新
       this.setRouteDialogOptions([2, itemRoute, index, false]);
     },

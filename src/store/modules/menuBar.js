@@ -81,7 +81,7 @@ const state = {
     ],
     TaskManagerOptions: 0, // 0 不显示 1 添加 2 修改
     routeDialogOptions: 0, // 0不显示 1添加航线 2 修改航线
-    algorithmList: [],
+    showList: [], // 航线列表子项操作显示
     algorithmOptions: [0, {}], // 0不显示 1新增算法参数 2 修改算法参数
     routeAlgorithmInfo: 0, // 0不显示 1查看评估结果
     assessLegendShow: false, // 评估结果图例
@@ -97,34 +97,34 @@ const mutations = {
     setMenuList(state, val) {
         state.menuList = val
     },
-    setAlgorithmList(state, val) {
-        state.algorithmList = val
+    setshowList(state, val) {
+        state.showList = val
     },
     setAlgorithm(state, val) {
         state.algorithmOptions = val
         console.log(state.algorithmOptions, `state.setAlgorithm`)
     },
     // 评估参数配置显示
-    setAlgorithmShowAlgorithm(state, indexRoute) {
+    setShowAlgorithm(state, indexRoute) {
         state.nowIndex = indexRoute
-        if (state.algorithmList[indexRoute].showAlgorithm == true) {
-            state.algorithmList[indexRoute].showAlgorithm = !state.algorithmList[indexRoute].showAlgorithm
+        if (state.showList[indexRoute].showAlgorithm == true) {
+            state.showList[indexRoute].showAlgorithm = !state.showList[indexRoute].showAlgorithm
             state.algorithmOptions[0] = 0
         } else {
-            state.algorithmList.forEach(item => item.showAlgorithm = false)
-            state.algorithmList[indexRoute].showAlgorithm = true
+            state.showList.forEach(item => item.showAlgorithm = false)
+            state.showList[indexRoute].showAlgorithm = true
             state.algorithmOptions[0] = 1
         }
     },
     // 航线编辑显示
-    setAlgorithmShowEdit(state, indexRoute) {
+    setShowEdit(state, indexRoute) {
         state.nowIndex = indexRoute
-        if (state.algorithmList[indexRoute].showEdit == true) {
-            state.algorithmList[indexRoute].showEdit = !state.algorithmList[indexRoute].showEdit
+        if (state.showList[indexRoute].showEdit == true) {
+            state.showList[indexRoute].showEdit = !state.showList[indexRoute].showEdit
             state.routeDialogOptions = 0
         } else {
-            state.algorithmList.forEach(item => item.showEdit = false)
-            state.algorithmList[indexRoute].showEdit = true
+            state.showList.forEach(item => item.showEdit = false)
+            state.showList[indexRoute].showEdit = true
             state.routeDialogOptions = 2
         }
     },
