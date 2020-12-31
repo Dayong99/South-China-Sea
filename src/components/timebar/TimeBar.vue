@@ -13,7 +13,7 @@
       placeholder="选择日期"
       size="mini"
       value-format="yyyy-MM-dd"
-      style="width:128px;position:absolute;left:10px; top:-19px;"
+      style="width:128px;position:absolute;left:0px; top:-19px;"
       @change="getDay"
     />
 
@@ -29,11 +29,7 @@
         </el-option>
       </el-select>
 
-      <el-select
-        v-model="timeForcast"
-        placeholder="起报时间"
-        size="small"
-      >
+      <el-select v-model="timeForcast" placeholder="起报时间" size="small">
         <el-option
           v-for="item in timeForcastList"
           :key="item.value"
@@ -65,6 +61,12 @@
         @mousemove="showTip"
         @mouseleave="hideTip"
       />
+      <ul class="time_ul">
+        <li v-for="(item,index) in hasDataList" :key="index">
+          <div class="greenCircle" :style="{ left: item }" @click="click"></div>
+        </li>
+      </ul>
+      <!-- <div class="div1" @click="click"></div> -->
     </div>
 
     <!-- 划过提示框 -->
@@ -87,8 +89,18 @@
     </div>
 
     <!-- 播放按钮 -->
-    <div id="playpause" style="left:256px;" @click="changeIcon">
+    <div id="playpause" @click="changeIcon">
       <i :class="iconData" />
+    </div>
+    <!-- 切换下一个时间点 -->
+    <div class="next" @click="nextTime">
+      <!-- <i class="el-icon-arrow-right" @click="nextTime"></i> -->
+      <img src="@/assets/images/timebar/next.svg" />
+    </div>
+    <!-- 切换上一个时间点 -->
+    <div class="prev" @click="prevTime">
+      <!-- <i class="el-icon-arrow-left"></i> -->
+      <img src="@/assets/images/timebar/prev.svg" />
     </div>
   </div>
 </template>
@@ -128,7 +140,7 @@ export default {
       itemtimeIndex: 0, // 时间段
 
       // 时次
-      num: 8,
+      num: 24,
 
       // 时间段长度
       bItem: 0, // 天数
@@ -197,31 +209,36 @@ export default {
       timeInterval: 3,
 
       // 起报时间
-      timeForcast: '02',
-      timeForcastList: [{
-        value: '02',
-        label: '02:00',
-      }, {
-        value: '08',
-        label: '08:00',
-      }, {
-        value: '14',
-        label: '14:00',
-      },
-      {
-        value: '20',
-        label: '20:00',
-      }]
+      timeForcast: "20",
+      timeForcastList: [
+        {
+          value: "00", //02
+          label: "00:00",
+        },
+        {
+          value: "08",
+          label: "08:00",
+        },
+        {
+          value: "12", //14
+          label: "12:00",
+        },
+        {
+          value: "20",
+          label: "20:00",
+        },
+      ],
+      hasDataList: [],
     };
   },
   created() {},
   computed: {
     ...mapState({
-      sourceType: state => state.sideBar.sourceType,
+      sourceType: (state) => state.sideBar.sourceType,
       // 所有要素类型
-      menuItemList: state => state.sideBar.menuItemList,
+      menuItemList: (state) => state.sideBar.menuItemList,
       // 刷新时间
-      reloadTime: state => state.sideBar.reloadTime,
+      reloadTime: (state) => state.sideBar.reloadTime,
     }),
     // 单个日期宽度
     dayWidth: function() {
@@ -235,71 +252,82 @@ export default {
     },
   },
   watch: {
-    timeLevel(newval) {
-      this.calendarList.forEach((item, index) => {
-        this.calendarList[index].timeArr = newval;
-      });
-      console.log("object");
+    // timeLevel(newval) {
+    //   this.calendarList.forEach((item, index) => {
+    //     this.calendarList[index].timeArr = newval;
+    //   });
+    //   console.log("object");
 
-      // 时次改变时间轴改变
-      this.resetPlay();
+    //   // 时次改变时间轴改变
+    //   this.resetPlay();
 
-      // 基数
-      this.num = newval.length;
-      // 初始化当前时间
-      this.showday =
-        this.calendarList[0].day + " - " + this.calendarList[0].timeArr[0];
-      // 时间数组长度
-      this.dayListLength = this.calendarList.length;
-      // 分割的总个数
-      this.count = this.dayListLength * newval.length;
-      // 时间段长度
-      this.bItem = this.totalwidth / this.dayListLength;
-      this.sItem = this.totalwidth / this.count;
-    },
+    //   // 基数
+    //   this.num = newval.length;
+    //   // 初始化当前时间
+    //   this.showday =
+    //     this.calendarList[0].day + " - " + this.calendarList[0].timeArr[0];
+    //   // 时间数组长度
+    //   this.dayListLength = this.calendarList.length;
+    //   // 分割的总个数
+    //   this.count = this.dayListLength * newval.length;
+    //   // 时间段长度
+    //   this.bItem = this.totalwidth / this.dayListLength;
+    //   this.sItem = this.totalwidth / this.count;
+    // },
     // 时间间隔变化
-    timeInterval(newval) {
-      if (newval === 1) {
-        this.num = 24;
-      } else if (newval === 3) {
-        this.num = 8;
-      } else if (newval === 6) {
-        this.num = 4;
-      } else if (newval === 12) {
-        this.num = 2;
-      } else if (newval === 24) {
-        this.num = 1;
-      }
+    // timeInterval(newval) {
+    //   if (newval === 1) {
+    //     this.num = 24;
+    //   } else if (newval === 3) {
+    //     this.num = 8;
+    //   } else if (newval === 6) {
+    //     this.num = 4;
+    //   } else if (newval === 12) {
+    //     this.num = 2;
+    //   } else if (newval === 24) {
+    //     this.num = 1;
+    //   }
 
-      this.timeFlag = false;
-      this.getLatestTime();
-      // 初始化当前时间
-      this.showday =
-        this.calendarList[0].day + " " + this.calendarList[0].timeArr[0];
-      // this.showday = "2020-08-01 03:00"
-      // 时间数组长度
-      this.dayListLength = this.calendarList.length;
-      // 分割的总个数
-      this.count = this.dayListLength * this.num;
-      // 时间段长度
-      this.bItem = this.totalwidth / this.dayListLength;
-      // console.log(this.bItem)
-      this.sItem = this.totalwidth / this.count;
+    //   this.timeFlag = false;
+    //   this.getLatestTime();
+    //   // 初始化当前时间
+    //   this.showday =
+    //     this.calendarList[0].day + " " + this.calendarList[0].timeArr[0];
+    //   // this.showday = "2020-08-01 03:00"
+    //   // 时间数组长度
+    //   this.dayListLength = this.calendarList.length;
+    //   // 分割的总个数
+    //   this.count = this.dayListLength * this.num;
+    //   // 时间段长度
+    //   this.bItem = this.totalwidth / this.dayListLength;
+    //   // console.log(this.bItem)
+    //   this.sItem = this.totalwidth / this.count;
 
-      this.changeTime(this.showday)
-      // this.$store.commit("changeTime", this.showday);
+    //   this.changeTime(this.showday);
+    //   // this.$store.commit("changeTime", this.showday);
 
-      this.resetPlay();
-    },
+    //   this.resetPlay();
+    // },
     // 起报时间
     timeForcast(newval) {
-      this.setTimeForcast(newval)
+      this.setTimeForcast(newval);
+      //起报时间变化时，根据起报时间重新获取有数据的时间点
+      let startTime = this.dateVal + " " + this.timeForcast + ":00:00";
+      this.getTypeTime(startTime);
     },
     // 刷新时间
     reloadTime(newval) {
-      this.currentId = this.menuItemList[this.menuItemList.length - 1].id
+      this.currentId = this.menuItemList[this.menuItemList.length - 1].id;
       this.timeFlag = false;
-      this.getTypeTime()
+      let startTime = this.dateVal + " " + this.timeForcast + ":00:00";
+      //刷新时间时，传起报时间获取时间列表
+      this.getTypeTime(startTime);
+    },
+
+    dateVal(newVal){
+      // console.log(newVal,"新的时间");
+      let startTime = this.dateVal + " " + this.timeForcast + ":00:00";
+      this.getTypeTime(startTime);
     }
   },
   mounted() {
@@ -331,6 +359,7 @@ export default {
         .then((res) => {
           if (res.status == 200) {
             this.currentId = res.data.data[0].id;
+            //初始化时，不传起报时间获取时间列表
             this.getTypeTime();
           }
         })
@@ -367,8 +396,8 @@ export default {
   },
   methods: {
     ...mapMutations({
-      setTimeForcast: 'time/setTimeForcast',
-      changeTime: 'time/changeTime'
+      setTimeForcast: "time/setTimeForcast",
+      changeTime: "time/changeTime",
     }),
     // 获取选择的时间
     getDay() {
@@ -378,52 +407,172 @@ export default {
       } else {
         this.timeFlag = false;
       }
-      this.changeTime(this.dateVal + " 00:00")
+      this.changeTime(this.dateVal + " 00:00");
       // this.$store.commit("changeTime", this.dateVal + " 00:00");
       this.getLatestTime();
     },
 
     //获得最近有数据的时间点
-    getTypeTime() {
-      const date = new Date();
-      const year = date.getFullYear();
-      const month =
-        date.getMonth() + 1 < 10
-          ? "0" + (date.getMonth() + 1)
-          : date.getMonth() + 1;
-      const day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-      const hour =
-        date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-      const minute =
-        date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-      let time = year + "-" + month + "-" + day + " " + hour + ":" + minute;
-      console.log("当前系统时间", time);
-      this.$get("/api/numerical-forecast/trygettime", {
-        time: time,
-        type: this.currentId,
-      }).then((res) => {
-        let timeArr = res.data.data.split(" ");
-        console.log(timeArr);
-        // const hour = Number(timeArr[1])<10?'0'+Number(timeArr[1])<10:Number(timeArr[1])<10
-        this.dateVal = timeArr[0];
-        this.getLatestTime();
-        // 初始化当前时间
-        this.showday =
-          this.calendarList[0].day + " " + this.calendarList[0].timeArr[0];
-        // this.showday = "2020-08-01 03:00"
-        // 时间数组长度
-        this.dayListLength = this.calendarList.length;
-        // 分割的总个数
-        this.count = this.dayListLength * this.num;
-        // 时间段长度
-        this.bItem = this.totalwidth / this.dayListLength;
-        // console.log(this.bItem)
-        this.sItem = this.totalwidth / this.count;
+    getTypeTime(startTime) {
+      // const date = new Date();
+      // const year = date.getFullYear();
+      // const month =
+      //   date.getMonth() + 1 < 10
+      //     ? "0" + (date.getMonth() + 1)
+      //     : date.getMonth() + 1;
+      // const day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+      // const hour =
+      //   date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+      // const minute =
+      //   date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+      // let time = year + "-" + month + "-" + day + " " + hour + ":" + minute;
+      // console.log("当前系统时间", time);
+      // this.$get("/api/numerical-forecast/trygettime", {
+      //   time: time,
+      //   type: this.currentId,
+      // }).then((res) => {
+      //   let timeArr = res.data.data.split(" ");
+      //   console.log(timeArr);
+      //   // const hour = Number(timeArr[1])<10?'0'+Number(timeArr[1])<10:Number(timeArr[1])<10
+      //   this.dateVal = timeArr[0];
+      //   this.getLatestTime();
+      //   // 初始化当前时间
+      //   this.showday =
+      //     this.calendarList[0].day + " " + this.calendarList[0].timeArr[0];
+      //   // this.showday = "2020-08-01 03:00"
+      //   // 时间数组长度
+      //   this.dayListLength = this.calendarList.length;
+      //   // 分割的总个数
+      //   this.count = this.dayListLength * this.num;
+      //   // 时间段长度
+      //   this.bItem = this.totalwidth / this.dayListLength;
+      //   // console.log(this.bItem)
+      //   this.sItem = this.totalwidth / this.count;
 
-        this.changeTime(this.showday)
+      //   this.changeTime(this.showday);
 
-        this.resetPlay();
-      });
+      //   this.resetPlay();
+      // });
+      if (startTime) {
+        this.$get("api/numerical-forecast/trygettime-list", {
+          startTime: startTime,
+          type: this.currentId,
+        }).then((res) => {
+          console.log(res.data.data, "根据起报时间获取时间列表");
+          let data = res.data.data;
+          if (data.length != 0) {
+            this.dateVal = data[0].startDay;
+            this.getLatestTime();
+            // 初始化当前时间
+            this.showday =
+              this.calendarList[0].day + " " + this.calendarList[0].timeArr[0];
+            // this.showday = "2020-08-01 03:00"
+            // 时间数组长度
+            this.dayListLength = this.calendarList.length;
+            // 分割的总个数
+            this.count = this.dayListLength * this.num;
+            // 时间段长度
+            this.bItem = this.totalwidth / this.dayListLength;
+            // console.log(this.bItem)
+            this.sItem = this.totalwidth / this.count;
+            //初始化时间到有数据的时间点
+            this.item = 1 + data[0].startHours;
+            this.getLineData();
+
+            this.changeTime(this.showday);
+            console.log(this.calendarList, "时间轴时间列表");
+            //找出当前时间段内，有数据的时间点并计算偏移的位置
+            let start = new Date(
+              this.calendarList[0].day + " " + this.calendarList[0].timeArr[0]
+            ).getTime();
+            let end =
+              new Date(
+                this.calendarList[this.calendarList.length - 1].day +
+                  " " +
+                  this.calendarList[this.calendarList.length - 1].timeArr[0]
+              ).getTime() +
+              1 * 24 * 60 * 60 * 1000;
+            // console.log(start,end);
+            this.hasDataList = [];
+            const width =
+              ((document.body.clientWidth - 410) / 7).toFixed(1) / this.num;
+            data.forEach((item) => {
+              let time = new Date(
+                item.startDay + " " + item.startHours + ":00:00"
+              ).getTime();
+              if (time >= start && time < end) {
+                let dif = (time - start) / (1 * 60 * 60 * 1000);
+                this.hasDataList.push(width * dif - 3 + "px");
+              }
+            });
+          } else {
+            this.$message.warning("该起报时间无数据");
+            this.hasDataList = []
+            this.resetPlay()
+            this.changeTime(this.showday);
+          }
+
+          // this.resetPlay();
+        });
+      } else {
+        this.$get("api/numerical-forecast/trygettime-list", {
+          type: this.currentId,
+        }).then((res) => {
+          console.log(res.data.data, "根据起报时间获取时间列表");
+          let data = res.data.data;
+          if (data.length != 0) {
+            this.dateVal = data[0].startDay;
+            this.getLatestTime();
+            // 初始化当前时间
+            this.showday =
+              this.calendarList[0].day + " " + this.calendarList[0].timeArr[0];
+            // this.showday = "2020-08-01 03:00"
+            // 时间数组长度
+            this.dayListLength = this.calendarList.length;
+            // 分割的总个数
+            this.count = this.dayListLength * this.num;
+            // 时间段长度
+            this.bItem = this.totalwidth / this.dayListLength;
+            // console.log(this.bItem)
+            this.sItem = this.totalwidth / this.count;
+            //初始化时间到有数据的时间点
+            this.item = 1 + data[0].startHours;
+            this.getLineData();
+
+            this.changeTime(this.showday);
+            console.log(this.calendarList, "时间轴时间列表");
+            //找出当前时间段内有数据的时间点，并计算偏移的位置
+            let start = new Date(
+              this.calendarList[0].day + " " + this.calendarList[0].timeArr[0]
+            ).getTime();
+            let end =
+              new Date(
+                this.calendarList[this.calendarList.length - 1].day +
+                  " " +
+                  this.calendarList[this.calendarList.length - 1].timeArr[0]
+              ).getTime() +
+              1 * 24 * 60 * 60 * 1000;
+            // console.log(start,end);
+            this.hasDataList = [];
+            const width =
+              ((document.body.clientWidth - 410) / 7).toFixed(1) / this.num;
+            data.forEach((item) => {
+              let time = new Date(
+                item.startDay + " " + item.startHours + ":00:00"
+              ).getTime();
+              if (time >= start && time < end) {
+                let dif = (time - start) / (1 * 60 * 60 * 1000);
+                this.hasDataList.push(width * dif - 3 + "px");
+              }
+            });
+            // console.log(this.hasDataList);
+          }else{
+            this.$message.warning("暂无数据");
+          }
+
+          // this.resetPlay();
+        });
+      }
       // .catch(err=>{
       //   console.log(err.response.status);
       //   if(err.response.status==404){
@@ -495,7 +644,8 @@ export default {
           while (time < 24) {
             let str = time < 10 ? "0" + time : time;
             timeArr.push(str + ":00");
-            time += this.timeInterval;
+            // time += this.timeInterval;
+            time += 1;
           }
           obj.timeArr = timeArr;
           this.dateList.push(obj);
@@ -538,6 +688,7 @@ export default {
     // 进度条滑动场长度
     loadTo(a, b) {
       this.playPosition = event.offsetX + "px";
+      console.log(this.playPosition, "playPosition===========");
       this.nowTime = event.offsetX + 260 + "px";
       this.circlePosition = event.offsetX + 296 + "px";
 
@@ -552,7 +703,7 @@ export default {
       this.timeIndex = this.itemtimeIndex;
       this.item = this.itemdayIndex * this.num + (this.itemtimeIndex + 1);
       // 传递时间
-      this.changeTime(this.showday)
+      this.changeTime(this.showday);
       // this.$store.commit("changeTime", this.showday);
     },
     // 当前点的位置
@@ -634,11 +785,13 @@ export default {
     changeLine() {
       // 当前长度
       this.linewidth = Number(this.$refs.line.style.width.replace("px", ""));
-      if (this.item <= this.count) {
-        this.item++;
+      // if (this.item <= this.count) {
+      if (this.item + this.timeInterval <= this.count) {
+        // this.item++;
+        this.item += this.timeInterval;
 
         this.getLineData();
-        this.changeTime(this.showday)
+        this.changeTime(this.showday);
         // this.$store.commit("changeTime", this.showday);
       } else {
         this.resetPlay();
@@ -653,6 +806,37 @@ export default {
         clearInterval(this.timer);
       }
     },
+    //下一个时间点
+    nextTime() {
+      if (this.timer) {
+        this.iconData = this.playIcon;
+        clearInterval(this.timer);
+      }
+      this.changeLine();
+    },
+    //上一个时间点
+    prevTime() {
+      console.log("切换上一个时间点");
+      // 当前长度
+      this.linewidth = Number(this.$refs.line.style.width.replace("px", ""));
+      // if (this.item - 1 <= 0) {
+      if (this.item - this.timeInterval <= 0) {
+        this.resetPlay();
+      } else {
+        // this.item--;
+        this.item -= this.timeInterval;
+        this.getLineData();
+        this.changeTime(this.showday);
+        if (this.timer) {
+          this.iconData = this.playIcon;
+          clearInterval(this.timer);
+        }
+      }
+      // this.item = 4
+      // this.getLineData()
+      // this.changeTime(this.showday);
+    },
+    click() {},
   },
 };
 </script>

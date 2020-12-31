@@ -757,7 +757,8 @@ export default {
             for (var i = 0; i < dataArr.length; i++) {
               // var value = (dataArr[i][2] * 1852) / 3600; //海里/时=》米/秒
               var value = dataArr[i][2];
-              var rad = (Math.PI * (dataArr[i][3] - 180)) / 180; //度数=》弧度
+              var rad = (Math.PI * dataArr[i][3]) / 180; //度数=》弧度
+              // var rad = (Math.PI * (dataArr[i][3] - 180)) / 180; //度数=》弧度
               windUObj.data.push(value * Math.sin(rad));
               windVObj.data.push(value * Math.cos(rad));
               // var rad = (Math.PI * (270-dataArr[i][3])) / 180; //度数=》弧度
