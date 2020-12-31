@@ -49,7 +49,7 @@ var distanceMeasure = {
     distanceMeasure.points.push(e.latlng);
     if (distanceMeasure.polyline)
       map.removeLayer(distanceMeasure.polyline);
-    distanceMeasure.polyline = L.polyline(distanceMeasure.points, { showMeasurements: true, color: 'red', measurementOptions: { imperial:true } });
+    distanceMeasure.polyline = L.polyline(distanceMeasure.points, { showMeasurements: true, color: 'red', measurementOptions: { imperial:false } });
     distanceMeasure.polyline.addTo(distanceMeasure.layers);
     distanceMeasure.layers.addTo(map);
     distanceMeasure.points.pop();
