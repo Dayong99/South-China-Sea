@@ -192,7 +192,9 @@ export default {
     },
     closeManager() {
       this.routeManagerShow = false;
-      this.setShowEdit(this.nowIndex)
+      if(this.routeDialogOptions[0]==2){
+        this.setShowEdit(this.nowIndex)
+      }
       this.setRouteDialogOptions([0, this.routeDialogOptions[1], this.routeDialogOptions[2], false]);
       this.reset();
       if(this.lastLine) {
