@@ -126,6 +126,8 @@ export default {
   computed: {
     ...mapState({
       routeDialogOptions: (state) => state.menuBar.routeDialogOptions,
+      algorithmList:(state) => state.menuBar.algorithmList,
+      nowIndex:(state) => state.menuBar.nowIndex
     }),
   },
   watch: {
@@ -167,6 +169,7 @@ export default {
   methods: {
     ...mapMutations({
       setRouteDialogOptions: "menuBar/setRouteDialogOptions",
+      setAlgorithmShowEdit:"menuBar/setAlgorithmShowEdit"
     }),
     routeCustomClick() {
       this.routeCustomActive = !this.routeCustomActive;
@@ -189,6 +192,7 @@ export default {
     },
     closeManager() {
       this.routeManagerShow = false;
+      this.setAlgorithmShowEdit(this.nowIndex)
       this.setRouteDialogOptions([0, this.routeDialogOptions[1], this.routeDialogOptions[2], false]);
       this.reset();
       if(this.lastLine) {

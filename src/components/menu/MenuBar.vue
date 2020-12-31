@@ -96,6 +96,7 @@
               @click.stop="openTask(index)"
             />
           </div>
+          <!-- 任务管理列表 -->
           <ul class="list_task_ul" v-show="item.flag && flagList[0]">
             <li v-for="(item, index) in taskList" :key="index">
               <div class="task_list">
@@ -138,10 +139,13 @@
                   v-for="(itemRoute, indexRoute) in item.routeList"
                   :key="`route${indexRoute}`"
                 >
-                  <div
-                    @click="switchRoute(item, index, itemRoute, indexRoute)"
+                  <!-- <div
                     class="task_content_desc"
-                    :class="{ task_content_desc_active: itemRoute.checked }"
+                    :class="itemRoute.checked?'task_content_desc_active':''"
+                    @click="switchRoute(item, index, itemRoute, indexRoute)"
+                  > -->
+                  <div
+                    class="task_content_desc"
                   >
                     <div class="task_content_img">
                       <img src="@/assets/images/menu/lineTitle.svg" alt="" />
@@ -149,6 +153,7 @@
                     <div class="task_content_name">
                       {{ itemRoute.lineName }}
                     </div>
+                    <!-- 航线操作 -->
                     <div class="control_wrapper">
                       <!-- 航线详情按钮 -->
                       <img
@@ -163,8 +168,7 @@
 
                       <!-- 航线评估按钮 -->
                       <img
-                            :src="
-                              itemRoute.showAlorithm
+                            :src="algorithmList[indexRoute].showAlgorithm
                                 ? AssessControlSrc.assess.active
                                 : AssessControlSrc.assess.deactive
                             "
@@ -175,7 +179,7 @@
                       <!-- 航线编辑按钮 -->
                       <img
                         :src="
-                          itemRoute.edit
+                          algorithmList[indexRoute].showEdit
                             ? AssessControlSrc.edit.active
                             : AssessControlSrc.edit.deactive
                         "
@@ -476,6 +480,7 @@ export default {
       pointInfo: (state) => state.clickup.pointInfo,
       TaskManagerOptions: (state) => state.menuBar.TaskManagerOptions,
       routeDialogOptions: (s) => s.menuBar.routeDialogOptions,
+      algorithmList:(s)=>s.menuBar.algorithmList,
       algorithmOptions: (s) => s.menuBar.algorithmOptions,
     }),
 
@@ -635,6 +640,9 @@ export default {
       setPointInfoShow: "clickup/setPointInfoShow",
       setInfoShow: "clickup/setInfoShow",
       setAssessLegendShow: "menuBar/setAssessLegendShow",
+      setAlgorithmList:"menuBar/setAlgorithmList",
+      setAlgorithmShowAlgorithm:"menuBar/setAlgorithmShowAlgorithm",
+      setAlgorithmShowEdit:"menuBar/setAlgorithmShowEdit",
     }),
     // 任务树setting
     AssessSetting(itemAssess) {
@@ -669,9 +677,13 @@ export default {
     },
     // 新建评估
     algorithm(itemRoute, indexRoute) {
-      itemRoute.showAlorithm = !itemRoute.showAlorithm
-      console.log(itemRoute.showAlorithm,`itemRoute.showAlorithm`)
-      this.setAlgorithm([1, itemRoute]);
+      this.setAlgorithmShowAlgorithm(indexRoute)
+      console.log(this.algorithmList[indexRoute].showAlgorithm,`this.algorithmOptions[indexRoute].showAlgorithm`)
+      if(this.algorithmList[indexRoute].showAlgorithm==true){
+        this.setAlgorithm([1,this.algorithmList[indexRoute]]);
+      }else{
+        this.setAlgorithm([0,this.algorithmList[indexRoute]]);
+      }
     },
     // 新增航线
     addTaskItem(item, index) {
@@ -691,10 +703,11 @@ export default {
         this.taskList[index].checked = true;
       }
     },
-    switchRoute(item, index, itemRoute, indexRoute) {
-      this.taskList[index].routeList[indexRoute].checked = !this.taskList[index]
-        .routeList[indexRoute].checked;
-    },
+    // switchRoute(item, index, itemRoute, indexRoute) {
+    //   itemRoute.checked = !itemRoute.checked;
+    //   this.setAlgorithm([0,item.routeList])
+    //   console.log(this.algorithmOptions,"this.algorithmOptions switch");
+    // },
     editTaskItem(item) {
       this.setTaskManagerOptions([2, item]);
     },
@@ -791,11 +804,14 @@ export default {
               return {
                 ...e,
                 checked: false,
-                assessChecked: false,
+                showAlgorithm: false,
                 showRoute: false,
+                showEdit:false,
                 assessList: [],
               };
             });
+            this.setAlgorithmList(this.taskList[index].routeList)
+            console.log(this.algorithmList,"this.algorithmList, loadRouteList");
           }
         })
         .catch(() => {
@@ -816,12 +832,14 @@ export default {
               return {
                 ...e,
                 checked: false,
-                assessChecked: false,
+                showAlgorithm: false,
                 showRoute: false,
-                showAlorithm: false,
+                showEdit: false,
                 assessList: [],
               };
             });
+            this.setAlgorithmList(this.taskList[index].routeList)
+            console.log(this.algorithmList,"this.algorithmList, reLoadRouteList");
           }
         })
         .catch(() => {
@@ -1963,6 +1981,8 @@ export default {
 
     // 航线编辑
     editRoute(itemRoute, indexRoute, index) {
+      // itemRoute.showEdit = !itemRoute.showEdit
+      this.setAlgorithmShowEdit(indexRoute)
       // false 不刷新    true 刷新
       this.setRouteDialogOptions([2, itemRoute, index, false]);
     },
