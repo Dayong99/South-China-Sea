@@ -243,7 +243,7 @@ export default {
 
           let str;
           if (item.other2) {
-            str = '名称:'+item.placeName + " , 半径:" + item.other2 + "公里/海里";
+            str = '<div style="line-height:22px;">名称:'+item.placeName + "<br />半径:" + Number(item.other2).toFixed(2) + "公里/"+(Number(item.other2)*0.539956803456).toFixed(2)+"海里</div>";
           } else {
             str = '名称:'+item.placeName;
           }

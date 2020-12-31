@@ -6,9 +6,10 @@
         line-height: 18px;
         // display: block;
         align-self: flex-end;
-        margin-top: 30px;
+        margin-top: 13px;
         margin-right: 10px;
         padding: 2px 0px;
+        z-index: 999;
         &::before {
             position: absolute;
             top: 0;
@@ -19,81 +20,83 @@
             border-radius: 9px;
             content: ' ';
         }
-        .ghost-levelcode {
-            font-size: 10px;
-            position: absolute;
-            display: block;
-            box-sizing: border-box;
-            right: 1.5em;
-            .box {
-                // cursor: -webkit-grab;
-                // cursor: -moz-grab;
-                // cursor: grab;
-                position: relative;
-                background-color: rgba(68, 65, 65, 0.84);
-                color: white;
-                height: 1.8em;
-                box-sizing: border-box;
-                padding: 0 .8em;
-                white-space: nowrap;
-                text-align: center;
-                display: table-cell;
-                vertical-align: middle;
-                border-radius: .5em;
-                box-shadow: 0 0 4px 0 black;
-                &::before {
-                    top: .45em;
-                    right: -1em;
-                    border: solid transparent;
-                    content: ' ';
-                    height: 0;
-                    width: 0;
-                    position: absolute;
-                    border-left-color: rgba(68, 65, 65, 0.84);
-                    border-width: .5em;
-                    margin-left: -0.5em;
-                }
-            }
-        }
-        .main-levelcode {
-            font-size: 10px;
-            position: absolute;
-            display: block;
-            box-sizing: border-box;
-            right: 2.5em;
-            .box {
-                // cursor: -webkit-grab;
-                // cursor: -moz-grab;
-                // cursor: grab;
-                position: relative;
-                background-color: rgb(152, 26, 0);
-                color: white;
-                height: 1.8em;
-                box-sizing: border-box;
-                padding: 0 .8em;
-                white-space: nowrap;
-                text-align: center;
-                display: table-cell;
-                vertical-align: middle;
-                border-radius: .5em;
-                box-shadow: 0 0 4px 0 black;
-                &::before {
-                    top: .45em;
-                    right: -1em;
-                    border: solid transparent;
-                    content: ' ';
-                    height: 0;
-                    width: 0;
-                    position: absolute;
-                    border-left-color: rgb(152, 26, 0);
-                    border-width: .5em;
-                    margin-left: -0.5em;
-                }
-            }
-        }
+        // .ghost-levelcode {
+        //     font-size: 10px;
+        //     position: absolute;
+        //     display: block;
+        //     box-sizing: border-box;
+        //     right: 1.5em;
+        //     .box {
+        //         // cursor: -webkit-grab;
+        //         // cursor: -moz-grab;
+        //         // cursor: grab;
+        //         position: relative;
+        //         background-color: rgba(68, 65, 65, 0.84);
+        //         color: white;
+        //         height: 1.8em;
+        //         box-sizing: border-box;
+        //         padding: 0 .8em;
+        //         white-space: nowrap;
+        //         text-align: center;
+        //         display: table-cell;
+        //         vertical-align: middle;
+        //         border-radius: .5em;
+        //         box-shadow: 0 0 4px 0 black;
+        //         &::before {
+        //             top: .45em;
+        //             right: -1em;
+        //             border: solid transparent;
+        //             content: ' ';
+        //             height: 0;
+        //             width: 0;
+        //             position: absolute;
+        //             border-left-color: rgba(68, 65, 65, 0.84);
+        //             border-width: .5em;
+        //             margin-left: -0.5em;
+        //         }
+        //     }
+        // }
+        // .main-levelcode {
+        //     font-size: 10px;
+        //     position: absolute;
+        //     display: block;
+        //     box-sizing: border-box;
+        //     right: 2.5em;
+        //     .box {
+        //         // cursor: -webkit-grab;
+        //         // cursor: -moz-grab;
+        //         // cursor: grab;
+        //         position: relative;
+        //         background-color: rgb(152, 26, 0);
+        //         color: white;
+        //         height: 1.8em;
+        //         box-sizing: border-box;
+        //         padding: 0 .8em;
+        //         white-space: nowrap;
+        //         text-align: center;
+        //         display: table-cell;
+        //         vertical-align: middle;
+        //         border-radius: .5em;
+        //         box-shadow: 0 0 4px 0 black;
+        //         &::before {
+        //             top: .45em;
+        //             right: -1em;
+        //             border: solid transparent;
+        //             content: ' ';
+        //             height: 0;
+        //             width: 0;
+        //             position: absolute;
+        //             border-left-color: rgb(152, 26, 0);
+        //             border-width: .5em;
+        //             margin-left: -0.5em;
+        //         }
+        //     }
+        // }
         // 层级按钮全部可见后样式代码
         .level_list {
             position: absolute;
+            top: 0;
+            right: 18px;
             height: 100%;
             display: flex;
             flex-direction: column;
@@ -104,7 +107,6 @@
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
             font-size: 14px;
             line-height: 14px;
-            margin-left: -36px;
             .level_num {
                 display: flex;
                 justify-content: space-between;
@@ -117,7 +119,7 @@
                 .decoration {
                     width: 4px;
                     height: 4px;
-                    margin-left: 1px;
+                    margin-left: 2px;
                     background-color: rgba(0, 0, 0, 0.6);
                     transform: rotate(45deg);
                 }

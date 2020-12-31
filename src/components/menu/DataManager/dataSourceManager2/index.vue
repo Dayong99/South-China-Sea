@@ -67,6 +67,12 @@
         @click="exportNecp"
         >导入gfs</el-button
       >
+      <el-button
+        icon="el-icon-download"
+        class="operation_add"
+        @click="exportZC"
+        >导入总参</el-button
+      >
     </div>
     <div class="manager_table">
       <el-table :data="tableData" border style="width: 100%">
@@ -157,6 +163,8 @@
     <sea ref="sea" :dialog-visible="seaVisible" @close="closeDialogPage" />
     <temp ref="temp" :dialog-visible="tempVisible" @close="closeDialogPage" />
     <necp ref="necp" :dialog-visible="necpVisible" @close="closeDialogPage" />
+        <zc ref="zc" :dialog-visible="zcVisible" @close="closeDialogPage" />
+
   </div>
 </template>
 
@@ -167,6 +175,7 @@ import file from "./file.vue";
 import sea from "./seawater.vue";
 import temp from "./temperature.vue";
 import necp from "./necp.vue";
+import zc from "./zc.vue";
 
 export default {
   components: {
@@ -174,6 +183,7 @@ export default {
     sea,
     temp,
     necp,
+    zc,
     Pagination,
   },
   data() {
@@ -187,6 +197,7 @@ export default {
       seaVisible: false,
       tempVisible: false,
       necpVisible: false,
+      zcVisible:false,
       // 详细面板显示隐藏
       systemManagerShow: false,
       managerValue: "",
@@ -265,6 +276,9 @@ export default {
     exportNecp() {
       this.necpVisible = true;
     },
+     exportZC() {
+      this.zcVisible = true;
+    },
     // 搜索
     search() {
       if (this.time) {
@@ -308,6 +322,8 @@ export default {
       this.seaVisible = false;
       this.tempVisible = false;
       this.necpVisible = false;
+            this.zcVisible = false;
+
       this.fetch();
     },
     closeManager() {

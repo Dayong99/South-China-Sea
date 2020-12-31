@@ -391,6 +391,10 @@ export default {
           value: 1,
           label: "GFS",
         },
+        {
+          value: 2,
+          label: "总参",
+        },
       ],
       drawOption: [
         {

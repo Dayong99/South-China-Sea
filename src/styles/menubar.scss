@@ -1,7 +1,7 @@
 #menuBar {
     width: 300px;
     position: fixed;
-    top: 20px;
+    top: 14px;
     left: 12px;
     z-index: 999;
     display: flex;
@@ -46,8 +46,7 @@
             display: flex;
             align-items: center;
             margin-left: 8px;
-            margin-top:1px;
-            
+            margin-top: 1px;
             .input_left {
                 width: 32px;
                 height: 28px;
@@ -65,7 +64,7 @@
             }
             .input_content {
                 .search_content /deep/ .el-input__inner {
-                    line-height:28px;
+                    line-height: 28px;
                     height: 28px;
                     color: rgb(192, 192, 192);
                     border: none;

@@ -747,10 +747,10 @@ export default {
             L.divIcon({
               html:
                 "<div class='leaflet-marker-markerTooltip'>" +
-                this.radius +
-                "公里/海里</div>",
+                this.radius.toFixed(2) +
+                "公里/<br />"+(this.radius*0.539956803456).toFixed(2)+"海里</div>",
               className: "leaflet-marker-noDefaultDivIcon",
-              iconSize: 80,
+              iconSize: 100,
             })
           );
         }
@@ -1118,38 +1118,29 @@ export default {
           };
           this.formData.coordinates = {
             type: "Polygon",
-            // coordinates: [
-            //   [
-            //     [Number(this.rectData.minLon), Number(this.rectData.minLat)],
-            //     [Number(this.rectData.minLon), Number(this.rectData.maxLat)],
-            //     [Number(this.rectData.maxLon), Number(this.rectData.maxLat)],
-            //     [Number(this.rectData.maxLon), Number(this.rectData.minLat)],
-            //     [Number(this.rectData.minLon), Number(this.rectData.minLat)],
-            //   ],
-            // ],
-
             coordinates: [
               [
-                [93.251953, 5.134715],
-                [93.251953, 12.382928],
-                [101.557617, 12.382928],
-                [101.557617, 5.134715],
-                [93.251953, 5.134715],
+                [Number(this.rectData.minLon), Number(this.rectData.minLat)],
+                [Number(this.rectData.minLon), Number(this.rectData.maxLat)],
+                [Number(this.rectData.maxLon), Number(this.rectData.maxLat)],
+                [Number(this.rectData.maxLon), Number(this.rectData.minLat)],
+                [Number(this.rectData.minLon), Number(this.rectData.minLat)],
               ],
             ],
-          };
-          // this.formData = {
-          //   placeName: this.rectData.placeName,
-          //   isShow: "1",
-          //   longitude: "",
-          //   latitude: "",
-          //   coordinates: JSON.stringify(this.formData.coordinates).toString(),
-          //   drawType: 2,
-          //   other1: JSON.stringify(this.formData.other1).toString(),
-          //   other2: null,
-          // };
 
-          this.$put("/api/common-place", {
+          };
+          this.formData = {
+            placeName: this.rectData.placeName,
+            isShow: "1",
+            longitude: "",
+            latitude: "",
+            coordinates: JSON.stringify(this.formData.coordinates).toString(),
+            drawType: 2,
+            other1: JSON.stringify(this.formData.other1).toString(),
+            other2: null,
+          };
+
+          this.$post("/api/common-place", {
             ...this.formData,
           })
             .then(() => {

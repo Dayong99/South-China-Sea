@@ -25,6 +25,16 @@
         style="width:260px;"
       >
       </el-input>
+      <el-input
+        placeholder="文件类型"
+        prefix-icon="el-icon-document"
+        v-model="queryParams.sourceType"
+        class="operation_input"
+        clearable
+        @clear="search"
+        style="width:260px;"
+      >
+      </el-input>
       <el-select v-model="queryParams.type" placeholder="数据源类型" clearable @change="search">
         <el-option
           v-for="(item, index) in sourceOption"
@@ -229,6 +239,7 @@ export default {
       },
       queryParams: {
         parameterName: null,
+        sourceType:null,
         type:null
       },
       infoVisible: false,
@@ -243,6 +254,10 @@ export default {
         {
           value: 1,
           label: "GFS",
+        },
+        {
+          value: 2,
+          label: "总参",
         },
       ],
     };
@@ -281,6 +296,7 @@ export default {
       if (val) {
         this.queryParams = {
           parameterName: null,
+          sourceType:null,
           type:null
         };
         this.fetch();
@@ -304,6 +320,7 @@ export default {
     resetSearch() {
       this.queryParams = {
         parameterName: null,
+        sourceType:null,
         type:null
       };
       this.search();

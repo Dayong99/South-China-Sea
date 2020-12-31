@@ -78,7 +78,7 @@ export default {
         this.levelShow = false
       }
       // 层级工具栏初始高度
-      this.barHeight = this.itemHeight * newval.length + 'px'
+      this.barHeight = this.itemHeight * newval.length *0.95 + 'px'
 
       // // 层级栏初始内容
       // this.levelList = newval
