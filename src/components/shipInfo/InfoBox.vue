@@ -571,8 +571,8 @@ export default {
                     const image = getShipFillingValueImage({
                       tempreture: station.temperature,
                       time: this.$m(station.dayTime).format("HH:mm"),
-                      dirwind: 5,
-                      speedwind: 5,
+                      dirwind: station.windDirection,
+                      speedwind: station.windSpeed
                     });
                     const fillIcon = new L.Icon({
                       iconUrl: image,

@@ -12,7 +12,7 @@ export function getShipFillingValueImage(fillingValue) {
   let secondParmsX = 10 * Math.sin(((360 / 5) * Math.PI) / 180).toFixed(1);
   let secondParmsY = 10 * Math.cos(((360 / 5) * Math.PI) / 180).toFixed(1);
 
-  let temp = '//'
+  let temp = '--'
   if (fillingValue.tempreture) {
     temp = fillingValue.tempreture
   }
@@ -34,7 +34,7 @@ export function getShipFillingValueImage(fillingValue) {
   /* 气压 */
   ctx.fillStyle = "#008000";
   ctx.fillText(
-    '//',
+    '--',
     canvas.width / 2 + secondParmsX + 5,
     canvas.height / 2 + secondParmsY
   );
@@ -63,7 +63,7 @@ export function getOceanFillingValueImage(fillingValue) {
     10 * Math.sin(((360 / 5) * 4 * Math.PI) / 180).toFixed(1);
   let firstParmsY =
     10 * Math.cos(((360 / 5) * 4 * Math.PI) / 180).toFixed(1);
-  let temp = '//'
+  let temp = '--'
   if (fillingValue.tempreture) {
     temp = fillingValue.tempreture
   }
@@ -75,7 +75,7 @@ export function getOceanFillingValueImage(fillingValue) {
     canvas.width / 2 + firstParmsX - 25,
     canvas.height / 2 + firstParmsY + 2
   );
-  let time = '//'
+  let time = '--'
   if (fillingValue.time) {
     time = fillingValue.time
   }
@@ -86,7 +86,7 @@ export function getOceanFillingValueImage(fillingValue) {
     canvas.width / 2 + firstParmsX - 5,
     canvas.height / 2 + firstParmsY - 15
   );
-  let visibility = '//'
+  let visibility = '--'
   if (fillingValue.visibility) {
     visibility = fillingValue.visibility
   }
@@ -100,28 +100,28 @@ export function getOceanFillingValueImage(fillingValue) {
   // 水温
   ctx.fillStyle = "#4c44f1";
   ctx.fillText(
-    '//',
+    '--',
     canvas.width / 2 + firstParmsX - 25,
     canvas.height / 2 + firstParmsY + 30
   );
   // 气压
   ctx.fillStyle = "#4c44f1";
   ctx.fillText(
-    '//',
+    '--',
     canvas.width / 2 + firstParmsX + 25,
     canvas.height / 2 + firstParmsY + 5
   );
   // 浪高
   ctx.fillStyle = "#4c44f1";
   ctx.fillText(
-    '//',
+    '--',
     canvas.width / 2 + firstParmsX + 25,
     canvas.height / 2 + firstParmsY + 15
   );
   // 周期
   ctx.fillStyle = "#4c44f1";
   ctx.fillText(
-    '//',
+    '--',
     canvas.width / 2 + firstParmsX + 5,
     canvas.height / 2 + firstParmsY + 15
   );
@@ -150,7 +150,7 @@ export function getBuoyFillingValueImage(fillingValue) {
     10 * Math.sin(((360 / 5) * 4 * Math.PI) / 180).toFixed(1);
   let firstParmsY =
     10 * Math.cos(((360 / 5) * 4 * Math.PI) / 180).toFixed(1);
-  let temp = '//'
+  let temp = '--'
   if (fillingValue.tempreture) {
     temp = fillingValue.tempreture
   }
@@ -162,7 +162,7 @@ export function getBuoyFillingValueImage(fillingValue) {
     canvas.width / 2 + firstParmsX - 25,
     canvas.height / 2 + firstParmsY - 5
   );
-  let time = '//'
+  let time = '--'
   if (fillingValue.time) {
     time = fillingValue.time
   }
@@ -176,11 +176,11 @@ export function getBuoyFillingValueImage(fillingValue) {
   /* 能见度 */
   ctx.fillStyle = "#4c44f1";
   ctx.fillText(
-    '//',
+    '--',
     canvas.width / 2 + firstParmsX - 25,
     canvas.height / 2 + firstParmsY + 8
   );
-  let salinity = '//'
+  let salinity = '--'
   if (fillingValue.salinity) {
     salinity = fillingValue.salinity
   }
@@ -194,18 +194,18 @@ export function getBuoyFillingValueImage(fillingValue) {
   // 水温
   ctx.fillStyle = "#4c44f1";
   ctx.fillText(
-    '//',
+    '--',
     canvas.width / 2 + firstParmsX - 25,
     canvas.height / 2 + firstParmsY + 30
   );
   // 气压
   ctx.fillStyle = "#4c44f1";
   ctx.fillText(
-    '//',
+    '--',
     canvas.width / 2 + firstParmsX + 25,
     canvas.height / 2 + firstParmsY + 5
   );
-  let waveHeight = '//'
+  let waveHeight = '--'
   if (fillingValue.waveHeight) {
     waveHeight = fillingValue.waveHeight
   }
@@ -216,7 +216,7 @@ export function getBuoyFillingValueImage(fillingValue) {
     canvas.width / 2 + firstParmsX + 25,
     canvas.height / 2 + firstParmsY + 15
   );
-  let wavePeriod = '//'
+  let wavePeriod = '--'
   if (fillingValue.wavePeriod) {
     wavePeriod = fillingValue.wavePeriod
   }
