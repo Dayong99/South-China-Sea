@@ -1884,8 +1884,6 @@ export default {
               this.setTidalMsgFlag(false);
               // 最大值和最小值
               tidalList.forEach((e, i) => {
-                console.log(e, `tidalListItem`);
-                
                 if (e.tidalType === 2) {
                   console.log("第一低潮", e);
                   let time = e.tidalTime.split('T')[1]
