@@ -85,7 +85,7 @@ const state = {
     algorithmOptions: [0, {}], // 0不显示 1新增算法参数 2 修改算法参数
     routeAlgorithmInfo: 0, // 0不显示 1查看评估结果
     assessLegendShow: false, // 评估结果图例
-    nowIndex: 0, //当前选中索引
+    nowIndex: 0, //当前选中航线列表项索引
 }
 
 const actions = {

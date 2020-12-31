@@ -1,6 +1,6 @@
 #app {
     #levelbar {
-        width: 20px;
+        width: 100%;
         position: relative;
         cursor: pointer;
         line-height: 18px;
@@ -113,8 +113,8 @@
                 align-items: center;
                 margin-right: 2px;
                 .level_text {
-                    padding: 0px 4px;
-                    padding-top: 2px;
+                    padding: 2px 4px;
+                    padding-top: 4px;
                 }
                 .decoration {
                     width: 4px;
