@@ -21,7 +21,7 @@
       class="level_num" 
       :class="activeLevel==item?'active_level':''"
       @click.stop="getNowTip(item)">
-        <div class="level_text">{{item}}</div>
+        <div class="level_text">{{ levelName(item) }}</div>
         <div class="decoration"></div>
       </li>
     </ul>
@@ -57,7 +57,18 @@ export default {
     ...mapState({
       levelList: state => state.sideBar.levelList,
       menuItemList: state => state.sideBar.menuItemList
-    })
+    }),
+    levelName() {
+      return function(level) {
+        if(level == '999') {
+          return '地面'
+        } else if(level == '0') {
+          return '海面'
+        } else {
+          return level
+        }
+      }
+    }
   },
   watch: {
     levelList(newval) {

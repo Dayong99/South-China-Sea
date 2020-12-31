@@ -14,7 +14,7 @@ const state = {
    */
   realTimeValue: null,
   // 数据源
-  sourceType: 1,
+  sourceType: 2,
   // 刷新时间标识
   reloadTime: false,
 }
