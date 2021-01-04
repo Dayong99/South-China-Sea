@@ -106,26 +106,22 @@ const mutations = {
     },
     // 评估参数配置显示
     setShowAlgorithm(state, indexRoute) {
-        state.nowIndex = indexRoute
-        if (state.showList[indexRoute].showAlgorithm == true) {
-            state.showList[indexRoute].showAlgorithm = !state.showList[indexRoute].showAlgorithm
-            state.algorithmOptions[0] = 0
-        } else {
-            state.showList.forEach(item => item.showAlgorithm = false)
-            state.showList[indexRoute].showAlgorithm = true
-            state.algorithmOptions[0] = 1
-        }
+        mutations.setValue(state, indexRoute, 'showAlgorithm', 'algorithmOptions', 1)
     },
     // 航线编辑显示
     setShowEdit(state, indexRoute) {
+        mutations.setValue(state, indexRoute, 'showEdit', 'routeDialogOptions', 2)
+    },
+    // 航线编辑和评估参数配置显示共有代码合并
+    setValue(state, indexRoute, val, numVal, num) {
         state.nowIndex = indexRoute
-        if (state.showList[indexRoute].showEdit == true) {
-            state.showList[indexRoute].showEdit = !state.showList[indexRoute].showEdit
-            state.routeDialogOptions = 0
+        if (state.showList[indexRoute][val] == true) {
+            state.showList[indexRoute][val] = false
+            state[numVal] = 0
         } else {
-            state.showList.forEach(item => item.showEdit = false)
-            state.showList[indexRoute].showEdit = true
-            state.routeDialogOptions = 2
+            state.showList.forEach(item => !item[val])
+            state.showList[indexRoute][val] = true
+            state[numVal] = num
         }
     },
     setTaskManagerOptions(state, val) {

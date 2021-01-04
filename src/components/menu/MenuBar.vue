@@ -679,11 +679,7 @@ export default {
     algorithm(itemRoute, indexRoute) {
       this.setShowAlgorithm(indexRoute)
       console.log(this.showList[indexRoute].showAlgorithm,`this.algorithmOptions[indexRoute].showAlgorithm`)
-      if(this.showList[indexRoute].showAlgorithm==true){
-        this.setAlgorithm([1,this.showList[indexRoute]]);
-      }else{
-        this.setAlgorithm([0,this.showList[indexRoute]]);
-      }
+      this.showList[indexRoute].showAlgorithm ? this.setAlgorithm([1,this.showList[indexRoute]]) : this.setAlgorithm([0,this.showList[indexRoute]]);
     },
     // 新增航线
     addTaskItem(item, index) {
