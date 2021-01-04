@@ -223,12 +223,13 @@
     }
     // 菜单栏
     .menu_list {
-        width: 95%;
+        width: 92%;
         color: rgba(80, 80, 80, 1);
-        margin-top: 15px;
+        margin-top: 6px;
         border-radius: 10px;
         background: rgba(255, 255, 255, 0.8);
         box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.5);
+        margin-left: -8px;
         .list_ul {
             width: 100%;
             display: flex;
@@ -237,7 +238,7 @@
             .list_ul_li {
                 width: 100%;
                 line-height: 50px;
-                padding: 0 18px;
+                padding: 0 16px;
                 position: relative;
                 color: rgba(117, 109, 109, 1);
                 font-size: 16px;
