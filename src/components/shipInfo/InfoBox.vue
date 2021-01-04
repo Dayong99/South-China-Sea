@@ -70,18 +70,11 @@ export default {
         var prefix = "leaflet-popup",
           container = (this._container = L.DomUtil.create(
             "div",
-            prefix +
-              " " +
-              (this.options.className || "") +
-              " leaflet-zoom-animated"
+            prefix + " " + (this.options.className || "") + " leaflet-zoom-animated"
           ));
 
         var wrapper = container;
-        this._contentNode = L.DomUtil.create(
-          "div",
-          prefix + "-content",
-          wrapper
-        );
+        this._contentNode = L.DomUtil.create("div", prefix + "-content", wrapper);
 
         L.DomEvent.disableClickPropagation(wrapper)
           .disableScrollPropagation(this._contentNode)
@@ -197,15 +190,14 @@ export default {
                     }).addTo(map);
                     buoy.id = item.id;
                     this.buoyMarkArr.push(buoy);
+                    const popup = buoy.bindCustomPopup(str);
                     buoy.on("click", (ev) => {
-                      buoy.bindCustomPopup(str).openPopup();
+                      popup.openPopup();
                     });
                   }
                 })
                 .then(() => {
-                  console.log(this.buoyMarkArr, `markerArrmarker游标站`);
                   this.buoyMarkerGroup = L.layerGroup(this.buoyMarkArr);
-                  console.log(this.buoyMarkerGroup, `buoyMarkerGroup游标站`);
                   map.addLayer(this.buoyMarkerGroup);
                 });
             });
@@ -572,7 +564,7 @@ export default {
                       tempreture: station.temperature,
                       time: this.$m(station.dayTime).format("HH:mm"),
                       dirwind: station.windDirection,
-                      speedwind: station.windSpeed
+                      speedwind: station.windSpeed,
                     });
                     const fillIcon = new L.Icon({
                       iconUrl: image,
@@ -607,16 +599,15 @@ export default {
                       day: day,
                       time: time,
                     });
+                    const popup = shipMarker.bindCustomPopup(str);
                     shipMarker.on("click", (ev) => {
-                      shipMarker.bindCustomPopup(str).openPopup();
+                      popup.openPopup();
                     });
                   }
                 })
                 .then(() => {
-                  console.log(this.shipMarkArr, `船舶markerArr`);
                   this.shipMarkerGroup = L.layerGroup(this.shipMarkArr);
                   map.addLayer(this.shipMarkerGroup);
-                  console.log(this.shipMarkerGroup, `this.shipMarkerGroup`);
                 });
             });
           }
@@ -630,7 +621,6 @@ export default {
       this.$get("/api/ground-live")
         .then((res) => {
           if (res.status == 200) {
-            console.log("ground", res.data.data);
             let data = res.data.data;
             let markerArr = [];
             data.forEach((item) => {
@@ -690,10 +680,8 @@ export default {
                   });
               });
             });
-            console.log(markerArr, "地面站markerArr");
             this.groundMarkerGroup = L.layerGroup(markerArr);
             map.addLayer(this.groundMarkerGroup);
-            console.log(this.groundMarkerGroup, `groundMarkerGroup`);
           }
         })
         .catch((error) => {
@@ -704,7 +692,6 @@ export default {
       this.$get("/api/ocean-station-live")
         .then((res) => {
           if (res.status == 200) {
-            console.log("ocean", res.data.data);
             let data = res.data.data;
             let markerArr = [];
             data.forEach((item) => {
@@ -768,16 +755,15 @@ export default {
                     oceanMarker.type = "ocean";
                     oceanMarker.id = item.id;
                     this.oceanMarkArr.push(oceanMarker);
+                    const popup = oceanMarker.bindCustomPopup(str);
                     oceanMarker.on("click", (ev) => {
-                      oceanMarker.bindCustomPopup(str).openPopup();
+                      popup.openPopup();
                     });
                   }
                 })
                 .then(() => {
-                  console.log(this.oceanMarkArr, `海洋markerArr`);
                   this.oceanMarkerGroup = L.layerGroup(this.oceanMarkArr);
                   map.addLayer(this.oceanMarkerGroup);
-                  console.log(this.oceanMarkerGroup, `this.oceanMarkerGroup`);
                 })
                 .catch((error) => {
                   this.$message.error("获取站点数据失败");
@@ -791,13 +777,6 @@ export default {
     },
     // 清除站点数据
     removeAllLayer() {
-      console.log(
-        this.buoyMarkerGroup,
-        this.shipMarkerGroup,
-        this.oceanMarkerGroup,
-        this.groundMarkerGroup,
-        "清楚图层"
-      );
       if (this.buoyMarkerGroup.length) {
         this.buoyMarkerGroup.clearLayers();
       }
@@ -815,7 +794,7 @@ export default {
   },
 };
 </script>
-<style lang ='scss'>
+<style lang="scss">
 /* 用不了 &#{&} 这种写法*/
 .l-popup {
   &--no-style {
