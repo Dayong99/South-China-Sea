@@ -1,16 +1,20 @@
 <template>
   <div v-show="tabShow" style="width:960px;">
     <div class="manager_operation">
-      <el-input
-        placeholder="区站号"
-        prefix-icon="el-icon-search"
-        v-model="queryParams.areaNum"
-        class="operation_input"
+      <!-- <el-select
+        style="width:150px;margin-right:10px;"
+        v-model="queryParams.tidalType"
+        placeholder="潮汐类型"
         clearable
-        @clear="search"
-        style="width: 260px"
+        @change="search"
       >
-      </el-input>
+        <el-option
+          v-for="(item, index) in typeList"
+          :key="index"
+          :label="item.label"
+          :value="item.value"
+        ></el-option>
+      </el-select> -->
       <el-date-picker
         v-model="time"
         format="yyyy-MM-dd HH:mm:ss"
@@ -36,106 +40,26 @@
             {{ (pagination.num - 1) * pagination.size + scope.$index + 1 }}
           </template>
         </el-table-column>
-         <el-table-column
-          label="区站号"
-          align="center"
-          min-width="100px"
-        >
+        <el-table-column label="港口" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.areaNumber }}</span>
+            <span>{{ showPort(scope.row.hid) }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="能见度"
-          align="center"
-          min-width="100px"
-        >
+        <el-table-column label="潮汐时间" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.visibility }}</span>
+            <span>{{
+              $m(scope.row.tidalTime).format("yyyy-MM-DD HH:mm:ss")
+            }}</span>
           </template>
         </el-table-column>
-      
-        <el-table-column
-          label="风向(°)"
-          align="center"
-          min-width="100px"
-        >
+        <el-table-column label="潮高" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.windDirection }}</span>
+            <span>{{ scope.row.height }}</span>
           </template>
         </el-table-column>
-       
-        <el-table-column
-          label="风速(m/s)"
-          align="center"
-          min-width="100px"
-        >
+        <el-table-column label="潮汐类型" align="center" min-width="100px">
           <template slot-scope="scope">
-            <span>{{ scope.row.windSpeed }}</span>
-          </template>
-        </el-table-column>
-        
-        <el-table-column
-          label="温度(℃)"
-          align="center"
-          min-width="100px"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.temperature }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="露点温度(℃)"
-          align="center"
-          min-width="120px"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.dewTemperature }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="气压(hPa)"
-          align="center"
-          min-width="100px"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.pressure }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="海平面气压(hPa)"
-          align="center"
-         width="140px"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.seaLevelPressure }}</span>
-          </template>
-        </el-table-column>
-         <el-table-column
-          label="降水(mm)"
-          align="center"
-          min-width="100px"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.precipitation }}</span>
-          </template>
-        </el-table-column>
-         <el-table-column
-          label="起报时间"
-          align="center"
-          min-width="160px"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.startTime }}</span>
-          </template>
-        </el-table-column>
-         <el-table-column
-          label="风速单位"
-          align="center"
-          min-width="100px"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.windUnit }}</span>
+            <span>{{ showType(scope.row.tidalType) }}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -187,9 +111,34 @@ export default {
       },
       queryParams: {},
       time: [],
+      portList: [],
+      typeList: [
+        {
+          label: "普通数据",
+          value: 0,
+        },
+        {
+          label: "第一高潮",
+          value: 1,
+        },
+        {
+          label: "第二高潮",
+          value: 2,
+        },
+        {
+          label: "普通数据",
+          value: 3,
+        },
+        {
+          label: "普通数据",
+          value: 4,
+        },
+      ],
     };
   },
-  mounted() {},
+  mounted() {
+    this.getAllPort();
+  },
   computed: {
     ...mapState({
       menuList: (state) => state.menuBar.menuList,
@@ -232,11 +181,42 @@ export default {
       setMenuList: "menuBar/setMenuList",
     }),
 
+    getAllPort() {
+      this.$get("/api/harbor/allHarborList").then((res) => {
+        this.portList = res.data.data;
+      });
+    },
+    showPort(val) {
+      let name;
+      for (let i = 0; i < this.portList.length; i++) {
+        if (Number(val) == Number(this.portList[i].id)) {
+          name = this.portList[i].hname;
+          break;
+        }
+      }
+      return name;
+    },
+
+    showType(type) {
+      switch (Number(type)) {
+        case 0:
+          return "普通数据";
+        case 1:
+          return "第一高潮";
+        case 2:
+          return "第二高潮";
+        case 3:
+          return "第一低潮";
+        case 4:
+          return "第二低潮";
+      }
+    },
+
     // 搜索重置
     resetSearch() {
       this.queryParams = {};
       this.time = [];
-      this.search();
+      this.fetch();
     },
     add() {
       this.dialog.isVisible = true;
@@ -256,20 +236,25 @@ export default {
           ...this.queryParams,
         });
       } else {
-        if (this.queryParams.areaNum) {
-          this.fetch({
-            areaNum: this.queryParams.areaNum,
-          });
-        } else {
-          this.fetch();
-        }
+        // if (
+        //   this.queryParams.tidalType !== "" ||
+        //   this.queryParams.tidalType !== null ||
+        //   this.queryParams.tidalType !== undefined
+        // ) {
+        //   this.fetch({
+        //     tidalType: this.queryParams.tidalType,
+        //   });
+        // } else {
+        //   this.fetch();
+        // }
+        this.fetch();
       }
     },
     // 获取表格数据
     fetch(params = {}) {
       params.pageSize = this.pagination.size;
       params.pageNum = this.pagination.num;
-      this.$get("/api/ground-live/page", {
+      this.$get("/api/tidal/page", {
         ...params,
       }).then((res) => {
         console.log(res, "res");
@@ -288,5 +273,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
