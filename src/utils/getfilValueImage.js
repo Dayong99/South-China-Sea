@@ -17,7 +17,7 @@ export function getShipFillingValueImage(fillingValue) {
     temp = fillingValue.tempreture
   }
   /* 气温 */
-  ctx.fillStyle = "#e9305b";
+  ctx.fillStyle = "#e34665";
   ctx.font = "12px Arial";
   ctx.fillText(
     temp,
@@ -25,7 +25,7 @@ export function getShipFillingValueImage(fillingValue) {
     canvas.height / 2 + firstParmsY + 2
   );
   /* 时间 */
-  ctx.fillStyle = "#4c44f1";
+  ctx.fillStyle = "#ef30eb";
   ctx.fillText(
     "" + fillingValue.time,
     canvas.width / 2 + secondParmsX - 25,
@@ -68,62 +68,62 @@ export function getOceanFillingValueImage(fillingValue) {
     temp = fillingValue.tempreture
   }
   /* 气温 */
-  ctx.fillStyle = "#e9305b";
+  ctx.fillStyle = "#e34665";
   ctx.font = "12px Arial";
   ctx.fillText(
     temp,
     canvas.width / 2 + firstParmsX - 25,
-    canvas.height / 2 + firstParmsY + 2
+    canvas.height / 2 + firstParmsY - 10
   );
   let time = '--'
   if (fillingValue.time) {
     time = fillingValue.time
   }
   /* 时间 */
-  ctx.fillStyle = "#4c44f1";
+  ctx.fillStyle = "#f159ef";
   ctx.fillText(
     time,
-    canvas.width / 2 + firstParmsX - 5,
-    canvas.height / 2 + firstParmsY - 15
+    canvas.width / 2 + firstParmsX + 20,
+    canvas.height / 2 + firstParmsY - 10
   );
   let visibility = '--'
-  if (fillingValue.visibility) {
+  if (fillingValue.visibility && !(fillingValue.visibility === '//')) {
     visibility = fillingValue.visibility
   }
   /* 能见度 */
-  ctx.fillStyle = "#4c44f1";
+  ctx.fillStyle = "#ae48f0";
   ctx.fillText(
     visibility,
     canvas.width / 2 + firstParmsX - 25,
-    canvas.height / 2 + firstParmsY + 15
+    canvas.height / 2 + firstParmsY + 3
   );
   // 水温
-  ctx.fillStyle = "#4c44f1";
+  ctx.fillStyle = "#0081ff";
   ctx.fillText(
     '--',
     canvas.width / 2 + firstParmsX - 25,
-    canvas.height / 2 + firstParmsY + 30
+    canvas.height / 2 + firstParmsY + 25
   );
   // 气压
-  ctx.fillStyle = "#4c44f1";
+  ctx.fillStyle = "#40b700";
   ctx.fillText(
     '--',
     canvas.width / 2 + firstParmsX + 25,
     canvas.height / 2 + firstParmsY + 5
   );
   // 浪高
-  ctx.fillStyle = "#4c44f1";
+  ctx.fillStyle = "#b09200";
   ctx.fillText(
     '--',
     canvas.width / 2 + firstParmsX + 25,
     canvas.height / 2 + firstParmsY + 15
   );
   // 周期
-  ctx.fillStyle = "#4c44f1";
+  ctx.fillStyle = "#2458ff";
   ctx.fillText(
     '--',
-    canvas.width / 2 + firstParmsX + 5,
-    canvas.height / 2 + firstParmsY + 15
+    canvas.width / 2 + firstParmsX,
+    canvas.height / 2 + firstParmsY + 20
   );
   // 绘制风羽
   drawWind(ctx, fillingValue, 80, 80)
@@ -155,51 +155,51 @@ export function getBuoyFillingValueImage(fillingValue) {
     temp = fillingValue.tempreture
   }
   /* 气温 */
-  ctx.fillStyle = "#e9305b";
+  ctx.fillStyle = "#e34665";
   ctx.font = "12px Arial";
   ctx.fillText(
     temp,
     canvas.width / 2 + firstParmsX - 25,
-    canvas.height / 2 + firstParmsY - 5
+    canvas.height / 2 + firstParmsY - 10
   );
   let time = '--'
   if (fillingValue.time) {
     time = fillingValue.time
   }
   /* 时间 */
-  ctx.fillStyle = "#4c44f1";
+  ctx.fillStyle = "#f159ef";
   ctx.fillText(
     time,
-    canvas.width / 2 + firstParmsX - 5,
-    canvas.height / 2 + firstParmsY - 15
+    canvas.width / 2 + firstParmsX + 20,
+    canvas.height / 2 + firstParmsY - 10
   );
   /* 能见度 */
-  ctx.fillStyle = "#4c44f1";
+  ctx.fillStyle = "#ae48f0";
   ctx.fillText(
     '--',
     canvas.width / 2 + firstParmsX - 25,
-    canvas.height / 2 + firstParmsY + 8
+    canvas.height / 2 + firstParmsY + 3
   );
   let salinity = '--'
-  if (fillingValue.salinity) {
+  if (fillingValue.salinity && !(fillingValue.salinity === "/")) {
     salinity = fillingValue.salinity
   }
   /* 相对湿度 */
-  ctx.fillStyle = "#4c44f1";
+  ctx.fillStyle = "#f47900";
   ctx.fillText(
     salinity,
     canvas.width / 2 + firstParmsX - 25,
-    canvas.height / 2 + firstParmsY + 20
+    canvas.height / 2 + firstParmsY + 15
   );
   // 水温
-  ctx.fillStyle = "#4c44f1";
+  ctx.fillStyle = "#0081ff";
   ctx.fillText(
     '--',
     canvas.width / 2 + firstParmsX - 25,
-    canvas.height / 2 + firstParmsY + 30
+    canvas.height / 2 + firstParmsY + 25
   );
   // 气压
-  ctx.fillStyle = "#4c44f1";
+  ctx.fillStyle = "#40b700";
   ctx.fillText(
     '--',
     canvas.width / 2 + firstParmsX + 25,
@@ -210,7 +210,7 @@ export function getBuoyFillingValueImage(fillingValue) {
     waveHeight = fillingValue.waveHeight
   }
   // 波高
-  ctx.fillStyle = "#4c44f1";
+  ctx.fillStyle = "#b09200";
   ctx.fillText(
     waveHeight,
     canvas.width / 2 + firstParmsX + 25,
@@ -221,11 +221,11 @@ export function getBuoyFillingValueImage(fillingValue) {
     wavePeriod = fillingValue.wavePeriod
   }
   // 周期
-  ctx.fillStyle = "#4c44f1";
+  ctx.fillStyle = "#2458ff";
   ctx.fillText(
     wavePeriod,
     canvas.width / 2 + firstParmsX,
-    canvas.height / 2 + firstParmsY + 15
+    canvas.height / 2 + firstParmsY + 20
   );
   // 绘制风羽
   drawWind(ctx, fillingValue, 80, 80)
