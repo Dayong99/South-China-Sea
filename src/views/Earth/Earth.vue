@@ -99,6 +99,20 @@ export default {
       // this.changeZoom();
       this.changeMove();
 
+      //添加全国边界线
+      // var myStyle = {
+      //   color: "#00f",
+      //   weight: 2,
+      //   opacity: 0.5,
+      //   fillColor: "red",
+      //   fillOpacity: 0,
+      // };
+      // $.getJSON("./geojson/provinces.geojson", function(data) {
+      //   L.geoJSON(data, {
+      //     style: myStyle,
+      //   }).addTo(map);
+      // });
+
     },
     // async createTileLayer(url, options) {
     //   let tileLayer = await L.tileLayer(url, options);

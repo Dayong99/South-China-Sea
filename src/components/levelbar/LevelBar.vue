@@ -21,7 +21,7 @@
       class="level_num" 
       :class="activeLevel==item?'active_level':''"
       @click.stop="getNowTip(item)">
-        <div class="level_text">{{item}}</div>
+        <div class="level_text">{{ item | levelName }}</div>
         <div class="decoration"></div>
       </li>
     </ul>
@@ -32,6 +32,17 @@
 import { mapState,mapMutations } from 'vuex'
 export default {
   name: 'LevelBar',
+  filters: {
+    levelName(value) {
+      if(value == '999') {
+        return '地面'
+      } else if(value == '0') {
+        return '海面'
+      } else {
+        return value
+      }
+    }
+  },
   data() {
     return {
       barHeight: 0,
@@ -57,7 +68,7 @@ export default {
     ...mapState({
       levelList: state => state.sideBar.levelList,
       menuItemList: state => state.sideBar.menuItemList
-    })
+    }),
   },
   watch: {
     levelList(newval) {
@@ -67,7 +78,7 @@ export default {
         this.levelShow = false
       }
       // 层级工具栏初始高度
-      this.barHeight = this.itemHeight * newval.length + 'px'
+      this.barHeight = this.itemHeight * newval.length *0.95 + 'px'
 
       // // 层级栏初始内容
       // this.levelList = newval

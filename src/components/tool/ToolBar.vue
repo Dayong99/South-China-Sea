@@ -872,7 +872,7 @@ export default {
 .right-top-container {
   position: absolute;
   right: 28px;
-  top: 22px;
+  top: 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;

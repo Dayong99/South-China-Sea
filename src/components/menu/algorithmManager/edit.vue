@@ -339,10 +339,19 @@ export default {
   computed: {
     ...mapState({
       algorithmOptions: (state) => state.menuBar.algorithmOptions,
+      showList:(state)=>state.menuBar.showList,
+      nowIndex:(state) => state.menuBar.nowIndex
     }),
   },
 
   watch: {
+    // algorithmList:{
+    //   handler(newval,oldval){
+    //     newval[0].showAlgorithm==true?(this.algorithmShow = true) : (this.algorithmShow = false)
+    //   },
+    //   deep:true
+    // },
+    
     algorithmOptions: {
       handler(val) {
         val[0] ? (this.algorithmShow = true) : (this.algorithmShow = false);
@@ -369,6 +378,7 @@ export default {
   methods: {
     ...mapMutations({
       setAlgorithm: "menuBar/setAlgorithm",
+      setShowAlgorithm:"menuBar/setShowAlgorithm"
     }),
     // 修改节点名称
     confirmNodeName() {
@@ -396,7 +406,7 @@ export default {
     // 关闭评估窗口
     closeManager() {
       this.algorithmShow = false;
-      this.setAlgorithm([0, {}]);
+      this.algorithmOptions[0] == 1 ? this.setShowAlgorithm(this.nowIndex) : ""; //航线列表子项操作显隐
       this.title = null;
       this.activeNodeIndex = [];
       this.editNodeInfo = {

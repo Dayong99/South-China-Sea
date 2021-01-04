@@ -18,7 +18,7 @@ function drawRect(canvasId) {
   $("#backCanvas").remove();
   let backCanvas = document.createElement("canvas");
   backCanvas.id = "backCanvas";
-  $("#app").append(backCanvas);
+  $("body").append(backCanvas);
   let screenWidth = document.body.clientWidth - 4;
   let screenHeight = document.body.clientHeight - 4;
   backCanvas.width = screenWidth;
@@ -241,6 +241,7 @@ async function drawImg(drawX, drawY, width, height) {
     backgroundColor: null, //画出来的图片有白色的边框,不要可设置背景为透明色（null）
     useCORS: true, //支持图片跨域
     scale: 1, //设置放大的倍数
+    // foreignObjectRendering: true,
   }).then((canvas) => {
     $('#canvasResult').remove()
     $('body').append('<canvas id="canvasResult" width=' + width + ' height=' + height + ' style="display:none"></canvas>');
