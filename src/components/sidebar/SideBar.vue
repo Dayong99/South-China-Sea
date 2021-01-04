@@ -13,9 +13,13 @@
             :class="{ menu_left: true, bg_color: item.windWaveFlag }"
             v-if="item.windWave !== 'other' && item.flag"
             @click.stop="changeWindWave(index)"
-          >{{ item.windWaveName }}</div>
+          >
+            {{ item.windWaveName }}
+          </div>
 
-          <div :class="{ menu_left: true, bg_color: item.flag }">{{ item.name }}</div>
+          <div :class="{ menu_left: true, bg_color: item.flag }">
+            {{ item.name }}
+          </div>
           <!-- <div :class="{ menu_right: true, bgcolor: item.flag == 1 }">
             <img :src="item.flag == 0 ? item.img : item.selectImg" />
           </div> -->
@@ -531,10 +535,16 @@ export default {
         this.setMenuItemList(this.currentItemList);
         console.log("currentItemList", this.currentItemList);
         let index1 = val.findIndex((item) => {
-          return item.parameterMark == "U_V_component_of_wind" || item.parameterMark === 'U_V_component_of_wind_ground';
+          return (
+            item.parameterMark == "U_V_component_of_wind" ||
+            item.parameterMark === "U_V_component_of_wind_ground"
+          );
         });
         let index2 = val.findIndex((item) => {
-          return item.parameterMark == "ec_wave_height" || item.parameterMark === 'waves_direction';
+          return (
+            item.parameterMark == "ec_wave_height" ||
+            item.parameterMark === "waves_direction"
+          );
         });
         if (index1 != -1) {
           this.windSwitchflag = true;
@@ -556,15 +566,14 @@ export default {
     // 当前要素的变化，用来改变风羽、波向的绘制，不用于其他，没有冲突
     currentItem: {
       handler(val, old) {
-        console.log('currentItem---', val);
-        if(val.windWaveFlag) {
-          this.clearWindOrWave(val)
-          this.findAndDrawWindWave(val, val.currentLevel)
-          
+        console.log("currentItem---", val);
+        if (val.windWaveFlag) {
+          this.clearWindOrWave(val);
+          this.findAndDrawWindWave(val, val.currentLevel);
+
           console.log(this.currentWindWave);
           // 绘制
         }
-        
       },
       deep: true,
     },
@@ -643,14 +652,19 @@ export default {
 
       // 如果有风羽或波向重新请求数据
       let windWaveIndex = this.currentItemList.findIndex((item) => {
-        return (item.parameterMark === "U_V_component_of_wind" ||
+        return (
+          item.parameterMark === "U_V_component_of_wind" ||
           item.parameterMark === "U_V_component_of_wind_ground" ||
           item.parameterMark === "ec_wave_height" ||
-          item.parameterMark === "waves_direction")
+          item.parameterMark === "waves_direction"
+        );
       });
       if (windWaveIndex !== -1) {
-        this.clearWindOrWave(this.currentItemList[windWaveIndex])
-        this.findAndDrawWindWave(this.currentItemList[windWaveIndex], this.currentItemList[windWaveIndex].currentLevel)
+        this.clearWindOrWave(this.currentItemList[windWaveIndex]);
+        this.findAndDrawWindWave(
+          this.currentItemList[windWaveIndex],
+          this.currentItemList[windWaveIndex].currentLevel
+        );
       }
       this.drawItemList();
 
@@ -697,23 +711,31 @@ export default {
           map.off("moveend", this.drawWindAnimate);
         }
         let index = this.currentItemList.findIndex((item) => {
-          return item.parameterMark === "U_V_component_of_wind" || item.parameterMark === 'U_V_component_of_wind_ground';
+          return (
+            item.parameterMark === "U_V_component_of_wind" ||
+            item.parameterMark === "U_V_component_of_wind_ground"
+          );
         });
         // currentWind当前选中的风场对应的风场粒子 currentLevel当前层级
         let currentWind = null;
         let currentLevel = null;
-        if(this.currentItemList[index].parameterMark === 'U_V_component_of_wind') {
-          let i = this.windWaveList.findIndex(item => {
-            return item.parameterMark === 'wind_plume'
-          })
-          currentWind = this.windWaveList[i]
-          currentLevel = this.currentItemList[index].currentLevel
-        } else if(this.currentItemList[index].parameterMark === 'U_V_component_of_wind_ground') {
-          let i = this.windWaveList.findIndex(item => {
-            return item.parameterMark === 'wind_plume_ground'
-          })
-          currentWind = this.windWaveList[i]
-          currentLevel = this.currentItemList[index].currentLevel
+        if (
+          this.currentItemList[index].parameterMark === "U_V_component_of_wind"
+        ) {
+          let i = this.windWaveList.findIndex((item) => {
+            return item.parameterMark === "wind_plume";
+          });
+          currentWind = this.windWaveList[i];
+          currentLevel = this.currentItemList[index].currentLevel;
+        } else if (
+          this.currentItemList[index].parameterMark ===
+          "U_V_component_of_wind_ground"
+        ) {
+          let i = this.windWaveList.findIndex((item) => {
+            return item.parameterMark === "wind_plume_ground";
+          });
+          currentWind = this.windWaveList[i];
+          currentLevel = this.currentItemList[index].currentLevel;
         }
         console.log("currentWind", currentWind);
         // let i = this.currentItemList[index].parseIntLevel.findIndex((item) => {
@@ -754,16 +776,16 @@ export default {
               header: {
                 dx: 1.0,
                 dy: 1.0,
-                la1: 90,
-                la2: -90,
-                lo1: 0,
-                lo2: 359,
-                nx: 360,
-                ny: 181,
+                la1: 60,
+                la2: -10,
+                lo1: 60,
+                lo2: 150,
+                nx: 91,
+                ny: 71,
                 parameterCategory: 2,
                 parameterNumber: 2,
                 parameterUnit: "m.s-1",
-                basicAngle: 0,
+                // "basicAngle": 0,
               },
             };
             let windVObj = {
@@ -771,24 +793,24 @@ export default {
               header: {
                 dx: 1.0,
                 dy: 1.0,
-                la1: 90,
-                la2: -90,
-                lo1: 0,
-                lo2: 359,
-                nx: 360,
-                ny: 181,
+                la1: 60,
+                la2: -10,
+                lo1: 60,
+                lo2: 150,
+                nx: 91,
+                ny: 71,
                 parameterCategory: 2,
                 parameterNumber: 3,
                 parameterUnit: "m.s-1",
-                basicAngle: 0,
+                // basicAngle: 0,
               },
             };
 
             for (var i = 0; i < dataArr.length; i++) {
               // var value = (dataArr[i][2] * 1852) / 3600; //海里/时=》米/秒
               var value = dataArr[i][2];
-              var rad = (Math.PI * dataArr[i][3]) / 180; //度数=》弧度
-              // var rad = (Math.PI * (dataArr[i][3] - 180)) / 180; //度数=》弧度
+              // var rad = (Math.PI * dataArr[i][3]) / 180; //度数=》弧度
+              var rad = (Math.PI * (dataArr[i][3] - 180)) / 180; //度数=》弧度
               windUObj.data.push(value * Math.sin(rad));
               windVObj.data.push(value * Math.cos(rad));
               // var rad = (Math.PI * (270-dataArr[i][3])) / 180; //度数=》弧度
@@ -836,20 +858,25 @@ export default {
           map.removeLayer(this.waveParticleLayer);
         }
         let index = this.currentItemList.findIndex((item) => {
-          return item.parameterMark == "ec_wave_height" || item.parameterMark === 'waves_direction';
+          return (
+            item.parameterMark == "ec_wave_height" ||
+            item.parameterMark === "waves_direction"
+          );
         });
         // currentWind当前选中的海浪、海流对应的风场粒子
         let currentWave = null;
-        if(this.currentItemList[index].parameterMark === 'ec_wave_height') {
-          let i = this.windWaveList.findIndex(item => {
-            return item.parameterMark === 'waves_direction_lang'
-          })
-          currentWave = this.windWaveList[i]
-        } else if(this.currentItemList[index].parameterMark === 'waves_direction') {
-          let i = this.windWaveList.findIndex(item => {
-            return item.parameterMark === 'waves_direction_liu'
-          })
-          currentWave = this.windWaveList[i]
+        if (this.currentItemList[index].parameterMark === "ec_wave_height") {
+          let i = this.windWaveList.findIndex((item) => {
+            return item.parameterMark === "waves_direction_lang";
+          });
+          currentWave = this.windWaveList[i];
+        } else if (
+          this.currentItemList[index].parameterMark === "waves_direction"
+        ) {
+          let i = this.windWaveList.findIndex((item) => {
+            return item.parameterMark === "waves_direction_liu";
+          });
+          currentWave = this.windWaveList[i];
         }
         //获取海浪数据
         this.$get("api/numerical-forecast/wave-list", {
@@ -986,7 +1013,7 @@ export default {
     });
 
     L.CustomPopup = L.Popup.extend({
-      _initLayout: function () {
+      _initLayout: function() {
         var prefix = "leaflet-popup",
           container = (this._container = L.DomUtil.create(
             "div",
@@ -1011,7 +1038,7 @@ export default {
 
     // add bindCustomPopup
     L.Layer.include({
-      bindCustomPopup: function (content, options) {
+      bindCustomPopup: function(content, options) {
         if (content instanceof L.Popup) {
           L.setOptions(content, options);
           this._popup = content;
@@ -1067,56 +1094,66 @@ export default {
     },
     // 切换风羽、波向是否选中
     changeWindWave(index) {
-      this.menuList[index].windWaveFlag = !this.menuList[index].windWaveFlag
-      if(!this.menuList[index].windWaveFlag) {
-        this.clearWindOrWave(this.menuList[index])
+      this.menuList[index].windWaveFlag = !this.menuList[index].windWaveFlag;
+      if (!this.menuList[index].windWaveFlag) {
+        this.clearWindOrWave(this.menuList[index]);
       }
     },
     // wind、wave使用了自动重绘，需要单独清除
     clearWindOrWave(layer) {
       let windList = this.windGroup.getLayers();
       let waveList = this.waveGroup.getLayers();
-      if ((layer.parameterMark === "ec_wave_height" || layer.parameterMark === "waves_direction") && waveList.length) {
+      if (
+        (layer.parameterMark === "ec_wave_height" ||
+          layer.parameterMark === "waves_direction") &&
+        waveList.length
+      ) {
         this.waveGroup.clearLayers();
-      } else if ((layer.parameterMark === "U_V_component_of_wind" || layer.parameterMark === "U_V_component_of_wind_ground") && windList.length) {
+      } else if (
+        (layer.parameterMark === "U_V_component_of_wind" ||
+          layer.parameterMark === "U_V_component_of_wind_ground") &&
+        windList.length
+      ) {
         this.windGroup.clearLayers();
       }
     },
     // 查找对应的wind、wave
     findAndDrawWindWave(currentItem, level) {
       // 找到并绘制wind wave
-      if(currentItem.windWave === 'wind') {
-        if(currentItem.parameterMark === 'U_V_component_of_wind') {
+      if (currentItem.windWave === "wind") {
+        if (currentItem.parameterMark === "U_V_component_of_wind") {
           // 风
-          let index = this.windWaveList.findIndex(item => {
-            return item.parameterMark === 'wind_plume'
-          })
-          this.currentWindWave = this.windWaveList[index]
-        } else if(currentItem.parameterMark === 'U_V_component_of_wind_ground') {
+          let index = this.windWaveList.findIndex((item) => {
+            return item.parameterMark === "wind_plume";
+          });
+          this.currentWindWave = this.windWaveList[index];
+        } else if (
+          currentItem.parameterMark === "U_V_component_of_wind_ground"
+        ) {
           // 地面风
-          let index = this.windWaveList.findIndex(item => {
-            return item.parameterMark === 'wind_plume_ground'
-          })
-          this.currentWindWave = this.windWaveList[index]
+          let index = this.windWaveList.findIndex((item) => {
+            return item.parameterMark === "wind_plume_ground";
+          });
+          this.currentWindWave = this.windWaveList[index];
         }
 
-        this.getAndDrawWind(this.currentWindWave, level)
-      } else if(currentItem.windWave === 'wave') {
-        if(currentItem.parameterMark === 'ec_wave_height') {
+        this.getAndDrawWind(this.currentWindWave, level);
+      } else if (currentItem.windWave === "wave") {
+        if (currentItem.parameterMark === "ec_wave_height") {
           // 海浪
-          let index = this.windWaveList.findIndex(item => {
-            return item.parameterMark === 'waves_direction_lang'
-          })
-          this.currentWindWave = this.windWaveList[index]
-        } else if(currentItem.parameterMark === 'waves_direction') {
+          let index = this.windWaveList.findIndex((item) => {
+            return item.parameterMark === "waves_direction_lang";
+          });
+          this.currentWindWave = this.windWaveList[index];
+        } else if (currentItem.parameterMark === "waves_direction") {
           // 海流
-          let index = this.windWaveList.findIndex(item => {
-            return item.parameterMark === 'waves_direction_liu'
-          })
-          this.currentWindWave = this.windWaveList[index]
+          let index = this.windWaveList.findIndex((item) => {
+            return item.parameterMark === "waves_direction_liu";
+          });
+          this.currentWindWave = this.windWaveList[index];
         }
 
-        this.getAndDrawWave(this.currentWindWave)
+        this.getAndDrawWave(this.currentWindWave);
       }
     },
     // 初始选中
@@ -1155,7 +1192,7 @@ export default {
                 drawType: item.drawType,
                 currentLevel: null,
                 // windWave 标识 是否含有 wind 或 wave  other表示不是
-                windWave: 'other',
+                windWave: "other",
                 // windWaveFlag 表示风羽、洋流是否选中
                 windWaveFlag: true,
               };
@@ -1193,17 +1230,26 @@ export default {
               }
               obj.grade = gradesize;
               // 给定含有风羽、洋流的标识
-              if(item.parameterMark === 'U_V_component_of_wind' || item.parameterMark === 'U_V_component_of_wind_ground') {
-                obj.windWave = 'wind'
-                obj.windWaveName = '风羽'
+              if (
+                item.parameterMark === "U_V_component_of_wind" ||
+                item.parameterMark === "U_V_component_of_wind_ground"
+              ) {
+                obj.windWave = "wind";
+                obj.windWaveName = "风羽";
               }
-              if(item.parameterMark === 'ec_wave_height' || item.parameterMark === 'waves_direction') {
-                obj.windWave = 'wave'
-                obj.windWaveName = '波向'
+              if (
+                item.parameterMark === "ec_wave_height" ||
+                item.parameterMark === "waves_direction"
+              ) {
+                obj.windWave = "wave";
+                obj.windWaveName = "波向";
               }
               // wind\wave 不显示在sidebar上
-              if(item.drawType === 'point_wind' || item.drawType === 'point_flow') {
-                this.windWaveList.push(obj)
+              if (
+                item.drawType === "point_wind" ||
+                item.drawType === "point_flow"
+              ) {
+                this.windWaveList.push(obj);
               } else {
                 this.menuList.push(obj);
               }
@@ -1241,15 +1287,16 @@ export default {
           this.clearWindWave(this.menuList[index]);
         }
 
-        if(
+        if (
           this.menuList[index].parameterMark === "U_V_component_of_wind" ||
-          this.menuList[index].parameterMark === "U_V_component_of_wind_ground" ||
+          this.menuList[index].parameterMark ===
+            "U_V_component_of_wind_ground" ||
           this.menuList[index].parameterMark === "ec_wave_height" ||
           this.menuList[index].parameterMark === "waves_direction"
         ) {
-          this.clearWindOrWave(this.menuList[index])
+          this.clearWindOrWave(this.menuList[index]);
         }
-        
+
         if (this.menuList[index].drawType === "typhoon") {
           console.log("取消台风---------");
           this.typhoonShow = false;
@@ -1300,7 +1347,7 @@ export default {
           });
           // 只需要判断 i，currentItemList有menulist一定有
           if (i != -1) {
-            this.clearWindOrWave(this.menuList[j])
+            this.clearWindOrWave(this.menuList[j]);
             // 清除前一个互斥的要素及色斑图
             this.clearLayer(this.menuList[j]);
             this.menuList[j].flag = false;
@@ -1570,10 +1617,12 @@ export default {
 
       // 清除一下风羽、洋流，避免没有清楚的问题
       let windWaveIndex = this.currentItemList.findIndex((item) => {
-        return (item.parameterMark === "U_V_component_of_wind" ||
+        return (
+          item.parameterMark === "U_V_component_of_wind" ||
           item.parameterMark === "U_V_component_of_wind_ground" ||
           item.parameterMark === "ec_wave_height" ||
-          item.parameterMark === "waves_direction")
+          item.parameterMark === "waves_direction"
+        );
       });
       let windList = this.windGroup.getLayers();
       let waveList = this.waveGroup.getLayers();
@@ -1966,8 +2015,12 @@ export default {
         this.setChangeDateIndex(2); // 重置为第三个日期
         this.tidalData.timeList = [];
         let now = this.$m(this.day).format("MM-DD");
-        let yestoday = this.$m(this.day).subtract(1, "days").format("MM-DD");
-        let lastday = this.$m(this.day).subtract(2, "days").format("MM-DD");
+        let yestoday = this.$m(this.day)
+          .subtract(1, "days")
+          .format("MM-DD");
+        let lastday = this.$m(this.day)
+          .subtract(2, "days")
+          .format("MM-DD");
         this.tidalData.timeList.push(lastday);
         this.tidalData.timeList.push(yestoday);
         this.tidalData.timeList.push(now);
@@ -2011,50 +2064,50 @@ export default {
               tidalList.forEach((e, i) => {
                 if (e.tidalType === 2) {
                   console.log("第一低潮", e);
-                  let time = e.tidalTime.split('T')[1]
+                  let time = e.tidalTime.split("T")[1];
                   let tidal = {
-                    tidalTime: `${time.split(':')[0]}时${time.split(':')[1]}分`,
+                    tidalTime: `${time.split(":")[0]}时${time.split(":")[1]}分`,
                     name: `第一低潮`,
-                    height: e.height
+                    height: e.height,
                   };
-                  tidalLists.push(tidal)
+                  tidalLists.push(tidal);
                   return;
                 }
                 if (e.tidalType === 1) {
-                  let time = e.tidalTime.split('T')[1]
+                  let time = e.tidalTime.split("T")[1];
                   let tidal = {
-                    tidalTime: `${time.split(':')[0]}时${time.split(':')[1]}分`,
+                    tidalTime: `${time.split(":")[0]}时${time.split(":")[1]}分`,
                     name: `第二低潮`,
-                    height: e.height
+                    height: e.height,
                   };
-                  tidalLists.push(tidal)
-                  return
+                  tidalLists.push(tidal);
+                  return;
                 }
                 if (e.tidalType === 3) {
                   console.log("第一高潮", e);
-                  let time = e.tidalTime.split('T')[1]
+                  let time = e.tidalTime.split("T")[1];
                   let tidal = {
-                    tidalTime: `${time.split(':')[0]}时${time.split(':')[1]}分`,
+                    tidalTime: `${time.split(":")[0]}时${time.split(":")[1]}分`,
                     name: `第一高潮`,
-                    height: e.height
+                    height: e.height,
                   };
-                  tidalLists.push(tidal)
+                  tidalLists.push(tidal);
                   return;
                 }
                 if (e.tidalType === 4) {
                   console.log("第二高潮", e);
-                  let time = e.tidalTime.split('T')[1]
+                  let time = e.tidalTime.split("T")[1];
                   let tidal = {
-                    tidalTime: `${time.split(':')[0]}时${time.split(':')[1]}分`,
+                    tidalTime: `${time.split(":")[0]}时${time.split(":")[1]}分`,
                     name: `第二高潮`,
-                    height: e.height
+                    height: e.height,
                   };
-                  tidalLists.push(tidal)
+                  tidalLists.push(tidal);
                   return;
                 }
               });
-              console.log(tidalLists,`tidalListstidalListstidalLists`)
-              this.tidalData.tidalList = tidalLists
+              console.log(tidalLists, `tidalListstidalListstidalLists`);
+              this.tidalData.tidalList = tidalLists;
               for (let i = 0; i < tidalList.length; i++) {
                 let time = this.$m(tidalList[i].tidalTime).format("HH");
                 this.tidalCharts.xdata.push(time);
