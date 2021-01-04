@@ -89,7 +89,7 @@ export default {
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-            this.$get("/api/ground-live/analysisGround", {
+            this.$get("/api/tidal/analysisTidal", {
               filePath:encodeURIComponent(this.formData.filePath)
             })
               .then(() => {
@@ -149,5 +149,8 @@ export default {
   color: #c0b2c0;
   -webkit-text-fill-color: #c0b2c0;
 }
+
+
+
 
 </style>
