@@ -1930,7 +1930,7 @@ export default {
         this.$get("/api/numerical-forecast/ocean-current", {
           day: this.day,
           time: this.time,
-          grade: 4,
+          grade: 1,
           level: 1,
           type: currentItem.id,
         }).then(res => {
