@@ -2557,11 +2557,11 @@ export default {
         );
 
         const img = this.toImage(fyImage);
-        let bounds = L.latLngBounds(L.latLng(-10, 96.06), L.latLng(48.3, 169.96));
-        // let bounds = L.latLngBounds(
-        //   L.latLng(-54.96, 49.74),
-        //   L.latLng(54.96, 159.66)
-        // );
+        // let bounds = L.latLngBounds(L.latLng(-10, 96.06), L.latLng(48.3, 169.96));
+        let bounds = L.latLngBounds(
+          L.latLng(-54.96, 49.74),
+          L.latLng(54.96, 159.66)
+        );
         if (img && img !== "data:image/png;base64,") {
           // let imageLayer = L.imageOverlay(img, bounds,{opacity:0.3});
           let imageLayer = L.imageOverlay(img, bounds);
