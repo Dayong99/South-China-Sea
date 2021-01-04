@@ -204,9 +204,7 @@ export default {
     },
     closeManager() {
       this.routeManagerShow = false;
-      if(this.routeDialogOptions[0]==2){
-        this.setShowEdit(this.nowIndex)
-      }
+      this.routeDialogOptions[0]==2 ? this.setShowEdit(this.nowIndex) : ""; //航线列表子项操作显隐
       this.setRouteDialogOptions([0, this.routeDialogOptions[1], this.routeDialogOptions[2], false]);
       this.reset();
       if (this.lastLine) {

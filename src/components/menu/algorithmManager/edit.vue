@@ -406,9 +406,7 @@ export default {
     // 关闭评估窗口
     closeManager() {
       this.algorithmShow = false;
-      if(this.algorithmOptions[0] == 1){
-        this.setShowAlgorithm(this.nowIndex);
-      }
+      this.algorithmOptions[0] == 1 ? this.setShowAlgorithm(this.nowIndex) : ""; //航线列表子项操作显隐
       this.title = null;
       this.activeNodeIndex = [];
       this.editNodeInfo = {
