@@ -125,6 +125,16 @@
 
     <!-- 台风显示 -->
     <div class="tylist" v-if="typhoonShow">
+      <div class="select_wrapper">
+        <div class="item_desc">年份</div>
+        <div class="item_select">
+          <select v-model="selectDate">
+            <option v-for="(item, index) in dateList" :key="index" :value="item">
+              {{ item }} 年
+            </option>
+          </select>
+        </div>
+      </div>
       <div class="tytitle">
         <div class="chooseAll" @click="chooseAll">
           <img
@@ -276,6 +286,9 @@ export default {
   },
   data() {
     return {
+      // 选中的年份
+      selectDate: 2020,
+      dateList: [],
       firstFlag: true,
       // 日期、小时
       day: null,
@@ -568,6 +581,10 @@ export default {
     }),
   },
   watch: {
+    selectDate(val) {
+      console.log(val, `年份`);
+      this.loadTyphoon();
+    },
     timeForcast(newval) {
       console.log(newval);
     },
@@ -1006,6 +1023,10 @@ export default {
     this.initMenuList();
   },
   mounted() {
+    const date = this.$m().format("YYYY");
+    this.selectDate = date;
+    console.log(date, `年`);
+    this.dateList = this.generateArray(1949, Number(date));
     // 初始化潮汐图标
     this.tidalIcon = this.$utilsMap.createIcon({
       iconUrl: require("@/assets/images/sidebar/station.png"),
@@ -1044,7 +1065,7 @@ export default {
     });
 
     L.CustomPopup = L.Popup.extend({
-      _initLayout: function() {
+      _initLayout: function () {
         var prefix = "leaflet-popup",
           container = (this._container = L.DomUtil.create(
             "div",
@@ -1062,7 +1083,7 @@ export default {
 
     // add bindCustomPopup
     L.Layer.include({
-      bindCustomPopup: function(content, options) {
+      bindCustomPopup: function (content, options) {
         if (content instanceof L.Popup) {
           L.setOptions(content, options);
           this._popup = content;
@@ -1102,6 +1123,12 @@ export default {
       setChangeDateIndex: "clickup/setChangeDateIndex",
       setReloadTime: "sideBar/setReloadTime",
     }),
+    // 生成日期数组
+    generateArray(start, end) {
+      return Array.from(new Array(end + 1).keys())
+        .slice(start)
+        .reverse();
+    },
     changeDrawFlag() {
       this.drawFlag = !this.drawFlag;
       if (!this.drawFlag) {
@@ -1127,9 +1154,17 @@ export default {
     clearWindOrWave(layer) {
       let windList = windGroup.getLayers();
       let waveList = waveGroup.getLayers();
-      if ((layer.parameterMark === "ec_wave_height" || layer.parameterMark === "waves_direction") && waveList.length) {
+      if (
+        (layer.parameterMark === "ec_wave_height" ||
+          layer.parameterMark === "waves_direction") &&
+        waveList.length
+      ) {
         waveGroup.clearLayers();
-      } else if ((layer.parameterMark === "U_V_component_of_wind" || layer.parameterMark === "U_V_component_of_wind_ground") && windList.length) {
+      } else if (
+        (layer.parameterMark === "U_V_component_of_wind" ||
+          layer.parameterMark === "U_V_component_of_wind_ground") &&
+        windList.length
+      ) {
         windGroup.clearLayers();
       }
     },
@@ -1243,7 +1278,7 @@ export default {
                 gradesize = 0;
               }
               // 海流的grade不变
-              if(item.parameterMark === 'waves_direction') {
+              if (item.parameterMark === "waves_direction") {
                 gradesize = 0;
               }
               obj.grade = gradesize;
@@ -1255,13 +1290,13 @@ export default {
                 obj.windWave = "wind";
                 obj.windWaveName = "风羽";
               }
-              if(item.parameterMark === 'ec_wave_height') {
-                obj.windWave = 'wave'
-                obj.windWaveName = '波向'
+              if (item.parameterMark === "ec_wave_height") {
+                obj.windWave = "wave";
+                obj.windWaveName = "波向";
               }
-              if(item.parameterMark === 'waves_direction') {
-                obj.windWave = 'wave'
-                obj.windWaveName = '流向'
+              if (item.parameterMark === "waves_direction") {
+                obj.windWave = "wave";
+                obj.windWaveName = "流向";
               }
               // wind\wave 不显示在sidebar上
               if (item.drawType === "point_wind" || item.drawType === "point_flow") {
@@ -1306,8 +1341,7 @@ export default {
 
         if (
           this.menuList[index].parameterMark === "U_V_component_of_wind" ||
-          this.menuList[index].parameterMark ===
-            "U_V_component_of_wind_ground" ||
+          this.menuList[index].parameterMark === "U_V_component_of_wind_ground" ||
           this.menuList[index].parameterMark === "ec_wave_height" ||
           this.menuList[index].parameterMark === "waves_direction"
         ) {
@@ -1388,28 +1422,34 @@ export default {
           console.log("选中台风---------");
           this.drawWarning();
           //获取台风列表数据信息
-          this.$get("api/typhoon").then((res) => {
-            console.log(res.data.data, "台风数据信息");
-            let tyData = res.data.data;
-            this.tyList = [];
-            tyData.forEach((item) => {
-              this.tyList.push({
-                id: item.id,
-                choose: false,
-                cycloneType: item.cycloneType,
-                cycloneName: item.cycloneName,
-                // centerMaxSpeed: item.centerMaxSpeed,
-              });
-            });
-            console.log(this.tyList);
-            this.typhoonShow = true;
-          });
+          this.loadTyphoon();
         }
       }
 
       // 当前要素设置为当前要素列表中的最后一个
       // this.currentItem = this.currentItemList[this.currentItemList.length - 1]
       // this.currentLevel = this.currentItemList[this.currentItemList.length - 1].level[0]
+    },
+    // 请求台风数据
+    loadTyphoon() {
+      this.$get("api/typhoon", {
+        year: this.selectDate,
+      }).then((res) => {
+        console.log(res.data.data, "台风数据信息");
+        let tyData = res.data.data;
+        this.tyList = [];
+        tyData.forEach((item) => {
+          this.tyList.push({
+            id: item.id,
+            choose: false,
+            cycloneType: item.cycloneType,
+            cycloneName: item.cycloneName,
+            // centerMaxSpeed: item.centerMaxSpeed,
+          });
+        });
+        console.log(this.tyList);
+        this.typhoonShow = true;
+      });
     },
     // 绘制单个要素
     drawItem() {
@@ -1910,7 +1950,7 @@ export default {
     },
     // 绘制 洋流\波向
     getAndDrawWave(currentItem) {
-      if(currentItem.parameterMark === 'waves_direction_lang') {
+      if (currentItem.parameterMark === "waves_direction_lang") {
         this.$get("/api/numerical-forecast/wave", {
           day: this.day,
           time: this.time,
@@ -1950,7 +1990,7 @@ export default {
                 waveList.push(latlngList);
               }
               console.log("waveList", waveList);
-  
+
               var config = {
                 lat: "0",
                 lng: "1",
@@ -1967,81 +2007,81 @@ export default {
           .catch((error) => {
             this.$message.error("获取" + currentItem.name + "数据失败");
           });
-      } else if(currentItem.parameterMark === 'waves_direction_liu') {
+      } else if (currentItem.parameterMark === "waves_direction_liu") {
         this.$get("/api/numerical-forecast/ocean-current", {
           day: this.day,
           time: this.time,
           grade: 1,
           level: 1,
           type: currentItem.id,
-        }).then(res => {
-          console.log("wave--res", res.data.data);
-          if (res.status == 200) {
-            let gridSize = currentItem.gridSize;
-            let xMin = currentItem.xMin;
-            let xMax = currentItem.xMax;
-            let yMin = currentItem.yMin;
-            let yMax = currentItem.yMax;
-            // waveList 构造数组 361 * 720 [lat, lng, value, dir]
-            let waveList = [];
-            console.log(gridSize);
-            let data = res.data.data;
-
-            // data.reverse()
-            let firstX = data[0][0];
-            let latlngList = [];
-            for (let i = 0; i < data.length; i++) {
-
-              if(firstX == data[i][0]) {
-                latlngList.push(data[i])
-              } else {
-                // latlngList.reverse()
-                waveList.push(latlngList)
-                latlngList = []
-                firstX = data[i][0]
-                latlngList.push(data[i])
-              }
-            }
-            // for (let i = 0; i < data.length; i++) {
-            //   let latlngList = [];
-            //   for (let j = 0; j < data[i].length; j++) {
-            //     let arr = [];
-            //     arr.push(Number(yMax) - i * gridSize);
-            //     if (Number(xMin) + j * gridSize > 180) {
-            //       arr.push(Number(xMin) + j * gridSize - 360);
-            //     } else {
-            //       arr.push(Number(xMin) + j * gridSize);
-            //     }
-            //     if (data[i][j] != "") {
-            //       let temp = data[i][j].split(",");
-            //       arr.push(temp[0]);
-            //       arr.push(temp[1]);
-            //     } else {
-            //       arr.push("");
-            //       arr.push("");
-            //     }
-            //     latlngList.push(arr);
-            //   }
-            //   waveList.push(latlngList);
-            // }
-            console.log("waveList", waveList);
-
-            var config = {
-              lat: "0",
-              lng: "1",
-              value: "2",
-              dir: "3",
-              data: waveList,
-            };
-            let waveLayer = new FlowLayer({}, config);
-            waveLayer.id = currentItem.id;
-            waveGroup.addLayer(waveLayer);
-            window.map.addLayer(waveGroup);
-          }
         })
-        .catch((error) => {
-          this.$message.error("获取" + currentItem.name + "数据失败");
-        });
+          .then((res) => {
+            console.log("wave--res", res.data.data);
+            if (res.status == 200) {
+              let gridSize = currentItem.gridSize;
+              let xMin = currentItem.xMin;
+              let xMax = currentItem.xMax;
+              let yMin = currentItem.yMin;
+              let yMax = currentItem.yMax;
+              // waveList 构造数组 361 * 720 [lat, lng, value, dir]
+              let waveList = [];
+              console.log(gridSize);
+              let data = res.data.data;
+
+              // data.reverse()
+              let firstX = data[0][0];
+              let latlngList = [];
+              for (let i = 0; i < data.length; i++) {
+                if (firstX == data[i][0]) {
+                  latlngList.push(data[i]);
+                } else {
+                  // latlngList.reverse()
+                  waveList.push(latlngList);
+                  latlngList = [];
+                  firstX = data[i][0];
+                  latlngList.push(data[i]);
+                }
+              }
+              // for (let i = 0; i < data.length; i++) {
+              //   let latlngList = [];
+              //   for (let j = 0; j < data[i].length; j++) {
+              //     let arr = [];
+              //     arr.push(Number(yMax) - i * gridSize);
+              //     if (Number(xMin) + j * gridSize > 180) {
+              //       arr.push(Number(xMin) + j * gridSize - 360);
+              //     } else {
+              //       arr.push(Number(xMin) + j * gridSize);
+              //     }
+              //     if (data[i][j] != "") {
+              //       let temp = data[i][j].split(",");
+              //       arr.push(temp[0]);
+              //       arr.push(temp[1]);
+              //     } else {
+              //       arr.push("");
+              //       arr.push("");
+              //     }
+              //     latlngList.push(arr);
+              //   }
+              //   waveList.push(latlngList);
+              // }
+              console.log("waveList", waveList);
+
+              var config = {
+                lat: "0",
+                lng: "1",
+                value: "2",
+                dir: "3",
+                data: waveList,
+              };
+              let waveLayer = new FlowLayer({}, config);
+              waveLayer.id = currentItem.id;
+              waveGroup.addLayer(waveLayer);
+              window.map.addLayer(waveGroup);
+            }
+          })
+          .catch((error) => {
+            this.$message.error("获取" + currentItem.name + "数据失败");
+          });
       }
     },
     // 绘制潮汐
@@ -2104,12 +2144,8 @@ export default {
         this.setChangeDateIndex(2); // 重置为第三个日期
         this.tidalData.timeList = [];
         let now = this.$m(this.day).format("MM-DD");
-        let yestoday = this.$m(this.day)
-          .subtract(1, "days")
-          .format("MM-DD");
-        let lastday = this.$m(this.day)
-          .subtract(2, "days")
-          .format("MM-DD");
+        let yestoday = this.$m(this.day).subtract(1, "days").format("MM-DD");
+        let lastday = this.$m(this.day).subtract(2, "days").format("MM-DD");
         this.tidalData.timeList.push(lastday);
         this.tidalData.timeList.push(yestoday);
         this.tidalData.timeList.push(now);
@@ -2564,10 +2600,7 @@ export default {
 
         const img = this.toImage(fyImage);
         // let bounds = L.latLngBounds(L.latLng(-10, 96.06), L.latLng(48.3, 169.96));
-        let bounds = L.latLngBounds(
-          L.latLng(-54.96, 49.74),
-          L.latLng(54.96, 159.66)
-        );
+        let bounds = L.latLngBounds(L.latLng(-54.96, 49.74), L.latLng(54.96, 159.66));
         if (img && img !== "data:image/png;base64,") {
           // let imageLayer = L.imageOverlay(img, bounds,{opacity:0.3});
           let imageLayer = L.imageOverlay(img, bounds);
