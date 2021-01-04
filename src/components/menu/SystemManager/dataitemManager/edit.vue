@@ -3,7 +3,7 @@
   <el-dialog
     :title="title"
     width="500px"
-    top="50px"
+    top="100px"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :visible.sync="isVisible"
@@ -15,7 +15,7 @@
       :rules="rules"
       label-position="right"
       label-width="100px"
-      style="line-height: 100%; height: 600px"
+      class="info-form"
     >
       <el-row>
         <el-col :span="18">
@@ -390,6 +390,10 @@ export default {
         {
           value: 1,
           label: "GFS",
+        },
+        {
+          value: 2,
+          label: "总参",
         },
       ],
       drawOption: [

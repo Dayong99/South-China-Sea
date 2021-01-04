@@ -161,6 +161,12 @@ export default {
     }),
   },
   watch: {
+    tidalData: {
+      handler:function(val) {
+        console.log(val,`弹框获取的信息值`)
+      },
+      deep: true
+    },
     tidalShow(newval) {
       console.log('-----------',newval);
       // this.$nextTick(() => {

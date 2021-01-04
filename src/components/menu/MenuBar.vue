@@ -96,6 +96,7 @@
               @click.stop="openTask(index)"
             />
           </div>
+          <!-- 任务管理列表 -->
           <ul class="list_task_ul" v-show="item.flag && flagList[0]">
             <li v-for="(item, index) in taskList" :key="index">
               <div class="task_list">
@@ -138,10 +139,13 @@
                   v-for="(itemRoute, indexRoute) in item.routeList"
                   :key="`route${indexRoute}`"
                 >
-                  <div
-                    @click="switchRoute(item, index, itemRoute, indexRoute)"
+                  <!-- <div
                     class="task_content_desc"
-                    :class="{ task_content_desc_active: itemRoute.checked }"
+                    :class="itemRoute.checked?'task_content_desc_active':''"
+                    @click="switchRoute(item, index, itemRoute, indexRoute)"
+                  > -->
+                  <div
+                    class="task_content_desc"
                   >
                     <div class="task_content_img">
                       <img src="@/assets/images/menu/lineTitle.svg" alt="" />
@@ -149,6 +153,7 @@
                     <div class="task_content_name">
                       {{ itemRoute.lineName }}
                     </div>
+                    <!-- 航线操作 -->
                     <div class="control_wrapper">
                       <!-- 航线详情按钮 -->
                       <img
@@ -163,8 +168,7 @@
 
                       <!-- 航线评估按钮 -->
                       <img
-                            :src="
-                              itemRoute.showAlorithm
+                            :src="showList[indexRoute].showAlgorithm
                                 ? AssessControlSrc.assess.active
                                 : AssessControlSrc.assess.deactive
                             "
@@ -175,7 +179,7 @@
                       <!-- 航线编辑按钮 -->
                       <img
                         :src="
-                          itemRoute.edit
+                          showList[indexRoute].showEdit
                             ? AssessControlSrc.edit.active
                             : AssessControlSrc.edit.deactive
                         "
@@ -476,6 +480,7 @@ export default {
       pointInfo: (state) => state.clickup.pointInfo,
       TaskManagerOptions: (state) => state.menuBar.TaskManagerOptions,
       routeDialogOptions: (s) => s.menuBar.routeDialogOptions,
+      showList:(s)=>s.menuBar.showList,
       algorithmOptions: (s) => s.menuBar.algorithmOptions,
     }),
 
@@ -635,6 +640,9 @@ export default {
       setPointInfoShow: "clickup/setPointInfoShow",
       setInfoShow: "clickup/setInfoShow",
       setAssessLegendShow: "menuBar/setAssessLegendShow",
+      setshowList:"menuBar/setshowList",
+      setShowAlgorithm:"menuBar/setShowAlgorithm",
+      setShowEdit:"menuBar/setShowEdit",
     }),
     // 任务树setting
     AssessSetting(itemAssess) {
@@ -669,9 +677,13 @@ export default {
     },
     // 新建评估
     algorithm(itemRoute, indexRoute) {
-      itemRoute.showAlorithm = !itemRoute.showAlorithm
-      console.log(itemRoute.showAlorithm,`itemRoute.showAlorithm`)
-      this.setAlgorithm([1, itemRoute]);
+      this.setShowAlgorithm(indexRoute)
+      console.log(this.showList[indexRoute].showAlgorithm,`this.algorithmOptions[indexRoute].showAlgorithm`)
+      if(this.showList[indexRoute].showAlgorithm==true){
+        this.setAlgorithm([1,this.showList[indexRoute]]);
+      }else{
+        this.setAlgorithm([0,this.showList[indexRoute]]);
+      }
     },
     // 新增航线
     addTaskItem(item, index) {
@@ -691,10 +703,11 @@ export default {
         this.taskList[index].checked = true;
       }
     },
-    switchRoute(item, index, itemRoute, indexRoute) {
-      this.taskList[index].routeList[indexRoute].checked = !this.taskList[index]
-        .routeList[indexRoute].checked;
-    },
+    // switchRoute(item, index, itemRoute, indexRoute) {
+    //   itemRoute.checked = !itemRoute.checked;
+    //   this.setAlgorithm([0,item.routeList])
+    //   console.log(this.algorithmOptions,"this.algorithmOptions switch");
+    // },
     editTaskItem(item) {
       this.setTaskManagerOptions([2, item]);
     },
@@ -791,11 +804,14 @@ export default {
               return {
                 ...e,
                 checked: false,
-                assessChecked: false,
+                showAlgorithm: false,
                 showRoute: false,
+                showEdit:false,
                 assessList: [],
               };
             });
+            this.setshowList(this.taskList[index].routeList)
+            console.log(this.showList,"this.showList, loadRouteList");
           }
         })
         .catch(() => {
@@ -816,12 +832,14 @@ export default {
               return {
                 ...e,
                 checked: false,
-                assessChecked: false,
+                showAlgorithm: false,
                 showRoute: false,
-                showAlorithm: false,
+                showEdit: false,
                 assessList: [],
               };
             });
+            this.setshowList(this.taskList[index].routeList)
+            console.log(this.showList,"this.showList, reLoadRouteList");
           }
         })
         .catch(() => {
@@ -1696,17 +1714,38 @@ export default {
           newArr = this.removeRepeat(pointArr, "x+");
         }
         console.log("去重排序之后的数组-----------", newArr);
-        let index = newArr.findIndex((item) => {
-          return (
-            ((item[0] == point1[0] || item[1] == point1[1]) &&
-              !(item[0] == point1[0] && item[1] == point1[1])) ||
-            ((item[0] == point2[0] || item[1] == point2[1]) &&
-              !(item[0] == point2[0] && item[1] == point2[1]))
-          );
-        });
-        if (index != -1) {
-          newArr.splice(index, 1);
-        }
+        console.log(point1,point2,"===========");
+        newArr.forEach((item,index)=>{
+          if(item[0]==point1[0]){
+            if(item[1] !== point1[1]){
+              newArr.splice(index,1)
+            }
+          }else if(item[1] == point1[1]){
+            if(item[0] !== point1[0]){
+              newArr.splice(index,1)
+            }
+          }else if(item[0]==point2[0]){
+            if(item[1] !== point2[1]){
+              newArr.splice(index,1)
+            }
+          }else if(item[1] == point2[1]){
+            if(item[0] !== point2[0]){
+              newArr.splice(index,1)
+            }
+          }
+        })
+        // let index = newArr.findIndex((item) => {
+        //   return (
+        //     ((item[0] == point1[0] || item[1] == point1[1]) &&
+        //       (item[0] !== point1[0] || item[1] !== point1[1])) ||
+        //     ((item[0] == point2[0] || item[1] == point2[1]) &&
+        //       (item[0] !== point2[0] || item[1] !== point2[1]))
+        //   );
+        // });
+        // console.log(index,"=============");
+        // if (index != -1) {
+        //   newArr.splice(index, 1);
+        // }
 
         //构建位置，颜色数组，用于循环绘制变色线
         let fArr = [];
@@ -1963,6 +2002,8 @@ export default {
 
     // 航线编辑
     editRoute(itemRoute, indexRoute, index) {
+      // itemRoute.showEdit = !itemRoute.showEdit
+      this.setShowEdit(indexRoute)
       // false 不刷新    true 刷新
       this.setRouteDialogOptions([2, itemRoute, index, false]);
     },

@@ -182,14 +182,14 @@
   // 输入框颜色选择器
   .color_value {
     opacity:0;
-    width:130px;
+    width:193px;
     height:36px;
     padding:0 25px;
     position: absolute;
       top:2px;
       left:0;
     .el-color-picker__trigger {
-      width:130px;
+      width:193px;
       height:36px;
       position: absolute;
       left:0;
@@ -207,9 +207,10 @@
         width:16px;
         height:16px;
         position: absolute;
-        left:115px;
+        left:95px;
         top:12px;
       }
+
     }
   
     .delete_color {
@@ -227,4 +228,15 @@
       width:23px;
       height: 23px; 
       float: right;
+    }
+
+    .insert_form {
+      .el-input {
+        width:193px;
+      }
+
+      .preview_color {
+       
+        left:115px;
+      }
     }

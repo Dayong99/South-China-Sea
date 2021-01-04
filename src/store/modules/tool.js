@@ -70,15 +70,15 @@ export default {
     colorList: [{
         class: "color_box",
         // color: "rgb(255,72,72,1)",
-        color:"rgb(25,186,0,1)"
+        color:"rgba(25,186,0,1)"
       },
       {
         class: "color_box",
-        color: "rgb(255,186,0,1)",
+        color: "rgba(255,186,0,1)",
       },
       {
         class: "color_box",
-        color: "rgb(255,72,72,1)",
+        color: "rgba(255,72,72,1)",
       }
     ],
     sizeList: [{

@@ -149,6 +149,7 @@ export default {
         placeName: null,
       },
       geojsonGroup: [],
+      drawType:null
     };
   },
   filters: {
@@ -228,7 +229,11 @@ export default {
           let style = JSON.parse(item.other1);
           let layer;
           if (geojson.type == "Point") {
-            layer = new L.Circle([geojson.coordinates[1],geojson.coordinates[0]], Number(item.other2), style).addTo(map);
+            layer = new L.Circle(
+              [geojson.coordinates[1], geojson.coordinates[0]],
+              Number(item.other2),
+              style
+            ).addTo(map);
             console.log(layer);
           } else {
             layer = L.geoJSON(geojson, {
@@ -236,8 +241,16 @@ export default {
             }).addTo(map);
           }
 
+          let str;
+          if (item.other2) {
+            str = '<div style="line-height:22px;">名称:'+item.placeName + "<br />半径:" + Number(item.other2).toFixed(2) + "公里/"+(Number(item.other2)*0.539956803456).toFixed(2)+"海里</div>";
+          } else {
+            str = '名称:'+item.placeName;
+          }
+          console.log(str)
+
           layer
-            .bindPopup(item.placeName, {
+            .bindPopup(str, {
               autoPan: false,
               autoClose: false,
               className: "leaflet-marker-markerTip",
@@ -256,9 +269,14 @@ export default {
       });
     },
     editItem(row) {
+      if(row.drawType==1){
+        this.drawType='警戒线'
+      }else{
+        this.drawType='任务区'
+      }
       this.$refs.edit.setData(row);
       this.dialog.isVisible = true;
-      this.dialog.title = "修改标志区";
+      this.dialog.title = this.drawType;
       this.markShow = false;
     },
 
@@ -271,14 +289,19 @@ export default {
     },
     // 删除
     deleteItem(row) {
-      this.$confirm("确认删除该标志区吗")
+      if(row.drawType==1){
+        this.drawType='警戒线'
+      }else{
+        this.drawType='任务区'
+      }
+      this.$confirm("确认删除该"+this.drawType+"吗")
         .then(() => {
           this.$delete(`/api/common-place`, {
             id: row.id,
           })
             .then(() => {
               this.$message({
-                message: "标志区删除成功",
+                message: "删除成功",
                 type: "success",
               });
             })
@@ -291,11 +314,11 @@ export default {
             message: "取消删除",
             type: "information",
           });
-        })
+        });
     },
     add() {
       this.dialog.isVisible = true;
-      this.dialog.title = "添加标志区";
+      this.dialog.title = "添加警戒线/任务区";
     },
     // 搜索
     search() {
@@ -345,5 +368,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
