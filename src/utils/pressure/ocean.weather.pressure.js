@@ -12,8 +12,9 @@ export var PressureLayer = CanvasLayer.extend({
     showLevel: 3, // 文字的显示级别
     stroke: true,
     color:  '#605FF0', //'#61A5E8',
-    specialColor: '5f2500', // 特殊线的颜色，棕红色
+    specialColor: '#5f2500', // 特殊线的颜色，棕红色
     weight: 0.8,
+    specialWeight: 2,
     opacity: 0.85,
     lineCap: 'round',
     lineJoin: 'round',
@@ -78,18 +79,23 @@ export var PressureLayer = CanvasLayer.extend({
     for(let i = 0, len = data.length; i < len; i++) {
       points = this.getPoints(map, data[i]);
       text = data[i][0][this.cfg.value];
-      this._drawLine(ctx, points);
+      let typeFlag = false
+      // typeFlag 绘制588线
+      // if(text == 588) {
+      //   typeFlag = true
+      // }
+      this._drawLine(ctx, points, typeFlag);
       if (this.options.isDrawLeftRight){
         lpoints = this.getLeft360Points(map, data[i]);
         rpoints = this.getRight360Points(map, data[i]);
-        this._drawLine(ctx, lpoints);
-        this._drawLine(ctx, rpoints);
+        this._drawLine(ctx, lpoints, typeFlag);
+        this._drawLine(ctx, rpoints, typeFlag);
       }
       if (zoom >= this.options.showLevel) { // zoom >= 3 && zoom < 5 && text >= 1000 || zoom >= 5
-        this._drawText(ctx, points[Math.floor(points.length / 2)] ,text);
+        this._drawText(ctx, points[Math.floor(points.length / 2)] ,text, typeFlag);
         if (this.options.isDrawLeftRight){
-          this._drawText(ctx, lpoints[Math.floor(points.length / 2)] ,text);
-          this._drawText(ctx, rpoints[Math.floor(points.length / 2)] ,text);
+          this._drawText(ctx, lpoints[Math.floor(points.length / 2)] ,text, typeFlag);
+          this._drawText(ctx, rpoints[Math.floor(points.length / 2)] ,text, typeFlag);
         }
       }
     }
@@ -169,7 +175,7 @@ export var PressureLayer = CanvasLayer.extend({
     return pts;
   },
 
-  _drawLine: function (ctx, points) {
+  _drawLine: function (ctx, points, flag) {
     var p ;
     ctx.save();
     ctx.beginPath();
@@ -177,16 +183,20 @@ export var PressureLayer = CanvasLayer.extend({
       p = points[i];
       i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
     }
-    this._fillStroke(ctx);
+    this._fillStroke(ctx, flag);
     ctx.restore();
   },
 
-  _drawText: function (ctx, pt, text){
+  _drawText: function (ctx, pt, text, flag){
     ctx.save();
     ctx.textAlign = 'start';
     ctx.textBaseline = 'middle';
     ctx.font = 'normal ' + this.options.fontWeight + ' ' + this.options.fontSize + ' ' + this.options.fontFamily;
-    ctx.fillStyle = this.options.fontColor;
+    if(flag) {
+      ctx.fillStyle = this.options.specialColor;
+    } else {
+      ctx.fillStyle = this.options.fontColor;
+    }
     ctx.strokeStyle = this.options.fontStrokeColor;
     ctx.lineWidth = this.options.fontStrokeSize;
     ctx.strokeText(text, pt.x, pt.y);
@@ -210,7 +220,7 @@ export var PressureLayer = CanvasLayer.extend({
     ctx.restore();
   },
 
-  _fillStroke: function (ctx) {
+  _fillStroke: function (ctx, flag) {
 		var options = this.options;
 
 		if (options.fill) {
@@ -222,10 +232,15 @@ export var PressureLayer = CanvasLayer.extend({
 		if (options.stroke && options.weight !== 0) {
 			if (ctx.setLineDash) {
 				ctx.setLineDash(this.options && this.options._dashArray || []);
-			}
+      }
 			ctx.globalAlpha = options.opacity;
-			ctx.lineWidth = options.weight;
-			ctx.strokeStyle = options.color;
+      if(flag) {
+        ctx.lineWidth = options.specialWeight;
+        ctx.strokeStyle = options.specialColor
+      } else {
+        ctx.lineWidth = options.weight;
+        ctx.strokeStyle = options.color;
+      }
 			ctx.lineCap = options.lineCap;
 			ctx.lineJoin = options.lineJoin;
 			ctx.stroke();

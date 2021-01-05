@@ -1860,7 +1860,7 @@ export default {
         // maxX: 360,
         // minY: -75,
         // maxY: 75,
-        num: 30,
+        num: 20,
         time: this.time,
         type: currentItem.id,
       })
@@ -1876,7 +1876,7 @@ export default {
                   let latlng = [];
                   latlng.push(item1.Y);
                   latlng.push(item1.X);
-                  latlng.push(Math.round(item.Value / 10));
+                  latlng.push(item.Value);
                   linedata.push(latlng);
                 });
   
@@ -1889,7 +1889,7 @@ export default {
                   let latlng = [];
                   latlng.push(item1.Y);
                   latlng.push(item1.X);
-                  latlng.push(Math.round(item.Value));
+                  latlng.push(item.Value);
                   linedata.push(latlng);
                 });
   
