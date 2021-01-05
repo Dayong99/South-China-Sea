@@ -641,7 +641,7 @@ export default {
     currentItem: {
       handler(val, old) {
         console.log("currentItem---", val);
-        if (val.windWaveFlag) {
+        if (val.windWaveFlag && (val.drawType == 'point_wind' || val.drawType == 'point_flow')) {
           this.clearWindOrWave(val);
           this.findAndDrawWindWave(val, val.currentLevel);
 
@@ -691,31 +691,37 @@ export default {
       deep: true,
     },
     // 层级变化
-    nowLevel(newval) {
-      // 最近的层级 作为缓存，删除当前要素之后 显示前一个要素的绘制层级
-      this.currentItemList[
-        this.currentItemList.length - 1
-      ].currentLevel = newval;
-      this.currentItem.currentLevel = newval;
-      if (
-        this.currentItem.drawType == "point_flow" ||
-        this.currentItem.drawType == "point_wind"
-      ) {
-        this.clearWindWave(this.currentItem);
-      } else if (this.currentItem.drawType == "layer") {
-        this.clearLayer(this.currentItem);
-      }
-      this.drawItem();
-      if (
-        this.currentItemList[this.currentItemList.length - 1].name == "风场"
-      ) {
-        this.windSwitch = false;
-      }
-      if (
-        this.currentItemList[this.currentItemList.length - 1].name == "海浪"
-      ) {
-        this.waveSwitch = false;
-      }
+    nowLevel: {
+      handler(newval, oldval) {
+        console.log('nowlevel--------sidebar',newval);
+        if(newval.refresh) {
+          // 最近的层级 作为缓存，删除当前要素之后 显示前一个要素的绘制层级
+          this.currentItemList[
+            this.currentItemList.length - 1
+          ].currentLevel = newval.level;
+          this.currentItem.currentLevel = newval.level;
+          if (
+            this.currentItem.drawType == "point_flow" ||
+            this.currentItem.drawType == "point_wind"
+          ) {
+            this.clearWindWave(this.currentItem);
+          } else if (this.currentItem.drawType == "layer") {
+            this.clearLayer(this.currentItem);
+          }
+          this.drawItem();
+          if (
+            this.currentItemList[this.currentItemList.length - 1].name == "风场"
+          ) {
+            this.windSwitch = false;
+          }
+          if (
+            this.currentItemList[this.currentItemList.length - 1].name == "海浪"
+          ) {
+            this.waveSwitch = false;
+          }
+        }
+      },
+      deep: true
     },
     // 监听时间
     nowTime(newval) {
@@ -1259,6 +1265,7 @@ export default {
       setTidalMsgFlag: "clickup/setTidalMsgFlag",
       setChangeDateIndex: "clickup/setChangeDateIndex",
       setReloadTime: "sideBar/setReloadTime",
+      setNowLevel: "sideBar/setNowLevel",
     }),
     // 生成日期数组
     generateArray(start, end) {
@@ -1522,10 +1529,13 @@ export default {
           this.setLevelList(
             this.currentItemList[this.currentItemList.length - 1].parseIntLevel
           );
+          // 重置store要素层级level，false不刷新
+          this.setNowLevel({level: this.currentLevel, refresh: false})
         } else {
           this.currentItem = null;
           this.currentLevel = null;
           this.setLevelList([]);
+          this.setNowLevel({level: null, refresh: false})
         }
       } else {
         // 互斥元素添加

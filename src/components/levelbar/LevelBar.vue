@@ -123,10 +123,10 @@ export default {
       // // 层级变化通知sideBar重绘
       // this.setNowLevel(this.nowcontent)
 
-      // // 层级变化通知sideBar重绘
-      this.setNowLevel(item)
       // 选中样式变化
       this.activeLevel=item
+      // // 层级变化通知sideBar重绘
+      this.setNowLevel({level: item, refresh: true})
     },
     // 显示层级戳
     // showTip() {
