@@ -1860,35 +1860,47 @@ export default {
         // maxX: 360,
         // minY: -75,
         // maxY: 75,
-        num: 30,
+        num: 20,
         time: this.time,
         type: currentItem.id,
       })
         .then((res) => {
           if (res.status == 200) {
             let polyline = [];
-            // max 输出最大值
-            // let maxList = []
-            res.data.data.forEach((item) => {
-              let linedata = [];
-              // let max = 0
-              item.PointList.forEach((item1) => {
-                let latlng = [];
-                // if(max < item1.X) {
-                //   max = item1.X
-                // }
-                latlng.push(item1.Y);
-                latlng.push(item1.X);
-                latlng.push(Math.round(item.Value / 10));
-                linedata.push(latlng);
+            console.log('------------', currentItem);
+            
+            if(currentItem.parameterMark === 'Geopotential_Height') {
+              res.data.data.forEach((item) => {
+                let linedata = [];
+                item.PointList.forEach((item1) => {
+                  let latlng = [];
+                  latlng.push(item1.Y);
+                  latlng.push(item1.X);
+                  latlng.push(item.Value);
+                  linedata.push(latlng);
+                });
+  
+                polyline.push(linedata);
               });
-              // maxList.push(max)
+            } else {
+              res.data.data.forEach((item) => {
+                let linedata = [];
+                item.PointList.forEach((item1) => {
+                  let latlng = [];
+                  latlng.push(item1.Y);
+                  latlng.push(item1.X);
+                  latlng.push(item.Value);
+                  linedata.push(latlng);
+                });
+  
+                polyline.push(linedata);
+              });
+            }
 
-              polyline.push(linedata);
-            });
-            // console.log('最大值', maxList)
             let line = new PressureLayer(
-              {},
+              {
+                lineType: currentItem.parameterMark
+              },
               {
                 data: polyline,
                 hlData: [],
