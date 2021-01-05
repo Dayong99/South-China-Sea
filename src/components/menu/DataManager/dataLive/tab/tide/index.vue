@@ -1,12 +1,26 @@
 <template>
   <div v-show="tabShow" style="width:960px;">
     <div class="manager_operation">
-      <!-- <el-select
+      <el-select
         style="width:150px;margin-right:10px;"
-        v-model="queryParams.tidalType"
+        v-model="queryParams.gkId"
+        placeholder="港口"
+        clearable
+        @clear="search"
+      >
+        <el-option
+          v-for="(item, index) in portList"
+          :key="index"
+          :label="item.hname"
+          :value="item.id"
+        ></el-option>
+      </el-select>
+      <el-select
+        style="width:150px;margin-right:10px;"
+        v-model="queryParams.type"
         placeholder="潮汐类型"
         clearable
-        @change="search"
+         @clear="search"
       >
         <el-option
           v-for="(item, index) in typeList"
@@ -14,7 +28,7 @@
           :label="item.label"
           :value="item.value"
         ></el-option>
-      </el-select> -->
+      </el-select>
       <el-date-picker
         v-model="time"
         format="yyyy-MM-dd HH:mm:ss"
@@ -236,18 +250,25 @@ export default {
           ...this.queryParams,
         });
       } else {
-        // if (
-        //   this.queryParams.tidalType !== "" ||
-        //   this.queryParams.tidalType !== null ||
-        //   this.queryParams.tidalType !== undefined
-        // ) {
-        //   this.fetch({
-        //     tidalType: this.queryParams.tidalType,
-        //   });
-        // } else {
-        //   this.fetch();
-        // }
-        this.fetch();
+        let params = {};
+        if (
+          this.queryParams.gkId !== "" &&
+          this.queryParams.gkId !== null &&
+          this.queryParams.gkId !== undefined
+        ) {
+          params.gkId = this.queryParams.gkId;
+        }
+
+        if (
+          this.queryParams.type !== "" &&
+          this.queryParams.type !== null &&
+          this.queryParams.type !== undefined
+        ) {
+          params.type = this.queryParams.type;
+        }
+        this.fetch({
+          ...params,
+        });
       }
     },
     // 获取表格数据
