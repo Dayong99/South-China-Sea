@@ -12,6 +12,7 @@ export var PressureLayer = CanvasLayer.extend({
     showLevel: 3, // 文字的显示级别
     stroke: true,
     color:  '#605FF0', //'#61A5E8',
+    specialColor: '5f2500', // 特殊线的颜色，棕红色
     weight: 0.8,
     opacity: 0.85,
     lineCap: 'round',
@@ -22,7 +23,8 @@ export var PressureLayer = CanvasLayer.extend({
     fontFamily: 'Microsoft YaHei',
     fontColor: '#61A5E8',
     fontStrokeSize: 3,
-    fontStrokeColor: '#fff'
+    fontStrokeColor: '#fff',
+    lineType: '', // 多加的，判断哪种线，位势高度588线特殊标记
   },
 
   initialize: function (options, config) {
@@ -37,6 +39,7 @@ export var PressureLayer = CanvasLayer.extend({
     }, config);
     this._data = this.cfg.data;
     this._hlData = this.cfg.hlData;
+    console.log('line  js  位势高度判断', this.options.lineType);
   },
 
   setData: function (data, hlData) {
