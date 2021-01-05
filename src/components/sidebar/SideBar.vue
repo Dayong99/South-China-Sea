@@ -828,7 +828,7 @@ export default {
           .then((res) => {
             let dataArr = res.data.data;
             let newDataArr = [];
-            for (let i = 90; i >= -90; i--) {
+            for (let i = currentWind.yMax; i >= currentWind.yMin; i-=currentWind.gridSize) {
               for (let j = 0; j < dataArr.length; j++) {
                 if (dataArr[j][0] == i) {
                   newDataArr.push(dataArr[j]);
@@ -909,7 +909,7 @@ export default {
               // windVObj.data.push(value * Math.sin(rad));
             }
             this.windData.push(windUObj, windVObj);
-            console.log(this.windData);
+            console.log(this.windData,"======================");
             this.drawWindAnimate();
 
             map.on("movestart", this.removeWindAnimate);
@@ -2799,6 +2799,7 @@ export default {
 
     //绘制风场粒子动画
     drawWindAnimate() {
+      console.log(this.windData,"111111111111");
       windParticleLayer = L.velocityLayer({
         displayValues: true,
         displayOptions: {
@@ -2810,7 +2811,7 @@ export default {
         maxVelocity: 15,
         // particleMultiplier: 1 / 100,
         // velocityScale:0.002,
-        // colorScale: ["#fff"],
+        colorScale: ["#ff0000"],
         // lineWidth: 2,
       });
       map.addLayer(windParticleLayer);
