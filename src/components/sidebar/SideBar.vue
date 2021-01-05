@@ -691,31 +691,37 @@ export default {
       deep: true,
     },
     // 层级变化
-    nowLevel(newval) {
-      // 最近的层级 作为缓存，删除当前要素之后 显示前一个要素的绘制层级
-      this.currentItemList[
-        this.currentItemList.length - 1
-      ].currentLevel = newval;
-      this.currentItem.currentLevel = newval;
-      if (
-        this.currentItem.drawType == "point_flow" ||
-        this.currentItem.drawType == "point_wind"
-      ) {
-        this.clearWindWave(this.currentItem);
-      } else if (this.currentItem.drawType == "layer") {
-        this.clearLayer(this.currentItem);
-      }
-      this.drawItem();
-      if (
-        this.currentItemList[this.currentItemList.length - 1].name == "风场"
-      ) {
-        this.windSwitch = false;
-      }
-      if (
-        this.currentItemList[this.currentItemList.length - 1].name == "海浪"
-      ) {
-        this.waveSwitch = false;
-      }
+    nowLevel: {
+      handler(newval, oldval) {
+        console.log('nowlevel--------sidebar',newval);
+        if(newval.refresh) {
+          // 最近的层级 作为缓存，删除当前要素之后 显示前一个要素的绘制层级
+          this.currentItemList[
+            this.currentItemList.length - 1
+          ].currentLevel = newval.level;
+          this.currentItem.currentLevel = newval.level;
+          if (
+            this.currentItem.drawType == "point_flow" ||
+            this.currentItem.drawType == "point_wind"
+          ) {
+            this.clearWindWave(this.currentItem);
+          } else if (this.currentItem.drawType == "layer") {
+            this.clearLayer(this.currentItem);
+          }
+          this.drawItem();
+          if (
+            this.currentItemList[this.currentItemList.length - 1].name == "风场"
+          ) {
+            this.windSwitch = false;
+          }
+          if (
+            this.currentItemList[this.currentItemList.length - 1].name == "海浪"
+          ) {
+            this.waveSwitch = false;
+          }
+        }
+      },
+      deep: true
     },
     // 监听时间
     nowTime(newval) {
@@ -828,7 +834,7 @@ export default {
           .then((res) => {
             let dataArr = res.data.data;
             let newDataArr = [];
-            for (let i = 90; i >= -90; i--) {
+            for (let i = currentWind.yMax; i >= currentWind.yMin; i-=currentWind.gridSize) {
               for (let j = 0; j < dataArr.length; j++) {
                 if (dataArr[j][0] == i) {
                   newDataArr.push(dataArr[j]);
@@ -909,7 +915,7 @@ export default {
               // windVObj.data.push(value * Math.sin(rad));
             }
             this.windData.push(windUObj, windVObj);
-            console.log(this.windData);
+            console.log(this.windData,"======================");
             this.drawWindAnimate();
 
             map.on("movestart", this.removeWindAnimate);
@@ -1259,6 +1265,7 @@ export default {
       setTidalMsgFlag: "clickup/setTidalMsgFlag",
       setChangeDateIndex: "clickup/setChangeDateIndex",
       setReloadTime: "sideBar/setReloadTime",
+      setNowLevel: "sideBar/setNowLevel",
     }),
     // 生成日期数组
     generateArray(start, end) {
@@ -1522,10 +1529,13 @@ export default {
           this.setLevelList(
             this.currentItemList[this.currentItemList.length - 1].parseIntLevel
           );
+          // 重置store要素层级level，false不刷新
+          this.setNowLevel({level: this.currentLevel, refresh: false})
         } else {
           this.currentItem = null;
           this.currentLevel = null;
           this.setLevelList([]);
+          this.setNowLevel({level: null, refresh: false})
         }
       } else {
         // 互斥元素添加
@@ -1860,35 +1870,47 @@ export default {
         // maxX: 360,
         // minY: -75,
         // maxY: 75,
-        num: 30,
+        num: 20,
         time: this.time,
         type: currentItem.id,
       })
         .then((res) => {
           if (res.status == 200) {
             let polyline = [];
-            // max 输出最大值
-            // let maxList = []
-            res.data.data.forEach((item) => {
-              let linedata = [];
-              // let max = 0
-              item.PointList.forEach((item1) => {
-                let latlng = [];
-                // if(max < item1.X) {
-                //   max = item1.X
-                // }
-                latlng.push(item1.Y);
-                latlng.push(item1.X);
-                latlng.push(Math.round(item.Value / 10));
-                linedata.push(latlng);
+            console.log('------------', currentItem);
+            
+            if(currentItem.parameterMark === 'Geopotential_Height') {
+              res.data.data.forEach((item) => {
+                let linedata = [];
+                item.PointList.forEach((item1) => {
+                  let latlng = [];
+                  latlng.push(item1.Y);
+                  latlng.push(item1.X);
+                  latlng.push(item.Value);
+                  linedata.push(latlng);
+                });
+  
+                polyline.push(linedata);
               });
-              // maxList.push(max)
+            } else {
+              res.data.data.forEach((item) => {
+                let linedata = [];
+                item.PointList.forEach((item1) => {
+                  let latlng = [];
+                  latlng.push(item1.Y);
+                  latlng.push(item1.X);
+                  latlng.push(item.Value);
+                  linedata.push(latlng);
+                });
+  
+                polyline.push(linedata);
+              });
+            }
 
-              polyline.push(linedata);
-            });
-            // console.log('最大值', maxList)
             let line = new PressureLayer(
-              {},
+              {
+                lineType: currentItem.parameterMark
+              },
               {
                 data: polyline,
                 hlData: [],
@@ -2799,6 +2821,7 @@ export default {
 
     //绘制风场粒子动画
     drawWindAnimate() {
+      console.log(this.windData,"111111111111");
       windParticleLayer = L.velocityLayer({
         displayValues: true,
         displayOptions: {
@@ -2810,7 +2833,7 @@ export default {
         maxVelocity: 15,
         // particleMultiplier: 1 / 100,
         // velocityScale:0.002,
-        // colorScale: ["#fff"],
+        colorScale: ["#ff0000"],
         // lineWidth: 2,
       });
       map.addLayer(windParticleLayer);

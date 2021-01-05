@@ -112,7 +112,7 @@ export default {
         })
         list.forEach(item => {
           let temp = this.allColorList.filter(itemColor => {
-            return itemColor.id === item.legendId
+            return itemColor.id == item.legendId
           })
           let menuObj = {
             name: item.name,
