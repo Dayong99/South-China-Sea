@@ -4,7 +4,10 @@ const state = {
   // 高度层级
   levelList: [],
   // 当前层级
-  nowLevel: null,
+  nowLevel: {
+    level: null,
+    refresh: false,  // 标识是否重新刷新
+  },
   // 实况信息
   /**
    * 地面常规观测--ground
@@ -31,10 +34,10 @@ const mutations = {
     },
     setLevelList(state, val) {
         state.levelList = val
-        console.log('levelList--change', state.levelList);
     },
     setNowLevel(state, val) {
-        state.nowLevel = val
+        state.nowLevel.level = val.level
+        state.nowLevel.refresh = val.refresh
     },
     setRealTimeValue(state, val) {
         state.realTimeValue = val
