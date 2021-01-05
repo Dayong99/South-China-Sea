@@ -35,18 +35,22 @@
       </el-date-picker>
       <el-button class="operation_search" @click="search">搜索</el-button>
       <el-button class="operation_clear" @click="resetSearch">重置</el-button>
-      <el-button icon="el-icon-download" class="operation_add" @click="add"
-        >导入资料</el-button
+      <el-button icon="el-icon-download" class="operation_add" @click="openFile"
+        >导入实时台风</el-button
+      >
+      <el-button icon="el-icon-download" class="operation_add" @click="openHistory"
+        >导入历史台风</el-button
       >
     </div>
     <div class="manager_table">
-      <el-table :data="tableData" border style="width: 100%">
+      <el-table :data="tableData" border style="width: 100%;" height="500">
         
         <el-table-column
           label="台风名称"
           align="center"
           min-width="100px"
           :show-overflow-tooltip="true"
+          fixed
         >
           <template slot-scope="scope">
             <span>{{ scope.row.cycloneName }}</span>
@@ -123,6 +127,12 @@
       :dialog-visible="dialog.isVisible"
       @close="closeDialogPage"
     />
+
+     <history
+      ref="history"
+      :dialog-visible="historyVisible"
+      @close="closeDialogPage"
+    />
   </div>
 </template>
 
@@ -130,9 +140,12 @@
 import Pagination from "@/components/Pagination";
 import { mapState, mapMutations } from "vuex";
 import file from "./file.vue";
+import history from "./history.vue";
+
 export default {
   components: {
     file,
+    history,
     Pagination,
   },
   data() {
@@ -143,6 +156,7 @@ export default {
         isVisible: false,
         title: "",
       },
+      historyVisible:false,
       // 详细面板显示隐藏
       systemManagerShow: false,
       managerValue: "",
@@ -205,9 +219,11 @@ export default {
       this.queryParams = {};
       this.search();
     },
-    add() {
+    openFile() {
       this.dialog.isVisible = true;
-      this.dialog.title = "添加数据源";
+    },
+    openHistory(){
+      this.historyVisible = true;
     },
     changeDate() {
       if (!this.queryParams.year) {
@@ -237,6 +253,8 @@ export default {
     // 关闭新增 修改 对话框
     closeDialogPage() {
       this.dialog.isVisible = false;
+            this.historyVisible = false;
+
       this.fetch();
     },
     closeManager() {

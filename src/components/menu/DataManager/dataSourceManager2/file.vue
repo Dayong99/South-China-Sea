@@ -94,7 +94,7 @@ export default {
             })
               .then(() => {
                 this.$message({
-                  message: "目标路径导入成功",
+                  message: "海浪导入成功",
                   type: "success",
                 });
                 this.reset();
@@ -104,7 +104,7 @@ export default {
               })
               .catch(() => {
                 this.$message({
-                  message: "目标路径导入失败",
+                  message: "海浪导入失败",
                   type: "error",
                 });
               });

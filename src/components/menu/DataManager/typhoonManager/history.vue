@@ -1,7 +1,7 @@
 <template>
   <!-- eslint-disable-->
   <el-dialog
-    title="导入资料"
+    title="导入历史台风"
     width="500px"
     top="200px"
     :close-on-click-modal="false"
@@ -89,12 +89,12 @@ export default {
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-            this.$get("/api/ground-live/analysisGround", {
+            this.$get("/api/typhoon/addTyphoonData", {
               filePath:encodeURIComponent(this.formData.filePath)
             })
               .then(() => {
                 this.$message({
-                  message: "资料导入成功",
+                  message: "历史台风导入成功",
                   type: "success",
                 });
                 this.reset();
@@ -104,7 +104,7 @@ export default {
               })
               .catch(() => {
                 this.$message({
-                  message: "资料导入失败",
+                  message: "历史台风导入失败",
                   type: "error",
                 });
               });
@@ -150,4 +150,88 @@ export default {
   -webkit-text-fill-color: #c0b2c0;
 }
 
+.wrapper::-webkit-scrollbar {
+  /*滚动条整体样式*/
+  width: 2px; /*高宽分别对应横竖滚动条的尺寸*/
+  height: 1px;
+}
+.wrapper::-webkit-scrollbar-thumb {
+  /*滚动条里面小方块*/
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba(245, 245, 245, 1);
+  background: #535353;
+}
+.wrapper::-webkit-scrollbar-track {
+  /*滚动条里面轨道*/
+  box-shadow: inset 0 0 5pxrgba (245, 245, 245, 1);
+  border-radius: 10px;
+  background: #ededed;
+}
+.wrapper {
+  background: rgba(245, 245, 245, 1);
+  width: 265px;
+  height: 400px;
+  overflow-y: auto;
+  .content_wrapper {
+    background: rgba(245, 245, 245, 1);
+    width: 260px;
+    height: 55px;
+    display: flex;
+    border-radius: 5px;
+    .content {
+      width: 92%;
+      height: 60px;
+      display: flex;
+      flex-flow: column;
+      white-space: nowrap;
+
+      .item {
+        flex: 1;
+        padding-left: 5px;
+      }
+      .content_desc {
+        font-family: Microsoft YaHei;
+        font-size: 14px;
+        color: rgba(80, 80, 80, 1);
+        height: 25px;
+        font-size: 700;
+      }
+      .content_type {
+        font-family: Microsoft YaHei;
+        font-size: 12px;
+        font-weight: 400;
+        color: rgba(138, 138, 138, 1);
+        height: 20px;
+        line-height: 30px;
+        border-bottom: 1px solid rgba(212, 212, 212, 1);
+      }
+    }
+    .active {
+      color: red;
+    }
+    .check {
+      width: 8%;
+    }
+  }
+}
+
+.save_wrapper {
+  margin-left: 162px;
+  margin-bottom: 15px;
+  .save {
+    cursor: pointer;
+    width: 150px;
+    height: 30px;
+    background: rgba(152, 26, 0, 1);
+    border: none;
+    border-radius: 2px;
+    color: #ffffff;
+    font-family: Microsoft YaHei;
+    font-size: 16px;
+    letter-spacing: 10px;
+  }
+  .save:active {
+    border: none;
+  }
+}
 </style>

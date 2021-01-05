@@ -31,6 +31,7 @@
         <el-tab-pane :key="'tide'" label="潮汐" name="tide">
           <tide :tabShow="flagArr[4]" />
         </el-tab-pane>
+        
       </el-tabs>
     </div>
   </div>
@@ -118,7 +119,7 @@ export default {
         this.flagArr[3] = true;
       } else if (tab.name === "tide") {
         this.flagArr[4] = true;
-      }
+      } 
     },
 
     closeManager() {
