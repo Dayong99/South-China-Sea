@@ -641,7 +641,7 @@ export default {
     currentItem: {
       handler(val, old) {
         console.log("currentItem---", val);
-        if (val.windWaveFlag && (val.drawType == 'point_wind' || val.drawType == 'point_flow')) {
+        if (val.windWaveFlag) {
           this.clearWindOrWave(val);
           this.findAndDrawWindWave(val, val.currentLevel);
 
