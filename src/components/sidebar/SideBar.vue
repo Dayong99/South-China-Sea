@@ -1568,6 +1568,7 @@ export default {
         //如果类型是台风，打开台风列表
         if (this.currentItem.drawType == "typhoon") {
           console.log("选中台风---------");
+          this.typhoonShow = true;
           this.drawWarning();
           //获取台风列表数据信息
           this.loadTyphoon();
@@ -1596,7 +1597,7 @@ export default {
           });
         });
         console.log(this.tyList);
-        this.typhoonShow = true;
+        // this.typhoonShow = true;
       });
     },
     // 绘制单个要素
