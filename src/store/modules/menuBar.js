@@ -119,7 +119,7 @@ const mutations = {
             state.showList[indexRoute][val] = false
             state[numVal] = 0
         } else {
-            state.showList.forEach(item => !item[val])
+            state.showList.forEach(item => item[val] = false)
             state.showList[indexRoute][val] = true
             state[numVal] = num
         }

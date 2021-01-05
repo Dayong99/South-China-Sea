@@ -62,7 +62,7 @@
         @mouseleave="hideTip"
       />
       <ul class="time_ul">
-        <li v-for="(item,index) in hasDataList" :key="index">
+        <li v-for="(item, index) in hasDataList" :key="index">
           <div class="greenCircle" :style="{ left: item }" @click="click"></div>
         </li>
       </ul>
@@ -229,6 +229,7 @@ export default {
         },
       ],
       hasDataList: [],
+      flag: false,
     };
   },
   created() {},
@@ -317,18 +318,24 @@ export default {
     },
     // 刷新时间
     reloadTime(newval) {
+      this.flag = true;
       this.currentId = this.menuItemList[this.menuItemList.length - 1].id;
       this.timeFlag = false;
-      let startTime = this.dateVal + " " + this.timeForcast + ":00:00";
+      // let startTime = this.dateVal + " " + this.timeForcast + ":00:00";
       //刷新时间时，传起报时间获取时间列表
-      this.getTypeTime(startTime);
+      this.getTypeTime();
     },
 
-    dateVal(newVal){
+    dateVal(newVal) {
+      console.log("走这里监听",this.flag);
+      if (!this.flag) {
+        let startTime = this.dateVal + " " + this.timeForcast + ":00:00";
+        this.getTypeTime(startTime);
+      }
       // console.log(newVal,"新的时间");
-      let startTime = this.dateVal + " " + this.timeForcast + ":00:00";
-      this.getTypeTime(startTime);
-    }
+      // let startTime = this.dateVal + " " + this.timeForcast + ":00:00";
+      // this.getTypeTime(startTime);
+    },
   },
   mounted() {
     // 监听时间轴尺寸变化
@@ -507,8 +514,8 @@ export default {
             });
           } else {
             this.$message.warning("该起报时间无数据");
-            this.hasDataList = []
-            this.resetPlay()
+            this.hasDataList = [];
+            this.resetPlay();
             this.changeTime(this.showday);
           }
 
@@ -565,8 +572,13 @@ export default {
                 this.hasDataList.push(width * dif - 3 + "px");
               }
             });
+            
+            setTimeout(()=>{
+              this.flag = false
+            },1000)
+            // console.log("====================",this.flag);
             // console.log(this.hasDataList);
-          }else{
+          } else {
             this.$message.warning("暂无数据");
           }
 
@@ -726,7 +738,7 @@ export default {
       const nowVal = parseInt(this.$refs.nowtime.style.left.replace("px", ""));
       const tipVal = parseInt(this.tipleft.replace("px", ""));
       // if (Math.abs(nowVal - tipVal) <= 80) {
-      if ((nowVal - tipVal) <= 50&&(nowVal-tipVal)>-120) {
+      if (nowVal - tipVal <= 50 && nowVal - tipVal > -120) {
         this.tiptop = "-6em";
       } else {
         this.tiptop = "-3.5em";
