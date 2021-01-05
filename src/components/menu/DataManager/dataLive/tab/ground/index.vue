@@ -258,7 +258,7 @@ export default {
       } else {
         if (this.queryParams.areaNum) {
           this.fetch({
-            areaNum: this.queryParams.areaNum,
+            number: this.queryParams.areaNum,
           });
         } else {
           this.fetch();

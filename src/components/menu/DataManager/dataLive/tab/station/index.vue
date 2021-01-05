@@ -1,7 +1,7 @@
 <template>
   <div v-show="tabShow" style="width: 960px">
     <div class="manager_operation">
-      <el-input
+      <!-- <el-input
         placeholder="航向"
         prefix-icon="el-icon-search"
         v-model="queryParams.course"
@@ -10,7 +10,21 @@
         @clear="search"
         style="width: 260px"
       >
-      </el-input>
+      </el-input> -->
+      <el-select
+        style="width:180px;margin-right:10px;"
+        v-model="queryParams.type"
+        placeholder="天气、站、编报类型"
+        clearable
+        @clear="search"
+      >
+        <el-option
+          v-for="(item, index) in typeList"
+          :key="index"
+          :label="item.label"
+          :value="item.value"
+        ></el-option>
+      </el-select>
       <el-date-picker
         v-model="time"
         format="yyyy-MM-dd HH:mm:ss"
@@ -39,10 +53,10 @@
         <el-table-column
           label="天气、站、编报类型"
           align="center"
-          min-width="160px"
+          width="160px"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.stationPrecipitationReport }}</span>
+            <span>{{ showType(scope.row.stationPrecipitationReport) }}</span>
           </template>
         </el-table-column>
         <el-table-column label="低云高度" align="center" min-width="100px">
@@ -72,11 +86,7 @@
             <span>{{ scope.row.temperature }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="气压(hPa)"
-          align="center"
-          min-width="100px"
-        >
+        <el-table-column label="气压(hPa)" align="center" min-width="100px">
           <template slot-scope="scope">
             <span>{{ scope.row.pressure }}</span>
           </template>
@@ -91,12 +101,20 @@
             <span>{{ scope.row.speed }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="涌向，波浪方向1" align="center" min-width="100px">
+        <el-table-column
+          label="涌向，波浪方向1"
+          align="center"
+          min-width="100px"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.waveDirection }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="涌向，波浪方向2" align="center" min-width="100px">
+        <el-table-column
+          label="涌向，波浪方向2"
+          align="center"
+          min-width="100px"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.waveDirection2 }}</span>
           </template>
@@ -155,6 +173,32 @@ export default {
       },
       queryParams: {},
       time: [],
+      typeList: [
+        {
+          label: "人工站 编报",
+          value: 1,
+        },
+        {
+          label: "人工站 不编报",
+          value: 2,
+        },
+        {
+          label: "人工站 不编报 未观测",
+          value: 3,
+        },
+        {
+          label: "自动站 编报",
+          value: 4,
+        },
+        {
+          label: "自动站 不编报",
+          value: 5,
+        },
+        {
+          label: "自动站 不编报 未观测",
+          value: 6,
+        },
+      ],
     };
   },
   mounted() {},
@@ -200,6 +244,23 @@ export default {
       setMenuList: "menuBar/setMenuList",
     }),
 
+    showType(type) {
+      switch (Number(type)) {
+        case 1:
+          return "人工站 编报";
+        case 2:
+          return "人工站 不编报";
+        case 3:
+          return "人工站 不编报 未观测";
+        case 4:
+          return "自动站 编报";
+        case 5:
+          return "自动站 不编报";
+        case 6:
+          return "自动站 不编报 未观测";
+      }
+    },
+
     // 搜索重置
     resetSearch() {
       this.queryParams = {};
@@ -224,9 +285,13 @@ export default {
           ...this.queryParams,
         });
       } else {
-        if (this.queryParams.course) {
+        if (
+          this.queryParams.type !== "" &&
+          this.queryParams.type !== null &&
+          this.queryParams.type !== undefined
+        ) {
           this.fetch({
-            course: this.queryParams.course,
+            sPrecipitationReport: this.queryParams.type,
           });
         } else {
           this.fetch();
@@ -256,5 +321,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
