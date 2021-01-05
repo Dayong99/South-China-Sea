@@ -28,6 +28,9 @@
         <el-tab-pane :key="'station'" label="海洋站" name="station">
           <station :tabShow="flagArr[3]" />
         </el-tab-pane>
+        <el-tab-pane :key="'tide'" label="潮汐" name="tide">
+          <tide :tabShow="flagArr[4]" />
+        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -38,6 +41,7 @@ import Ground from "./tab/ground/index";
 import Ship from "./tab/ship/index";
 import Buoy from "./tab/buoy/index";
 import Station from "./tab/station/index";
+import Tide from "./tab/tide/index";
 
 import { mapState, mapMutations } from "vuex";
 export default {
@@ -45,16 +49,16 @@ export default {
     Ground,
     Ship,
     Buoy,
-    Station
+    Station,
+    Tide,
   },
   data() {
     return {
-
       // 详细面板显示隐藏
       systemManagerShow: false,
 
       tabName: "ground",
-      flagArr: [true, false, false, false],
+      flagArr: [true, false, false, false, false],
     };
   },
   mounted() {},
@@ -87,16 +91,16 @@ export default {
       },
       deep: true,
     },
-    systemManagerShow(val){
-      if(val){
-        this.tabName = 'ground'
-        this.flagArr=[true, false, false, false]
+    systemManagerShow(val) {
+      if (val) {
+        this.tabName = "ground";
+        this.flagArr = [true, false, false, false];
         this.$refs.dataliveBox.style.left = "50%";
         this.$refs.dataliveBox.style.top = "42%";
         this.$refs.dataliveBox.style.transform = "translate(-50%, -50%)";
-        this.$refs.ground.fetch()
+        this.$refs.ground.fetch();
       }
-    }
+    },
   },
   methods: {
     ...mapMutations({
@@ -112,6 +116,8 @@ export default {
         this.flagArr[2] = true;
       } else if (tab.name === "station") {
         this.flagArr[3] = true;
+      } else if (tab.name === "tide") {
+        this.flagArr[4] = true;
       }
     },
 
@@ -125,4 +131,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.el-table .text-red {
+  background: red !important;
+}
+.el-table .text-blue {
+  color: blue !important;
+}
 </style>

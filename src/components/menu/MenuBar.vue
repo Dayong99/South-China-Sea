@@ -1710,17 +1710,38 @@ export default {
           newArr = this.removeRepeat(pointArr, "x+");
         }
         console.log("去重排序之后的数组-----------", newArr);
-        let index = newArr.findIndex((item) => {
-          return (
-            ((item[0] == point1[0] || item[1] == point1[1]) &&
-              !(item[0] == point1[0] && item[1] == point1[1])) ||
-            ((item[0] == point2[0] || item[1] == point2[1]) &&
-              !(item[0] == point2[0] && item[1] == point2[1]))
-          );
-        });
-        if (index != -1) {
-          newArr.splice(index, 1);
-        }
+        console.log(point1,point2,"===========");
+        newArr.forEach((item,index)=>{
+          if(item[0]==point1[0]){
+            if(item[1] !== point1[1]){
+              newArr.splice(index,1)
+            }
+          }else if(item[1] == point1[1]){
+            if(item[0] !== point1[0]){
+              newArr.splice(index,1)
+            }
+          }else if(item[0]==point2[0]){
+            if(item[1] !== point2[1]){
+              newArr.splice(index,1)
+            }
+          }else if(item[1] == point2[1]){
+            if(item[0] !== point2[0]){
+              newArr.splice(index,1)
+            }
+          }
+        })
+        // let index = newArr.findIndex((item) => {
+        //   return (
+        //     ((item[0] == point1[0] || item[1] == point1[1]) &&
+        //       (item[0] !== point1[0] || item[1] !== point1[1])) ||
+        //     ((item[0] == point2[0] || item[1] == point2[1]) &&
+        //       (item[0] !== point2[0] || item[1] !== point2[1]))
+        //   );
+        // });
+        // console.log(index,"=============");
+        // if (index != -1) {
+        //   newArr.splice(index, 1);
+        // }
 
         //构建位置，颜色数组，用于循环绘制变色线
         let fArr = [];

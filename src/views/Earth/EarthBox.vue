@@ -69,6 +69,7 @@
     <!-- 自定义popup -->
     <click-up></click-up>
 
+    <!-- <div class="div1" @click="draw"></div> -->
   </div>
 </template>
 
@@ -158,7 +159,10 @@ export default {
     InfoBox: InfoBox,
   },
   data() {
-    return {};
+    return {
+      flag: false,
+      fyGroup: L.layerGroup(),
+    };
   },
   computed: {
     ...mapState({
@@ -168,6 +172,25 @@ export default {
   watch: {},
   mounted() {},
   methods: {
+    // draw() {
+    //   // this.flag = !this.flag
+    //   console.log("卫星云图");
+    //   let bounds = L.latLngBounds(L.latLng(10, 50), L.latLng(54, 160));
+    //   let url = require("@/assets/true_color(1).jpg");
+    //   let layer = L.imageOverlay(url, bounds, { opacity: 0.2 });
+    //   this.fyGroup.addLayer(layer);
+    //   this.fyGroup.addTo(map);
+    //   // if(this.flag){
+    //   //   console.log("卫星云图");
+    //   //   let bounds = L.latLngBounds(L.latLng(10, 50), L.latLng(54, 160));
+    //   //   let url = require('@/assets/true_color(1).jpg')
+    //   //   let layer = L.imageOverlay(url, bounds, { opacity :0.5})
+    //   //   this.fyGroup.addLayer(layer)
+    //   //   this.fyGroup.addTo(map)
+    //   // }else{
+    //   //   this.fyGroup.clearLayers()
+    //   // }
+    // },
   },
 };
 </script>

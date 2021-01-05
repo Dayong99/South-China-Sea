@@ -2,7 +2,7 @@
   <div v-show="tabShow" style="width:960px;">
     <div class="manager_operation">
       <el-input
-        placeholder="数据源名称"
+        placeholder="区站号"
         prefix-icon="el-icon-search"
         v-model="queryParams.areaNum"
         class="operation_input"

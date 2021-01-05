@@ -130,7 +130,7 @@ export var FlowLayer = RedrawCanvasLayer.extend({
       y0 = b - r;
     var x1 = a + (x0 - a) * Math.cos(arc) - (y0 - b) * Math.sin(arc);
     var y1 = b + (x0 - a) * Math.sin(arc) + (y0 - b) * Math.cos(arc);
-    this.drawArrow(ctx, a, b, x1, y1, 30, 6, 1, '#1494B7');
+    this.drawArrow(ctx, a, b, x1, y1, 30, 6, 1, '#fff');
   },
 
   /*
