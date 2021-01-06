@@ -6,7 +6,7 @@
       ref="markerBox"
       v-drag
       v-show="systemManagerShow"
-      style="width: auto; height: auto"
+      
     >
       <div class="manager_title">
         <span>常用警戒线和任务区</span>
@@ -35,7 +35,7 @@
           <el-table-column
             label="名称"
             align="center"
-            min-width="100px"
+            min-width="150px"
             :show-overflow-tooltip="true"
           >
             <template slot-scope="scope">

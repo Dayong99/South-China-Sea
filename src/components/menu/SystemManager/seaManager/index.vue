@@ -5,6 +5,7 @@
     v-show="systemManagerShow"
     v-drag
     ref="seaBox"
+    
   >
     <div class="manager_title">
       <span>海区划分</span>

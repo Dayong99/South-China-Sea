@@ -5,7 +5,7 @@
     ref="siteBox"
     v-drag
     v-show="systemManagerShow"
-    style="width: auto; height: auto"
+    
   >
     <div class="manager_title">
       <span>常用地点</span>

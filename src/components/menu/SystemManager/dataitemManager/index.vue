@@ -4,7 +4,7 @@
     class="ship_manager"
     v-show="systemManagerShow"
     ref="dataitemBox"
-    style="width: 900px; height: auto"
+    
     v-drag
   >
     <div class="manager_title">

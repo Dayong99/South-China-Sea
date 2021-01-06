@@ -1,5 +1,11 @@
 <template>
-  <div id="ship_manager" class="ship_manager" v-show="systemManagerShow" v-drag>
+  <div
+    id="ship_manager"
+    class="ship_manager"
+    v-show="systemManagerShow"
+    v-drag
+    
+  >
     <div class="manager_title">
       <span>评估条件因子</span>
       <img
@@ -30,17 +36,18 @@
             {{ (pagination.num - 1) * pagination.size + scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column label="名称" align="center" min-width="100px">
+        <el-table-column label="名称" align="center" min-width="100px" :show-overflow-tooltip="true">
           <template slot-scope="scope">
             <span>{{ scope.row.remark }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="气象要素" align="center" min-width="100px">
+        <el-table-column label="气象要素" align="center" min-width="150px" :show-overflow-tooltip="true"
+        >>
           <template slot-scope="scope">
             <span>{{ scope.row.parameterName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="气象要素单位" align="center" min-width="100px">
+        <el-table-column label="气象要素单位" align="center" min-width="120px">
           <template slot-scope="scope">
             <span>{{ scope.row.units }}</span>
           </template>
@@ -55,7 +62,7 @@
             <span>{{ scope.row.parameter }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="分级系数" align="center" min-width="100px">
+        <el-table-column label="分级系数" align="center" min-width="120px">
           <template slot-scope="scope">
             <span>{{ scope.row.coefficient }}</span>
           </template>
@@ -65,6 +72,7 @@
           width="140px"
           header-align="center"
           align="center"
+          fixed="right"
         >
           <template slot-scope="{ row }">
             <el-button
@@ -299,5 +307,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

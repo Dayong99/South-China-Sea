@@ -3,7 +3,6 @@
     id="ship_manager"
     class="ship_manager"
     v-show="shipManagerShow"
-    style="width: auto; height: auto"
   >
     <div class="manager_title">
       <span>船舰管理</span>
@@ -34,6 +33,7 @@
           prop="role-name"
           align="center"
           min-width="100px"
+          :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.warshipName }}</span>

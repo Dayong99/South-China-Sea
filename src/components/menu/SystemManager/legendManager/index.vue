@@ -3,7 +3,7 @@
     id="ship_manager"
     class="ship_manager"
     v-show="systemManagerShow"
-    style="width: 960px; height: auto"
+    
     v-drag
     ref="legendBox"
   >

@@ -1,5 +1,5 @@
 <template>
-  <div v-show="tabShow" style="width:960px;">
+  <div v-show="tabShow" style="width:900px;">
     
     <div class="manager_operation">
       <el-input

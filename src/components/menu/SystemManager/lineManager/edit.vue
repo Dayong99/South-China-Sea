@@ -116,7 +116,7 @@
       <div class="insertBox">
         <el-row :gutter="20">
           <el-col :span="22">
-            <div class="color_main" style="width: 650px">
+            <div class="color_main" style="width: 98%">
               <ul class="colorBox">
                 <li
                   @click="getSelected(index)"

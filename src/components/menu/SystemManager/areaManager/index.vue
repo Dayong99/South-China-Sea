@@ -4,7 +4,7 @@
     class="ship_manager"
     ref="areaBox"
     v-show="systemManagerShow"
-    style="width: auto; height: auto"
+    
     v-drag
   >
     <div class="manager_title">

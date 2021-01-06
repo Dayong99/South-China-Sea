@@ -3,7 +3,7 @@
     id="ship_manager"
     class="ship_manager"
     v-show="systemManagerShow"
-    style="width: auto; height: auto"
+    style="width:auto; height: auto"
     v-drag
     ref="dataliveBox"
   >

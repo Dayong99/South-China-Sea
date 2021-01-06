@@ -3,7 +3,7 @@
     id="ship_manager"
     class="ship_manager"
     v-show="systemManagerShow"
-    style="width: auto; height: auto"
+    
     v-drag
     ref="paramBox"
   >
@@ -43,7 +43,7 @@
         <el-table-column
           label="参数名称"
           align="center"
-          min-width="240px"
+          width="180px"
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
@@ -51,17 +51,17 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="类型" align="center" min-width="100px">
+        <el-table-column label="类型" align="center" width="100px">
           <template slot-scope="scope">
             <span v-html="showType(scope.row.baseType)"></span>
           </template>
         </el-table-column>
-        <el-table-column label="值" align="center" min-width="250px">
+        <el-table-column label="值" align="center" width="150px" :show-overflow-tooltip="true">
           <template slot-scope="scope">
             <span>{{ scope.row.baseValue }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="备注" align="center" min-width="200px">
+        <el-table-column label="备注" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.ramark }}</span>
           </template>
@@ -71,6 +71,7 @@
           width="140px"
           header-align="center"
           align="center"
+          fixed="right"
         >
           <template slot-scope="{ row }">
             <el-button

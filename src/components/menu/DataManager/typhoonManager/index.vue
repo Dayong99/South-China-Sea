@@ -3,7 +3,7 @@
     id="ship_manager"
     class="ship_manager"
     v-show="systemManagerShow"
-    style="width: 960px;height:auto;"
+    style="width: 900px;height:auto;"
     v-drag
     ref="typhoonBox"
   >
@@ -38,19 +38,25 @@
       <el-button icon="el-icon-download" class="operation_add" @click="openFile"
         >导入实时台风</el-button
       >
-      <el-button icon="el-icon-download" class="operation_add" @click="openHistory"
+      <el-button
+        icon="el-icon-download"
+        class="operation_add"
+        @click="openHistory"
         >导入历史台风</el-button
       >
     </div>
     <div class="manager_table">
-      <el-table :data="tableData" border style="width: 100%;" height="500">
-        
+      <el-table :data="tableData" border style="width: 100%;">
+        <el-table-column label="序号" width="70px" align="center">
+          <template slot-scope="scope">
+            {{ (pagination.num - 1) * pagination.size + scope.$index + 1 }}
+          </template>
+        </el-table-column>
         <el-table-column
           label="台风名称"
           align="center"
           min-width="100px"
           :show-overflow-tooltip="true"
-          fixed
         >
           <template slot-scope="scope">
             <span>{{ scope.row.cycloneName }}</span>
@@ -76,12 +82,20 @@
             <span>{{ scope.row.createtime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="生成时的经度坐标" align="center" min-width="100px">
+        <el-table-column
+          label="生成时的经度坐标"
+          align="center"
+          min-width="100px"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.lon }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="生成时的纬度坐标" align="center" min-width="100px">
+        <el-table-column
+          label="生成时的纬度坐标"
+          align="center"
+          min-width="100px"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.lat }}</span>
           </template>
@@ -100,7 +114,12 @@
             <span>{{ scope.row.centerMaxSppe }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="风圈半径" align="center" min-width="100px" :show-overflow-tooltip="true">
+        <el-table-column
+          label="风圈半径"
+          align="center"
+          min-width="100px"
+          :show-overflow-tooltip="true"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.windCircle }}</span>
           </template>
@@ -112,7 +131,7 @@
         </el-table-column>
       </el-table>
     </div>
-    <!-- <div class="manager_page">
+    <div class="manager_page">
       <pagination
         :total="total"
         :page.sync="pagination.num"
@@ -120,7 +139,7 @@
         @pagination="search"
         style="padding-bottom: 0"
       />
-    </div> -->
+    </div>
 
     <file
       ref="file"
@@ -128,7 +147,7 @@
       @close="closeDialogPage"
     />
 
-     <history
+    <history
       ref="history"
       :dialog-visible="historyVisible"
       @close="closeDialogPage"
@@ -156,7 +175,7 @@ export default {
         isVisible: false,
         title: "",
       },
-      historyVisible:false,
+      historyVisible: false,
       // 详细面板显示隐藏
       systemManagerShow: false,
       managerValue: "",
@@ -222,7 +241,7 @@ export default {
     openFile() {
       this.dialog.isVisible = true;
     },
-    openHistory(){
+    openHistory() {
       this.historyVisible = true;
     },
     changeDate() {
@@ -245,15 +264,15 @@ export default {
       }).then((res) => {
         console.log(res, "res");
         if (res.data.data) {
-          // this.total = res.data.data.total;
-          this.tableData = res.data.data;
+          this.total = res.data.data.total;
+          this.tableData = res.data.data.rows;
         }
       });
     },
     // 关闭新增 修改 对话框
     closeDialogPage() {
       this.dialog.isVisible = false;
-            this.historyVisible = false;
+      this.historyVisible = false;
 
       this.fetch();
     },
@@ -266,5 +285,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
