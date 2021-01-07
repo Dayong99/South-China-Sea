@@ -122,14 +122,16 @@ export default {
       isDrawFlag: false,
       editLine: null, // 修改航线时编辑
       markArr: [],
+      moveIcon: null,
+      currentMarkerGroup: null,
     };
   },
   mounted() {},
   computed: {
     ...mapState({
       routeDialogOptions: (state) => state.menuBar.routeDialogOptions,
-      showList:(state) => state.menuBar.showList,
-      nowIndex:(state) => state.menuBar.nowIndex
+      showList: (state) => state.menuBar.showList,
+      nowIndex: (state) => state.menuBar.nowIndex,
     }),
   },
   watch: {
@@ -174,14 +176,14 @@ export default {
       },
       deep: true,
     },
-    activeRoutePoint(val){
+    activeRoutePoint(val) {
       this.drawNum(this.routeInfo);
-    }
+    },
   },
   methods: {
     ...mapMutations({
       setRouteDialogOptions: "menuBar/setRouteDialogOptions",
-      setShowEdit:"menuBar/setShowEdit"
+      setShowEdit: "menuBar/setShowEdit",
     }),
     routeCustomClick() {
       this.routeCustomActive = !this.routeCustomActive;
@@ -204,8 +206,13 @@ export default {
     },
     closeManager() {
       this.routeManagerShow = false;
-      this.routeDialogOptions[0]==2 ? this.setShowEdit(this.nowIndex) : ""; //航线列表子项操作显隐
-      this.setRouteDialogOptions([0, this.routeDialogOptions[1], this.routeDialogOptions[2], false]);
+      this.routeDialogOptions[0] == 2 ? this.setShowEdit(this.nowIndex) : ""; //航线列表子项操作显隐
+      this.setRouteDialogOptions([
+        0,
+        this.routeDialogOptions[1],
+        this.routeDialogOptions[2],
+        false,
+      ]);
       this.reset();
       if (this.lastLine) {
         this.lastLine.disableEdit();
@@ -217,12 +224,15 @@ export default {
     draw() {
       // 开启航线绘制
       this.lastLine = window.routeMap.editTools.startPolyline();
-
+      this.currentMarkerGroup = L.layerGroup([]).addTo(window.routeMap);
+      this.moveIcon = L.marker([0, 0]);
       // startPolyline: function (latlng, options) {
       //       var line = this.createPolyline([], options);
       //       line.enableEdit(this.map).newShape(latlng);
       //       return line;
       //   },
+      //开启鼠标移动监听
+      window.routeMap.on("mousemove", this.moveFunction, this);
 
       // 添加航线点
       this.lastLine.on("editable:vertex:new", (e) => {
@@ -262,6 +272,9 @@ export default {
         if (i == this.routeInfo.length - 1) {
           this.activeRoutePoint = this.routeInfo.length - 2;
         }
+        if(this.activeRoutePoint>=i&&this.activeRoutePoint!=0){
+          this.activeRoutePoint--
+        }
         this.routeInfo.splice(i, 1);
       });
       // 暂停编辑
@@ -272,9 +285,38 @@ export default {
       // 右键停止编辑
       window.routeMap.on("contextmenu", (e) => {
         window.routeMap.editTools.stopDrawing();
-
+        //清除提示信息并关闭鼠标移动监听事件
+        if (window.routeMap.hasLayer(this.currentMarkerGroup)) {
+          this.currentMarkerGroup.clearLayers();
+        }
+        // this.currentMarkerGroup.clearLayers();
+        window.routeMap.off("mousemove", this.moveFunction, this);
         this.routeCustomActive = false;
       });
+    },
+
+    moveFunction(e) {
+      // console.log(e, "鼠标移动========");
+      if (window.routeMap.hasLayer(this.currentMarkerGroup)) {
+        this.currentMarkerGroup.clearLayers();
+      }
+      this.moveIcon.addTo(this.currentMarkerGroup);
+      this.moveIcon.setIcon(
+        L.divIcon({
+          html:
+            "<div class='leaflet-marker-markerTooltip'>点击开始绘制 右键结束</div>",
+          className: "leaflet-marker-noDefaultDivIcon",
+        })
+      );
+      this.moveIcon.setLatLng(e.latlng);
+      // this.myIcon = L.divIcon({
+      //   html: "<div>24小时警戒线</div>",
+      //   className: "my-div-icon",
+      //   iconSize: 50,
+      // });
+      // let mark1 = L.marker([e.latlng.lat, e.latlng.lng], {
+      //   icon: myIcon,
+      // }).addTo(window.routeMap);
     },
 
     routeEditClick() {
@@ -433,6 +475,9 @@ export default {
         // 删除尾部点时
         if (i == this.routeInfo.length - 1) {
           this.activeRoutePoint = this.routeInfo.length - 2;
+        }
+        if(this.activeRoutePoint>=i&&this.activeRoutePoint!=0){
+          this.activeRoutePoint--
         }
         this.routeInfo.splice(i, 1);
       });

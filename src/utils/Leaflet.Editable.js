@@ -485,7 +485,8 @@
             this.on('dragstart', this.onDragStart);
             this.on('dragend', this.onDragEnd);
             this.on('mouseup', this.onMouseup);
-            this.on('click', this.onClick);
+            // this.on('click', this.onClick);
+            this.on('contextmenu', this.onClick);
             this.on('contextmenu', this.onContextMenu);
             this.on('mousedown touchstart', this.onMouseDown);
             this.on('mouseover', this.onMouseOver);
@@ -500,7 +501,8 @@
             this.off('dragstart', this.onDragStart);
             this.off('dragend', this.onDragEnd);
             this.off('mouseup', this.onMouseup);
-            this.off('click', this.onClick);
+            // this.off('click', this.onClick);
+            this.off('contextmenu', this.onClick);
             this.off('contextmenu', this.onContextMenu);
             this.off('mousedown touchstart', this.onMouseDown);
             this.off('mouseover', this.onMouseOver);
