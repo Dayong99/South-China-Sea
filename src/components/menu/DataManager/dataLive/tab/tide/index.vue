@@ -1,5 +1,5 @@
 <template>
-  <div v-show="tabShow" style="width:900px;">
+  <div v-show="tabShow">
     <div class="manager_operation">
       <el-select
         style="width:150px;margin-right:10px;"
@@ -256,7 +256,7 @@ export default {
           this.queryParams.gkId !== null &&
           this.queryParams.gkId !== undefined
         ) {
-          params.gkId = this.queryParams.gkId;
+          params.hId = this.queryParams.gkId;
         }
 
         if (
@@ -264,7 +264,7 @@ export default {
           this.queryParams.type !== null &&
           this.queryParams.type !== undefined
         ) {
-          params.type = this.queryParams.type;
+          params.tidalType = this.queryParams.type;
         }
         this.fetch({
           ...params,

@@ -291,7 +291,7 @@ export default {
           this.queryParams.type !== undefined
         ) {
           this.fetch({
-            sPrecipitationReport: this.queryParams.type,
+            stationPrecipitationReport: this.queryParams.type,
           });
         } else {
           this.fetch();
