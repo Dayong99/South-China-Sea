@@ -32,8 +32,7 @@
           label="名称"
           prop="role-name"
           align="center"
-          min-width="100px"
-          :show-overflow-tooltip="true"
+          width="100px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.warshipName }}</span>
@@ -43,7 +42,7 @@
           label="类型"
           prop="role-name"
           align="center"
-          min-width="100px"
+          width="100px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.warshipType }}</span>
@@ -53,7 +52,7 @@
           label="编号"
           prop="role-name"
           align="center"
-          min-width="100px"
+          width="100px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.number }}</span>
@@ -63,7 +62,7 @@
           label="吨位"
           prop="role-name"
           align="center"
-          min-width="100px"
+          width="100px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.tonnage }}</span>
@@ -73,7 +72,7 @@
           label="抗风能力"
           prop="role-name"
           align="center"
-          min-width="100px"
+          width="100px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.windResistant }}</span>
@@ -83,7 +82,7 @@
           label="图片"
           prop="role-name"
           align="center"
-          min-width="100px"
+          width="100px"
         >
           <template slot-scope="scope">
             <span>
@@ -104,6 +103,7 @@
           width="140px"
           header-align="center"
           align="center"
+          fixed="right"
         >
           <template slot-scope="{ row }">
             <el-button

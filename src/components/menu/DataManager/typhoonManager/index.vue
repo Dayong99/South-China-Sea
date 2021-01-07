@@ -259,7 +259,7 @@ export default {
     fetch(params = {}) {
       params.pageSize = this.pagination.size;
       params.pageNum = this.pagination.num;
-      this.$get("/api/typhoon", {
+      this.$get("/api/typhoon/page", {
         ...params,
       }).then((res) => {
         console.log(res, "res");

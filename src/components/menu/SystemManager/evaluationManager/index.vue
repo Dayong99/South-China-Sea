@@ -30,7 +30,7 @@
       >
     </div>
     <div class="manager_table">
-      <el-table :data="tableData" border style="width: 100%" max-height="400px">
+      <el-table :data="tableData" border style="width: 100%">
         <el-table-column label="序号" width="70px" align="center">
           <template slot-scope="scope">
             {{ (pagination.num - 1) * pagination.size + scope.$index + 1 }}
@@ -41,7 +41,7 @@
             <span>{{ scope.row.remark }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="气象要素" align="center" min-width="150px" :show-overflow-tooltip="true"
+        <el-table-column label="气象要素" align="center" :show-overflow-tooltip="true"
         >>
           <template slot-scope="scope">
             <span>{{ scope.row.parameterName }}</span>
@@ -69,10 +69,9 @@
         </el-table-column>
         <el-table-column
           label="操作"
-          width="140px"
           header-align="center"
           align="center"
-          fixed="right"
+          width="140px"
         >
           <template slot-scope="{ row }">
             <el-button
