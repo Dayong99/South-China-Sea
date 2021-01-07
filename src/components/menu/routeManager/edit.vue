@@ -85,7 +85,7 @@
         @click="routeEditClick"
       >
         <!-- {{ this.title }} -->
-        保存
+        保 存
       </div>
       <div
         class="hand_wrapper"
@@ -520,18 +520,19 @@ export default {
     width: 1100px;
     height: 50px;
     border-radius: 5px;
-    padding: 5px;
+    // padding: 5px;
     // margin-left: 20px;
 
     .routeInfo_item {
       height: 100%;
       display: flex;
-      padding-top: 5px;
+      // padding-top: 5px;
       padding-left: 4px;
       .item {
-        flex: 1;
+        // flex: 1;
+        margin-right: 30px;
         .date_wrapper {
-          width: 170px;
+          width: 172px;
           height: 30px;
         }
         .input_wrapper {
@@ -581,20 +582,21 @@ export default {
     }
   }
   .button_wrapper {
-    width: 64px;
+    width: 54px;
     height: 24px;
     position: absolute;
     // top: 75px;
     // left: 18px;
-    bottom: 9px;
+    bottom: 20px;
     right: 12px;
+    line-height: 25px;
     cursor: pointer;
     z-index: 10000;
-    background: #ffffff;
+    background: #981a00;
     text-align: center;
     border-radius: 5px;
-    color: rgba(117, 109, 109, 1);
-    box-shadow: 0px 0px 10px #000;
+    color: #fff;
+    box-shadow: 1px 1px 6px rgba(0,0,0,0.3);
   }
   .hand_wrapper {
     width: 64px;
