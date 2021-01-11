@@ -181,7 +181,7 @@
             "
           />
         </div>
-        <div class="title_num">类型</div>
+        <div class="title_num">编号</div>
         <div class="title_cn">名称</div>
         <!-- <div class="title_en">英文名</div> -->
       </div>
@@ -197,7 +197,7 @@
                 "
               />
             </div>
-            <div class="title_num">{{ item.cycloneType }}</div>
+            <div class="title_num">{{ item.international }}</div>
             <div class="title_cn">{{ item.cycloneName }}</div>
             <!-- <div class="title_en">{{ item.enName }}</div> -->
           </div>
@@ -480,16 +480,16 @@ export default {
       // 卫星云图
       fyTypeOptions: [
         {
-          value: "channel3",
+          value: "fy4a_ch3",
           label: "可见光",
         },
         {
-          value: "channel12",
+          value: "fy4a_ch12",
           label: "红外",
         },
         {
           value: "true_colors",
-          label: "红外增强",
+          label: "真彩",
         },
       ],
       fyType: null,
@@ -1798,13 +1798,14 @@ export default {
         let tyData = res.data.data;
         this.tyList = [];
         tyData.forEach((item) => {
-          this.tyList.push({
-            id: item.id,
-            choose: false,
-            cycloneType: item.cycloneType,
-            cycloneName: item.cycloneName,
-            // centerMaxSpeed: item.centerMaxSpeed,
-          });
+          this.tyList.push({choose: false,...item});
+          // this.tyList.push({
+          //   id: item.id,
+          //   choose: false,
+          //   cycloneType: item.cycloneType,
+          //   cycloneName: item.cycloneName,
+          //   // centerMaxSpeed: item.centerMaxSpeed,
+          // });
         });
         console.log(this.tyList);
         // this.typhoonShow = true;
