@@ -27,7 +27,7 @@
       >
     </div>
     <div class="manager_table">
-      <el-table :data="tableData" border style="width: auto">
+      <el-table :data="tableData" border style="width: auto"  max-height="400px">
         <el-table-column
           label="名称"
           prop="role-name"

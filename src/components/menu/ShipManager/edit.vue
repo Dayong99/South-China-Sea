@@ -15,7 +15,6 @@
       :rules="rules"
       label-position="right"
       label-width="100px"
-      style="line-height: 100%"
     >
       <!-- 名称 -->
       <el-row>

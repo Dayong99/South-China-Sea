@@ -46,7 +46,7 @@
       >
     </div>
     <div class="manager_table">
-      <el-table :data="tableData" border style="width: 100%;">
+      <el-table :data="tableData" border style="width: 100%;"  max-height="400px">
         <el-table-column label="序号" width="70px" align="center">
           <template slot-scope="scope">
             {{ (pagination.num - 1) * pagination.size + scope.$index + 1 }}

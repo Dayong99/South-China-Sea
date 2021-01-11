@@ -3,7 +3,6 @@
     id="ship_manager"
     class="ship_manager"
     v-show="systemManagerShow"
-    
     v-drag
     ref="paramBox"
   >
@@ -34,7 +33,7 @@
       >
     </div>
     <div class="manager_table">
-      <el-table :data="tableData" border style="width: 100%">
+      <el-table :data="tableData" border style="width: 100%"  max-height="400px">
         <el-table-column label="序号" width="70px" align="center">
           <template slot-scope="scope">
             {{ (pagination.num - 1) * pagination.size + scope.$index + 1 }}
@@ -56,7 +55,12 @@
             <span v-html="showType(scope.row.baseType)"></span>
           </template>
         </el-table-column>
-        <el-table-column label="值" align="center" width="150px" :show-overflow-tooltip="true">
+        <el-table-column
+          label="值"
+          align="center"
+          width="150px"
+          :show-overflow-tooltip="true"
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.baseValue }}</span>
           </template>
@@ -245,7 +249,7 @@ export default {
             message: "取消删除",
             type: "information",
           });
-        })
+        });
     },
     add() {
       this.dialog.isVisible = true;
@@ -292,5 +296,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
