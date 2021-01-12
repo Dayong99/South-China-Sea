@@ -9,13 +9,12 @@
         bottom: 24px;
         margin-bottom: -8px;
         // z-index: 998;
-        z-index: 1000;
+        z-index: 999;
         .el-input--mini {
             .el-input__icon {
                 line-height: 24px;
             }
         }
-
         input {
             height: 24px;
             line-height: 24px;
@@ -27,30 +26,25 @@
             border-radius: 15px;
             font-size: 13px;
         }
-
         .timeInterval {
             width: 105px;
             position: absolute;
             // left: 140px;
             left: 126px;
             top: -19px;
-
             .el-select {
                 margin-bottom: 3px;
             }
-
             .el-input {
                 // width: 100px;
                 width: 70px;
                 color: #fff3e1;
                 margin-left: 6px;
                 margin-bottom: 2px;
-
                 .el-input__icon {
                     line-height: 24px !important;
                 }
             }
-
             .el-input__inner {
                 // width: 98px;
                 width: 70px;
@@ -67,7 +61,6 @@
                 padding-left: 5px;
             }
         }
-
         // 时间进度条
         .timeline {
             height: 6px;
@@ -81,7 +74,6 @@
             left: 300px;
             -webkit-transition: width ease-in-out .7s;
             transition: width ease-in-out .7s;
-
             .playLen {
                 background-color: #e5e5e5;
                 height: 6px;
@@ -96,7 +88,6 @@
                 -webkit-transition: width 1s;
                 -o-transition: width 1s;
             }
-
             .totalLen {
                 width: calc(100% - 80px);
                 height: 6px;
@@ -104,8 +95,6 @@
                 border-radius: 6px;
                 left: 140px;
             }
-
-
             // .div1{
             //     width: 10px;
             //     height: 10px;
@@ -117,7 +106,6 @@
             //     pointer-events: none;
             // }
         }
-
         .circle {
             position: absolute;
             display: block;
@@ -132,7 +120,6 @@
             -webkit-transition: left 1s;
             -o-transition: left 1s;
         }
-
         .timecode {
             font-size: 13px;
             position: absolute;
@@ -145,14 +132,12 @@
             -webkit-transition: left 1s;
             -o-transition: left 1s;
         }
-
         // 划过提示框
         .ghost-timecode {
             transition: .3s opacity 0s;
             -webkit-transition: .3s opacity 0s;
             pointer-events: none;
             text-align: center;
-
             .box {
                 color: white;
                 height: 1.8em;
@@ -165,7 +150,6 @@
                 border-radius: .5em;
                 box-shadow: 0 0 4px 0 black;
                 background-color: rgba(0, 0, 0, 0.5);
-
                 &::before {
                     top: 100%;
                     left: 1.8em;
@@ -180,12 +164,10 @@
                 }
             }
         }
-
         // 当前时间
         .main-timecode {
             top: -3em;
             text-align: center;
-
             .box {
                 cursor: -webkit-grab;
                 cursor: -moz-grab;
@@ -203,7 +185,6 @@
                 border: none;
                 border-radius: .5em;
                 box-shadow: 0 0 4px 0 black;
-
                 &::before {
                     top: 100%;
                     left: 2em;
@@ -217,14 +198,12 @@
                     margin-left: -0.5em;
                 }
             }
-
             .dataImg {
                 position: absolute;
                 top: 2px;
                 //right: -28px;
                 cursor: pointer;
             }
-
             .dataBox {
                 font-size: 16px;
                 width: 354px;
@@ -237,13 +216,11 @@
                 position: absolute;
                 //left: 5px;
                 bottom: 35px;
-
                 img {
                     position: absolute;
                     top: 15px;
                     left: 12px;
                 }
-
                 .lonlatBox {
                     width: 246px;
                     height: 28px;
@@ -253,14 +230,12 @@
                     top: 10px;
                     left: 50px;
                     color: #ffffff;
-
                     span {
                         &:first-child {
                             position: absolute;
                             top: 6px;
                             left: 25px;
                         }
-
                         &:last-child {
                             position: absolute;
                             top: 6px;
@@ -268,14 +243,12 @@
                         }
                     }
                 }
-
                 .close {
                     position: absolute;
                     top: 12px;
                     right: 11px;
                     cursor: pointer;
                 }
-
                 .datalist {
                     width: 330px;
                     // height: 232px;
@@ -287,31 +260,25 @@
                     top: 49px;
                     left: 12px;
                     color: #ffffff;
-
                     ul {
                         list-style: none;
                         margin: 0;
                         padding: 0;
-
                         li {
                             height: 26px;
                             margin-top: 5px;
                             margin-bottom: 3px;
-
                             .itemdiv {
                                 height: 26px;
                                 position: relative;
-
                                 div {
                                     height: 26px;
                                     position: absolute;
                                     right: 128px;
                                     text-align: center;
-
                                     span {
                                         display: inline-block;
                                         margin-top: 2px;
-
                                         &:nth-child(2) {
                                             background: rgba(160, 160, 160, 1);
                                             border-radius: 5px;
@@ -319,7 +286,6 @@
                                         }
                                     }
                                 }
-
                                 .dataNum {
                                     display: inline-block;
                                     position: absolute;
@@ -331,18 +297,15 @@
                             }
                         }
                     }
-
                     .remarkBox {
                         width: 100%;
                         height: 78px;
                         position: relative;
-
                         span {
                             position: absolute;
                             top: 0;
                             left: 20px;
                         }
-
                         .remarks {
                             width: 255px;
                             height: 74px;
@@ -357,7 +320,6 @@
                 }
             }
         }
-
         // 播放按钮
         #playpause {
             position: absolute;
@@ -370,7 +332,6 @@
             background-color: rgba(0, 0, 0, 0.5);
             text-align: center;
             cursor: pointer;
-
             i {
                 display: block;
                 font-size: 14px;
@@ -378,7 +339,6 @@
                 color: #fff;
                 margin-left: 2px;
             }
-
             // position: absolute;
             // top: -20px;
             // left: 0;
@@ -397,7 +357,6 @@
             //     margin-left: 2px;
             // }
         }
-
         // 日期
         #calendar {
             width: calc(100% - 80px);
@@ -406,7 +365,6 @@
             right: 0;
             top: 2px;
             white-space: nowrap;
-
             div {
                 display: inline-block;
                 box-sizing: border-box;
@@ -422,13 +380,11 @@
                 font-weight: 500;
                 cursor: pointer;
                 position: relative;
-
                 &:not(:first-child) {
                     border-left: 1px solid rgba(0, 0, 0, 0.5);
                 }
             }
         }
-
         .day {
             .dayitem {
                 width: 100%;
@@ -437,13 +393,11 @@
                 left: 0;
                 // top:-12px;
                 display: flex;
-
                 span {
                     height: 100%;
                 }
             }
         }
-
         // 产品演示时间轴
         #productBar {
             position: absolute;
@@ -452,33 +406,27 @@
             width: 80px;
             display: flex;
             justify-content: space-around;
-
             i {
                 color: #D49500;
                 cursor: pointer;
                 font-size: 26px;
-
                 &:nth-child(1) {
                     margin-top: 1px;
                 }
-
                 &:nth-child(2) {
                     margin-top: 5px;
                     margin-left: 2px;
                 }
-
                 &:nth-child(3) {
                     margin-top: 1px;
                 }
             }
         }
-
         .loading {
             position: absolute;
             top: .2em;
             left: -1.4em;
         }
-
         #now {
             display: block;
             width: 3px;
@@ -487,7 +435,6 @@
             background-color: #946051;
             top: 0;
         }
-
         .time-operate {
             position: absolute;
             top: 40px;
@@ -502,37 +449,30 @@
             font-size: 16px !important;
             font-family: FZLTHJW--GB1-0, FZLTHJW--GB1;
             font-weight: normal;
-
             .operate {
                 width: 115px;
                 display: flex;
                 flex-flow: row nowrap;
                 align-items: center;
             }
-
             .operate-add {
                 justify-content: space-between;
-
                 a {
                     height: 20px;
                     line-height: 20px;
                 }
             }
-
             .operate-pos {
                 justify-content: start;
-
                 span {
                     font-family: DIN-Regular, DIN;
                     padding-left: 5px;
                 }
             }
-
             .operate-data {
                 width: 180px;
                 justify-content: start;
                 padding-left: 2px;
-
                 input {
                     width: 100%;
                     margin-left: 5px;
@@ -544,7 +484,6 @@
                 }
             }
         }
-
         .next {
             position: absolute;
             top: -18px;
@@ -560,14 +499,11 @@
             align-items: center;
             // text-align: center;
             cursor: pointer;
-
             img {
                 color: #fff;
                 margin-left: 2px;
             }
-
         }
-
         .prev {
             position: absolute;
             top: -18px;
@@ -583,14 +519,11 @@
             background-color: rgba(0, 0, 0, 0.5);
             // text-align: center;
             cursor: pointer;
-
             img {
                 color: #fff;
                 margin-right: 2px;
             }
-
         }
-
         .greenCircle {
             width: 10px;
             height: 10px;
@@ -602,7 +535,6 @@
             // bottom: -2px;
             pointer-events: none;
         }
-
         // .time_ul {
         //     width: calc(100% - 410px);
         //     position: relative;
@@ -612,7 +544,5 @@
         //     // background-color: rgba(0, 0, 0, 0.5);
         //     border-radius: 6px;
         // }
-
-        
     }
 }
