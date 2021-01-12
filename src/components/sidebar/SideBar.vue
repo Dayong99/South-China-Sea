@@ -1798,7 +1798,7 @@ export default {
         let tyData = res.data.data;
         this.tyList = [];
         tyData.forEach((item) => {
-          this.tyList.push({choose: false,...item});
+          this.tyList.push({ choose: false, ...item });
           // this.tyList.push({
           //   id: item.id,
           //   choose: false,
@@ -3132,14 +3132,54 @@ export default {
       console.log(item, "点击选中风,海流");
       //如果未选中菜单则选中
       if (!item.flag) {
-        item.flag = true;
+        //互斥
+        this.changeflag = true;
+        // 互斥元素添加
+        if (this.menuList[index].mutex) {
+          // 当前选中的要素中找到前一个互斥的要素
+          let i = this.currentItemList.findIndex((item) => {
+            return item.mutex == 1;
+          });
+          // 所有的要素中找到前一个互斥的要素
+          let j = this.menuList.findIndex((item) => {
+            return item.mutex && item.flag;
+          });
+          // 只需要判断 i，currentItemList有menulist一定有
+          if (i != -1) {
+            this.clearWindOrWave(this.menuList[j]);
+            // 清除前一个互斥的要素及色斑图
+            this.clearLayer(this.menuList[j]);
+            this.menuList[j].flag = false;
+            this.currentItemList.splice(i, 1);
+          }
+          this.menuList[index].flag = true;
+          this.currentItemList.push(this.menuList[index]);
+        } else {
+          this.menuList[index].flag = true;
+          this.currentItemList.push(this.menuList[index]);
+        }
+        // 当前要素设置为当前要素列表中的最后一个
+        this.currentItem = this.currentItemList[
+          this.currentItemList.length - 1
+        ];
+        this.currentLevel = this.currentItemList[
+          this.currentItemList.length - 1
+        ].parseIntLevel[0];
+        this.setLevelList(
+          this.currentItemList[this.currentItemList.length - 1].parseIntLevel
+        );
+
+        // 绘制当前选中的要素
+        this.drawItem();
+
+        // item.flag = true;
         //绘制风,风羽或者海浪,波向或者海流,流向
         //如果已选中风,地面风,海浪或者海流,则只清除色斑图
       } else {
         this.changeflag = !this.changeflag;
         if (this.changeflag) {
           //绘制色斑图
-          this.drawItem()
+          this.drawItem();
         } else {
           //清除色斑图
           if (this.menuList[index].drawType === "layer") {
