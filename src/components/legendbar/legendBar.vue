@@ -14,6 +14,10 @@
     </div> -->
     <div class="legend_content" v-show="legendShow">
       <ul>
+        <div class="legend_title">
+          <span>图例</span>
+          <el-checkbox v-model="is_clot">裁剪</el-checkbox>
+        </div>
         <li
           v-for="(color, index) in colorList"
           :key="index"
@@ -91,7 +95,9 @@ export default {
       // }
       ],
       // 获取所有的图例配置信息
-      allColorList: []
+      allColorList: [],
+      // 陆地裁剪
+      is_clot: true,
     };
   },
   created() {
@@ -103,6 +109,10 @@ export default {
     })
   },
   watch: {
+    // 监听裁剪变化
+    is_clot(newval) {
+      this.setIsClot(newval)
+    },
     // 根据菜单显示图例
     menuItemList: {
       handler(newval, oldval) {
@@ -146,6 +156,9 @@ export default {
 
   },
   methods: {
+    ...mapMutations({
+      setIsClot: 'sideBar/setIsClot',
+    }),
     // 关闭图例
     closeLegend() {
       this.legendShow = false
