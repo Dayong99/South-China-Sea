@@ -271,7 +271,7 @@
       center
       append-to-body
     >
-      <el-form ref="form" :model="editNodeName" label-width="80px">
+      <el-form ref="form"  label-width="80px">
         <el-form-item label="装备类型" v-if="!(activeNodeIndex[1] === -1)">
           <el-input v-model="editNodeInfo.name"></el-input>
         </el-form-item>
@@ -968,6 +968,7 @@ export default {
         });
         // 增删减节点控制
         this.treeChart.on("collapse-control:click", (evt) => {
+          console.log(evt.item._cfg.model,"=========================");
           const level = evt.item._cfg.model.level;
           if (level === 1) {
             console.log("添加节点");
@@ -1271,7 +1272,7 @@ export default {
         let parameter = e.parameter;
         if (e.structure === 3) {
           console.log(e.name.split("_")[0], `e.name.split("_")[0]`);
-          if (Number(e.name.split("_")[0]) === 4 || Number(e.name.split("_")[0]) === 10) {
+          if (Number(e.name.split("_")[0]) === 4 || Number(e.name.split("_")[0]) === 10 || Number(e.name.split("_")[0]) === 41 || Number(e.name.split("_")[0]) === 43) {
             console.log(e.parameter, `e.parametere.parameter`);
             let parameterArr = e.parameter.split("_");
             parameterArr = parameterArr.map((e, i) => {
@@ -1313,6 +1314,7 @@ export default {
       let params = {
         courseId: courseId,
         planId: planId,
+        forecasttime:"2020-12-08 08:00:00",
         hydrometeor: JSON.stringify(hydrometeor),
         treeName: treeName.join(","),
         treeStructure: treeStructure.join(","),
@@ -1323,8 +1325,10 @@ export default {
         treeExpression: treeExpression.join(","),
         treeParameter: treeParameter.join(","),
         // treeDeploy: treeDeploy.join(","),
-        treeDeploy: JSON.stringify(this.mockData),
+        // treeDeploy: JSON.stringify(this.mockData),
+        treeDeploy: "",
       };
+      console.log((JSON.stringify(params)),"================");
       this.loading = true;
       this.$jsonPost(`/api/assessment/evaluate`, {
         ...params,
