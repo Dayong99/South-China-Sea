@@ -20,6 +20,9 @@ const state = {
   sourceType: 2,
   // 刷新时间标识
   reloadTime: false,
+
+  // 陆地裁剪
+  is_clot: true,
 }
 
 const actions = {
@@ -47,6 +50,9 @@ const mutations = {
     },
     setReloadTime(state) {
         state.reloadTime = !state.reloadTime
+    },
+    setIsClot(state, val) {
+        state.is_clot = val
     }
 }
 

@@ -616,6 +616,8 @@ export default {
       tidalShow: (state) => state.clickup.tidalShow,
       // 起报时间
       timeForcast: (state) => state.time.timeForcast,
+      // 陆地裁剪
+      is_clot: state => state.sideBar.is_clot,
     }),
   },
   watch: {
@@ -625,6 +627,10 @@ export default {
     },
     timeForcast(newval) {
       console.log(newval);
+    },
+    // 陆地裁剪变化
+    is_clot(newval) {
+      this.drawLayerByClot()
     },
     // 当前要素列表的变化
     currentItemList: {
@@ -1925,6 +1931,77 @@ export default {
         console.log("extentList", extentList);
       }
     },
+    // 裁剪变化时重新绘制色斑图
+    drawLayerByClot() {
+      let layerIndex = this.currentItemList.findIndex((item) => {
+        return item.drawType === "layer";
+      });
+      let currentItem = this.currentItemList[layerIndex]
+      let itemExtent = {
+        xMin: currentItem.xMin,
+        xMax: currentItem.xMax,
+        yMin: currentItem.yMin,
+        yMax: currentItem.yMax,
+      };
+      let otherList = [];
+      // 深拷贝，范围是列表中所有数据共用的
+      let extentList = this._.cloneDeep(this.extentList);
+      extentList.forEach((item, index) => {
+        // 最小范围大于最大范围，直接赋值
+        if (item.xMin >= itemExtent.xMax) {
+          otherList.push(item);
+        } else if (item.xMax <= itemExtent.xMin) {
+          otherList.push(item);
+        } else if (item.yMin >= itemExtent.yMax) {
+          otherList.push(item);
+        } else if (item.yMax <= itemExtent.yMin) {
+          otherList.push(item);
+        } else {
+          extentList[index].xMin =
+            Number(itemExtent.xMin) > Number(item.xMin)
+              ? Number(itemExtent.xMin)
+              : Number(item.xMin);
+          extentList[index].xMax =
+            Number(itemExtent.xMax) < Number(item.xMax)
+              ? Number(itemExtent.xMax)
+              : Number(item.xMax);
+          extentList[index].yMin =
+            Number(itemExtent.yMin) > Number(item.yMin)
+              ? Number(itemExtent.yMin)
+              : Number(item.yMin);
+          extentList[index].yMax =
+            Number(itemExtent.yMax) < Number(item.yMax)
+              ? Number(itemExtent.yMax)
+              : Number(item.yMax);
+        }
+      });
+
+      otherList.forEach((item, index) => {
+        let i = extentList.findIndex((item1) => {
+          return item1 == item;
+        });
+        extentList.splice(i, 1);
+      });
+
+      this.layerNum++;
+      extentList.forEach((item, index) => {
+        if (item.xMax > 180) {
+          extentList[index].xMin -= 360;
+          if (extentList[index].xMin == -1) {
+            extentList[index].xMin = 0;
+          }
+          extentList[index].xMax -= 360;
+          if (extentList[index].xMax == -1) {
+            extentList[index].xMax = 0;
+          }
+        }
+      });
+
+      extentList.forEach((item) => {
+        this.clearLayer(currentItem);
+        this.getAndDrawLayer(currentItem, item);
+      });
+    },
     // 循环绘制当前要素列表的要素
     drawItemList() {
       // 循环所有元素，根据每个元素的范围给视口范围进行调整
@@ -2135,6 +2212,7 @@ export default {
           "/api/numerical-forecast/mercator-polygonsImage",
           {
             // this.$getbuffer('/api/numerical-forecast/polygonsImage', {
+            clot: this.is_clot,
             day: this.day,
             grade: currentItem.grade,
             level: currentItem.level[levelIndex],
