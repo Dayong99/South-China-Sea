@@ -758,7 +758,8 @@ export default {
       this.latlngGraticuleLayer = L.latlngGraticule({
         showLabel: true,
         dashArray: [4, 4],
-        fontColor: "#999999",
+        // fontColor: "#999999",
+        fontColor: "#000",
         zoomInterval: this.graticule_zoom,
       }).addTo(window.map);
     },

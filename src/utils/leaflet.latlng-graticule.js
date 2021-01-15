@@ -13,7 +13,7 @@
           showLabel: true,
           opacity: 1,
           weight: 0.8,
-          color: '#aaa',
+          color: '#000',
           font: '12px Verdana',
           dashArray: [0, 0],
           lngLineCurved: 0,
