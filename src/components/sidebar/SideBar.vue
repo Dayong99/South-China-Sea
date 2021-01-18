@@ -1265,11 +1265,17 @@ export default {
               this.$message.error("获取" + currentWave.name + "数据失败");
             });
         } else if (currentWave.parameterMark === "waves_direction_liu") {
+          let currentIndex = this.currentItemList.findIndex(item => {
+            return item.parameterMark == 'waves_direction'
+          })
+          let levelIndex = this.currentItemList[currentIndex].parseIntLevel.findIndex((item) => {
+            return item === this.currentItemList[currentIndex].currentLevel;
+          });
           this.$get("/api/numerical-forecast/ocean-current", {
             day: this.day,
             time: this.time,
             grade: 0,
-            level: 1,
+            level: this.currentItemList[currentIndex].level[levelIndex],
             type: currentWave.id,
           })
             .then((res) => {
@@ -2004,6 +2010,7 @@ export default {
     },
     // 循环绘制当前要素列表的要素
     drawItemList() {
+      console.log('------------', this.currentItemList);
       // 循环所有元素，根据每个元素的范围给视口范围进行调整
       this.currentItemList.forEach((currentItem) => {
         let itemExtent = {
@@ -2155,8 +2162,6 @@ export default {
         .then((res) => {
           if (res.status == 200) {
             let polyline = [];
-            console.log("------------", currentItem);
-
             if (currentItem.parameterMark === "Geopotential_Height") {
               res.data.data.forEach((item) => {
                 let linedata = [];
@@ -2458,11 +2463,17 @@ export default {
             this.$message.error("获取" + currentItem.name + "数据失败");
           });
       } else if (currentItem.parameterMark === "waves_direction_liu") {
+        let currentIndex = this.currentItemList.findIndex(item => {
+          return item.parameterMark == 'waves_direction'
+        })
+        let levelIndex = this.currentItemList[currentIndex].parseIntLevel.findIndex((item) => {
+          return item === this.currentItemList[currentIndex].currentLevel;
+        });
         this.$get("/api/numerical-forecast/ocean-current", {
           day: this.day,
           time: this.time,
           grade: 1,
-          level: 1,
+          level: this.currentItemList[currentIndex].level[levelIndex],
           type: currentItem.id,
         })
           .then((res) => {

@@ -21,7 +21,11 @@
       class="level_num" 
       :class="activeLevel==item?'active_level':''"
       @click.stop="getNowTip(item)">
-        <div class="level_text">{{ item | levelName }}</div>
+        <div class="level_text">
+          <!-- <span>{{ item | levelName }}</span>
+          <span>{{ unit }}</span> -->
+          {{ item | levelName }}
+        </div>
         <div class="decoration"></div>
       </li>
     </ul>
@@ -29,7 +33,9 @@
 </template>
 
 <script>
-import { mapState,mapMutations } from 'vuex'
+import { mapState,mapMutations } from 'vuex';
+// 层级单位
+let unit = 'hPa';
 export default {
   name: 'LevelBar',
   filters: {
@@ -38,8 +44,10 @@ export default {
         return '地面'
       } else if(value == '0') {
         return '海面'
+      } else if(value == 1) {
+        return '表层'
       } else {
-        return value
+        return value + ' ' + unit
       }
     }
   },
@@ -61,7 +69,10 @@ export default {
       tiptop: 0,
       tipleft: '',
       itemlevelIndex: 0,
-      activeLevel:-1
+      activeLevel:-1,
+
+      // 层级单位
+      // unit: '',
     }
   },
   computed: {
@@ -89,6 +100,13 @@ export default {
     },
     menuItemList: {
       handler(val, oldval) {
+        console.log('------------levelBar', val);
+        // 海流水温单独设置单位 m
+        if(val[val.length - 1].parameterMark == 'ocean_temperature' || val[val.length - 1].parameterMark == 'waves_direction') {
+          unit = 'm'
+        } else {
+          unit = 'hPa'
+        }
         if(this.levelShow) {
           // 显示最近缓存的层级
           this.nowcontent = val[val.length - 1].currentLevel
