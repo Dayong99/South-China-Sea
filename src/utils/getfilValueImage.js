@@ -297,7 +297,7 @@ export function getGroundFillingValueImage(fillingValue) {
   ctx.fillText(
     '--',
     canvas.width / 2 + firstParmsX - 25,
-    canvas.height / 2 + firstParmsY + 3
+    canvas.height / 2 + firstParmsY + 15
   );
 
 
