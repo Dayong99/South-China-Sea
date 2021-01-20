@@ -1094,6 +1094,88 @@
                 }
             }
         }
+        // 地面
+        .thunder_left_ground {
+            background: rgba(41, 40, 38, 0.5);
+            width: 200px;
+            height: 130px;
+            position: relative;
+            font-size: 14px;
+            font-family: FZLTZCHK--GBK1-0, FZLTZCHK--GBK1;
+            font-weight: 600;
+            margin-left: 10px;
+            border-radius: 10px;
+
+            img {
+                width: 50px;
+                height: 65px;
+                display: block;
+                position: absolute;
+                left: 73px;
+                top: 28px;
+            }
+
+            span {
+                display: inline-block;
+                position: absolute;
+
+                // 气温
+                &:nth-child(2) {
+                    color: #e34665;
+                    top: 21px;
+                    left: 58px;
+                }
+
+                // 能见度
+                &:nth-child(3) {
+                    color: #ae48f0;
+                    top: 40px;
+                    left: 30px;
+                }
+
+                // 相对湿度
+                &:nth-child(4) {
+                    color: #f47900;
+                    left: 10px;
+                    bottom: 48px;
+                }
+
+                // // 水温
+                // &:nth-child(5) {
+                //     color: #0081ff;
+                //     left: 46px;
+                //     bottom: 27px;
+                // }
+
+                // // 周期
+                // &:nth-child(6) {
+                //     color: #2458ff;
+                //     bottom: 16px;
+                //     right: 94px;
+                // }
+
+                // // 有效波高
+                // &:nth-child(7) {
+                //     color: #b09200;
+                //     top: 77px;
+                //     right: 51px;
+                // }
+
+                // 气压
+                &:nth-child(5) {
+                    color: #40b700;
+                    top: 55px;
+                    right: 50px;
+                }
+
+                // 时间
+                &:nth-child(6) {
+                    color: #f159ef;
+                    top: 35px;
+                    right: 42px;
+                }
+            }
+        }
     }
 }
 

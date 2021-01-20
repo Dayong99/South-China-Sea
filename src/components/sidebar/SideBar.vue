@@ -44,11 +44,7 @@
         </li>
       </ul>
       <ul class="menu_list">
-        <li
-          v-for="(item, index) in menuList"
-          :key="index"
-          @click.stop="menuClick(index)"
-        >
+        <li v-for="(item, index) in menuList" :key="index" @click.stop="menuClick(index)">
           <!-- <div class="menu_left" :class="{ bgcolor: item.flag == 1 }">{{ item.name }}</div> -->
           <div :class="{ menu_right: true, bgcolor: item.flag == true }">
             <img :src="item.icon" />
@@ -95,11 +91,7 @@
         <div class="other_lon">,{{ lonNum }}</div>
       </div>
       <!-- 重绘刷新位置1 -->
-      <div
-        class="isDraw"
-        :class="{ draw_active: drawFlag }"
-        @click="changeDrawFlag"
-      >
+      <div class="isDraw" :class="{ draw_active: drawFlag }" @click="changeDrawFlag">
         <img src="@/assets/images/sidebar/draw.svg" />重绘底图
       </div>
       <div class="re_time" @click.stop="reloadTime">
@@ -146,9 +138,7 @@
           :value="item.value"
         >
           <div class="real_option">
-            <img
-              :src="realTimeValue == item.value ? item.selectIcon : item.icon"
-            />
+            <img :src="realTimeValue == item.value ? item.selectIcon : item.icon" />
             <span>{{ item.label }}</span>
           </div>
         </el-option>
@@ -161,11 +151,7 @@
         <div class="item_desc">年份</div>
         <div class="item_select">
           <select v-model="selectDate">
-            <option
-              v-for="(item, index) in dateList"
-              :key="index"
-              :value="item"
-            >
+            <option v-for="(item, index) in dateList" :key="index" :value="item">
               {{ item }} 年
             </option>
           </select>
@@ -245,8 +231,9 @@
         class="ty_color"
         v-if="
           realTimeValue === 'ship' ||
-            realTimeValue === 'buoy' ||
-            realTimeValue === 'ocean'
+          realTimeValue === 'buoy' ||
+          realTimeValue === 'ocean' ||
+          realTimeValue === 'ground'
         "
       >
         <div class="thunder_left_ship" v-if="realTimeValue === 'ship'">
@@ -273,6 +260,14 @@
           <span>水温</span>
           <span>周期</span>
           <span>浪高</span>
+          <span>气压</span>
+          <span>时间</span>
+        </div>
+        <div class="thunder_left_ground" v-if="realTimeValue === 'ground'">
+          <img src="@/assets/images/legendbar/wind.png" />
+          <span>气温</span>
+          <span>能见度</span>
+          <span>相对湿度</span>
           <span>气压</span>
           <span>时间</span>
         </div>
@@ -617,7 +612,7 @@ export default {
       // 起报时间
       timeForcast: (state) => state.time.timeForcast,
       // 陆地裁剪
-      is_clot: state => state.sideBar.is_clot,
+      is_clot: (state) => state.sideBar.is_clot,
     }),
   },
   watch: {
@@ -630,7 +625,7 @@ export default {
     },
     // 陆地裁剪变化
     is_clot(newval) {
-      this.drawLayerByClot()
+      this.drawLayerByClot();
     },
     // 当前要素列表的变化
     currentItemList: {
@@ -764,18 +759,18 @@ export default {
           }
           this.drawItem();
           if (
-            this.currentItemList[this.currentItemList.length - 1]
-              .parameterMark == "U_V_component_of_wind" ||
-            this.currentItemList[this.currentItemList.length - 1]
-              .parameterMark == "U_V_component_of_wind_ground"
+            this.currentItemList[this.currentItemList.length - 1].parameterMark ==
+              "U_V_component_of_wind" ||
+            this.currentItemList[this.currentItemList.length - 1].parameterMark ==
+              "U_V_component_of_wind_ground"
           ) {
             this.windSwitch = false;
           }
           if (
-            this.currentItemList[this.currentItemList.length - 1]
-              .parameterMark == "ec_wave_height" ||
-            this.currentItemList[this.currentItemList.length - 1]
-              .parameterMark == "waves_direction"
+            this.currentItemList[this.currentItemList.length - 1].parameterMark ==
+              "ec_wave_height" ||
+            this.currentItemList[this.currentItemList.length - 1].parameterMark ==
+              "waves_direction"
           ) {
             this.waveSwitch = false;
           }
@@ -787,8 +782,7 @@ export default {
     nowTime(newval) {
       const str = Number(newval[11]);
       this.day = newval.substring(0, 10);
-      this.time =
-        str === 0 ? newval.substring(12, 13) : newval.substring(11, 13);
+      this.time = str === 0 ? newval.substring(12, 13) : newval.substring(11, 13);
 
       // 如果有风羽或波向重新请求数据
       let windWaveIndex = this.currentItemList.findIndex((item) => {
@@ -820,7 +814,7 @@ export default {
     // 监听实况选择变化
     realTimeValue(newval) {
       this.setRealTimeValue(newval);
-      console.log(newval, `选择的站点`);
+      console.log(newval, newval === "ground", `选择的站点`);
     },
     // 监听卫星云图
     fyType(newval) {
@@ -860,17 +854,14 @@ export default {
         // currentWind当前选中的风场对应的风场粒子 currentLevel当前层级
         let currentWind = null;
         let currentLevel = null;
-        if (
-          this.currentItemList[index].parameterMark === "U_V_component_of_wind"
-        ) {
+        if (this.currentItemList[index].parameterMark === "U_V_component_of_wind") {
           let i = this.windWaveList.findIndex((item) => {
             return item.parameterMark === "wind_plume";
           });
           currentWind = this.windWaveList[i];
           currentLevel = this.currentItemList[index].currentLevel;
         } else if (
-          this.currentItemList[index].parameterMark ===
-          "U_V_component_of_wind_ground"
+          this.currentItemList[index].parameterMark === "U_V_component_of_wind_ground"
         ) {
           let i = this.windWaveList.findIndex((item) => {
             return item.parameterMark === "wind_plume_ground";
@@ -973,12 +964,8 @@ export default {
                 la2: currentWind.yMin,
                 lo1: currentWind.xMin,
                 lo2: currentWind.xMax,
-                nx:
-                  (currentWind.xMax - currentWind.xMin) / currentWind.gridSize +
-                  1,
-                ny:
-                  (currentWind.yMax - currentWind.yMin) / currentWind.gridSize +
-                  1,
+                nx: (currentWind.xMax - currentWind.xMin) / currentWind.gridSize + 1,
+                ny: (currentWind.yMax - currentWind.yMin) / currentWind.gridSize + 1,
                 parameterCategory: 2,
                 parameterNumber: 2,
                 parameterUnit: "m.s-1",
@@ -995,12 +982,8 @@ export default {
                 la2: currentWind.yMin,
                 lo1: currentWind.xMin,
                 lo2: currentWind.xMax,
-                nx:
-                  (currentWind.xMax - currentWind.xMin) / currentWind.gridSize +
-                  1,
-                ny:
-                  (currentWind.yMax - currentWind.yMin) / currentWind.gridSize +
-                  1,
+                nx: (currentWind.xMax - currentWind.xMin) / currentWind.gridSize + 1,
+                ny: (currentWind.yMax - currentWind.yMin) / currentWind.gridSize + 1,
                 parameterCategory: 2,
                 parameterNumber: 3,
                 parameterUnit: "m.s-1",
@@ -1084,9 +1067,7 @@ export default {
           });
           currentHeight = this.currentItemList[index];
           currentWave = this.windWaveList[i];
-        } else if (
-          this.currentItemList[index].parameterMark === "waves_direction"
-        ) {
+        } else if (this.currentItemList[index].parameterMark === "waves_direction") {
           let i = this.windWaveList.findIndex((item) => {
             return item.parameterMark === "waves_direction_liu";
           });
@@ -1210,14 +1191,8 @@ export default {
                     la2: currentWave.yMin,
                     lo1: currentWave.xMin,
                     lo2: currentWave.xMax,
-                    nx:
-                      (currentWave.xMax - currentWave.xMin) /
-                        currentWave.gridSize +
-                      1,
-                    ny:
-                      (currentWave.yMax - currentWave.yMin) /
-                        currentWave.gridSize +
-                      1,
+                    nx: (currentWave.xMax - currentWave.xMin) / currentWave.gridSize + 1,
+                    ny: (currentWave.yMax - currentWave.yMin) / currentWave.gridSize + 1,
                     parameterCategory: 2,
                     parameterNumber: 2,
                     parameterUnit: "m.s-1",
@@ -1232,14 +1207,8 @@ export default {
                     la2: currentWave.yMin,
                     lo1: currentWave.xMin,
                     lo2: currentWave.xMax,
-                    nx:
-                      (currentWave.xMax - currentWave.xMin) /
-                        currentWave.gridSize +
-                      1,
-                    ny:
-                      (currentWave.yMax - currentWave.yMin) /
-                        currentWave.gridSize +
-                      1,
+                    nx: (currentWave.xMax - currentWave.xMin) / currentWave.gridSize + 1,
+                    ny: (currentWave.yMax - currentWave.yMin) / currentWave.gridSize + 1,
                     parameterCategory: 2,
                     parameterNumber: 3,
                     parameterUnit: "m.s-1",
@@ -1265,12 +1234,14 @@ export default {
               this.$message.error("获取" + currentWave.name + "数据失败");
             });
         } else if (currentWave.parameterMark === "waves_direction_liu") {
-          let currentIndex = this.currentItemList.findIndex(item => {
-            return item.parameterMark == 'waves_direction'
-          })
-          let levelIndex = this.currentItemList[currentIndex].parseIntLevel.findIndex((item) => {
-            return item === this.currentItemList[currentIndex].currentLevel;
+          let currentIndex = this.currentItemList.findIndex((item) => {
+            return item.parameterMark == "waves_direction";
           });
+          let levelIndex = this.currentItemList[currentIndex].parseIntLevel.findIndex(
+            (item) => {
+              return item === this.currentItemList[currentIndex].currentLevel;
+            }
+          );
           this.$get("/api/numerical-forecast/ocean-current", {
             day: this.day,
             time: this.time,
@@ -1301,14 +1272,8 @@ export default {
                     la2: currentWave.yMin,
                     lo1: currentWave.xMin,
                     lo2: currentWave.xMax,
-                    nx:
-                      (currentWave.xMax - currentWave.xMin) /
-                        currentWave.gridSize +
-                      1,
-                    ny:
-                      (currentWave.yMax - currentWave.yMin) /
-                        currentWave.gridSize +
-                      1,
+                    nx: (currentWave.xMax - currentWave.xMin) / currentWave.gridSize + 1,
+                    ny: (currentWave.yMax - currentWave.yMin) / currentWave.gridSize + 1,
                     parameterCategory: 2,
                     parameterNumber: 2,
                     parameterUnit: "m.s-1",
@@ -1323,14 +1288,8 @@ export default {
                     la2: currentWave.yMin,
                     lo1: currentWave.xMin,
                     lo2: currentWave.xMax,
-                    nx:
-                      (currentWave.xMax - currentWave.xMin) /
-                        currentWave.gridSize +
-                      1,
-                    ny:
-                      (currentWave.yMax - currentWave.yMin) /
-                        currentWave.gridSize +
-                      1,
+                    nx: (currentWave.xMax - currentWave.xMin) / currentWave.gridSize + 1,
+                    ny: (currentWave.yMax - currentWave.yMin) / currentWave.gridSize + 1,
                     parameterCategory: 2,
                     parameterNumber: 3,
                     parameterUnit: "m.s-1",
@@ -1411,22 +1370,15 @@ export default {
     });
 
     L.CustomPopup = L.Popup.extend({
-      _initLayout: function() {
+      _initLayout: function () {
         var prefix = "leaflet-popup",
           container = (this._container = L.DomUtil.create(
             "div",
-            prefix +
-              " " +
-              (this.options.className || "") +
-              " leaflet-zoom-animated"
+            prefix + " " + (this.options.className || "") + " leaflet-zoom-animated"
           ));
 
         var wrapper = container;
-        this._contentNode = L.DomUtil.create(
-          "div",
-          prefix + "-content",
-          wrapper
-        );
+        this._contentNode = L.DomUtil.create("div", prefix + "-content", wrapper);
 
         L.DomEvent.disableClickPropagation(wrapper)
           .disableScrollPropagation(this._contentNode)
@@ -1436,7 +1388,7 @@ export default {
 
     // add bindCustomPopup
     L.Layer.include({
-      bindCustomPopup: function(content, options) {
+      bindCustomPopup: function (content, options) {
         if (content instanceof L.Popup) {
           L.setOptions(content, options);
           this._popup = content;
@@ -1447,7 +1399,6 @@ export default {
           }
           this._popup.setContent(content);
         }
-
         if (!this._popupHandlersAdded) {
           this.on({
             click: this._openPopup,
@@ -1532,9 +1483,7 @@ export default {
             return item.parameterMark === "wind_plume";
           });
           this.currentWindWave = this.windWaveList[index];
-        } else if (
-          currentItem.parameterMark === "U_V_component_of_wind_ground"
-        ) {
+        } else if (currentItem.parameterMark === "U_V_component_of_wind_ground") {
           // 地面风
           let index = this.windWaveList.findIndex((item) => {
             return item.parameterMark === "wind_plume_ground";
@@ -1655,10 +1604,7 @@ export default {
                 obj.windWaveName = "流向";
               }
               // wind\wave 不显示在sidebar上
-              if (
-                item.drawType === "point_wind" ||
-                item.drawType === "point_flow"
-              ) {
+              if (item.drawType === "point_wind" || item.drawType === "point_flow") {
                 this.windWaveList.push(obj);
               } else {
                 this.menuList.push(obj);
@@ -1700,8 +1646,7 @@ export default {
 
         if (
           this.menuList[index].parameterMark === "U_V_component_of_wind" ||
-          this.menuList[index].parameterMark ===
-            "U_V_component_of_wind_ground" ||
+          this.menuList[index].parameterMark === "U_V_component_of_wind_ground" ||
           this.menuList[index].parameterMark === "ec_wave_height" ||
           this.menuList[index].parameterMark === "waves_direction"
         ) {
@@ -1720,9 +1665,7 @@ export default {
 
         // 取消状态、重置最近缓存的level
         this.menuList[index].flag = false;
-        this.menuList[index].currentLevel = this.menuList[
-          index
-        ].parseIntLevel[0];
+        this.menuList[index].currentLevel = this.menuList[index].parseIntLevel[0];
         let i = this.currentItemList.findIndex((item) => {
           return item.id == this.menuList[index].id;
         });
@@ -1731,9 +1674,7 @@ export default {
         }
         // 当前要素设置为当前要素列表中的最后一个
         if (this.currentItemList.length) {
-          this.currentItem = this.currentItemList[
-            this.currentItemList.length - 1
-          ];
+          this.currentItem = this.currentItemList[this.currentItemList.length - 1];
           this.currentLevel = this.currentItemList[
             this.currentItemList.length - 1
           ].parseIntLevel[0];
@@ -1775,9 +1716,7 @@ export default {
           this.currentItemList.push(this.menuList[index]);
         }
         // 当前要素设置为当前要素列表中的最后一个
-        this.currentItem = this.currentItemList[
-          this.currentItemList.length - 1
-        ];
+        this.currentItem = this.currentItemList[this.currentItemList.length - 1];
         this.currentLevel = this.currentItemList[
           this.currentItemList.length - 1
         ].parseIntLevel[0];
@@ -1942,7 +1881,7 @@ export default {
       let layerIndex = this.currentItemList.findIndex((item) => {
         return item.drawType === "layer";
       });
-      let currentItem = this.currentItemList[layerIndex]
+      let currentItem = this.currentItemList[layerIndex];
       let itemExtent = {
         xMin: currentItem.xMin,
         xMax: currentItem.xMax,
@@ -2010,7 +1949,7 @@ export default {
     },
     // 循环绘制当前要素列表的要素
     drawItemList() {
-      console.log('------------', this.currentItemList);
+      console.log("------------", this.currentItemList);
       // 循环所有元素，根据每个元素的范围给视口范围进行调整
       this.currentItemList.forEach((currentItem) => {
         let itemExtent = {
@@ -2463,12 +2402,14 @@ export default {
             this.$message.error("获取" + currentItem.name + "数据失败");
           });
       } else if (currentItem.parameterMark === "waves_direction_liu") {
-        let currentIndex = this.currentItemList.findIndex(item => {
-          return item.parameterMark == 'waves_direction'
-        })
-        let levelIndex = this.currentItemList[currentIndex].parseIntLevel.findIndex((item) => {
-          return item === this.currentItemList[currentIndex].currentLevel;
+        let currentIndex = this.currentItemList.findIndex((item) => {
+          return item.parameterMark == "waves_direction";
         });
+        let levelIndex = this.currentItemList[currentIndex].parseIntLevel.findIndex(
+          (item) => {
+            return item === this.currentItemList[currentIndex].currentLevel;
+          }
+        );
         this.$get("/api/numerical-forecast/ocean-current", {
           day: this.day,
           time: this.time,
@@ -2605,12 +2546,8 @@ export default {
         this.setChangeDateIndex(2); // 重置为第三个日期
         this.tidalData.timeList = [];
         let now = this.$m(this.day).format("MM-DD");
-        let yestoday = this.$m(this.day)
-          .subtract(1, "days")
-          .format("MM-DD");
-        let lastday = this.$m(this.day)
-          .subtract(2, "days")
-          .format("MM-DD");
+        let yestoday = this.$m(this.day).subtract(1, "days").format("MM-DD");
+        let lastday = this.$m(this.day).subtract(2, "days").format("MM-DD");
         this.tidalData.timeList.push(lastday);
         this.tidalData.timeList.push(yestoday);
         this.tidalData.timeList.push(now);
@@ -2642,11 +2579,7 @@ export default {
             let time = null;
             this.clearChart();
             // this.createChart(this.tidalCharts);
-            if (
-              tidalList.length &&
-              tidalList != null &&
-              tidalList != undefined
-            ) {
+            if (tidalList.length && tidalList != null && tidalList != undefined) {
               // 高低潮数据列表
               let tidalLists = [];
               this.setTidalMsgFlag(false);
@@ -2794,9 +2727,7 @@ export default {
       ];
       this.warningLine = [];
       let lin1 = L.polyline(latlngs24, { color: "red" }).addTo(map);
-      let lin2 = L.polyline(latlngs48, { color: "blue", dashArray: 5 }).addTo(
-        map
-      );
+      let lin2 = L.polyline(latlngs48, { color: "blue", dashArray: 5 }).addTo(map);
       this.warningLine.push(lin1, lin2);
 
       let myIcon = L.divIcon({
@@ -2896,25 +2827,13 @@ export default {
         trackList.forEach((item) => {
           if (item.centerMaxSpeed >= 10.8 && item.centerMaxSpeed <= 17.1) {
             item.color = "#33ff26";
-          } else if (
-            item.centerMaxSpeed >= 17.2 &&
-            item.centerMaxSpeed <= 24.4
-          ) {
+          } else if (item.centerMaxSpeed >= 17.2 && item.centerMaxSpeed <= 24.4) {
             item.color = "#2665f9";
-          } else if (
-            item.centerMaxSpeed >= 24.5 &&
-            item.centerMaxSpeed <= 32.6
-          ) {
+          } else if (item.centerMaxSpeed >= 24.5 && item.centerMaxSpeed <= 32.6) {
             item.color = "#ffff0a";
-          } else if (
-            item.centerMaxSpeed >= 32.7 &&
-            item.centerMaxSpeed <= 41.4
-          ) {
+          } else if (item.centerMaxSpeed >= 32.7 && item.centerMaxSpeed <= 41.4) {
             item.color = "#fd8a09";
-          } else if (
-            item.centerMaxSpeed >= 41.5 &&
-            item.centerMaxSpeed <= 50.9
-          ) {
+          } else if (item.centerMaxSpeed >= 41.5 && item.centerMaxSpeed <= 50.9) {
             item.color = "#f75dfe";
           } else if (item.centerMaxSpeed >= 51) {
             item.color = "#f61525";
@@ -2951,9 +2870,7 @@ export default {
                   [trackList[i].lat, trackList[i].lon],
                   [trackList[i + 1].lat, trackList[i + 1].lon],
                 ];
-                let polyline = L.polyline(latlngs, { color: "#666666" }).addTo(
-                  map
-                );
+                let polyline = L.polyline(latlngs, { color: "#666666" }).addTo(map);
                 polyline.id = id;
                 polyline.bringToBack();
                 that.tyDeletArr.push(polyline);
@@ -3054,8 +2971,7 @@ export default {
 
     // 获取并添加卫星云图
     async getAndDrawFyType(type) {
-      let time =
-        this.time > 10 ? this.time + ":00:00" : "0" + this.time + ":00:00";
+      let time = this.time > 10 ? this.time + ":00:00" : "0" + this.time + ":00:00";
       // let bounds = L.latLngBounds(
       //   L.latLng(-54.96, 49.74),
       //   L.latLng(54.96, 159.66)
@@ -3086,10 +3002,7 @@ export default {
 
         const img = this.toImage(fyImage);
         // let bounds = L.latLngBounds(L.latLng(-10, 96.06), L.latLng(48.3, 169.96));
-        let bounds = L.latLngBounds(
-          L.latLng(-54.96, 49.74),
-          L.latLng(54.96, 159.66)
-        );
+        let bounds = L.latLngBounds(L.latLng(-54.96, 49.74), L.latLng(54.96, 159.66));
         if (img && img !== "data:image/png;base64,") {
           // let imageLayer = L.imageOverlay(img, bounds,{opacity:0.3});
           let imageLayer = L.imageOverlay(img, bounds);
@@ -3248,9 +3161,7 @@ export default {
           this.currentItemList.push(this.menuList[index]);
         }
         // 当前要素设置为当前要素列表中的最后一个
-        this.currentItem = this.currentItemList[
-          this.currentItemList.length - 1
-        ];
+        this.currentItem = this.currentItemList[this.currentItemList.length - 1];
         this.currentLevel = this.currentItemList[
           this.currentItemList.length - 1
         ].parseIntLevel[0];

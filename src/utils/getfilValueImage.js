@@ -242,6 +242,93 @@ export function getBuoyFillingValueImage(fillingValue) {
   return canvas.toDataURL();
 }
 
+export function getGroundFillingValueImage(fillingValue) {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = 80;
+  canvas.height = 80;
+  ctx.font = "12px";
+  let firstParmsX =
+    10 * Math.sin(((360 / 5) * 4 * Math.PI) / 180).toFixed(1);
+  let firstParmsY =
+    10 * Math.cos(((360 / 5) * 4 * Math.PI) / 180).toFixed(1);
+  let temp = '--'
+  if (fillingValue.tempreture) {
+    temp = fillingValue.tempreture
+  }
+
+  /* 气温 */
+  ctx.fillStyle = "#e34665";
+  ctx.font = "12px Arial";
+  ctx.fillText(
+    temp,
+    canvas.width / 2 + firstParmsX - 25,
+    canvas.height / 2 + firstParmsY - 10
+  );
+  let time = '--'
+  if (fillingValue.time) {
+    time = fillingValue.time
+  }
+
+
+  /* 时间 */
+  ctx.fillStyle = "#f159ef";
+  ctx.fillText(
+    time,
+    canvas.width / 2 + firstParmsX + 20,
+    canvas.height / 2 + firstParmsY - 10
+  );
+
+
+  /* 能见度 */
+  ctx.fillStyle = "#ae48f0";
+  ctx.fillText(
+    '--',
+    canvas.width / 2 + firstParmsX - 25,
+    canvas.height / 2 + firstParmsY + 3
+  );
+  let visibility = '--'
+  if (fillingValue.visibility && !(fillingValue.visibility === "/")) {
+    visibility = fillingValue.salinity
+  }
+
+  /* 相对湿度 */
+  ctx.fillStyle = "#f47900";
+  ctx.fillText(
+    '--',
+    canvas.width / 2 + firstParmsX - 25,
+    canvas.height / 2 + firstParmsY + 3
+  );
+
+
+  // 气压
+  let pressure = '--'
+  if (fillingValue.pressure) {
+    pressure = fillingValue.pressure
+  }
+  ctx.fillStyle = "#40b700";
+  ctx.fillText(
+    pressure,
+    canvas.width / 2 + firstParmsX + 20,
+    canvas.height / 2 + firstParmsY + 5
+  );
+
+
+  // 绘制风羽
+  drawWind(ctx, fillingValue, 80, 80)
+  ctx.beginPath();
+  ctx.arc(canvas.width / 2, canvas.height / 2, 2, 0, Math.PI * 2, false);
+  ctx.fillStyle = "#FC1C1C"; //填充颜色,默认是黑色
+  ctx.fill(); //画实心圆
+  ctx.beginPath();
+  ctx.strokeStyle = "#222";
+  ctx.lineWidth = 0.5
+  ctx.arc(canvas.width / 2, canvas.height / 2, 3.5, 0, Math.PI * 2, false);
+  ctx.stroke()
+
+  return canvas.toDataURL();
+}
+
 function drawWind(ctx, windObj, width, height) {
   let startPoint = {
     x: width / 2,

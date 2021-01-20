@@ -7,6 +7,7 @@ import {
   getShipFillingValueImage,
   getOceanFillingValueImage,
   getBuoyFillingValueImage,
+  getGroundFillingValueImage,
 } from "@/utils/getfilValueImage.js";
 import "@/utils/L.CanvasOverlay.js";
 export default {
@@ -39,6 +40,8 @@ export default {
       oceanMarkArr: [],
       // 浮标填值
       buoyMarkArr: [],
+      // 地面填值
+      groundMarkerArr: [],
     };
   },
   mounted() {
@@ -629,65 +632,156 @@ export default {
               }
               let lat = item.latitude;
               let lon = item.longitude;
-              let groundMarker = L.marker(L.latLng(lat, lon), {
-                icon: this.groundIcon,
-              }).addTo(map);
-              //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
-              groundMarker.type = "ground";
-              groundMarker.id = item.id;
-              markerArr.push(groundMarker);
-              groundMarker.on("click", (ev) => {
-                this.$get("/api/ground-live/one-byId", {
-                  id: ev.target.id,
-                })
-                  .then((res) => {
-                    if (res.status == 200) {
-                      let station = res.data.data;
-                      let unit = null;
-                      if (station.windUnit == 3 || station.windUnit == 4) {
-                        unit = "nm/h";
-                      } else {
-                        unit = "m/s";
-                      }
-                      let day = this.$m(station.startTime).format("YYYY-MM-DD");
-                      let time =
-                        this.$m(station.startTime).format("HH") +
-                        "时" +
-                        this.$m(station.startTime).format("mm") +
-                        "分";
-                      let str = this.getGroundContent({
-                        name: "地面站",
-                        lat: station.latitude.toFixed(3),
-                        lon: station.longitude.toFixed(3),
-                        dewTemperature: station.dewTemperature,
-                        temperature: station.temperature,
-                        pressure: station.pressure,
-                        windSpeed: station.windSpeed,
-                        windDirection: station.windDirection,
-                        precipitation: station.precipitation,
-                        seaLevelPressure: station.seaLevelPressure,
-                        visibility: station.visibility,
-                        windUnit: unit,
-                        pressure: station.pressure,
-                        day: day,
-                        time: time,
-                      });
-                      groundMarker.bindCustomPopup(str).openPopup();
+              this.$get("/api/ground-live/one-byId", {
+                id: item.id,
+              })
+                .then((res) => {
+                  if (res.status == 200) {
+                    let station = res.data.data;
+                    let unit = null;
+                    if (station.windUnit == 3 || station.windUnit == 4) {
+                      unit = "nm/h";
+                    } else {
+                      unit = "m/s";
                     }
-                  })
-                  .catch((error) => {
-                    this.$message.error("获取站点数据失败");
-                  });
-              });
+                    let day = this.$m(station.dayTime).format("YYYY-MM-DD");
+                    let time =
+                      this.$m(station.startTime).format("HH") +
+                      "时" +
+                      this.$m(station.startTime).format("mm") +
+                      "分";
+                    let str = this.getGroundContent({
+                      name: "地面站",
+                      lat: station.latitude.toFixed(3),
+                      lon: station.longitude.toFixed(3),
+                      dewTemperature: station.dewTemperature,
+                      temperature: station.temperature,
+                      pressure: station.pressure,
+                      windSpeed: station.windSpeed,
+                      windDirection: station.windDirection,
+                      precipitation: station.precipitation,
+                      seaLevelPressure: station.seaLevelPressure,
+                      visibility: station.visibility,
+                      windUnit: unit,
+                      pressure: station.pressure,
+                      day: day,
+                      time: time,
+                    });
+                    const image = getGroundFillingValueImage({
+                      // 温度
+                      tempreture: station.temperature,
+                      // 时间
+                      time: this.$m(station.startTime).format("HH:mm"),
+                      // 风向
+                      dirwind: station.windDirection,
+                      // 风速
+                      speedwind: station.windSpeed,
+                      // 气压
+                      pressure: station.pressure,
+                      // 能见度
+                      visibility: station.visibility,
+                    });
+                    const fillIcon = new L.Icon({
+                      iconUrl: image,
+                      iconSize: [80, 80],
+                      iconAnchor: [42, 64],
+                      popupAnchor: [1, -34],
+                      shadowSize: [41, 41],
+                    });
+                    let groundMarker = L.marker(L.latLng(lat, lon), {
+                      icon: fillIcon,
+                    }).addTo(map);
+                    groundMarker.type = "ground";
+                    groundMarker.id = item.id;
+                    this.groundMarkerArr.push(groundMarker);
+                    const popup = groundMarker.bindCustomPopup(str);
+                    groundMarker.on("click", (ev) => {
+                      popup.openPopup();
+                    });
+                  }
+                })
+                .then(() => {
+                  this.groundMarkerGroup = L.layerGroup(this.groundMarkerArr);
+                  map.addLayer(this.groundMarkerGroup);
+                });
             });
-            this.groundMarkerGroup = L.layerGroup(markerArr);
-            map.addLayer(this.groundMarkerGroup);
           }
         })
         .catch((error) => {
           this.$message.error("获取地面站数据失败");
         });
     },
+    // getGroundInfo() {
+    //   this.$get("/api/ground-live")
+    //     .then((res) => {
+    //       if (res.status == 200) {
+    //         let data = res.data.data;
+    //         let markerArr = [];
+    //         data.forEach((item) => {
+    //           if (item.latitude === null && item.longitude === null) {
+    //             return;
+    //           }
+    //           let lat = item.latitude;
+    //           let lon = item.longitude;
+    //           let groundMarker = L.marker(L.latLng(lat, lon), {
+    //             icon: this.groundIcon,
+    //           }).addTo(map);
+    //           //点击地图上任意另一个点，锚点跟过去，当前坐标值跟着变换；
+    //           groundMarker.type = "ground";
+    //           groundMarker.id = item.id;
+    //           markerArr.push(groundMarker);
+    //           groundMarker.on("click", (ev) => {
+    //             this.$get("/api/ground-live/one-byId", {
+    //               id: ev.target.id,
+    //             })
+    //               .then((res) => {
+    //                 if (res.status == 200) {
+    //                   let station = res.data.data;
+    //                   let unit = null;
+    //                   if (station.windUnit == 3 || station.windUnit == 4) {
+    //                     unit = "nm/h";
+    //                   } else {
+    //                     unit = "m/s";
+    //                   }
+    //                   let day = this.$m(station.startTime).format("YYYY-MM-DD");
+    //                   let time =
+    //                     this.$m(station.startTime).format("HH") +
+    //                     "时" +
+    //                     this.$m(station.startTime).format("mm") +
+    //                     "分";
+    //                   let str = this.getGroundContent({
+    //                     name: "地面站",
+    //                     lat: station.latitude.toFixed(3),
+    //                     lon: station.longitude.toFixed(3),
+    //                     dewTemperature: station.dewTemperature,
+    //                     temperature: station.temperature,
+    //                     pressure: station.pressure,
+    //                     windSpeed: station.windSpeed,
+    //                     windDirection: station.windDirection,
+    //                     precipitation: station.precipitation,
+    //                     seaLevelPressure: station.seaLevelPressure,
+    //                     visibility: station.visibility,
+    //                     windUnit: unit,
+    //                     pressure: station.pressure,
+    //                     day: day,
+    //                     time: time,
+    //                   });
+    //                   groundMarker.bindCustomPopup(str).openPopup();
+    //                 }
+    //               })
+    //               .catch((error) => {
+    //                 this.$message.error("获取站点数据失败");
+    //               });
+    //           });
+    //         });
+    //         this.groundMarkerGroup = L.layerGroup(markerArr);
+    //         map.addLayer(this.groundMarkerGroup);
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       this.$message.error("获取地面站数据失败");
+    //     });
+    // },
     getOceanInfo() {
       this.$get("/api/ocean-station-live")
         .then((res) => {
