@@ -210,7 +210,7 @@ export default {
   methods: {
     // 修改设置参数
     setData(data) {
-      
+
       console.log(data,`setData`)
       this.formData = {
         ...this.formData,
@@ -356,7 +356,7 @@ export default {
   color: rgba(112, 114, 116, 1);
   font-size: 14px;
 }
-/deep/input:disabled::-webkit-input-placeholder {
+::v-deep input:disabled::-webkit-input-placeholder {
   color: #c0b2c0;
   -webkit-text-fill-color: #c0b2c0;
 }

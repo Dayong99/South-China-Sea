@@ -63,7 +63,7 @@
           </div>
         </el-col>
       </el-row>
-      
+
       <el-row>
         <el-col :span="18">
           <div class="grid-content bg-purple-dark">
@@ -151,7 +151,7 @@ export default {
       this.$get("/api/baseinfo-type").then((res) => {
         console.log(res, "res");
         if (res.data.data) {
-        
+
           this.typeOption = res.data.data;
         }
       });
@@ -257,7 +257,7 @@ export default {
   color: rgba(112, 114, 116, 1);
   font-size: 14px;
 }
-/deep/input:disabled::-webkit-input-placeholder {
+::v-deep input:disabled::-webkit-input-placeholder {
   color: #c0b2c0;
   -webkit-text-fill-color: #c0b2c0;
 }

@@ -87,7 +87,7 @@ export default {
     },
     // 添加或修改
     submit() {
-      
+
       this.$refs.form.validate((valid) => {
         if (valid) {
             this.$get("/api/numerical-forecast/analysisOceanCurrent", {
@@ -146,7 +146,7 @@ export default {
   color: rgba(112, 114, 116, 1);
   font-size: 14px;
 }
-/deep/input:disabled::-webkit-input-placeholder {
+::v-deep input:disabled::-webkit-input-placeholder {
   color: #c0b2c0;
   -webkit-text-fill-color: #c0b2c0;
 }

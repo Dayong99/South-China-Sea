@@ -41,7 +41,7 @@
           </div>
         </el-col>
       </el-row>
-      
+
     </el-form>
     <div class="save_wrapper">
       <button class="save" type="button" @click="submit()">保存</button>
@@ -82,7 +82,7 @@ export default {
           message: "标志区名称不能为空",
           trigger: "blur",
         },
-        
+
       },
     };
   },
@@ -185,7 +185,7 @@ export default {
   color: rgba(112, 114, 116, 1);
   font-size: 14px;
 }
-/deep/input:disabled::-webkit-input-placeholder {
+::v-deep input:disabled::-webkit-input-placeholder {
   color: #c0b2c0;
   -webkit-text-fill-color: #c0b2c0;
 }

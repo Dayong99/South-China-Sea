@@ -75,36 +75,36 @@
       margin-right: 10px;
     }
 
-    .operation_input /deep/ .el-input__inner {
+    .operation_input ::v-deep .el-input__inner {
       width: 260px;
       height: 32px;
       line-height: 32px;
       background-color: #ffffff;
     }
 
-    .operation_input /deep/ .el-input__icon {
+    .operation_input ::v-deep .el-input__icon {
       line-height: 32px;
     }
   }
 
-  .manager_operation /deep/ .el-button {
+  .manager_operation ::v-deep .el-button {
     padding: 8px 15px;
     margin-left: 5px;
   }
 
-  .manager_operation /deep/ .operation_search {
+  .manager_operation ::v-deep .operation_search {
     border-radius: 6px;
     color: #fff;
     background-color: rgba(152, 26, 0, 1);
   }
 
-  .manager_operation /deep/ .operation_clear {
+  .manager_operation ::v-deep .operation_clear {
     color: #fff;
     background-color: rgba(255, 120, 120, 1);
     border-radius: 6px;
   }
 
-  .manager_operation /deep/ .operation_add {
+  .manager_operation ::v-deep .operation_add {
     color: rgba(152, 26, 0, 1);
     padding: 7px 8px;
     border-radius: 6px;
@@ -212,7 +212,7 @@
               height: 100%;
               border-right: 1px solid #ccc;
               overflow: hidden;
-              
+
             }
             .active {
               color: red;
@@ -273,7 +273,7 @@
                     width: 18px;
                     border: none;
                     appearance: none;
-                    padding-left: 5px; 
+                    padding-left: 5px;
                   }
                   select:focus {
                     outline: none;
@@ -324,13 +324,13 @@
     }
   }
 
-  .manager_table /deep/ .el-table__body-wrapper::-webkit-scrollbar {
+  .manager_table ::v-deep .el-table__body-wrapper::-webkit-scrollbar {
     width: 10px; // 横向滚动条
     height: 6px; // 纵向滚动条 必写
   }
 
   // 滚动条的滑块
-  .manager_table /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
+  .manager_table ::v-deep .el-table__body-wrapper::-webkit-scrollbar-thumb {
     background-color: #ddd;
     border-radius: 3px;
   }

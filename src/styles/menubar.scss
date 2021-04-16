@@ -63,7 +63,7 @@
                 }
             }
             .input_content {
-                .search_content /deep/ .el-input__inner {
+                .search_content ::v-deep .el-input__inner {
                     line-height: 28px;
                     height: 28px;
                     color: rgb(192, 192, 192);
@@ -72,10 +72,10 @@
                     padding-left: 0;
                     background: rgba(0, 0, 0, 0.6);
                 }
-                .search_content /deep/ .el-input__icon {
+                .search_content ::v-deep .el-input__icon {
                     line-height: 28px!important;
                 }
-                .search_content /deep/ .el-input__suffix {
+                .search_content ::v-deep .el-input__suffix {
                     line-height: 35px;
                 }
             }
